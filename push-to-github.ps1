@@ -1,89 +1,44 @@
 param(
-  [string]$Message = "Rebrand to #1800AD palette, cinematic gradients, asset hooks, mobile fixes",
-  [string]$Branch = "main",
-  [string]$GitHubUser = "vicethetechguy",
-  [string]$RemoteRepo = "vicethetechguy/Fantrade",
-  [switch]$NoCommit
+    [string]$Message = "Update Fantrade project files",
+    [string]$Branch = "main"
 )
 
 $ErrorActionPreference = "Stop"
 
-$repo = "C:\Users\user\Downloads\Fantrade New"
+$repo = $PSScriptRoot
 Set-Location -LiteralPath $repo
 
-$remoteUrl = "https://$GitHubUser@github.com/$RemoteRepo.git"
+Write-Host "=======================================================" -ForegroundColor Cyan
+Write-Host "         Fantrade - PowerShell Commit & Push" -ForegroundColor Cyan
+Write-Host "=======================================================" -ForegroundColor Cyan
+Write-Host ""
 
-Write-Host "Preparing Fantrade changes..."
-git add -A
-git status --short
-
-if (-not $NoCommit) {
-  git diff --cached --quiet
-  $diffExitCode = $LASTEXITCODE
-
-  if ($diffExitCode -eq 0) {
-    Write-Host "No staged changes to commit. Continuing to push $Branch."
-  } elseif ($diffExitCode -eq 1) {
+$status = git status --short
+if ([string]::IsNullOrWhiteSpace($status)) {
+    Write-Host "[INFO] No unstaged/uncommitted changes detected." -ForegroundColor Yellow
+    Write-Host "Pushing any unpushed local commits to GitHub..." -ForegroundColor Yellow
+} else {
+    Write-Host "[CHANGES DETECTED]:" -ForegroundColor Green
+    git status --short
+    Write-Host ""
+    
+    Write-Host "Staging all files..." -ForegroundColor Yellow
+    git add -A
+    
+    Write-Host "Committing with message: '$Message'..." -ForegroundColor Yellow
     git commit -m $Message
-    if ($LASTEXITCODE -ne 0) {
-      throw "Commit failed."
-    }
-  } else {
-    throw "Could not inspect staged changes."
-  }
 }
 
-$secureToken = Read-Host "Paste your GitHub fine-grained token" -AsSecureString
-$tokenPointer = [Runtime.InteropServices.Marshal]::SecureStringToBSTR($secureToken)
+Write-Host ""
+Write-Host "Pushing to GitHub (origin/$Branch)..." -ForegroundColor Cyan
+git push origin $Branch
 
-try {
-  $token = [Runtime.InteropServices.Marshal]::PtrToStringBSTR($tokenPointer)
-} finally {
-  [Runtime.InteropServices.Marshal]::ZeroFreeBSTR($tokenPointer)
-}
-
-if ([string]::IsNullOrWhiteSpace($token)) {
-  throw "No token entered."
-}
-
-$askPass = Join-Path $env:TEMP ("fantrade-git-askpass-" + [guid]::NewGuid() + ".cmd")
-
-try {
-  @"
-@echo off
-setlocal
-echo.%~1 | "%SystemRoot%\System32\find.exe" /I "Username" >nul
-if not errorlevel 1 (
-  echo $GitHubUser
-  exit /b 0
-)
-echo.%~1 | "%SystemRoot%\System32\find.exe" /I "Password" >nul
-if not errorlevel 1 (
-  powershell -NoProfile -ExecutionPolicy Bypass -Command "[Console]::Out.Write(`$env:GITHUB_FINE_GRAINED_TOKEN)"
-  exit /b 0
-)
-exit /b 1
-"@ | Set-Content -LiteralPath $askPass -Encoding ASCII -NoNewline
-
-  $env:GIT_ASKPASS = $askPass
-  $env:GIT_TERMINAL_PROMPT = "0"
-  $env:GCM_INTERACTIVE = "Never"
-  $env:GITHUB_FINE_GRAINED_TOKEN = $token
-
-  Write-Host "Pushing to $RemoteRepo/$Branch with token authentication..."
-  git -c credential.helper= -c core.askPass="$askPass" push $remoteUrl "HEAD:$Branch"
-
-  if ($LASTEXITCODE -ne 0) {
-    throw "Push failed. Check that the fine-grained token has access to $RemoteRepo and Contents read/write permission."
-  }
-
-  Write-Host "Push complete."
-} finally {
-  Remove-Item Env:\GIT_ASKPASS -ErrorAction SilentlyContinue
-  Remove-Item Env:\GIT_TERMINAL_PROMPT -ErrorAction SilentlyContinue
-  Remove-Item Env:\GCM_INTERACTIVE -ErrorAction SilentlyContinue
-  Remove-Item Env:\GITHUB_FINE_GRAINED_TOKEN -ErrorAction SilentlyContinue
-  if (Test-Path -LiteralPath $askPass) {
-    Remove-Item -LiteralPath $askPass -Force
-  }
+if ($LASTEXITCODE -eq 0) {
+    Write-Host ""
+    Write-Host "=======================================================" -ForegroundColor Green
+    Write-Host "  SUCCESS! Pushed successfully to GitHub!" -ForegroundColor Green
+    Write-Host "  View repo: https://github.com/vicethetechguy/Fantrade" -ForegroundColor Green
+    Write-Host "=======================================================" -ForegroundColor Green
+} else {
+    Write-Host "[ERROR] Push failed." -ForegroundColor Red
 }
