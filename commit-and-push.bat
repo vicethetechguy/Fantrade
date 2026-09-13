@@ -5,7 +5,7 @@ setlocal enabledelayedexpansion
 cd /d "%~dp0"
 
 echo =======================================================
-echo          Fantrade - Easy Commit & Push to GitHub
+echo          Fantrade - Easy Commit and Push to GitHub
 echo =======================================================
 echo.
 
