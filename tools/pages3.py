@@ -3,6 +3,7 @@
 leaderboard, notifications, settings. Same shell, same tokens as pages 1–6."""
 import os, sys
 sys.path.insert(0, os.path.dirname(__file__))
+from experience import prepare
 from common import head, atmosphere, nav, nav_min, footer, ic, JS_SHELL
 
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
@@ -25,6 +26,7 @@ def page(fname, title, body, js="", css="", app=True, chrome=True):
     """chrome=False renders the stripped auth shell (minimal nav, no footer)."""
     shell = nav(title.split(" — ")[0], app) if chrome else nav_min()
     tail = footer() if chrome else ""
+    body, js = prepare(fname, body, js)
     html = (head(title, css) + atmosphere() + shell + body + tail +
             "<script>(function(){" + JS_SHELL + js + "})();</script></body></html>")
     with open(os.path.join(OUT, fname), "w", encoding="utf-8") as f:
@@ -970,7 +972,7 @@ pf = [T('<main><section class="app-head"><div class="wrap"><div class="head-row"
 pf.append('<section style="padding:10px 0 120px"><div class="wrap"><div class="bento">')
 
 # value + chart
-pf.append(T('<div class="bezel c5" data-reveal><div class="core pad">'
+pf.append(T('<div class="bezel c6" data-reveal><div class="core pad">'
             '<div class="pfhead" style="display:flex;align-items:flex-start;gap:14px">'
             '<div style="min-width:0"><div class="k-label">Total portfolio value</div>'
             '<div class="value-big" style="font-size:clamp(28px,2.7vw,40px)">'
@@ -990,7 +992,7 @@ pf.append(T('<div class="bezel c5" data-reveal><div class="core pad">'
             '</div></div>', sparkline(SERIES)))
 
 # allocation
-pf.append(T('<div class="bezel c4" data-reveal><div class="core pad">'
+pf.append(T('<div class="bezel c6" data-reveal><div class="core pad">'
             '<div class="k-label">Capital allocation</div>'
             '<p style="font-size:12.5px;color:var(--dim);font-weight:300;margin:0 0 4px;line-height:1.6">'
             'How your balance is split between locked club assets, liquid reserves and speculative positions '
@@ -1012,29 +1014,6 @@ pf.append(T('<div class="bezel c4" data-reveal><div class="core pad">'
             '<i style="display:inline-block;width:8px;height:8px;border-radius:3px;background:#C4F82A;margin-right:9px"></i>',
             '<i style="display:inline-block;width:8px;height:8px;border-radius:3px;background:#4DA6FF;margin-right:9px"></i>',
             '<i style="display:inline-block;width:8px;height:8px;border-radius:3px;background:rgba(255,255,255,.34);margin-right:9px"></i>'))
-
-# syndicate card
-pf.append(T('<div class="bezel c3" data-reveal><div class="core pad">'
-            '<div class="k-label">Club syndicate</div>'
-            '<div style="font-family:Archivo;font-variation-settings:\'wdth\' 125,\'wght\' 900;'
-            'text-transform:uppercase;font-size:24px;line-height:1" data-bind="club">Zero FC</div>'
-            '<div class="sub-line" style="letter-spacing:.14em;text-transform:uppercase;margin-bottom:20px">'
-            'Apex division · Tier 1</div>'
-            '<div class="b-row"><span>Head coach</span><b style="color:var(--amber)">$Arteta</b></div>'
-            '<div class="b-row"><span>Squad captain</span><b>$Bruno · 1.5x</b></div>'
-            '<div class="b-row"><span>Club valuation</span><b data-bind="clubvalue">245,800</b></div>'
-            '<div class="b-row"><span>Global rank</span><b data-bind="rank">#124</b></div>'
-            '<div class="b-row total"><span>Locked until</span><b>Sat 17:30</b></div>'
-            '<div class="k-label" style="margin-top:26px">Ownership proof</div>'
-            '<div class="rowlink">@@ 13 of 13 assets verified<b style="color:var(--lime)">Valid</b></div>'
-            '<div class="rowlink">@@ Zero borrowed positions<b style="color:var(--lime)">Valid</b></div>'
-            '<p style="font-size:11.5px;color:var(--faint);font-weight:300;margin-top:16px;line-height:1.6">'
-            'Ownership is re-checked when a round locks. A club that cannot prove its eleven does not score.</p>'
-            '<div style="margin-top:18px">@@</div>'
-            '</div></div>',
-            ic("shield", "ic"), ic("check", "ic"),
-            btn("Inspect the pitch", "btn-glass", "clubs.html",
-                extra='style="width:100%;justify-content:space-between"')))
 
 # holdings
 pf.append(T('<div class="bezel c12" data-reveal><div class="core">'

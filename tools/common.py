@@ -364,6 +364,7 @@ footer{border-top:1px solid var(--hair);padding:70px 0 64px;background:rgba(255,
   input,select,textarea{font-size:16px!important} /* Prevents iOS auto-zoom */
   .wrap{padding-left:max(16px,env(safe-area-inset-left));padding-right:max(16px,env(safe-area-inset-right));max-width:100vw;box-sizing:border-box}
   .nav-island{top:max(10px,env(safe-area-inset-top));left:10px;right:10px;transform:none;width:auto;max-width:calc(100vw - 20px)!important;box-sizing:border-box;padding:6px 8px 6px 14px}
+  .nav-actions,.nav-island div[style*="display:flex"]{display:none!important}
   .nav-island #navAccountBtn{display:none!important}
   .nav-wallet{padding:5px 11px;font-size:11.5px;gap:6px}
   .nav-wallet .pulse{width:5px;height:5px}
@@ -790,24 +791,22 @@ APP_CSS = r"""
 
 CSS = CSS + APP_CSS
 
-MARKET_NAV = [("exchange.html", "Exchange"), ("clubs.html", "Dream Clubs"),
-              ("fanplay.html", "FanPlay"), ("ftr.html", "$FTR"),
-              ("how-it-works.html", "How it works")]
-
-APP_NAV = [("dashboard.html", "Dashboard"), ("exchange.html", "Exchange"),
-           ("clubs.html", "Dream Clubs"), ("fanplay.html", "FanPlay"),
-           ("portfolio.html", "Portfolio"), ("leaderboard.html", "Leaderboard")]
+MARKET_NAV = [("exchange.html", "Exchange"), ("fanplay.html", "FanPlay"),
+              ("how-it-works.html", "How to play")]
+APP_NAV = [("dashboard.html", "Home"), ("exchange.html", "Exchange"),
+           ("clubs.html", "My club"), ("fanplay.html", "FanPlay"),
+           ("portfolio.html", "Portfolio")]
 
 NAVITEMS = MARKET_NAV  # kept for backwards compatibility
 
 ACCOUNT_MENU = [("dashboard.html", "Dashboard", "chart"), ("portfolio.html", "Portfolio & ledger", "receipt"),
                 ("ftr.html", "$FTR wallet", "wallet"), ("notifications.html", "Notifications", "pulse"),
-                ("settings.html", "Settings", "scales")]
+                ("settings.html", "Settings", "scales"), ("leaderboard.html", "Leaderboard", "trophy"), ("how-it-works.html", "How to play", "ball")]
 
 def head(title, extra_css=""):
     return ('<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">'
             '<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">'
-            '<title>%s</title>%s<style>%s%s</style></head><body>' % (title, FONTS, CSS, extra_css))
+            '<title>%s</title>%s<style>%s%s</style></head><body>' % (title, FONTS, CSS, extra_css + __import__("experience").CSS))
 
 def atmosphere():
     return ('<div class="orb orb-a"></div><div class="orb orb-b"></div><div class="orb orb-c"></div>'
@@ -821,8 +820,8 @@ def atmosphere():
             '</div>') + sprite()
 
 def _shell(links, over, right, over_foot):
-    return ('<nav class="nav-island"><a class="logo" href="index.html">%s Fantrade</a>'
-            '<div class="nav-links">%s</div><div style="display:flex;align-items:center;gap:10px">%s</div>'
+    return ('<a class="skip-link" href="#main">Skip to content</a><nav class="nav-island" aria-label="Main navigation"><a class="logo" href="index.html">%s Fantrade</a>'
+            '<div class="nav-links">%s</div><div class="nav-actions" style="display:flex;align-items:center;gap:10px">%s</div>'
             '<button class="burger" id="burger" aria-label="Open menu" aria-expanded="false"><i></i><i></i></button></nav>'
             '<div class="overlay" id="overlay">%s%s</div>') % (ic("ball", "ic"), links, right, over, over_foot)
 
@@ -857,10 +856,13 @@ def nav(active="", app=False):
              '<button type="button" class="danger" data-signout>%sSign out</button>'
              '</div></div>') % (ic("pulse", "ic"), menu, ic("coin", "ic"), ic("lock", "ic"))
     over_extra = ('<a href="notifications.html" data-close>Notifications</a>'
-                  '<a href="settings.html" data-close>Settings</a>')
+                  '<a href="settings.html" data-close>Settings</a><a href="ftr.html" data-close>Wallet</a><a href="leaderboard.html" data-close>Leaderboard</a><a href="how-it-works.html" data-close>How to play</a>')
     foot = ('<button class="btn btn-glass" type="button" data-signout data-close>Sign out'
             '<span class="cap">%s</span></button>' % ic("arrow", "ic"))
-    return _shell(links, over + over_extra, right, foot)
+    mobile = '<nav class="mobile-tabs" aria-label="Quick navigation">' + ''.join(
+        '<a href="%s"%s>%s<span>%s</span></a>' % (h, ' aria-current="page"' if active == original else '', ic(icon), label)
+        for h,label,original,icon in [('dashboard.html','Home','Dashboard','chart'),('exchange.html','Exchange','Exchange','candle'),('clubs.html','My club','Dream Clubs','crest'),('fanplay.html','FanPlay','FanPlay','bolt'),('portfolio.html','Portfolio','Portfolio','wallet')]) + '</nav>'
+    return _shell(links, over + over_extra, right, foot) + mobile
 
 
 def nav_min(back="index.html", label="Back to Fantrade"):
@@ -870,19 +872,8 @@ def nav_min(back="index.html", label="Back to Fantrade"):
             % (ic("ball", "ic"), back, ic("arrow", "ic"), label))
 
 def footer():
-    return ('<footer><div class="wrap"><div class="foot">'
-            '<div class="col brandcol"><a class="logo" href="index.html">%s Fantrade</a>'
-            '<p>A football ownership economy. Own players and coaches, build your Dream Club, play every matchday.</p></div>'
-            '<div class="col"><b>Platform</b><a href="exchange.html">Exchange</a><a href="clubs.html">Dream Clubs</a>'
-            '<a href="fanplay.html">FanPlay</a><a href="ftr.html">$FTR</a></div>'
-            '<div class="col"><b>Your account</b><a href="dashboard.html">Dashboard</a><a href="portfolio.html">Portfolio &amp; ledger</a>'
-            '<a href="leaderboard.html">Leaderboard</a><a href="settings.html">Settings</a></div>'
-            '<div class="col"><b>Learn</b><a href="how-it-works.html">How it works</a><a href="fanplay.html#rules">Scoring rules</a>'
-            '<a href="fanplay.html#tiers">Market tiers</a><a href="clubs.html#chem">Club chemistry</a></div>'
-            '<div class="col"><b>Company</b><a href="signup.html">Create account</a><a href="signin.html">Sign in</a>'
-            '<a href="#">Press</a><a href="#">Contact</a></div>'
-            '</div><div class="legal"><span>© 2026 Fantrade. Prototype interface — figures shown are illustrative.</span>'
-            '<span>Terms · Privacy · Responsible play</span></div></div></footer>') % ic("ball", "ic")
+    return '<footer class="ux-footer"><div class="wrap"><span>Fantrade demo · illustrative data</span><div><a href="how-it-works.html">How to play</a><a href="settings.html#play">Play limits</a><a href="leaderboard.html">Leaderboard</a></div></div></footer>'
+
 
 JS_SHELL = r"""
 var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -1160,7 +1151,7 @@ var FT = (function(){
     executeTrade: function(side, assetSymbol, assetName, shares, price, isCoach){
       var subtotal = shares * price;
       var fee = subtotal * 0.004;
-      var total = Math.round(side === 'buy' ? subtotal + fee : subtotal - fee);
+      var total = Math.round((side === 'buy' ? subtotal + fee : subtotal - fee) * 100) / 100;
 
       if(side === 'buy'){
         if(state.wallet.balance < total){

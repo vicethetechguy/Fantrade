@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import os, sys
 sys.path.insert(0, os.path.dirname(__file__))
+from experience import prepare
 from common import head, atmosphere, nav, footer, ic, JS_SHELL
 
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
@@ -23,6 +24,7 @@ def btn(label, cls="btn-lime", href="#", tag="a", extra=""):
 
 
 def page(fname, title, body, js="", css="", app=False):
+    body, js = prepare(fname, body, js)
     html = (head(title, css) + atmosphere() + nav(title.split(" — ")[0] if " — " in title else "", app) +
             body + footer() + "<script>(function(){" + JS_SHELL + js + "})();</script></body></html>")
     with open(os.path.join(OUT, fname), "w", encoding="utf-8") as f:
@@ -288,24 +290,15 @@ EX_CSS = """
 """
 
 ex = []
-ex.append(T('<header class="phead"><div class="wrap">'
-          '<span class="pill" data-reveal>@@ Live market</span>'
-          '<h1 data-reveal>Exchange</h1>'
-          '<p class="lede" data-reveal>Every player and every coach carries a fixed supply of ten million shares. '
-          'Price is set by what fans are willing to pay for the football underneath it.</p>'
-          '<div class="statbar" data-reveal>'
-          '<div>@@ 24h volume <b>4.28M $FTR</b></div>'
-          '<div>@@ Listed assets <b>2,140</b></div>'
-          '<div>@@ Top mover <b>$Jackson +11.2%</b></div>'
-          '<div>@@ Next settlement <b>Fri 18:30</b></div></div></div></header>', ic("candle", "ic"), ic("chart", "ic"), ic("layers", "ic"), ic("bolt", "ic"), ic("clock", "ic")))
+ex.append('<header class="phead"><div class="wrap"><span class="eyebrow">Demo market</span><h1>Exchange</h1><p class="lede">Find a player or coach. Choose your shares, then review your order.</p></div></header>')
 
 ex.append('<main><section style="padding-top:40px"><div class="wrap">')
 ex.append(T('<div class="rail" data-reveal><div class="seg" id="seg">'
           '<button aria-pressed="true" data-f="all">@@ All</button>'
           '<button aria-pressed="false" data-f="player">@@ Players</button>'
           '<button aria-pressed="false" data-f="coach">@@ Coaches</button></div>'
-          '<div class="searchbox">@@<input id="q" type="search" placeholder="Search a player or coach"></div>'
-          '<div class="seg"><button aria-pressed="false">@@ Filters</button></div></div>', ic("layers", "ic"), ic("boot", "ic"), ic("whistle", "ic"), ic("search", "ic"), ic("filter", "ic")))
+          '<div class="searchbox">@@<input id="q" aria-label="Search players and coaches" type="search" placeholder="Search a player or coach"></div>'
+          '</div>', ic("layers", "ic"), ic("boot", "ic"), ic("whistle", "ic"), ic("search", "ic"), ic("filter", "ic")))
 
 ex.append('<div class="bento"><div class="bezel c8" data-reveal><div class="core">'
           '<div class="mhead"><span>Asset</span><span>Price $FTR</span><span>24h</span><span>Valuation</span>'
@@ -323,58 +316,21 @@ ex.append('<div class="c4" style="display:flex;flex-direction:column;gap:16px">'
           '<div class="seg" style="width:100%%;margin-bottom:16px"><button style="flex:1;justify-content:center" '
           'aria-pressed="true" data-side="buy">Buy</button><button style="flex:1;justify-content:center" '
           'aria-pressed="false" data-side="sell">Sell</button></div>'
-          '<div class="field"><label>Shares</label><input id="qty" value="10,000" inputmode="numeric"></div>'
-          '<div class="quick"><button data-q="1000">1K</button><button data-q="10000">10K</button>'
-          '<button data-q="50000">50K</button><button data-q="100000">100K</button></div>'
+          '<div class="line"><span>Available $FTR</span><b data-bind="balance"></b></div><div class="line"><span>Your shares</span><b id="spYourHolding">0</b></div><div class="field"><label>Shares</label><input id="qty" value="1" inputmode="numeric"></div>'
+          '<div class="quick"><button data-q="1">1</button><button data-q="10">10</button>'
+          '<button data-q="50">50</button><button data-q="100">100</button></div>'
           '<div class="line"><span>Price per share</span><b id="sumPx">48.20 $FTR</b></div>'
           '<div class="line"><span>Subtotal</span><b id="sumSub">482,000</b></div>'
           '<div class="line"><span>Exchange fee (0.4%%)</span><b id="sumFee">1,928</b></div>'
           '<div class="line"><span>Total</span><b id="sumTot">483,928 $FTR</b></div>'
           '%s</div></div>' % (ic("boot", "ic"), btn("Review order", tag="button", extra='id="reviewOrderBtn" style="margin-top:20px;width:100%;justify-content:space-between"')))
 
-ex.append('<div class="bezel" data-reveal><div class="core pad-sm">'
-          '<div class="k-label">Supply</div><div class="ringwrap">'
-          '<svg class="ring" viewBox="0 0 100 100"><circle cx="50" cy="50" r="42" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="6"/>'
-          '<circle id="spRing" cx="50" cy="50" r="42" fill="none" stroke="#C4F82A" stroke-width="6" stroke-linecap="round" '
-          'stroke-dasharray="264" stroke-dashoffset="166" transform="rotate(-90 50 50)"/></svg>'
-          '<div><div class="num" style="font-size:24px" id="spHeld">3,712,480</div>'
-          '<div class="k-label" style="margin:6px 0 0">Held by fans</div>'
-          '<div class="num" style="font-size:13px;color:var(--dim);margin-top:10px" id="spPct">37.1% of 10,000,000</div></div></div>'
-          '<div class="b-row"><span>Your holding</span><b id="spYourHolding">10,000</b></div>'
-          '<div class="b-row"><span>Average entry</span><b id="spAvgEntry">31.40</b></div>'
-          '<div class="b-row"><span>Unrealised</span><b class="up" id="spUnrealised">+168,000</b></div>'
-          '<div class="b-row"><span>In your club</span><b id="spInClub">ZERO FC · RW</b></div></div></div></div></div>')
-ex.append('</div></section>')
-
-# movers + coach index
-ex.append('<section style="padding-top:20px"><div class="wrap"><div class="bento">')
-ex.append(T('<div class="bezel c4" data-reveal><div class="core pad"><div class="k-label">@@ Top gainers · 24h</div>'
-          '<div class="movers" id="gainers"></div></div></div>', ic("bolt", "ic-sm")))
-ex.append(T('<div class="bezel c4" data-reveal><div class="core pad"><div class="k-label">@@ Fallers · 24h</div>'
-          '<div class="movers" id="fallers"></div></div></div>', ic("pulse", "ic-sm")))
-ex.append(T('<div class="bezel c4" data-reveal><div class="core pad"><div class="k-label">@@ Coach index</div>'
-          '<div class="value-big">24.65 <small>$FTR</small></div>'
-          '<div class="delta">▲ 2.1% · weighted across 186 listed coaches</div>'
-          '<div style="margin-top:20px">@@</div>'
-          '<p style="font-size:13px;font-weight:300;color:var(--dim);margin-top:18px">Coaches move on results, not '
-          'minutes. A win, a clean sheet or a tactical turnaround feeds the index — and your club modifier.</p>'
-          '</div></div>', ic("whistle", "ic-sm"), '<div id="coachSpark"></div>'))
-ex.append('</div></div></section>')
-
-# how trading works
-ex.append(T('<section><div class="wrap"><div class="sec-head" data-reveal>'
-          '<span class="pill">@@ Order mechanics</span><h2>How a trade<br>settles here</h2></div>'
-          '<div class="bento">', ic("swap", "ic")))
-for icon, t, d, c in [("wallet", "Fund in $FTR", "Deposit, convert to $FTR, and your balance is ready to trade against any listed asset.", "c4"),
-                      ("candle", "Buy at market", "Orders fill against the live book. Fees are 0.4% on both sides and are always shown before you confirm.", "c4"),
-                      ("shield", "Ownership recorded", "Settled shares land in your wallet immediately and become eligible for FanPlay and club selection.", "c4")]:
-    ex.append(T('<div class="bezel tight @@" data-reveal><div class="core pad f"><span class="ibox">@@</span>'
-              '<h4>@@</h4><p>@@</p></div></div>', c, ic(icon, "ic-lg"), t, d))
-ex.append('</div></div></section></main>')
+ex.append('</div></div><div class="ux-banner" style="margin-top:24px"><span>New here? Buy shares in one player to start Individual FanPlay.</span><a href="how-it-works.html">See the guide →</a></div></div></section></main>')
 
 EX_JS = r"""
 var filter='all', q='', side='buy', sel=0;
 function fmt(n){ return n.toLocaleString('en-US'); }
+function money(n){return n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});}
 function rows(){
   var list=ASSETS.map(function(a,i){ return [a,i]; }).filter(function(x){
     var a=x[0];
@@ -432,9 +388,9 @@ function calc(){
   var qty=parseInt((document.getElementById('qty').value||'0').replace(/[^0-9]/g,''),10)||0;
   var sub=qty*a.p, fee=sub*0.004;
   document.getElementById('sumPx').textContent=a.p.toFixed(2)+' $FTR';
-  document.getElementById('sumSub').textContent=fmt(Math.round(sub));
-  document.getElementById('sumFee').textContent=fmt(Math.round(fee));
-  document.getElementById('sumTot').textContent=fmt(Math.round(side==='buy'?sub+fee:sub-fee))+' $FTR';
+  document.getElementById('sumSub').textContent=money(sub);
+  document.getElementById('sumFee').textContent=money(fee);
+  document.getElementById('sumTot').textContent=money(side==='buy'?sub+fee:sub-fee)+' $FTR';
 }
 var qty=document.getElementById('qty');
 if(qty){
@@ -528,20 +484,20 @@ if(ro){
       return;
     }
     var sub=qtyVal*a.p, fee=sub*0.004;
-    var tot=Math.round(side==='buy'?sub+fee:sub-fee);
+    var tot=Math.round((side==='buy'?sub+fee:sub-fee)*100)/100;
     var s=FT.getState();
     var curH=s.holdings[a.t];
 
     var modalHtml='' +
       '<h3 class="ft-modal-title">Confirm '+(side==='buy'?'Buy Order':'Sell Order')+'</h3>' +
-      '<p class="ft-modal-desc">Review execution details against the live Fantrade order book.</p>' +
+      '<p class="ft-modal-desc">Check the quantity, fee and total for this demo order.</p>' +
       '<div class="ft-modal-card">' +
         '<div class="m-row"><span>Action</span><b style="color:'+(side==='buy'?'var(--lime)':'var(--amber)')+'">'+side.toUpperCase()+'</b></div>' +
         '<div class="m-row"><span>Asset</span><b>'+a.t+' ('+a.n+')</b></div>' +
         '<div class="m-row"><span>Quantity</span><b>'+fmt(qtyVal)+' shares</b></div>' +
         '<div class="m-row"><span>Price per Share</span><b>'+a.p.toFixed(2)+' $FTR</b></div>' +
-        '<div class="m-row"><span>Subtotal</span><b>'+fmt(Math.round(sub))+' $FTR</b></div>' +
-        '<div class="m-row"><span>Exchange Fee (0.4%)</span><b>'+fmt(Math.round(fee))+' $FTR</b></div>' +
+        '<div class="m-row"><span>Subtotal</span><b>'+money(sub)+' $FTR</b></div>' +
+        '<div class="m-row"><span>Exchange Fee (0.4%)</span><b>'+money(fee)+' $FTR</b></div>' +
         '<div class="m-row total"><span>Total '+(side==='buy'?'Cost':'Payout')+'</span><b style="color:'+(side==='buy'?'var(--lime)':'var(--amber)')+'">'+fmt(tot)+' $FTR</b></div>' +
       '</div>' +
       '<div class="ft-modal-card">' +
@@ -551,7 +507,7 @@ if(ro){
         '<div class="m-row"><span>Current Position</span><b>'+(curH?fmt(curH.shares):'0')+' shares</b></div>' +
       '</div>' +
       '<div style="display:flex;gap:10px;margin-top:20px">' +
-        '<button class="btn btn-lime" id="confirmTradeBtn" type="button" style="flex:1;justify-content:center">Execute '+side.toUpperCase()+'</button>' +
+        '<button class="btn btn-lime" id="confirmTradeBtn" type="button" style="flex:1;justify-content:center">Confirm '+side.toUpperCase()+'</button>' +
         '<button class="btn btn-glass" id="cancelTradeBtn" type="button" style="flex:1;justify-content:center">Cancel</button>' +
       '</div>';
 
@@ -568,6 +524,7 @@ if(ro){
         closeModal();
         updateSupplyCard();
         calc();
+        var next=document.getElementById('tradeNext');if(!next){next=document.createElement('div');next.id='tradeNext';next.className='ux-banner';document.querySelector('.ticket').appendChild(next);}next.innerHTML='<span>Order complete. Your holdings have been updated.</span><a href="fanplay.html">Continue to FanPlay →</a>';
       }catch(err){
         showToast(err.message, "error");
       }
@@ -585,7 +542,7 @@ loadTicket=function(){
   updateSupplyCard();
 };
 
-rows(); loadTicket(); liveTicks('.mrow');
+rows(); loadTicket();
 """
 page("exchange.html", "Exchange — Fantrade", "".join(ex), EX_JS, EX_CSS, app=True)
 
@@ -624,45 +581,14 @@ CL_CSS = """
 """
 
 cl = []
-cl.append(T('<header class="phead"><div class="wrap">'
-          '<span class="pill" data-reveal>@@ Dream Clubs</span><h1 data-reveal>Zero FC</h1>'
-          '<p class="lede" data-reveal>Your club is a portfolio wearing a badge. Everything in the squad is owned '
-          'outright, and its value moves with the market underneath it.</p>'
-          '<div class="statbar" data-reveal><div>@@ Club value <b>245,800 $FTR</b></div>'
-          '<div>@@ Rank <b>#124 of 48,206</b></div><div>@@ Club FP <b>8,420</b></div>'
-          '<div>@@ Boost <b>+15%</b></div></div></div></header>', ic("crest", "ic"), ic("coin", "ic"), ic("trophy", "ic"), ic("bolt", "ic"), ic("target", "ic")))
-
-cl.append(T('<main><section style="padding-top:30px"><div class="wrap"><div class="bento">'
-          '<div class="bezel c7" data-reveal><div class="core pitch" id="pitchMount"></div></div>'
-          '<div class="c5" style="display:flex;flex-direction:column;gap:16px">'
-          '<div class="bezel" data-reveal><div class="core pad"><div class="k-label">Club value</div>'
-          '<div class="value-big">245,800 <small>$FTR</small></div>'
-          '<div class="delta">▲ 12,400 this week</div>'
-          '<div style="margin-top:22px;border-top:1px solid var(--hair);padding-top:6px">'
-          '<div class="b-row"><span>Starting XI</span><b>180,600</b></div>'
-          '<div class="b-row"><span>Bench (4)</span><b>45,200</b></div>'
-          '<div class="b-row"><span>Coach $Arteta</span><b>20,000</b></div>'
-          '<div class="b-row total"><span>Club value</span><b>245,800</b></div></div>'
-          '<div style="margin-top:18px">@@</div></div></div>'
-          '<div class="mini-grid" data-reveal>'
-          '<div class="mini"><div class="k">Last round</div><div class="v lime">312</div></div>'
-          '<div class="mini"><div class="k">Season FP</div><div class="v">8,420</div></div>'
-          '<div class="mini"><div class="k">Win rate</div><div class="v">62%</div></div>'
-          '<div class="mini"><div class="k">$FTR earned</div><div class="v amber">19,640</div></div></div>'
-          '<div class="bezel" data-reveal style="flex:1"><div class="core pad-sm">'
-          '<div class="k-label">Club value · last 8 rounds</div><div id="valChart"></div></div></div>'
-          '</div></div></div></section>', btn("Enter this club in FanPlay", "btn-lime btn-sm", "fanplay.html")))
-
+cl.append('<header class="phead"><div class="wrap"><span class="eyebrow">Dream Club</span><h1>My club</h1><p class="lede">Set up your club identity and formation. New to FanPlay? You can start with just one player.</p><div class="ux-actions"><a class="btn btn-glass" href="how-it-works.html">How to play</a><a class="btn btn-lime" href="fanplay.html">Go to FanPlay</a></div></div></header><main>')
 # builder
 cl.append(T('<section id="builder"><div class="wrap"><div class="sec-head" data-reveal>'
-          '<span class="pill">@@ Club builder</span><h2>Build it in<br>eight steps</h2>'
-          '<p class="lede">Identity first, squad second. Every slot you fill checks your wallet before it accepts a '
-          'name — change the formation and the shape rebuilds around the players you own.</p></div>', ic("formation", "ic")))
+          '<span class="pill">@@ Club builder</span><h2>Make it your club</h2>'
+          '<p class="lede">Choose a name, colours and formation. The pitch shows a sample squad. Buy player '
+          'shares in the Exchange to become eligible for FanPlay.</p></div>', ic("formation", "ic")))
 cl.append(T('<div class="bento"><div class="bezel c5" data-reveal><div class="core pad">'
-          '<div class="stepper" id="stepper">'
-          '<button aria-current="step">@@ 1 Name</button><button>@@ 2 Identity</button>'
-          '<button>@@ 3 Coach</button><button>@@ 4 Shape</button><button>@@ 5 XI</button>'
-          '<button>@@ 6 Bench</button><button>@@ 7 Review</button><button>@@ 8 Save</button></div>'
+          '<h3 style="margin-bottom:20px">Club details</h3>'
           '<div class="field"><label>Club name</label><input id="clubNameInput" value="Zero FC" style="text-align:right"></div>'
           '<div class="field"><label>Stadium</label><input id="clubStadiumInput" value="Emirates of the North" style="text-align:right;font-size:13px"></div>'
           '<div class="k-label" style="margin-top:20px">Club colours</div>'
@@ -675,15 +601,14 @@ cl.append(T('<div class="bento"><div class="bezel c5" data-reveal><div class="co
           '<div class="k-label" style="margin-top:26px">Formation</div>'
           '<div class="forms" id="forms"><button aria-pressed="true">4-3-3</button><button>4-4-2</button>'
           '<button>3-5-2</button><button>4-2-3-1</button></div>'
-          '<div class="line" style="margin-top:24px"><span>Ownership check</span><b class="up">15 of 16 owned</b></div>'
+          '<div class="line" style="margin-top:24px"><span>Squad preview</span><b>Illustrative lineup</b></div>'
           '<div class="line"><span>Projected boost</span><b>+15.0%</b></div>'
-          '@@</div></div>', ic("crest", "ic"), ic("swatch", "ic"), ic("whistle", "ic"), ic("formation", "ic"),
-                              ic("pitch", "ic"), ic("subs", "ic"), ic("check", "ic"), ic("shield", "ic"),
+          '@@</div></div>',
                               btn("Save club", tag="button", extra='id="saveClubBtn" style="margin-top:20px;width:100%;justify-content:space-between"')))
 cl.append('<div class="bezel c7" data-reveal><div class="core pitch" id="builderPitch"></div></div></div></div></section>')
 
 # chemistry
-cl.append(T('<section id="chem"><div class="wrap"><div class="sec-head" data-reveal>'
+cl.append(T('<section id="chem"><div class="wrap"><details class="ux-details"><summary>How club chemistry works</summary><div class="sec-head" data-reveal>'
           '<span class="pill amber">@@ Club chemistry</span><h2>Why one squad<br>boosts harder</h2>'
           '<p class="lede">Two managers can own the same eleven players and score differently. Chemistry rewards the '
           'club that is actually coherent, not just expensive.</p></div><div class="bento">', ic("target", "ic")))
@@ -694,24 +619,9 @@ for icon, t, d, c, am in [("whistle", "Coach compatibility", "A coach whose real
                           ("clock", "Club consistency", "Clubs that hold their shape across rounds build a consistency bonus. Constant teardowns reset it.", "c6", "")]:
     cl.append(T('<div class="bezel tight @@" data-reveal><div class="core pad f"><span class="ibox @@">@@</span>'
               '<h4>@@</h4><p>@@</p></div></div>', c, am, ic(icon, "ic-lg"), t, d))
-cl.append('</div></div></section>')
+cl.append('</div></details></div></section>')
 
-# leaderboard
-LB = [("1", "Vanguard XI", "#C4F82A", "612,400", "14,980", "+19%"),
-      ("2", "Casa Blanca FC", "#E8E8E8", "588,100", "14,220", "+18%"),
-      ("3", "Northside Union", "#4DA3FF", "540,750", "13,640", "+17%"),
-      ("4", "Estádio Nove", "#FF6A1F", "498,300", "12,905", "+16%"),
-      ("124", "Zero FC", "#C4F82A", "245,800", "8,420", "+15%")]
-cl.append(T('<section><div class="wrap"><div class="sec-head" data-reveal>'
-          '<span class="pill">@@ Club table</span><h2>Where your club<br>sits this season</h2></div>'
-          '<div class="bezel" data-reveal><div class="core">'
-          '<div class="lb h"><span>Rank</span><span>Club</span><span>Club value</span><span>Season FP</span><span>Boost</span></div>', ic("trophy", "ic")))
-for r, n, col, v, fp, b in LB:
-    cl.append(T('<div class="lb@@"@@><span class="rank">@@</span><span class="cn">'
-              '<span class="mini-crest" style="background:linear-gradient(160deg,@@,rgba(0,0,0,.4))"></span>@@</span>'
-              '<span class="num">@@</span><span class="num">@@</span><span class="num up">@@</span></div>',
-              " you" if n == "Zero FC" else "", ' id="myClubLbRow"' if n == "Zero FC" else "", r, col, n, v, fp, b))
-cl.append('</div></div></div></section></main>')
+cl.append('</main>')
 
 CL_JS = PITCH_JS + r"""
 var FORMS={

@@ -12,16 +12,16 @@ self-contained HTML file with no build step and no runtime dependencies beyond G
 
 | File | What it covers |
 | --- | --- |
-| `index.html` | Landing page — the three layers (Own / Build / Play), live exchange console, Dream Club preview, the Fantrade loop, house rules |
-| `exchange.html` | Market table with player/coach filtering and search, working buy/sell ticket with live fee calculation, supply ring, movers, coach index |
-| `clubs.html` | Zero FC dashboard, club value chart, eight-step club builder with live formation switching (4-3-3 / 4-4-2 / 3-5-2 / 4-2-3-1), chemistry factors, club table |
-| `fanplay.html` | Individual vs Dream Club entry, six market tiers, live matchday board, settlement countdown, scoring rules |
-| `ftr.html` | $FTR wallet — balance, GBP conversion with fees, supply distribution, full ledger |
-| `how-it-works.html` | The six-step loop in full, settlement timeline, mode comparison, FAQ |
+| `index.html` | Short introduction and three clear steps: buy shares, choose an entry, play FanPlay |
+| `exchange.html` | Search, player/coach filters, essential prices, and a buy/sell ticket with balance, holdings, fees, review and next step |
+| `clubs.html` | Club identity and formation settings, illustrative squad preview, optional chemistry explanation |
+| `fanplay.html` | Three-step entry flow: owned selection, scoring tier, review and confirmation; active entries and optional scoring help |
+| `ftr.html` | Wallet balance, demo funding and conversion controls, transaction history |
+| `how-it-works.html` | Beginner guide, direct links to each step, glossary and concise FAQs |
 | `signin.html` | Split-screen sign in — validation, password reveal, passkey/social stubs, reset-link modal |
 | `signup.html` | Account creation — password strength meter, region select, terms gate, hands off to onboarding |
 | `onboarding.html` | Four-step setup wizard — manager profile, opening grant, first share purchase, club identity |
-| `dashboard.html` | Signed-in home — net worth, club summary, live lock countdown, matchday board, movers, activity, entries |
+| `dashboard.html` | Signed-in home — next action, available balance, share value, active entries and club shortcut |
 | `portfolio.html` | Portfolio & ledger — holdings table with filters and live P&L, allocation split, settlement ledger, yield, CSV export |
 | `leaderboard.html` | Global standings — division filters, search and sort, club inspection, promotion matrix, syndicate index |
 | `notifications.html` | Activity feed — day grouping, per-kind filters, unread state, per-channel toggles |
@@ -42,6 +42,13 @@ There are two nav shells. Marketing pages (`index`, `how-it-works`) show the pub
 **Sign in** and **Get started**. Signed-in pages show the app nav — Dashboard, Exchange, Dream Clubs,
 FanPlay, Portfolio, Leaderboard — plus the wallet chip, the notification bell and an account menu.
 Auth pages use a stripped shell: logo, one way back, no footer.
+
+The simplified app navigation uses Home, Exchange, My club, FanPlay and Portfolio, with
+the same five destinations in a mobile bottom bar. Wallet, settings, leaderboard and the
+guide remain available through secondary navigation. `tools/experience.py` supplies the
+focused screens and shared responsive styles. Individual FanPlay selects real browser-stored
+holdings; club entry requires 11 owned starters and an owned coach. The club pitch remains
+an illustrative formation preview, not a complete squad-selection implementation.
 
 ## State
 

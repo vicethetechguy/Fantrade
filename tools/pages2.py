@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import os, sys
 sys.path.insert(0, os.path.dirname(__file__))
+from experience import prepare
 from common import head, atmosphere, nav, footer, ic, JS_SHELL
 
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
@@ -20,6 +21,7 @@ def btn(label, cls="btn-lime", href="#", tag="a", extra=""):
 
 
 def page(fname, title, body, js="", css="", app=False):
+    body, js = prepare(fname, body, js)
     html = (head(title, css) + atmosphere() + nav(title.split(" — ")[0], app) +
             body + footer() + "<script>(function(){" + JS_SHELL + js + "})();</script></body></html>")
     open(os.path.join(OUT, fname), "w", encoding="utf-8").write(html)
@@ -53,7 +55,7 @@ FTR_CSS = """
 
 f = []
 f.append(T('<header class="phead"><div class="wrap">'
-           '<span class="pill" data-reveal>@@ The platform currency</span><h1 data-reveal>$FTR</h1>'
+           '<span class="pill" data-reveal>@@ The platform currency</span><h1 data-reveal>Wallet</h1>'
            '<p class="lede" data-reveal>One balance funds everything. You buy shares with $FTR, pay swap fees in $FTR, '
            'stake FanPlay entries in $FTR, and every settled round pays back into the same wallet.</p>'
            '<div class="statbar" data-reveal><div>@@ Your balance <b id="ftrStatBal">128,450 $FTR</b></div>'
@@ -62,7 +64,7 @@ f.append(T('<header class="phead"><div class="wrap">'
            ic("coin", "ic"), ic("wallet", "ic"), ic("lock", "ic"), ic("trophy", "ic")))
 
 f.append('<main><section style="padding-top:30px"><div class="wrap"><div class="bento">')
-f.append(T('<div class="bezel c5" data-reveal><div class="core pad">'
+f.append(T('<div class="bezel c6" data-reveal><div class="core pad">'
            '<div class="k-label">Available balance</div>'
            '<div class="balance" id="ftrMainBal">128,450<small> $FTR</small></div>'
            '<div class="delta">▲ 6,200 this week from settled rounds</div>'
@@ -72,7 +74,7 @@ f.append(T('<div class="bezel c5" data-reveal><div class="core pad">'
            btn("Deposit", extra='id="depositBtn" style="flex:1;justify-content:space-between"'),
            btn("Withdraw", "btn-glass", extra='id="withdrawBtn" style="flex:1;justify-content:space-between"')))
 
-f.append(T('<div class="bezel c4" data-reveal><div class="core pad">'
+f.append(T('<div class="bezel c6" data-reveal><div class="core pad">'
            '<div class="k-label">Convert</div>'
            '<div class="field"><label>You pay</label><input id="fiat" value="1,000" inputmode="numeric"></div>'
            '<div class="conv">@@<span class="eq">1 GBP = 12.40 $FTR · rate held for 30s</span></div>'
@@ -85,37 +87,6 @@ f.append(T('<div class="bezel c4" data-reveal><div class="core pad">'
            ic("swap", "ic"), btn("Convert to $FTR", tag="button",
                                  extra='id="convertBtn" style="margin-top:18px;width:100%;justify-content:space-between"')))
 
-f.append(T('<div class="bezel c3" data-reveal><div class="core pad">'
-           '<div class="k-label">Circulating supply</div>'
-           '<div class="dist" style="margin-top:10px">'
-           '<svg viewBox="0 0 42 42" style="width:120px;height:120px;flex:none">'
-           '<circle cx="21" cy="21" r="15.9" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="5"/>'
-           '<circle cx="21" cy="21" r="15.9" fill="none" stroke="#C4F82A" stroke-width="5" '
-           'stroke-dasharray="46 54" stroke-dashoffset="25" transform="rotate(-90 21 21)"/>'
-           '<circle cx="21" cy="21" r="15.9" fill="none" stroke="#FF6A1F" stroke-width="5" '
-           'stroke-dasharray="28 72" stroke-dashoffset="79" transform="rotate(-90 21 21)"/>'
-           '<circle cx="21" cy="21" r="15.9" fill="none" stroke="rgba(255,255,255,.28)" stroke-width="5" '
-           'stroke-dasharray="14 86" stroke-dashoffset="51" transform="rotate(-90 21 21)"/></svg></div>'
-           '<div class="key" style="margin-top:22px">'
-           '<div class="kr"><i style="background:#C4F82A"></i>Held by fans<b>46%</b></div>'
-           '<div class="kr"><i style="background:#FF6A1F"></i>Staked in rounds<b>28%</b></div>'
-           '<div class="kr"><i style="background:rgba(255,255,255,.28)"></i>Rewards pool<b>14%</b></div>'
-           '<div class="kr"><i style="background:rgba(255,255,255,.08)"></i>Treasury<b>12%</b></div></div>'
-           '</div></div>'))
-f.append('</div></div></section>')
-
-# utility
-f.append(T('<section><div class="wrap"><div class="sec-head" data-reveal>'
-           '<span class="pill">@@ What it does</span><h2>One currency,<br>four jobs</h2>'
-           '<p class="lede">$FTR is not a separate speculation. It is the settlement layer that makes ownership, '
-           'trading and matchday scoring work as one system.</p></div><div class="bento">', ic("layers", "ic")))
-for icon, t, d, c, am in [("candle", "Buys shares", "Every order on the exchange clears in $FTR, including partial fills and limit orders.", "c6", ""),
-                          ("swap", "Pays swap fees", "Swapping one asset for another settles the difference and the fee in $FTR, never in shares.", "c6", ""),
-                          ("bolt", "Stakes FanPlay entries", "Entering a round locks a stake for the settlement window. Unsettled stakes stay visible in your balance.", "c4", "am"),
-                          ("trophy", "Pays out rounds", "Fantrade Points convert to $FTR at settlement and land back in the same wallet.", "c4", ""),
-                          ("lock", "Never leaves your control", "Locked balances are shown separately and release the moment a window closes.", "c4", "")]:
-    f.append(T('<div class="bezel tight @@" data-reveal><div class="core pad f"><span class="ibox @@">@@</span>'
-               '<h4>@@</h4><p>@@</p></div></div>', c, am, ic(icon, "ic-lg"), t, d))
 f.append('</div></div></section>')
 
 # ledger
