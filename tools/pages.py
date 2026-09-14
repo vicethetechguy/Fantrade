@@ -394,7 +394,28 @@ function rows(){
       "<div><button class='tradebtn' data-trade='"+i+"'>Trade</button></div></div>";
   }).join('') || "<div style='padding:40px 24px;color:var(--dim);font-size:14px'>No assets match that search. Try a surname or a ticker like $Saka.</div>";
   document.querySelectorAll('[data-trade]').forEach(function(b){
-    b.addEventListener('click',function(){ sel=+b.dataset.trade; loadTicket(); rows(); });
+    b.addEventListener('click',function(e){
+      e.stopPropagation();
+      sel=+b.dataset.trade;
+      loadTicket();
+      rows();
+      if(window.innerWidth <= 768){
+        var tk=document.querySelector('.ticket');
+        if(tk) tk.scrollIntoView({ behavior:'smooth', block:'start' });
+      }
+    });
+  });
+  document.querySelectorAll('.mrow').forEach(function(row){
+    row.addEventListener('click',function(e){
+      if(e.target.closest('[data-trade]')) return;
+      sel=+row.dataset.i;
+      loadTicket();
+      rows();
+      if(window.innerWidth <= 768){
+        var tk=document.querySelector('.ticket');
+        if(tk) tk.scrollIntoView({ behavior:'smooth', block:'start' });
+      }
+    });
   });
 }
 function loadTicket(){
