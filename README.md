@@ -12,16 +12,16 @@ self-contained HTML file with no build step and no runtime dependencies beyond G
 
 | File | What it covers |
 | --- | --- |
-| `index.html` | Short introduction and three clear steps: buy shares, choose an entry, play FanPlay |
-| `exchange.html` | Search, player/coach filters, essential prices, and a buy/sell ticket with balance, holdings, fees, review and next step |
-| `clubs.html` | Club identity and formation settings, illustrative squad preview, optional chemistry explanation |
-| `fanplay.html` | Three-step entry flow: owned selection, scoring tier, review and confirmation; active entries and optional scoring help |
-| `ftr.html` | Wallet balance, demo funding and conversion controls, transaction history |
-| `how-it-works.html` | Beginner guide, direct links to each step, glossary and concise FAQs |
+| `index.html` | Landing page — the three layers (Own / Build / Play), live exchange console, Dream Club preview, the Fantrade loop, house rules |
+| `exchange.html` | Market table with player/coach filtering and search, working buy/sell ticket with live fee calculation, supply ring, movers, coach index |
+| `clubs.html` | Zero FC dashboard with Line-ups / League position / Form tabs, live position ladder and form pills, club value chart, eight-step club builder with live formation switching (4-3-3 / 4-4-2 / 3-5-2 / 4-2-3-1), chemistry factors, club table |
+| `fanplay.html` | Individual vs Dream Club entry, six market tiers, live scores board — date strip, featured match with ticking minute, fixtures grouped by competition with follow stars — settlement countdown, scoring rules |
+| `ftr.html` | $FTR wallet — balance hero with range-switched chart, Send / Receive / Swap / Buy panes, scannable receive QR, asset list, activity, supply distribution |
+| `how-it-works.html` | The six-step loop in full, settlement timeline, mode comparison, FAQ |
 | `signin.html` | Split-screen sign in — validation, password reveal, passkey/social stubs, reset-link modal |
 | `signup.html` | Account creation — password strength meter, region select, terms gate, hands off to onboarding |
 | `onboarding.html` | Four-step setup wizard — manager profile, opening grant, first share purchase, club identity |
-| `dashboard.html` | Signed-in home — next action, available balance, share value, active entries and club shortcut |
+| `dashboard.html` | Signed-in home — net worth, club summary, live lock countdown, matchday board, movers, activity, entries |
 | `portfolio.html` | Portfolio & ledger — holdings table with filters and live P&L, allocation split, settlement ledger, yield, CSV export |
 | `leaderboard.html` | Global standings — division filters, search and sort, club inspection, promotion matrix, syndicate index |
 | `notifications.html` | Activity feed — day grouping, per-kind filters, unread state, per-channel toggles |
@@ -43,13 +43,6 @@ There are two nav shells. Marketing pages (`index`, `how-it-works`) show the pub
 FanPlay, Portfolio, Leaderboard — plus the wallet chip, the notification bell and an account menu.
 Auth pages use a stripped shell: logo, one way back, no footer.
 
-The simplified app navigation uses Home, Exchange, My club, FanPlay and Portfolio, with
-the same five destinations in a mobile bottom bar. Wallet, settings, leaderboard and the
-guide remain available through secondary navigation. `tools/experience.py` supplies the
-focused screens and shared responsive styles. Individual FanPlay selects real browser-stored
-holdings; club entry requires 11 owned starters and an owned coach. The club pitch remains
-an illustrative formation preview, not a complete squad-selection implementation.
-
 ## State
 
 Everything is driven by `FT`, a small localStorage-backed store in `common.py` (`JS_SHELL`). It holds the
@@ -64,13 +57,23 @@ prototype stays consistent as you move between pages. Settings → Danger zone r
 - **Body type** — Montserrat 300–600
 - **Numerals** — JetBrains Mono, tabular figures (prices, share counts, FP totals only)
 - **Surface** — OLED black `#050505`, fixed mesh orbs, 4% film grain, hairlines at `rgba(255,255,255,.08)`
-- **Accents** — lime `#C4F82A` (players, actions), amber `#FF6A1F` (coaches, high-risk tiers)
+- **Accents** — lime `#C4F82A` (players, actions), amber `#FF6A1F` (coaches, high-risk tiers), red `#FF3B47` reserved for live match states only
 - **Structure** — double-bezel containers (outer shell `p-8` at `2rem` radius, inner core at `calc(2rem - .5rem)`)
+- **Wallet components** — shared across wallet, dashboard and portfolio: balance hero (`.bal-big` / `.bal-delta` / `.bal-chart`), range pills (`.range`), four-up action tiles (`.acts4`), asset rows with circular marks and sparklines (`.arow` / `.coin`), receive panel (`.netsel` / `.qr` / `.addr`), amber warning strips (`.warn`)
+- **Matchday components** — shared across FanPlay and Dream Clubs: date strip (`.dates` / `.livetgl`), featured match card (`.feat` / `.minute` / `.tcrest`), competition groups and fixture rows (`.comp` / `.fixt` / `.star`), tab strip (`.tabstrip`), form pills (`.form5`), live position ladder (`.gauge` / `.ladder` / `.rung`)
 - **Motion** — `cubic-bezier(.32,.72,0,1)` throughout; scroll entry via `IntersectionObserver`; `prefers-reduced-motion` respected
 - **Layout** — asymmetrical bento grids, collapsing to single column below 768px
 
 Source generators for the pages live in `tools/` — they emit the HTML from a shared design system so the
 fourteen pages can't drift apart.
+
+## The receive QR
+
+`tools/qr_data.py` holds a pre-computed QR matrix (error-correction level H) for the demo receive address, so
+the generators never need a QR library installed. `common.qr_svg()` renders it as a single SVG path with
+merged horizontal runs. It is a real, scannable code — the Fantrade mark punched through the middle sits well
+inside level H's recovery budget. Regenerate it with `segno.make(ADDRESS, error="h").matrix` if the address
+changes.
 
 ## Icons
 

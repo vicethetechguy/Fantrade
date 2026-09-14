@@ -3,15 +3,14 @@
 CSS = r"""
 :root{--dim:#adb4ae;--faint:#949e96;--hair:rgba(255,255,255,.12);--r-out:18px;--r-in:14px}
 body{background:#0c100e;line-height:1.6}
-.orb,.grain{display:none}
-h1,h2,h3,h4,.disp{font-variation-settings:'wdth' 100,'wght' 700;text-transform:none;line-height:1.14;letter-spacing:-.025em}
+.ux-page ~ .orb, .ux-page ~ .grain{display:none}
+.ux-page h1, .ux-page h2, .ux-page h3, .ux-page h4{font-variation-settings:'wdth' 100,'wght' 700;text-transform:none;line-height:1.14;letter-spacing:-.025em}
 .phead{padding:130px 0 24px}.phead h1{font-size:clamp(32px,4vw,48px);margin:12px 0}.phead .lede{max-width:650px;font-size:16px;margin:12px 0 0}
-section{padding:32px 0}.sec-head{margin-bottom:24px}.sec-head h2{font-size:clamp(26px,3vw,36px)}
-.bezel{box-shadow:none;background:transparent;border:1px solid var(--hair);padding:0}.core{background:#121814;box-shadow:none}
+.ux-page section{padding:32px 0}.sec-head{margin-bottom:24px}
+.ux-page .bezel{box-shadow:none;background:transparent;border:1px solid var(--hair);padding:0}.ux-page .core{background:#121814;box-shadow:none}
 .pad{padding:26px}.pad-sm{padding:22px}.bento>*{min-width:0}.statbar{margin-top:20px}
-.btn{min-height:44px;text-transform:none;letter-spacing:0;font-family:Montserrat,system-ui,sans-serif;font-weight:600;font-size:13px;transition:background .15s;border-radius:12px;padding:11px 18px;justify-content:center;white-space:normal;box-shadow:none}
-.btn .cap{display:none}.btn:hover{transform:none}.btn[disabled]{opacity:.45;cursor:not-allowed}
-.nav-island{top:16px;width:calc(100% - 48px);max-width:1216px;border-radius:16px;background:#141b17;justify-content:space-between;gap:16px;padding:10px 16px;box-sizing:border-box!important}
+.ux-page .btn{min-height:44px;text-transform:none;letter-spacing:0;font-family:Montserrat,system-ui,sans-serif;font-weight:600;font-size:13px;transition:background .15s;border-radius:12px;padding:11px 18px;justify-content:center;white-space:normal;box-shadow:none}
+.ux-page .btn .cap{display:none}.ux-page .btn:hover{transform:none}.ux-page .btn[disabled]{opacity:.45;cursor:not-allowed}
 .nav-island .btn{white-space:nowrap!important}
 .nav-actions{display:flex;align-items:center;gap:10px}
 .nav-links{gap:20px}.nav-links a{padding:10px 0}.nav-wallet .pulse{display:none}.nav-wallet{white-space:nowrap}
@@ -140,7 +139,7 @@ syncSelection();window.addEventListener('fantrade:statechange',syncSelection);if
 LANDING = '<main class="ux-page" id="main"><div class="wrap">'+heading('Football knowledge. Your team.','Buy shares in players and coaches, build a Dream Club, and put your football knowledge to work in FanPlay.','Welcome to Fantrade',False)+'''<div class="ux-actions"><a class="btn btn-lime" href="signup.html">Get started</a><a class="btn btn-glass" href="how-it-works.html">See how it works</a></div><p class="ux-note" style="margin-top:16px">Interactive demo · illustrative balances and match data</p>'''+guide_cards()+'''<article class="ux-card"><div class="ux-row"><div><h2>One player is enough to begin.</h2><p>Learn with Individual FanPlay. Build a full club when you’re ready.</p></div><a class="btn btn-lime" href="exchange.html">Explore the Exchange</a></div></article></div></main>'''
 
 def prepare(fname, body, js):
-    screens = {'index.html':(LANDING,''), 'how-it-works.html':(GUIDE,''), 'dashboard.html':(DASHBOARD,DASH_JS), 'fanplay.html':(FANPLAY,FP_JS)}
+    screens = {'how-it-works.html':(GUIDE,''), 'dashboard.html':(DASHBOARD,DASH_JS), 'fanplay.html':(FANPLAY,FP_JS)}
     body, js = screens.get(fname,(body,js))
     if fname == 'exchange.html':
         body='<div class="ux-exchange">'+body+'</div>'

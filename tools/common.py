@@ -24,6 +24,51 @@ def ic(name, cls="ic"):
     return '<svg class="%s" aria-hidden="true"><use href="#i-%s"/></svg>' % (cls, name)
 
 
+# ─────────────────────────────────────────────────────────────
+# QR — real, scannable, drawn from a pre-computed matrix so the
+# generators keep working without a QR library installed.
+# ─────────────────────────────────────────────────────────────
+from qr_data import MATRIX as _QR, ADDRESS as QR_ADDRESS
+
+FLAGS = {
+    "eng": '<rect width="30" height="20" fill="#fff"/><rect x="12" width="6" height="20" fill="#CE1124"/>'
+           '<rect y="7" width="30" height="6" fill="#CE1124"/>',
+    "esp": '<rect width="30" height="20" fill="#AA151B"/><rect y="5" width="30" height="10" fill="#F1BF00"/>',
+    "ita": '<rect width="10" height="20" fill="#008C45"/><rect x="10" width="10" height="20" fill="#fff"/>'
+           '<rect x="20" width="10" height="20" fill="#CD212A"/>',
+    "ger": '<rect width="30" height="20" fill="#000"/><rect y="6.7" width="30" height="6.6" fill="#DD0000"/>'
+           '<rect y="13.3" width="30" height="6.7" fill="#FFCE00"/>',
+    "fra": '<rect width="10" height="20" fill="#002395"/><rect x="10" width="10" height="20" fill="#fff"/>'
+           '<rect x="20" width="10" height="20" fill="#ED2939"/>',
+    "eur": '<rect width="30" height="20" fill="#003399"/>'
+           '<circle cx="15" cy="10" r="5" fill="none" stroke="#FFCC00" stroke-width="1.6" '
+           'stroke-dasharray="1.4 1.7"/>',
+}
+
+
+def flag(code):
+    return ('<span class="fl"><svg viewBox="0 0 30 20" aria-hidden="true">%s</svg></span>'
+            % FLAGS.get(code, FLAGS["eur"]))
+
+
+def qr_svg(quiet=2, label="Wallet receive address"):
+    n = len(_QR)
+    size = n + quiet * 2
+    runs = []
+    for y, row in enumerate(_QR):
+        x = 0
+        while x < n:
+            if row[x] == "1":
+                start = x
+                while x < n and row[x] == "1":
+                    x += 1
+                runs.append("M%d %dh%dv1h-%dz" % (start + quiet, y + quiet, x - start, x - start))
+            else:
+                x += 1
+    return ('<svg viewBox="0 0 %d %d" role="img" aria-label="%s" shape-rendering="crispEdges">'
+            '<path d="%s" fill="#0A0B0C"/></svg>' % (size, size, label, "".join(runs)))
+
+
 CSS = r"""
 :root{
   --void:#050505;--shell:rgba(255,255,255,.035);--core:#0A0B0C;
@@ -113,15 +158,12 @@ main,header,footer,.nav-island{position:relative;z-index:1}
 .burger i:nth-child(1){top:17px}.burger i:nth-child(2){top:25px}
 body.menu-open .burger i:nth-child(1){transform:translateY(4px) rotate(45deg)}
 body.menu-open .burger i:nth-child(2){transform:translateY(-4px) rotate(-45deg)}
-.overlay{position:fixed;inset:0;z-index:65;background:rgba(5,5,5,.86);backdrop-filter:blur(34px) saturate(140%);
-  -webkit-backdrop-filter:blur(34px) saturate(140%);display:flex;flex-direction:column;justify-content:center;
+.overlay{position:fixed;inset:0;z-index:65;background:#0c100e;display:flex;flex-direction:column;justify-content:center;
   padding:0 32px;gap:6px;opacity:0;pointer-events:none;visibility:hidden;
-  transition:opacity .7s var(--ease),visibility 0s linear .7s}
-body.menu-open .overlay{opacity:1;pointer-events:auto;visibility:visible;transition-delay:0s}
+  transition:opacity .25s var(--ease),visibility 0s linear .25s}
+body.menu-open .overlay{opacity:1!important;pointer-events:auto;visibility:visible;transition-delay:0s}
 .overlay a{font-family:Archivo;font-variation-settings:'wdth' 125,'wght' 800;text-transform:uppercase;
-  font-size:clamp(30px,9vw,54px);line-height:1.15;opacity:0;transform:translateY(48px);
-  transition:opacity .8s var(--ease),transform .8s var(--ease)}
-body.menu-open .overlay a{opacity:1;transform:translateY(0)}
+  font-size:clamp(30px,9vw,54px);line-height:1.15;opacity:1;transform:none}
 body.menu-open .overlay a:nth-child(1){transition-delay:.10s}
 body.menu-open .overlay a:nth-child(2){transition-delay:.16s}
 body.menu-open .overlay a:nth-child(3){transition-delay:.22s}
@@ -151,9 +193,8 @@ section{padding:130px 0}
 .num{font-family:'JetBrains Mono',monospace;font-variant-numeric:tabular-nums}
 
 /* reveal */
-[data-reveal]{opacity:0;transform:translateY(60px);filter:blur(10px);
-  transition:opacity .9s var(--ease-out),transform .9s var(--ease-out),filter .9s var(--ease-out)}
-[data-reveal].in{opacity:1;transform:translateY(0);filter:blur(0)}
+[data-reveal]{opacity:1;transform:none;filter:none;transition:opacity .6s var(--ease-out),transform .6s var(--ease-out)}
+[data-reveal].in{opacity:1;transform:none;filter:none}
 
 /* page header */
 .phead{padding:190px 0 70px}
@@ -349,7 +390,7 @@ footer{border-top:1px solid var(--hair);padding:70px 0 64px;background:rgba(255,
 
 /* responsive */
 @media (max-width:1024px){
-  .nav-links{display:none}.nav-island>.btn{display:none}.burger{display:block}
+  .nav-links, .nav-actions{display:none!important}.nav-island>.btn{display:none}.burger{display:block}
   .nav-island{width:calc(100vw - 32px);justify-content:space-between;padding:8px 8px 8px 20px}
   .c3,.c4,.c5,.c6,.c7,.c8,.c9{grid-column:span 12}
   .bento.halves .c6{grid-column:span 6}
@@ -364,7 +405,6 @@ footer{border-top:1px solid var(--hair);padding:70px 0 64px;background:rgba(255,
   input,select,textarea{font-size:16px!important} /* Prevents iOS auto-zoom */
   .wrap{padding-left:max(16px,env(safe-area-inset-left));padding-right:max(16px,env(safe-area-inset-right));max-width:100vw;box-sizing:border-box}
   .nav-island{top:max(10px,env(safe-area-inset-top));left:10px;right:10px;transform:none;width:auto;max-width:calc(100vw - 20px)!important;box-sizing:border-box;padding:6px 8px 6px 14px}
-  .nav-actions,.nav-island div[style*="display:flex"]{display:none!important}
   .nav-island #navAccountBtn{display:none!important}
   .nav-wallet{padding:5px 11px;font-size:11.5px;gap:6px}
   .nav-wallet .pulse{width:5px;height:5px}
@@ -760,6 +800,213 @@ APP_CSS = r"""
 .head-row{display:flex;align-items:flex-end;justify-content:space-between;gap:28px;flex-wrap:wrap}
 .head-row .acts{display:flex;gap:10px;flex-wrap:wrap}
 
+/* ── wallet: balance hero ───────────────────────────── */
+.bal-big{font-family:'JetBrains Mono',monospace;font-weight:200;font-size:clamp(36px,5vw,66px);
+  letter-spacing:-.045em;line-height:1;margin:14px 0 12px}
+.bal-big small{font-size:17px;color:var(--faint);letter-spacing:0;font-weight:300}
+.bal-delta{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;color:var(--lime);font-weight:500}
+.bal-delta .ic{width:13px;height:13px}
+.bal-delta.down{color:var(--red)}
+.bal-delta em{font-style:normal;color:var(--faint);font-weight:300}
+.bal-chart{height:168px;margin:24px 0 6px;position:relative}
+.bal-chart svg{width:100%;height:100%;display:block;overflow:visible}
+.range{display:flex;gap:6px;padding:5px;border-radius:999px;background:rgba(255,255,255,.035);
+  border:1px solid var(--hair);box-shadow:var(--inset);width:max-content;max-width:100%;flex-wrap:wrap}
+.range button{border:0;background:transparent;color:var(--faint);border-radius:999px;padding:8px 18px;
+  cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;transition:all .5s var(--ease)}
+.range button[aria-pressed="true"]{background:var(--lime);color:#0A0D03;box-shadow:var(--inset)}
+.range button:hover:not([aria-pressed="true"]){color:var(--ink)}
+
+/* four-up action tiles */
+.acts4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:26px}
+.acts4 button{display:flex;flex-direction:column;align-items:center;gap:11px;padding:18px 8px 15px;
+  border-radius:20px;border:1px solid var(--hair);background:rgba(255,255,255,.04);color:var(--dim);
+  cursor:pointer;box-shadow:var(--inset);font-family:Montserrat,sans-serif;transition:all .6s var(--ease)}
+.acts4 button .ic{width:19px;height:19px}
+.acts4 button span{font-weight:600;font-size:10px;letter-spacing:.14em;text-transform:uppercase}
+.acts4 button:hover:not([aria-pressed="true"]){color:var(--ink);border-color:var(--hair-2);transform:translateY(-2px)}
+.acts4 button[aria-pressed="true"]{background:var(--lime);border-color:var(--lime);color:#0A0D03;
+  box-shadow:var(--inset),0 16px 38px -16px rgba(196,248,42,.8)}
+
+/* asset rows */
+.arow{display:grid;grid-template-columns:1.7fr 88px 1fr;gap:16px;align-items:center;padding:15px 24px;
+  border-bottom:1px solid rgba(255,255,255,.045);transition:background .6s var(--ease)}
+.arow:last-child{border-bottom:0}
+.arow:hover{background:rgba(255,255,255,.025)}
+.arow .who{display:flex;align-items:center;gap:14px;min-width:0}
+.coin{width:40px;height:40px;border-radius:999px;flex:none;display:grid;place-items:center;
+  box-shadow:var(--inset);border:1px solid var(--hair);background:rgba(255,255,255,.05);color:var(--dim)}
+.coin .ic{width:19px;height:19px}
+.coin.lime{border-color:rgba(196,248,42,.35);background:rgba(196,248,42,.1);color:var(--lime)}
+.coin.am{border-color:rgba(255,106,31,.32);background:rgba(255,106,31,.09);color:var(--amber)}
+.arow .nm{font-size:14px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.arow .qt{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--faint);margin-top:4px}
+.arow .val{text-align:right;font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:300}
+.arow .chg{text-align:right;font-family:'JetBrains Mono',monospace;font-size:11.5px;margin-top:4px}
+
+/* receive / QR */
+.netsel{display:flex;align-items:center;gap:14px;border:1px solid var(--hair);border-radius:18px;
+  padding:13px 18px;background:rgba(255,255,255,.03);box-shadow:var(--inset);width:100%;
+  color:var(--ink);font-family:Montserrat,sans-serif;text-align:left;cursor:pointer;
+  transition:border-color .5s var(--ease),background .5s var(--ease)}
+.netsel:hover{border-color:var(--hair-2);background:rgba(255,255,255,.05)}
+.netsel .k{display:block;font-weight:600;font-size:9px;letter-spacing:.16em;color:var(--faint);
+  text-transform:uppercase}
+.netsel .v{display:block;font-size:13.5px;margin-top:5px}
+.netsel .chev{margin-left:auto}
+.qr{background:#F4F6F1;border-radius:24px;padding:20px;display:grid;place-items:center;margin:18px 0 16px;
+  position:relative;box-shadow:0 22px 54px -22px rgba(0,0,0,.95)}
+.qr svg{width:100%;height:auto;max-width:238px;display:block}
+.qr .mark{position:absolute;width:50px;height:50px;border-radius:15px;background:#0A0B0C;display:grid;
+  place-items:center;border:3px solid #F4F6F1}
+.qr .mark .ic{width:23px;height:23px;color:var(--lime)}
+.addr{font-family:'JetBrains Mono',monospace;font-size:12px;word-break:break-all;line-height:1.75;
+  text-align:center;margin-bottom:16px;padding:0 4px}
+.addr i{font-style:normal}
+.warn{display:flex;gap:13px;align-items:flex-start;border:1px solid rgba(255,106,31,.3);
+  background:rgba(255,106,31,.07);border-radius:16px;padding:15px 17px;margin-top:14px}
+.warn[hidden]{display:none}
+.warn .ic{width:17px;height:17px;color:var(--amber);flex:none;margin-top:2px}
+.warn p{margin:0;font-size:12px;color:#d9a37e;font-weight:300;line-height:1.6}
+.pane{display:none}
+.pane.on{display:block}
+.listening{display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:6px 13px;
+  background:rgba(196,248,42,.09);border:1px solid rgba(196,248,42,.25);color:var(--lime);
+  font-weight:600;font-size:9px;letter-spacing:.14em;text-transform:uppercase}
+.listening i{width:6px;height:6px;border-radius:99px;background:var(--lime);display:block;
+  box-shadow:0 0 10px rgba(196,248,42,.9);animation:blip 1.9s var(--ease) infinite}
+@keyframes blip{0%,100%{opacity:1}50%{opacity:.25}}
+
+/* ── matchday: live accent ──────────────────────────── */
+:root{--live:#FF3B47;--live-soft:rgba(255,59,71,.1);--live-line:rgba(255,59,71,.34)}
+.dot-live{width:7px;height:7px;border-radius:99px;background:var(--live);display:inline-block;flex:none;
+  box-shadow:0 0 10px rgba(255,59,71,.9);animation:blip 1.6s var(--ease) infinite}
+
+/* date strip */
+.datestrip{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.dates{display:flex;align-items:center;gap:3px;padding:5px;border-radius:999px;background:rgba(255,255,255,.035);
+  border:1px solid var(--hair);box-shadow:var(--inset)}
+.dates button{border:0;background:transparent;color:var(--faint);border-radius:999px;padding:8px 16px;
+  cursor:pointer;text-align:center;font-family:Montserrat,sans-serif;transition:all .5s var(--ease)}
+.dates button small{display:block;font-weight:600;font-size:8.5px;letter-spacing:.14em;text-transform:uppercase;
+  margin-bottom:4px}
+.dates button b{display:block;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:400}
+.dates button:hover{color:var(--dim)}
+.dates button[aria-pressed="true"]{background:rgba(255,255,255,.07);color:var(--ink);box-shadow:var(--inset)}
+.dates button[aria-pressed="true"] small{color:var(--live)}
+.dates .nudge{padding:10px 12px;color:var(--faint);font-size:13px}
+.livetgl{display:inline-flex;align-items:center;gap:9px;border-radius:999px;padding:10px 17px;cursor:pointer;
+  border:1px solid var(--hair);background:rgba(255,255,255,.04);color:var(--faint);box-shadow:var(--inset);
+  font-weight:600;font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;font-family:Montserrat,sans-serif;
+  transition:all .5s var(--ease)}
+.livetgl:hover{color:var(--ink);border-color:var(--hair-2)}
+.livetgl[aria-pressed="true"]{background:var(--live);border-color:var(--live);color:#fff}
+.livetgl[aria-pressed="true"] .dot-live{background:#fff;box-shadow:none}
+
+/* featured match */
+.feat{position:relative;border-radius:22px;padding:24px 22px 30px;border:1px solid var(--hair);
+  box-shadow:var(--inset);margin:0 0 6px;
+  background:radial-gradient(ellipse at 50% 128%,rgba(196,248,42,.17),rgba(255,255,255,.02) 64%)}
+.feat.islive{background:radial-gradient(ellipse at 50% 128%,rgba(255,59,71,.17),rgba(255,255,255,.02) 64%);
+  border-color:var(--live-line)}
+.feat-top{display:flex;justify-content:space-between;align-items:center;gap:14px;font-weight:600;font-size:9.5px;
+  letter-spacing:.16em;color:var(--faint);text-transform:uppercase}
+.feat-top .mid{text-align:center;flex:1}
+.feat-top .mid b{display:block;font-family:Archivo;font-variation-settings:'wdth' 120,'wght' 800;font-size:15px;
+  color:var(--ink);letter-spacing:.02em}
+.feat-top .mid span{display:block;margin-top:5px}
+.feat-top button{background:transparent;border:0;color:var(--faint);cursor:pointer;font:inherit;
+  letter-spacing:.16em;text-transform:uppercase;transition:color .4s var(--ease)}
+.feat-top button:hover{color:var(--lime)}
+.feat-mid{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:18px;margin-top:22px}
+.feat .side{text-align:center;min-width:0}
+.feat .side .nm{font-family:Archivo;font-variation-settings:'wdth' 118,'wght' 800;text-transform:uppercase;
+  font-size:16px;margin-top:13px;line-height:1.1}
+.feat .side .ha{display:flex;align-items:center;justify-content:center;gap:6px;font-weight:600;font-size:9px;
+  letter-spacing:.14em;color:var(--faint);margin-top:7px;text-transform:uppercase}
+.feat .side .ha .ic{width:11px;height:11px}
+.feat .sc{font-family:'JetBrains Mono',monospace;font-size:clamp(28px,3.2vw,40px);font-weight:300;
+  letter-spacing:-.03em;white-space:nowrap}
+.minute{position:absolute;left:50%;bottom:-13px;transform:translateX(-50%);border-radius:999px;padding:6px 15px;
+  background:var(--lime);color:#0A0D03;font-family:'JetBrains Mono',monospace;font-size:11px;white-space:nowrap;
+  box-shadow:0 12px 28px -12px rgba(196,248,42,.9)}
+.minute.live{background:var(--live);color:#fff;box-shadow:0 12px 28px -12px rgba(255,59,71,.9)}
+.minute.done{background:rgba(255,255,255,.1);color:var(--dim);box-shadow:none;border:1px solid var(--hair)}
+.tcrest{width:54px;height:54px;border-radius:999px;margin:0 auto;display:grid;place-items:center;flex:none;
+  font-family:Archivo;font-variation-settings:'wdth' 100,'wght' 900;font-size:15px;color:#0A0D03;
+  box-shadow:var(--inset),0 10px 24px -10px rgba(0,0,0,.9)}
+.tcrest.sm{width:26px;height:26px;font-size:7.5px;letter-spacing:-.01em;border-radius:999px;margin:0;
+  box-shadow:var(--inset)}
+
+/* competition group + fixture rows */
+.comp{display:flex;align-items:center;gap:13px;padding:24px 22px 12px}
+.comp .fl{width:24px;height:17px;border-radius:3px;overflow:hidden;flex:none;box-shadow:var(--inset)}
+.comp .fl svg{display:block;width:100%;height:100%}
+.comp>div{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;min-width:0}
+.comp b{font-family:Archivo;font-variation-settings:'wdth' 120,'wght' 800;text-transform:uppercase;font-size:17px}
+.comp span{font-size:11.5px;color:var(--faint);font-weight:300}
+.comp .more{margin-left:auto;color:var(--faint);display:flex;align-items:center;gap:7px;font-size:11px;
+  transition:color .4s var(--ease)}
+.comp .more:hover{color:var(--lime)}
+.fixt{display:grid;grid-template-columns:64px 1fr 28px;gap:14px;align-items:center;padding:13px 16px;
+  border-radius:18px;background:rgba(255,255,255,.03);border:1px solid var(--hair);box-shadow:var(--inset);
+  margin:0 14px 8px;transition:border-color .5s var(--ease),background .5s var(--ease)}
+.fixt:hover{border-color:var(--hair-2);background:rgba(255,255,255,.055)}
+.fixt.live{border-color:var(--live-line);background:var(--live-soft)}
+.fixt .stat{text-align:center;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--faint);
+  line-height:1.4}
+.fixt .stat b{display:block;font-weight:400;color:var(--dim)}
+.fixt.live .stat,.fixt.live .stat b{color:var(--live)}
+.fixt .teams{display:flex;flex-direction:column;gap:9px;min-width:0}
+.fixt .tm{display:flex;align-items:center;gap:11px;min-width:0}
+.fixt .tm .n{font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fixt .tm .g{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:13.5px;flex:none}
+.fixt .tm.dim .n,.fixt .tm.dim .g{color:var(--faint)}
+.fixt .mine{font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--lime);flex:none;
+  border:1px solid rgba(196,248,42,.28);background:rgba(196,248,42,.08);border-radius:6px;padding:2px 6px}
+.star{background:transparent;border:0;cursor:pointer;color:rgba(255,255,255,.2);padding:0;display:grid;
+  place-items:center;transition:color .4s var(--ease),transform .4s var(--ease)}
+.star .ic{width:19px;height:19px}
+.star:hover{color:var(--dim);transform:scale(1.12)}
+.star[aria-pressed="true"]{color:var(--lime)}
+
+/* tab strip */
+.tabstrip{display:flex;gap:4px;padding:5px;border-radius:999px;background:rgba(255,255,255,.035);
+  border:1px solid var(--hair);box-shadow:var(--inset);overflow-x:auto;scrollbar-width:none}
+.tabstrip::-webkit-scrollbar{display:none}
+.tabstrip button{border:0;background:transparent;color:var(--faint);border-radius:999px;padding:9px 18px;
+  cursor:pointer;white-space:nowrap;font-family:Montserrat,sans-serif;font-weight:600;font-size:10.5px;
+  letter-spacing:.12em;text-transform:uppercase;transition:all .5s var(--ease)}
+.tabstrip button:hover{color:var(--ink)}
+.tabstrip button[aria-pressed="true"]{background:var(--lime);color:#0A0D03;box-shadow:var(--inset)}
+
+/* form pills */
+.form5{display:flex;gap:5px}
+.form5 i{width:21px;height:21px;border-radius:7px;display:grid;place-items:center;font-style:normal;
+  font-family:'JetBrains Mono',monospace;font-size:9.5px;border:1px solid var(--hair);
+  background:rgba(255,255,255,.05);color:var(--faint)}
+.form5 i.w{background:rgba(196,248,42,.15);border-color:rgba(196,248,42,.36);color:var(--lime)}
+.form5 i.l{background:var(--live-soft);border-color:var(--live-line);color:#ff8a92}
+.form5 i.d{background:rgba(255,106,31,.1);border-color:rgba(255,106,31,.28);color:var(--amber)}
+
+/* league position gauge */
+.gauge{display:grid;grid-template-columns:auto 1fr auto;gap:26px;align-items:center;padding:6px 0}
+.gside{text-align:center}
+.gbar{width:11px;height:128px;border-radius:99px;background:rgba(255,255,255,.07);position:relative;
+  overflow:hidden;margin:0 auto 14px;box-shadow:var(--inset)}
+.gbar i{position:absolute;left:0;right:0;bottom:0;border-radius:99px;
+  background:linear-gradient(180deg,#C4F82A,#6f9c00);transition:height .9s var(--ease)}
+.gbar.rival i{background:linear-gradient(180deg,rgba(255,255,255,.42),rgba(255,255,255,.14))}
+.gside .pc{font-family:'JetBrains Mono',monospace;font-size:19px;font-weight:300}
+.gside .lb{font-weight:600;font-size:8.5px;letter-spacing:.16em;color:var(--faint);text-transform:uppercase;
+  margin-top:5px}
+.ladder{display:flex;flex-direction:column;align-items:center;gap:9px;position:relative}
+.ladder::before{content:"";position:absolute;top:6px;bottom:6px;width:1px;background:var(--hair)}
+.rung{position:relative;z-index:1;min-width:38px;text-align:center;border-radius:11px;padding:7px 10px;
+  border:1px solid var(--hair);background:rgba(10,11,12,.96);font-family:'JetBrains Mono',monospace;
+  font-size:12px;color:var(--faint);box-shadow:var(--inset)}
+.rung.you{border-color:var(--lime);background:rgba(196,248,42,.1);color:var(--lime)}
+
 @media (max-width:1024px){
   .auth{grid-template-columns:1fr}
   .auth-brand{display:none}
@@ -786,27 +1033,59 @@ APP_CSS = r"""
   .prog{gap:8px}.prog .st{min-width:0;flex:1 1 42%;padding-top:10px}
   .prog .st .l{font-size:11.5px}
   .menu{width:calc(100vw - 32px);max-width:280px}
+  .acts4{grid-template-columns:repeat(2,1fr);gap:7px}
+  .acts4 button{padding:15px 6px 13px;border-radius:17px}
+  .arow{grid-template-columns:1.4fr 1fr;gap:10px;padding:13px 14px}
+  .arow>*:nth-child(2){display:none}
+  .coin{width:34px;height:34px}
+  .coin .ic{width:16px;height:16px}
+  .bal-chart{height:130px}
+  .range{width:100%;justify-content:space-between}
+  .range button{flex:1;padding:8px 0;text-align:center}
+  .qr{padding:14px;border-radius:20px}
+  .addr{font-size:11px}
+  .datestrip{width:100%}
+  .dates{flex:1;justify-content:space-between}
+  .dates button{padding:8px 10px}
+  .livetgl{padding:9px 13px}
+  .feat{padding:20px 14px 28px;border-radius:19px}
+  .feat-top{flex-wrap:wrap}
+  .feat-top .mid{order:-1;flex:1 1 100%;margin-bottom:12px}
+  .feat-mid{gap:10px}
+  .feat .side .nm{font-size:13px;margin-top:10px}
+  .tcrest{width:44px;height:44px;font-size:13px}
+  .comp{padding:20px 14px 10px}
+  .comp b{font-size:15px}
+  .fixt{grid-template-columns:54px 1fr 24px;gap:10px;padding:11px 12px;margin:0 8px 7px;border-radius:15px}
+  .fixt .tm .n{font-size:12.5px}
+  .gauge{grid-template-columns:1fr;gap:20px;justify-items:center}
+  .ladder{flex-direction:row}
+  .ladder::before{top:50%;bottom:auto;left:6px;right:6px;width:auto;height:1px}
+  .gbar{height:88px}
+  .tabstrip button{padding:9px 14px;font-size:9.5px}
 }
 """
 
 CSS = CSS + APP_CSS
 
-MARKET_NAV = [("exchange.html", "Exchange"), ("fanplay.html", "FanPlay"),
-              ("how-it-works.html", "How to play")]
-APP_NAV = [("dashboard.html", "Home"), ("exchange.html", "Exchange"),
-           ("clubs.html", "My club"), ("fanplay.html", "FanPlay"),
-           ("portfolio.html", "Portfolio")]
+MARKET_NAV = [("exchange.html", "Exchange"), ("clubs.html", "Dream Clubs"),
+              ("fanplay.html", "FanPlay"), ("ftr.html", "$FTR"),
+              ("how-it-works.html", "How it works")]
+
+APP_NAV = [("dashboard.html", "Dashboard"), ("exchange.html", "Exchange"),
+           ("clubs.html", "Dream Clubs"), ("fanplay.html", "FanPlay"),
+           ("portfolio.html", "Portfolio"), ("leaderboard.html", "Leaderboard")]
 
 NAVITEMS = MARKET_NAV  # kept for backwards compatibility
 
 ACCOUNT_MENU = [("dashboard.html", "Dashboard", "chart"), ("portfolio.html", "Portfolio & ledger", "receipt"),
                 ("ftr.html", "$FTR wallet", "wallet"), ("notifications.html", "Notifications", "pulse"),
-                ("settings.html", "Settings", "scales"), ("leaderboard.html", "Leaderboard", "trophy"), ("how-it-works.html", "How to play", "ball")]
+                ("settings.html", "Settings", "scales")]
 
 def head(title, extra_css=""):
     return ('<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">'
             '<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">'
-            '<title>%s</title>%s<style>%s%s</style></head><body>' % (title, FONTS, CSS, extra_css + __import__("experience").CSS))
+            '<title>%s</title>%s<style>%s%s</style></head><body>' % (title, FONTS, CSS, extra_css))
 
 def atmosphere():
     return ('<div class="orb orb-a"></div><div class="orb orb-b"></div><div class="orb orb-c"></div>'
@@ -820,7 +1099,7 @@ def atmosphere():
             '</div>') + sprite()
 
 def _shell(links, over, right, over_foot):
-    return ('<a class="skip-link" href="#main">Skip to content</a><nav class="nav-island" aria-label="Main navigation"><a class="logo" href="index.html">%s Fantrade</a>'
+    return ('<nav class="nav-island"><a class="logo" href="index.html">%s Fantrade</a>'
             '<div class="nav-links">%s</div><div class="nav-actions" style="display:flex;align-items:center;gap:10px">%s</div>'
             '<button class="burger" id="burger" aria-label="Open menu" aria-expanded="false"><i></i><i></i></button></nav>'
             '<div class="overlay" id="overlay">%s%s</div>') % (ic("ball", "ic"), links, right, over, over_foot)
@@ -856,13 +1135,10 @@ def nav(active="", app=False):
              '<button type="button" class="danger" data-signout>%sSign out</button>'
              '</div></div>') % (ic("pulse", "ic"), menu, ic("coin", "ic"), ic("lock", "ic"))
     over_extra = ('<a href="notifications.html" data-close>Notifications</a>'
-                  '<a href="settings.html" data-close>Settings</a><a href="ftr.html" data-close>Wallet</a><a href="leaderboard.html" data-close>Leaderboard</a><a href="how-it-works.html" data-close>How to play</a>')
+                  '<a href="settings.html" data-close>Settings</a>')
     foot = ('<button class="btn btn-glass" type="button" data-signout data-close>Sign out'
             '<span class="cap">%s</span></button>' % ic("arrow", "ic"))
-    mobile = '<nav class="mobile-tabs" aria-label="Quick navigation">' + ''.join(
-        '<a href="%s"%s>%s<span>%s</span></a>' % (h, ' aria-current="page"' if active == original else '', ic(icon), label)
-        for h,label,original,icon in [('dashboard.html','Home','Dashboard','chart'),('exchange.html','Exchange','Exchange','candle'),('clubs.html','My club','Dream Clubs','crest'),('fanplay.html','FanPlay','FanPlay','bolt'),('portfolio.html','Portfolio','Portfolio','wallet')]) + '</nav>'
-    return _shell(links, over + over_extra, right, foot) + mobile
+    return _shell(links, over + over_extra, right, foot)
 
 
 def nav_min(back="index.html", label="Back to Fantrade"):
@@ -872,10 +1148,59 @@ def nav_min(back="index.html", label="Back to Fantrade"):
             % (ic("ball", "ic"), back, ic("arrow", "ic"), label))
 
 def footer():
-    return '<footer class="ux-footer"><div class="wrap"><span>Fantrade demo · illustrative data</span><div><a href="how-it-works.html">How to play</a><a href="settings.html#play">Play limits</a><a href="leaderboard.html">Leaderboard</a></div></div></footer>'
+    return ('<footer><div class="wrap"><div class="foot">'
+            '<div class="col brandcol"><a class="logo" href="index.html">%s Fantrade</a>'
+            '<p>A football ownership economy. Own players and coaches, build your Dream Club, play every matchday.</p></div>'
+            '<div class="col"><b>Platform</b><a href="exchange.html">Exchange</a><a href="clubs.html">Dream Clubs</a>'
+            '<a href="fanplay.html">FanPlay</a><a href="ftr.html">$FTR</a></div>'
+            '<div class="col"><b>Your account</b><a href="dashboard.html">Dashboard</a><a href="portfolio.html">Portfolio &amp; ledger</a>'
+            '<a href="leaderboard.html">Leaderboard</a><a href="settings.html">Settings</a></div>'
+            '<div class="col"><b>Learn</b><a href="how-it-works.html">How it works</a><a href="fanplay.html#rules">Scoring rules</a>'
+            '<a href="fanplay.html#tiers">Market tiers</a><a href="clubs.html#chem">Club chemistry</a></div>'
+            '<div class="col"><b>Company</b><a href="signup.html">Create account</a><a href="signin.html">Sign in</a>'
+            '<a href="#">Press</a><a href="#">Contact</a></div>'
+            '</div><div class="legal"><span>© 2026 Fantrade. Prototype interface — figures shown are illustrative.</span>'
+            '<span>Terms · Privacy · Responsible play</span></div></div></footer>') % ic("ball", "ic")
 
+JS_CHART = r"""
+// Shared lime area chart. Draws into `el` from a plain array of numbers.
+function drawArea(el, vals, up){
+  if(!el || !vals || vals.length < 2) return;
+  up = up !== false;
+  var w = 600, h = 168, pad = 10;
+  var lo = Math.min.apply(null, vals), hi = Math.max.apply(null, vals), rng = (hi - lo) || 1;
+  var id = 'g' + Math.random().toString(36).slice(2, 8);
+  var col = up ? '#C4F82A' : '#FF5E5E';
+  var pts = vals.map(function(v, i){
+    var x = i * (w / (vals.length - 1));
+    var y = h - ((v - lo) / rng) * (h - pad * 2) - pad;
+    return x.toFixed(1) + ',' + y.toFixed(1);
+  });
+  var last = pts[pts.length - 1].split(',');
+  el.innerHTML = '<svg viewBox="0 0 ' + w + ' ' + h + '" preserveAspectRatio="none">'
+    + '<defs><linearGradient id="' + id + '" x1="0" y1="0" x2="0" y2="1">'
+    + '<stop offset="0%" stop-color="' + col + '" stop-opacity=".30"/>'
+    + '<stop offset="100%" stop-color="' + col + '" stop-opacity="0"/></linearGradient></defs>'
+    + '<polygon points="0,' + h + ' ' + pts.join(' ') + ' ' + w + ',' + h + '" fill="url(#' + id + ')"/>'
+    + '<polyline points="' + pts.join(' ') + '" fill="none" stroke="' + col + '" stroke-width="1.9" '
+    + 'stroke-linejoin="round" stroke-linecap="round"/>'
+    + '<circle cx="' + last[0] + '" cy="' + last[1] + '" r="3.4" fill="' + col + '"/>'
+    + '<circle cx="' + last[0] + '" cy="' + last[1] + '" r="8" fill="' + col + '" opacity=".22"/>'
+    + '</svg>';
+}
+// Deterministic-ish series generator for the range pills.
+function series(n, drift, vol, seed){
+  var out = [], v = 100, s = seed || 7;
+  for(var i = 0; i < n; i++){
+    s = (s * 9301 + 49297) % 233280;
+    v += drift + ((s / 233280) - 0.5) * vol;
+    out.push(Math.max(4, v));
+  }
+  return out;
+}
+"""
 
-JS_SHELL = r"""
+JS_SHELL = JS_CHART + r"""
 var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 var io = new IntersectionObserver(function(es){
   es.forEach(function(e){
@@ -935,7 +1260,8 @@ function liveTicks(sel){
     var px=r.querySelector('[data-px]'), dx=r.querySelector('[data-dx]');
     if(px){ px.textContent=a.p.toFixed(2); px.style.color=move>=0?'#C4F82A':'#FF5E5E';
       setTimeout(function(){ px.style.color=''; },900); }
-    if(dx){ dx.textContent=(a.d>=0?'+':'')+a.d.toFixed(1)+'%'; dx.className='tick '+(a.d>=0?'up':'down'); }
+    if(dx){ dx.textContent=(a.d>=0?'+':'')+a.d.toFixed(1)+'%';
+      dx.classList.remove('up','down'); dx.classList.add(a.d>=0?'up':'down'); }
   },1500);
 }
 
@@ -958,6 +1284,7 @@ var FT = (function(){
       region: "United Kingdom",
       league: "Premier League"
     },
+    favourites: ["m-ars"],
     prefs: {
       settleAlerts: true,
       orderFills: true,
@@ -1139,6 +1466,15 @@ var FT = (function(){
       state.prefs[key] = val; save(state);
       window.dispatchEvent(new CustomEvent('fantrade:statechange', { detail: state }));
     },
+    isFav: function(id){ return (state.favourites || []).indexOf(id) > -1; },
+    toggleFav: function(id){
+      state.favourites = state.favourites || [];
+      var i = state.favourites.indexOf(id);
+      if(i > -1) state.favourites.splice(i, 1); else state.favourites.push(id);
+      save(state);
+      window.dispatchEvent(new CustomEvent('fantrade:statechange', { detail: state }));
+      return i === -1;
+    },
     readAll: function(){
       (state.notifications || []).forEach(function(n){ n.read = true; });
       save(state); FT.syncUI();
@@ -1151,7 +1487,7 @@ var FT = (function(){
     executeTrade: function(side, assetSymbol, assetName, shares, price, isCoach){
       var subtotal = shares * price;
       var fee = subtotal * 0.004;
-      var total = Math.round((side === 'buy' ? subtotal + fee : subtotal - fee) * 100) / 100;
+      var total = Math.round(side === 'buy' ? subtotal + fee : subtotal - fee);
 
       if(side === 'buy'){
         if(state.wallet.balance < total){
@@ -1247,6 +1583,53 @@ var FT = (function(){
       window.dispatchEvent(new CustomEvent('fantrade:statechange', { detail: state }));
       return netFtr;
     },
+    sendFtr: function(amount, dest, kind){
+      if(amount <= 0) throw new Error("Enter an amount to send.");
+      var fee = kind === 'withdraw' ? Math.max(50, Math.round(amount * 0.005)) : 0;
+      if(state.wallet.balance < amount + fee){
+        throw new Error("Insufficient $FTR. You have " + state.wallet.balance.toLocaleString('en-US')
+          + " and this needs " + (amount + fee).toLocaleString('en-US') + ".");
+      }
+      state.wallet.balance -= (amount + fee);
+      state.transactions.unshift({
+        type: kind === 'withdraw' ? "WITHDRAW" : "SEND",
+        asset: dest, shares: 1, price: amount, total: amount + fee, time: "Just now"
+      });
+      save(state); FT.syncUI();
+      window.dispatchEvent(new CustomEvent('fantrade:statechange', { detail: state }));
+      return { sent: amount, fee: fee, remaining: state.wallet.balance };
+    },
+    swapAssets: function(fromSym, toSym, shares, prices){
+      var from = state.holdings[fromSym];
+      if(!from) throw new Error("You do not hold any " + fromSym + ".");
+      if(from.shares < shares) throw new Error("You hold " + from.shares.toLocaleString('en-US')
+        + " " + fromSym + ", not " + shares.toLocaleString('en-US') + ".");
+      var gross = shares * from.p, fee = gross * 0.004, net = gross - fee;
+      var toPrice = prices[toSym];
+      if(!toPrice) throw new Error("No market price for " + toSym + ".");
+      var got = Math.floor(net / toPrice);
+      if(got < 1) throw new Error("That is not enough to buy a whole share of " + toSym + ".");
+
+      from.shares -= shares;
+      if(from.shares <= 0) delete state.holdings[fromSym];
+      if(!state.holdings[toSym]){
+        state.holdings[toSym] = { n: prices[toSym + ':name'] || toSym, shares: 0, avg: toPrice,
+          p: toPrice, c: !!prices[toSym + ':coach'], inClub: 'SUB' };
+      }
+      var to = state.holdings[toSym];
+      to.avg = ((to.shares * to.avg) + (got * toPrice)) / (to.shares + got);
+      to.shares += got;
+      to.p = toPrice;
+      state.wallet.balance += Math.round(net - got * toPrice);
+
+      state.transactions.unshift({
+        type: "SWAP", asset: fromSym + " → " + toSym, shares: shares,
+        price: from.p, total: Math.round(gross), time: "Just now"
+      });
+      save(state); FT.syncUI();
+      window.dispatchEvent(new CustomEvent('fantrade:statechange', { detail: state }));
+      return { spent: shares, received: got, fee: Math.round(fee) };
+    },
     depositFtr: function(amount){
       state.wallet.balance += amount;
       state.transactions.unshift({
@@ -1309,6 +1692,10 @@ var mc = document.getElementById('ftModalClose');
 if(mc) mc.addEventListener('click', closeModal);
 var bd = document.getElementById('ftModalBackdrop');
 if(bd) bd.addEventListener('click', function(e){ if(e.target === bd) closeModal(); });
+document.addEventListener('keydown', function(e){
+  var b = document.getElementById('ftModalBackdrop');
+  if(e.key === 'Escape' && b && b.classList.contains('open')) closeModal();
+});
 
 // Global Account / Wallet Modal Handler
 function showAccountModal(){

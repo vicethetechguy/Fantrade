@@ -3,8 +3,8 @@
 leaderboard, notifications, settings. Same shell, same tokens as pages 1–6."""
 import os, sys
 sys.path.insert(0, os.path.dirname(__file__))
-from experience import prepare
 from common import head, atmosphere, nav, nav_min, footer, ic, JS_SHELL
+from experience import prepare
 
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
 ARROW = '<span class="cap">' + ic("arrow", "ic") + '</span>'
@@ -24,9 +24,9 @@ def btn(label, cls="btn-lime", href="#", tag="a", extra=""):
 
 def page(fname, title, body, js="", css="", app=True, chrome=True):
     """chrome=False renders the stripped auth shell (minimal nav, no footer)."""
+    body, js = prepare(fname, body, js)
     shell = nav(title.split(" — ")[0], app) if chrome else nav_min()
     tail = footer() if chrome else ""
-    body, js = prepare(fname, body, js)
     html = (head(title, css) + atmosphere() + shell + body + tail +
             "<script>(function(){" + JS_SHELL + js + "})();</script></body></html>")
     with open(os.path.join(OUT, fname), "w", encoding="utf-8") as f:
@@ -366,9 +366,12 @@ ob.append('<div class="step-pane" data-pane="2">'
           '<div class="picks" id="obPicks">')
 for sym, nm, role, px, coach in STARTERS:
     ob.append(T('<button class="pick" type="button" data-sym="@@" data-nm="@@" data-px="@@" data-coach="@@">'
+                '<span class="coin@@" style="margin-bottom:12px">@@</span>'
                 '<div class="sym">@@</div><div class="nm">@@</div><div class="px">@@ <span '
                 'style="font-size:10px;color:var(--faint)">$FTR</span></div></button>',
-                sym, nm, px, "1" if coach else "0", sym, role, "%.2f" % px))
+                sym, nm, px, "1" if coach else "0",
+                " am" if coach else "", ic("whistle" if coach else "boot", "ic"),
+                sym, role, "%.2f" % px))
 ob.append('</div>')
 ob.append('<div class="field" style="margin-top:18px"><label>Shares</label>'
           '<input id="obShares" value="1,000" inputmode="numeric"></div>'
@@ -604,17 +607,16 @@ DASH_CSS = """
 .fx .fpv{text-align:right;font-family:'JetBrains Mono',monospace;font-size:15px;color:var(--lime);font-weight:300}
 .fx .fpk{text-align:right;font-weight:600;font-size:8.5px;letter-spacing:.16em;color:var(--faint);
   text-transform:uppercase;margin-top:5px}
-.mv{display:grid;grid-template-columns:1fr 78px 62px;gap:12px;align-items:center;padding:12px 0;
-  border-bottom:1px solid rgba(255,255,255,.045)}
+.mv{border-bottom:1px solid rgba(255,255,255,.045)}
 .mv:last-child{border-bottom:0}
+.mv:hover{background:transparent}
 .crest-lg{width:52px;height:57px;flex:none;clip-path:polygon(0 0,100% 0,100% 66%,50% 100%,0 66%);
   display:grid;place-items:center;font-family:Archivo;font-variation-settings:'wdth' 100,'wght' 900;
   font-size:15px;color:#0A0D03;filter:drop-shadow(0 8px 18px rgba(196,248,42,.3))}
 @media (max-width:768px){
   .fx{grid-template-columns:56px 1fr;gap:12px;padding:14px}
   .fx .fpv,.fx .fpk{text-align:left;grid-column:2}
-  .mv{grid-template-columns:1fr 70px;gap:10px}
-  .mv>*:nth-child(2){display:none}
+  .mv{padding-left:0!important;padding-right:0!important}
 }
 """
 
@@ -654,8 +656,15 @@ da.append('<section style="padding:10px 0 120px"><div class="wrap"><div class="b
 # net worth
 da.append(T('<div class="bezel c5" data-reveal><div class="core pad">'
             '<div class="k-label">Net worth</div>'
-            '<div class="value-big"><span data-bind="net">370,300</span><small> $FTR</small></div>'
-            '<div class="delta">▲ 18.4% over 30 days · +6,200 settled this week</div>'
+            '<div class="bal-big"><span data-bind="net">370,300</span><small> $FTR</small></div>'
+            '<div class="bal-delta" id="dashDelta">@@<span>18.4% over 30 days</span>'
+            '<em>+6,200 settled this week</em></div>'
+            '<div class="bal-chart" id="dashChart"></div>'
+            '<div class="range" id="dashRange" style="margin-bottom:22px">'
+            '<button type="button" aria-pressed="false" data-r="1W">1W</button>'
+            '<button type="button" aria-pressed="true" data-r="1M">1M</button>'
+            '<button type="button" aria-pressed="false" data-r="3M">3M</button>'
+            '<button type="button" aria-pressed="false" data-r="All">All</button></div>'
             '<div class="alloc" id="dashAlloc"><i style="width:66%;background:linear-gradient(90deg,#8fbe00,#C4F82A)"></i>'
             '<i style="width:25%;background:#4DA6FF"></i>'
             '<i style="width:9%;background:rgba(255,255,255,.34)"></i></div>'
@@ -665,11 +674,12 @@ da.append(T('<div class="bezel c5" data-reveal><div class="core pad">'
             '<div class="b-row total"><span>Season payouts received</span><b data-bind="earned">19,640</b></div>'
             '<div style="display:flex;gap:10px;margin-top:22px;flex-wrap:wrap">@@@@</div>'
             '</div></div>',
+            ic("arrow", "ic"),
             '<i style="display:inline-block;width:8px;height:8px;border-radius:3px;background:#C4F82A;margin-right:9px"></i>',
             '<i style="display:inline-block;width:8px;height:8px;border-radius:3px;background:#4DA6FF;margin-right:9px"></i>',
             '<i style="display:inline-block;width:8px;height:8px;border-radius:3px;background:rgba(255,255,255,.34);margin-right:9px"></i>',
             btn("Portfolio & ledger", href="portfolio.html", extra='style="flex:1;justify-content:space-between"'),
-            btn("Add $FTR", "btn-glass", "ftr.html", extra='style="flex:1;justify-content:space-between"')))
+            btn("Open wallet", "btn-glass", "ftr.html", extra='style="flex:1;justify-content:space-between"')))
 
 # club card
 da.append(T('<div class="bezel c4" data-reveal><div class="core pad">'
@@ -740,12 +750,14 @@ da.append(T('<div class="bezel c5" data-reveal><div class="core pad">'
             '<div class="k-label" style="margin:0">Today\'s movers</div>'
             '<a href="exchange.html" style="margin-left:auto;font-size:11px;color:var(--lime)">Open exchange</a></div>'))
 for sym, nm, px, d, idx in MOVERS:
-    da.append(T('<div class="mv" data-i="@@"><div class="asset"><span class="badge@@">@@</span>'
-                '<div style="min-width:0"><div class="t-sym">@@</div><div class="t-nm">@@</div></div></div>'
+    coach = sym == "$Arteta"
+    da.append(T('<div class="arow mv" data-i="@@" style="padding-left:0;padding-right:0">'
+                '<div class="who"><span class="coin@@">@@</span>'
+                '<div style="min-width:0"><div class="nm">@@</div><div class="qt">@@</div></div></div>'
                 '<div data-spark="@@"></div>'
-                '<div style="text-align:right"><div class="num" style="font-size:13px" data-px>@@</div>'
-                '<div class="tick @@" data-dx style="font-size:11px">@@</div></div></div>',
-                idx, " coach" if sym in ("$Arteta",) else "", ic("boot" if sym != "$Arteta" else "whistle", "ic"),
+                '<div><div class="val" data-px>@@</div>'
+                '<div class="chg @@" data-dx>@@</div></div></div>',
+                idx, " am" if coach else "", ic("whistle" if coach else "boot", "ic"),
                 sym, nm, "1" if d >= 0 else "0", "%.2f" % px,
                 "up" if d >= 0 else "down", ("+" if d >= 0 else "") + "%.1f%%" % d))
 da.append(T('<div style="margin-top:20px">@@</div></div></div>',
@@ -810,9 +822,27 @@ DASH_JS = r"""
 
 // sparklines on the movers list
 document.querySelectorAll('[data-spark]').forEach(function(d){
-  d.innerHTML = spark(d.dataset.spark === '1', 78, 26);
+  d.innerHTML = spark(d.dataset.spark === '1', 88, 26);
 });
 liveTicks('.mv');
+
+// net-worth chart, same component as the wallet
+var DSERIES = { '1W': series(28, 0.4, 3.0, 19), '1M': series(36, 1.1, 4.8, 53),
+                '3M': series(44, 1.7, 6.4, 83), 'All': series(52, 2.4, 8.6, 127) };
+var DDELTA = { '1W': '4.2% this week', '1M': '18.4% over 30 days',
+               '3M': '41.7% this quarter', 'All': '212.5% all time' };
+function dpaint(r){
+  drawArea(document.getElementById('dashChart'), DSERIES[r], true);
+  document.querySelector('#dashDelta span').textContent = DDELTA[r];
+}
+document.querySelectorAll('#dashRange button').forEach(function(b){
+  b.addEventListener('click', function(){
+    document.querySelectorAll('#dashRange button').forEach(function(x){ x.setAttribute('aria-pressed','false'); });
+    b.setAttribute('aria-pressed', 'true');
+    dpaint(b.dataset.r);
+  });
+});
+dpaint('1M');
 
 // countdown to the gameweek lock
 (function(){
@@ -898,8 +928,6 @@ print("built dashboard.html")
 PF_CSS = """
 .hcols{grid-template-columns:1.7fr .8fr .85fr .8fr .9fr 1.05fr 1.15fr 86px}
 .lcols{grid-template-columns:132px 1.6fr .9fr 1fr 104px}
-.chartbox{position:relative;height:150px;margin:20px 0 4px}
-.chartbox svg{width:100%;height:100%;display:block;overflow:visible}
 .chart-x{display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:10px;
   color:var(--faint);margin-top:10px}
 .seg-sm{display:flex;gap:4px;padding:4px;border-radius:999px;background:rgba(255,255,255,.035);
@@ -927,31 +955,6 @@ PF_CSS = """
 }
 """
 
-SERIES = [104, 108, 103, 112, 119, 116, 124, 131, 128, 136, 141, 138, 147, 152, 149,
-          158, 163, 159, 168, 174, 171, 180, 186, 183, 192, 198, 195, 206, 212, 219]
-
-
-def sparkline(vals, w=560, h=150):
-    lo, hi = min(vals), max(vals)
-    rng = (hi - lo) or 1
-    pts = []
-    for i, v in enumerate(vals):
-        x = i * (w / (len(vals) - 1))
-        y = h - ((v - lo) / rng) * (h - 14) - 7
-        pts.append("%.1f,%.1f" % (x, y))
-    line = " ".join(pts)
-    area = "0,%d " % h + line + " %d,%d" % (w, h)
-    return ('<svg viewBox="0 0 %d %d" preserveAspectRatio="none">'
-            '<defs><linearGradient id="pfg" x1="0" y1="0" x2="0" y2="1">'
-            '<stop offset="0%%" stop-color="#C4F82A" stop-opacity=".26"/>'
-            '<stop offset="100%%" stop-color="#C4F82A" stop-opacity="0"/></linearGradient></defs>'
-            '<polygon points="%s" fill="url(#pfg)"/>'
-            '<polyline points="%s" fill="none" stroke="#C4F82A" stroke-width="1.6" '
-            'stroke-linejoin="round" stroke-linecap="round"/>'
-            '<circle cx="%d" cy="%s" r="3.2" fill="#C4F82A"/></svg>'
-            % (w, h, area, line, w, pts[-1].split(",")[1]))
-
-
 pf = [T('<main><section class="app-head"><div class="wrap"><div class="head-row">'
         '<div><span class="pill" data-reveal>@@ Capital &amp; tactical ledger</span>'
         '<h1 data-reveal>Portfolio<br>&amp; ledger</h1>'
@@ -972,27 +975,28 @@ pf = [T('<main><section class="app-head"><div class="wrap"><div class="head-row"
 pf.append('<section style="padding:10px 0 120px"><div class="wrap"><div class="bento">')
 
 # value + chart
-pf.append(T('<div class="bezel c6" data-reveal><div class="core pad">'
+pf.append(T('<div class="bezel c5" data-reveal><div class="core pad">'
             '<div class="pfhead" style="display:flex;align-items:flex-start;gap:14px">'
             '<div style="min-width:0"><div class="k-label">Total portfolio value</div>'
-            '<div class="value-big" style="font-size:clamp(28px,2.7vw,40px)">'
+            '<div class="bal-big" style="font-size:clamp(28px,2.9vw,44px)">'
             '<span data-bind="net">370,300</span><small style="white-space:nowrap"> $FTR</small></div>'
-            '<div class="delta">▲ 18.4% over 30 days</div></div>'
-            '<div class="seg-sm" style="margin-left:auto;flex:none" id="pfRange">'
-            '<button type="button" aria-pressed="true">30D</button>'
-            '<button type="button" aria-pressed="false">90D</button>'
-            '<button type="button" aria-pressed="false">All</button></div></div>'
-            '<div class="chartbox">@@</div>'
-            '<div class="chart-x"><span>Aug 15</span><span>Aug 29</span><span>Sep 07</span><span>Today</span></div>'
+            '<div class="bal-delta" id="pfDelta">@@<span>18.4% over 30 days</span></div></div>'
+            '<div class="range" style="margin-left:auto;flex:none" id="pfRange">'
+            '<button type="button" aria-pressed="true" data-r="30D">30D</button>'
+            '<button type="button" aria-pressed="false" data-r="90D">90D</button>'
+            '<button type="button" aria-pressed="false" data-r="All">All</button></div></div>'
+            '<div class="bal-chart" id="pfChart"></div>'
+            '<div class="chart-x" id="pfAxis"><span>Aug 15</span><span>Aug 29</span><span>Sep 07</span>'
+            '<span>Today</span></div>'
             '<div class="b-row" style="margin-top:18px"><span>Unrealised P&amp;L</span>'
             '<b class="pl up" id="pfPnl">+0</b></div>'
             '<div class="b-row"><span>Realised this season</span><b class="pl up">+48,920</b></div>'
             '<div class="b-row total"><span>Effective yield (24 gameweeks)</span>'
             '<b style="color:var(--lime)">39.2% APR</b></div>'
-            '</div></div>', sparkline(SERIES)))
+            '</div></div>', ic("arrow", "ic")))
 
 # allocation
-pf.append(T('<div class="bezel c6" data-reveal><div class="core pad">'
+pf.append(T('<div class="bezel c4" data-reveal><div class="core pad">'
             '<div class="k-label">Capital allocation</div>'
             '<p style="font-size:12.5px;color:var(--dim);font-weight:300;margin:0 0 4px;line-height:1.6">'
             'How your balance is split between locked club assets, liquid reserves and speculative positions '
@@ -1014,6 +1018,29 @@ pf.append(T('<div class="bezel c6" data-reveal><div class="core pad">'
             '<i style="display:inline-block;width:8px;height:8px;border-radius:3px;background:#C4F82A;margin-right:9px"></i>',
             '<i style="display:inline-block;width:8px;height:8px;border-radius:3px;background:#4DA6FF;margin-right:9px"></i>',
             '<i style="display:inline-block;width:8px;height:8px;border-radius:3px;background:rgba(255,255,255,.34);margin-right:9px"></i>'))
+
+# syndicate card
+pf.append(T('<div class="bezel c3" data-reveal><div class="core pad">'
+            '<div class="k-label">Club syndicate</div>'
+            '<div style="font-family:Archivo;font-variation-settings:\'wdth\' 125,\'wght\' 900;'
+            'text-transform:uppercase;font-size:24px;line-height:1" data-bind="club">Zero FC</div>'
+            '<div class="sub-line" style="letter-spacing:.14em;text-transform:uppercase;margin-bottom:20px">'
+            'Apex division · Tier 1</div>'
+            '<div class="b-row"><span>Head coach</span><b style="color:var(--amber)">$Arteta</b></div>'
+            '<div class="b-row"><span>Squad captain</span><b>$Bruno · 1.5x</b></div>'
+            '<div class="b-row"><span>Club valuation</span><b data-bind="clubvalue">245,800</b></div>'
+            '<div class="b-row"><span>Global rank</span><b data-bind="rank">#124</b></div>'
+            '<div class="b-row total"><span>Locked until</span><b>Sat 17:30</b></div>'
+            '<div class="k-label" style="margin-top:26px">Ownership proof</div>'
+            '<div class="rowlink">@@ 13 of 13 assets verified<b style="color:var(--lime)">Valid</b></div>'
+            '<div class="rowlink">@@ Zero borrowed positions<b style="color:var(--lime)">Valid</b></div>'
+            '<p style="font-size:11.5px;color:var(--faint);font-weight:300;margin-top:16px;line-height:1.6">'
+            'Ownership is re-checked when a round locks. A club that cannot prove its eleven does not score.</p>'
+            '<div style="margin-top:18px">@@</div>'
+            '</div></div>',
+            ic("shield", "ic"), ic("check", "ic"),
+            btn("Inspect the pitch", "btn-glass", "clubs.html",
+                extra='style="width:100%;justify-content:space-between"')))
 
 # holdings
 pf.append(T('<div class="bezel c12" data-reveal><div class="core">'
@@ -1104,7 +1131,7 @@ function renderHoldings(){
 
     var d = MOVE[k] === undefined ? 0 : MOVE[k];
     rows.push('<div class="dr hcols">'
-      + '<div class="asset"><span class="badge' + (h.c ? ' coach' : '') + '">'
+      + '<div class="asset"><span class="coin' + (h.c ? ' am' : '') + '">'
       + '<svg class="ic" aria-hidden="true"><use href="#i-' + (h.c ? 'whistle' : 'boot') + '"/></svg></span>'
       + '<div style="min-width:0"><div class="t-sym">' + k + '</div><div class="t-nm">' + h.n + '</div></div></div>'
       + '<div class="num" style="font-size:13px">' + h.shares.toLocaleString('en-US') + '</div>'
@@ -1214,13 +1241,25 @@ if(xb) xb.addEventListener('click', function(){
   showToast('Ledger exported as fantrade-ledger.csv.', 'success');
 });
 
+var PSERIES = { '30D': series(36, 1.1, 4.8, 53), '90D': series(46, 1.8, 6.6, 89),
+                'All': series(56, 2.5, 9.2, 131) };
+var PDELTA = { '30D': '18.4% over 30 days', '90D': '44.1% over 90 days', 'All': '212.5% all time' };
+var PAXIS = { '30D': ['Aug 15','Aug 29','Sep 07','Today'],
+              '90D': ['Jun 16','Jul 15','Aug 14','Today'],
+              'All': ['GW 01','GW 10','GW 19','GW 28'] };
+function ppaint(r){
+  drawArea(document.getElementById('pfChart'), PSERIES[r], true);
+  document.querySelector('#pfDelta span').textContent = PDELTA[r];
+  document.getElementById('pfAxis').innerHTML = PAXIS[r].map(function(l){ return '<span>' + l + '</span>'; }).join('');
+}
 document.querySelectorAll('#pfRange button').forEach(function(b){
   b.addEventListener('click', function(){
     document.querySelectorAll('#pfRange button').forEach(function(x){ x.setAttribute('aria-pressed', 'false'); });
     b.setAttribute('aria-pressed', 'true');
-    showToast('Prototype shows a fixed 30-day series.', 'info');
+    ppaint(b.dataset.r);
   });
 });
+ppaint('30D');
 
 renderHoldings(); renderLedger();
 window.addEventListener('fantrade:statechange', function(){ renderHoldings(); renderLedger(); });
@@ -1597,6 +1636,10 @@ nt.append(T('<div class="bezel c8" data-reveal><div class="core">'
             '</div></div>'))
 
 nt.append(T('<div class="bezel c4" data-reveal><div class="core pad">'
+            '<div class="k-label">Needs you before the lock</div>'
+            '<div class="warn" style="margin:0 0 24px">@@<p>W. Saliba is a late fitness test. Auto-sub will '
+            'field Gabriel if he is withdrawn — turn auto-sub off in Settings if you would rather take the zero.</p>'
+            '</div>'
             '<div class="k-label">What you get told about</div>'
             '<p style="font-size:12.5px;color:var(--dim);font-weight:300;margin:0 0 8px;line-height:1.6">'
             'Toggle a channel off and Fantrade stops sending it — the event still lands in your ledger.</p>'
@@ -1619,6 +1662,7 @@ nt.append(T('<div class="bezel c4" data-reveal><div class="core pad">'
             '<b style="color:var(--lime)">+6,620 $FTR</b></div>'
             '<div style="margin-top:22px">@@</div>'
             '</div></div>',
+            ic("flag", "ic"),
             btn("All settings", "btn-glass", "settings.html",
                 extra='style="width:100%;justify-content:space-between"')))
 
@@ -1785,6 +1829,8 @@ st.append(T('<div class="bezel sec-card" id="security" data-reveal><div class="c
             '<div class="d">Require a code from your authenticator app on every new sign-in and before '
             'any withdrawal.</div></div>'
             '<button class="tgl" type="button" data-pref="twoFactor" aria-pressed="false"><i></i></button></div>'
+            '<div class="warn" id="tfaWarn">@@<p>Two-factor is off. Anyone with your password can move '
+            '$FTR out of this wallet and rebuild your club.</p></div>'
             '<div class="k-label" style="margin-top:26px">Active sessions</div>'
             '<div class="sess"><span class="ibox sm">@@</span><div><div class="t">Chrome · London, UK</div>'
             '<div class="d">This device · active now</div></div>'
@@ -1803,6 +1849,7 @@ st.append(T('<div class="bezel sec-card" id="security" data-reveal><div class="c
             tf("Confirm new password", "stPwConf", "password", "Repeat it", "lock", "",
                "The two passwords do not match."),
             btn("Update password", tag="button", extra='id="stSavePw"'),
+            ic("flag", "ic"),
             ic("shield", "ic-sm"), ic("user", "ic-sm"), ic("user", "ic-sm")))
 
 # notifications
@@ -2062,6 +2109,15 @@ el('stClose').addEventListener('click', function(){
   el('clEnt').textContent = s.fanplay.activeEntries.length;
   el('clNo').addEventListener('click', closeModal);
 });
+
+// the two-factor warning only stands while two-factor is off
+(function(){
+  var w = el('tfaWarn'), t = document.querySelector('.tgl[data-pref="twoFactor"]');
+  if(!w || !t) return;
+  function sync(){ w.hidden = t.getAttribute('aria-pressed') === 'true'; }
+  t.addEventListener('click', function(){ setTimeout(sync, 0); });
+  sync();
+})();
 
 // section highlighting
 (function(){

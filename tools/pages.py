@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 import os, sys
 sys.path.insert(0, os.path.dirname(__file__))
+from common import head, atmosphere, nav, footer, ic, flag, JS_SHELL
 from experience import prepare
-from common import head, atmosphere, nav, footer, ic, JS_SHELL
 
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
 os.makedirs(OUT, exist_ok=True)
@@ -290,15 +290,24 @@ EX_CSS = """
 """
 
 ex = []
-ex.append('<header class="phead"><div class="wrap"><span class="eyebrow">Demo market</span><h1>Exchange</h1><p class="lede">Find a player or coach. Choose your shares, then review your order.</p></div></header>')
+ex.append(T('<header class="phead"><div class="wrap">'
+          '<span class="pill" data-reveal>@@ Live market</span>'
+          '<h1 data-reveal>Exchange</h1>'
+          '<p class="lede" data-reveal>Every player and every coach carries a fixed supply of ten million shares. '
+          'Price is set by what fans are willing to pay for the football underneath it.</p>'
+          '<div class="statbar" data-reveal>'
+          '<div>@@ 24h volume <b>4.28M $FTR</b></div>'
+          '<div>@@ Listed assets <b>2,140</b></div>'
+          '<div>@@ Top mover <b>$Jackson +11.2%</b></div>'
+          '<div>@@ Next settlement <b>Fri 18:30</b></div></div></div></header>', ic("candle", "ic"), ic("chart", "ic"), ic("layers", "ic"), ic("bolt", "ic"), ic("clock", "ic")))
 
 ex.append('<main><section style="padding-top:40px"><div class="wrap">')
 ex.append(T('<div class="rail" data-reveal><div class="seg" id="seg">'
           '<button aria-pressed="true" data-f="all">@@ All</button>'
           '<button aria-pressed="false" data-f="player">@@ Players</button>'
           '<button aria-pressed="false" data-f="coach">@@ Coaches</button></div>'
-          '<div class="searchbox">@@<input id="q" aria-label="Search players and coaches" type="search" placeholder="Search a player or coach"></div>'
-          '</div>', ic("layers", "ic"), ic("boot", "ic"), ic("whistle", "ic"), ic("search", "ic"), ic("filter", "ic")))
+          '<div class="searchbox">@@<input id="q" type="search" placeholder="Search a player or coach"></div>'
+          '<div class="seg"><button aria-pressed="false">@@ Filters</button></div></div>', ic("layers", "ic"), ic("boot", "ic"), ic("whistle", "ic"), ic("search", "ic"), ic("filter", "ic")))
 
 ex.append('<div class="bento"><div class="bezel c8" data-reveal><div class="core">'
           '<div class="mhead"><span>Asset</span><span>Price $FTR</span><span>24h</span><span>Valuation</span>'
@@ -316,21 +325,58 @@ ex.append('<div class="c4" style="display:flex;flex-direction:column;gap:16px">'
           '<div class="seg" style="width:100%%;margin-bottom:16px"><button style="flex:1;justify-content:center" '
           'aria-pressed="true" data-side="buy">Buy</button><button style="flex:1;justify-content:center" '
           'aria-pressed="false" data-side="sell">Sell</button></div>'
-          '<div class="line"><span>Available $FTR</span><b data-bind="balance"></b></div><div class="line"><span>Your shares</span><b id="spYourHolding">0</b></div><div class="field"><label>Shares</label><input id="qty" value="1" inputmode="numeric"></div>'
-          '<div class="quick"><button data-q="1">1</button><button data-q="10">10</button>'
-          '<button data-q="50">50</button><button data-q="100">100</button></div>'
+          '<div class="field"><label>Shares</label><input id="qty" value="10,000" inputmode="numeric"></div>'
+          '<div class="quick"><button data-q="1000">1K</button><button data-q="10000">10K</button>'
+          '<button data-q="50000">50K</button><button data-q="100000">100K</button></div>'
           '<div class="line"><span>Price per share</span><b id="sumPx">48.20 $FTR</b></div>'
           '<div class="line"><span>Subtotal</span><b id="sumSub">482,000</b></div>'
           '<div class="line"><span>Exchange fee (0.4%%)</span><b id="sumFee">1,928</b></div>'
           '<div class="line"><span>Total</span><b id="sumTot">483,928 $FTR</b></div>'
           '%s</div></div>' % (ic("boot", "ic"), btn("Review order", tag="button", extra='id="reviewOrderBtn" style="margin-top:20px;width:100%;justify-content:space-between"')))
 
-ex.append('</div></div><div class="ux-banner" style="margin-top:24px"><span>New here? Buy shares in one player to start Individual FanPlay.</span><a href="how-it-works.html">See the guide →</a></div></div></section></main>')
+ex.append('<div class="bezel" data-reveal><div class="core pad-sm">'
+          '<div class="k-label">Supply</div><div class="ringwrap">'
+          '<svg class="ring" viewBox="0 0 100 100"><circle cx="50" cy="50" r="42" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="6"/>'
+          '<circle id="spRing" cx="50" cy="50" r="42" fill="none" stroke="#C4F82A" stroke-width="6" stroke-linecap="round" '
+          'stroke-dasharray="264" stroke-dashoffset="166" transform="rotate(-90 50 50)"/></svg>'
+          '<div><div class="num" style="font-size:24px" id="spHeld">3,712,480</div>'
+          '<div class="k-label" style="margin:6px 0 0">Held by fans</div>'
+          '<div class="num" style="font-size:13px;color:var(--dim);margin-top:10px" id="spPct">37.1% of 10,000,000</div></div></div>'
+          '<div class="b-row"><span>Your holding</span><b id="spYourHolding">10,000</b></div>'
+          '<div class="b-row"><span>Average entry</span><b id="spAvgEntry">31.40</b></div>'
+          '<div class="b-row"><span>Unrealised</span><b class="up" id="spUnrealised">+168,000</b></div>'
+          '<div class="b-row"><span>In your club</span><b id="spInClub">ZERO FC · RW</b></div></div></div></div></div>')
+ex.append('</div></section>')
+
+# movers + coach index
+ex.append('<section style="padding-top:20px"><div class="wrap"><div class="bento">')
+ex.append(T('<div class="bezel c4" data-reveal><div class="core pad"><div class="k-label">@@ Top gainers · 24h</div>'
+          '<div class="movers" id="gainers"></div></div></div>', ic("bolt", "ic-sm")))
+ex.append(T('<div class="bezel c4" data-reveal><div class="core pad"><div class="k-label">@@ Fallers · 24h</div>'
+          '<div class="movers" id="fallers"></div></div></div>', ic("pulse", "ic-sm")))
+ex.append(T('<div class="bezel c4" data-reveal><div class="core pad"><div class="k-label">@@ Coach index</div>'
+          '<div class="value-big">24.65 <small>$FTR</small></div>'
+          '<div class="delta">▲ 2.1% · weighted across 186 listed coaches</div>'
+          '<div style="margin-top:20px">@@</div>'
+          '<p style="font-size:13px;font-weight:300;color:var(--dim);margin-top:18px">Coaches move on results, not '
+          'minutes. A win, a clean sheet or a tactical turnaround feeds the index — and your club modifier.</p>'
+          '</div></div>', ic("whistle", "ic-sm"), '<div id="coachSpark"></div>'))
+ex.append('</div></div></section>')
+
+# how trading works
+ex.append(T('<section><div class="wrap"><div class="sec-head" data-reveal>'
+          '<span class="pill">@@ Order mechanics</span><h2>How a trade<br>settles here</h2></div>'
+          '<div class="bento">', ic("swap", "ic")))
+for icon, t, d, c in [("wallet", "Fund in $FTR", "Deposit, convert to $FTR, and your balance is ready to trade against any listed asset.", "c4"),
+                      ("candle", "Buy at market", "Orders fill against the live book. Fees are 0.4% on both sides and are always shown before you confirm.", "c4"),
+                      ("shield", "Ownership recorded", "Settled shares land in your wallet immediately and become eligible for FanPlay and club selection.", "c4")]:
+    ex.append(T('<div class="bezel tight @@" data-reveal><div class="core pad f"><span class="ibox">@@</span>'
+              '<h4>@@</h4><p>@@</p></div></div>', c, ic(icon, "ic-lg"), t, d))
+ex.append('</div></div></section></main>')
 
 EX_JS = r"""
 var filter='all', q='', side='buy', sel=0;
 function fmt(n){ return n.toLocaleString('en-US'); }
-function money(n){return n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});}
 function rows(){
   var list=ASSETS.map(function(a,i){ return [a,i]; }).filter(function(x){
     var a=x[0];
@@ -388,9 +434,9 @@ function calc(){
   var qty=parseInt((document.getElementById('qty').value||'0').replace(/[^0-9]/g,''),10)||0;
   var sub=qty*a.p, fee=sub*0.004;
   document.getElementById('sumPx').textContent=a.p.toFixed(2)+' $FTR';
-  document.getElementById('sumSub').textContent=money(sub);
-  document.getElementById('sumFee').textContent=money(fee);
-  document.getElementById('sumTot').textContent=money(side==='buy'?sub+fee:sub-fee)+' $FTR';
+  document.getElementById('sumSub').textContent=fmt(Math.round(sub));
+  document.getElementById('sumFee').textContent=fmt(Math.round(fee));
+  document.getElementById('sumTot').textContent=fmt(Math.round(side==='buy'?sub+fee:sub-fee))+' $FTR';
 }
 var qty=document.getElementById('qty');
 if(qty){
@@ -484,20 +530,20 @@ if(ro){
       return;
     }
     var sub=qtyVal*a.p, fee=sub*0.004;
-    var tot=Math.round((side==='buy'?sub+fee:sub-fee)*100)/100;
+    var tot=Math.round(side==='buy'?sub+fee:sub-fee);
     var s=FT.getState();
     var curH=s.holdings[a.t];
 
     var modalHtml='' +
       '<h3 class="ft-modal-title">Confirm '+(side==='buy'?'Buy Order':'Sell Order')+'</h3>' +
-      '<p class="ft-modal-desc">Check the quantity, fee and total for this demo order.</p>' +
+      '<p class="ft-modal-desc">Review execution details against the live Fantrade order book.</p>' +
       '<div class="ft-modal-card">' +
         '<div class="m-row"><span>Action</span><b style="color:'+(side==='buy'?'var(--lime)':'var(--amber)')+'">'+side.toUpperCase()+'</b></div>' +
         '<div class="m-row"><span>Asset</span><b>'+a.t+' ('+a.n+')</b></div>' +
         '<div class="m-row"><span>Quantity</span><b>'+fmt(qtyVal)+' shares</b></div>' +
         '<div class="m-row"><span>Price per Share</span><b>'+a.p.toFixed(2)+' $FTR</b></div>' +
-        '<div class="m-row"><span>Subtotal</span><b>'+money(sub)+' $FTR</b></div>' +
-        '<div class="m-row"><span>Exchange Fee (0.4%)</span><b>'+money(fee)+' $FTR</b></div>' +
+        '<div class="m-row"><span>Subtotal</span><b>'+fmt(Math.round(sub))+' $FTR</b></div>' +
+        '<div class="m-row"><span>Exchange Fee (0.4%)</span><b>'+fmt(Math.round(fee))+' $FTR</b></div>' +
         '<div class="m-row total"><span>Total '+(side==='buy'?'Cost':'Payout')+'</span><b style="color:'+(side==='buy'?'var(--lime)':'var(--amber)')+'">'+fmt(tot)+' $FTR</b></div>' +
       '</div>' +
       '<div class="ft-modal-card">' +
@@ -507,7 +553,7 @@ if(ro){
         '<div class="m-row"><span>Current Position</span><b>'+(curH?fmt(curH.shares):'0')+' shares</b></div>' +
       '</div>' +
       '<div style="display:flex;gap:10px;margin-top:20px">' +
-        '<button class="btn btn-lime" id="confirmTradeBtn" type="button" style="flex:1;justify-content:center">Confirm '+side.toUpperCase()+'</button>' +
+        '<button class="btn btn-lime" id="confirmTradeBtn" type="button" style="flex:1;justify-content:center">Execute '+side.toUpperCase()+'</button>' +
         '<button class="btn btn-glass" id="cancelTradeBtn" type="button" style="flex:1;justify-content:center">Cancel</button>' +
       '</div>';
 
@@ -524,7 +570,15 @@ if(ro){
         closeModal();
         updateSupplyCard();
         calc();
-        var next=document.getElementById('tradeNext');if(!next){next=document.createElement('div');next.id='tradeNext';next.className='ux-banner';document.querySelector('.ticket').appendChild(next);}next.innerHTML='<span>Order complete. Your holdings have been updated.</span><a href="fanplay.html">Continue to FanPlay →</a>';
+        var next=document.getElementById('tradeNext');
+        if(!next){
+          next=document.createElement('div');
+          next.id='tradeNext';
+          next.className='ux-banner';
+          var tk=document.querySelector('.ticket');
+          if(tk) tk.appendChild(next);
+        }
+        if(next) next.innerHTML='<span>Order complete. Your holdings have been updated.</span> <a href="fanplay.html">Continue to FanPlay →</a>';
       }catch(err){
         showToast(err.message, "error");
       }
@@ -542,7 +596,7 @@ loadTicket=function(){
   updateSupplyCard();
 };
 
-rows(); loadTicket();
+rows(); loadTicket(); liveTicks('.mrow');
 """
 page("exchange.html", "Exchange — Fantrade", "".join(ex), EX_JS, EX_CSS, app=True)
 
@@ -581,14 +635,110 @@ CL_CSS = """
 """
 
 cl = []
-cl.append('<header class="phead"><div class="wrap"><span class="eyebrow">Dream Club</span><h1>My club</h1><p class="lede">Set up your club identity and formation. New to FanPlay? You can start with just one player.</p><div class="ux-actions"><a class="btn btn-glass" href="how-it-works.html">How to play</a><a class="btn btn-lime" href="fanplay.html">Go to FanPlay</a></div></div></header><main>')
+cl.append(T('<header class="phead"><div class="wrap">'
+          '<span class="pill" data-reveal>@@ Dream Clubs</span><h1 data-reveal>Zero FC</h1>'
+          '<p class="lede" data-reveal>Your club is a portfolio wearing a badge. Everything in the squad is owned '
+          'outright, and its value moves with the market underneath it.</p>'
+          '<div class="statbar" data-reveal><div>@@ Club value <b>245,800 $FTR</b></div>'
+          '<div>@@ Rank <b>#124 of 48,206</b></div><div>@@ Club FP <b>8,420</b></div>'
+          '<div>@@ Boost <b>+15%</b></div></div></div></header>', ic("crest", "ic"), ic("coin", "ic"), ic("trophy", "ic"), ic("bolt", "ic"), ic("target", "ic")))
+
+ROUNDS = [("MD 27", "812", "18th", "w", "+6,200"), ("MD 26", "704", "41st", "w", "+4,100"),
+          ("MD 25", "689", "63rd", "w", "+3,250"), ("MD 24", "512", "308th", "l", "-2,500"),
+          ("MD 23", "548", "214th", "l", "-2,500")]
+
+cl.append(T('<main><section style="padding-top:30px"><div class="wrap"><div class="bento">'
+          '<div class="bezel c7" data-reveal><div class="core">'
+          '<div style="padding:20px 22px 0"><div class="tabstrip" id="clTabs" role="tablist">'
+          '<button type="button" role="tab" aria-pressed="true" data-p="lineups">Line-ups</button>'
+          '<button type="button" role="tab" aria-pressed="false" data-p="position">League position</button>'
+          '<button type="button" role="tab" aria-pressed="false" data-p="form">Form &amp; results</button>'
+          '</div></div>'
+          '<div class="pane on" data-pane="lineups"><div class="pitch" id="pitchMount"></div></div>'
+
+          # ── league position, live ──
+          '<div class="pane" data-pane="position"><div class="pad">'
+          '<div style="display:flex;align-items:center;gap:12px;margin-bottom:22px;flex-wrap:wrap">'
+          '<div class="k-label" style="margin:0">League position — live</div>'
+          '<span class="listening" style="margin-left:auto"><i></i>Updating</span></div>'
+          '<div class="gauge">'
+          '<div class="gside"><div class="gbar"><i style="height:60%"></i></div>'
+          '<div class="pc">60%</div><div class="lb">Zero FC form</div></div>'
+          '<div class="ladder">'
+          '<div class="rung">#122</div><div class="rung">#123</div>'
+          '<div class="rung you" id="clRung">#124</div><div class="rung">#125</div></div>'
+          '<div class="gside"><div class="gbar rival"><i style="height:20%"></i></div>'
+          '<div class="pc">20%</div><div class="lb">Sextante FC</div></div>'
+          '</div>'
+          '<div style="display:flex;gap:26px;margin-top:28px;flex-wrap:wrap">'
+          '<div><div class="k-label">Zero FC · you</div>'
+          '<div class="form5"><i class="l">L</i><i class="l">L</i><i class="w">W</i><i class="w">W</i>'
+          '<i class="w">W</i></div></div>'
+          '<div style="margin-left:auto"><div class="k-label">#123 · Sextante FC</div>'
+          '<div class="form5"><i class="w">W</i><i class="l">L</i><i class="d">D</i><i class="l">L</i>'
+          '<i class="l">L</i></div></div></div>'
+          '<div style="margin-top:26px;border-top:1px solid var(--hair);padding-top:6px">'
+          '<div class="b-row"><span>Points behind #123</span><b>140 FP</b></div>'
+          '<div class="b-row"><span>Points clear of #125</span><b>96 FP</b></div>'
+          '<div class="b-row"><span>Apex promotion cutoff</span><b>Top 150</b></div>'
+          '<div class="b-row total"><span>Projected finish</span>'
+          '<b style="color:var(--lime)">#118 · safe</b></div></div>'
+          '</div></div>'
+
+          # ── form and results ──
+          '<div class="pane" data-pane="form"><div class="pad" style="padding-bottom:20px">'
+          '<div class="k-label">Last five settled rounds</div></div>'
+          '<div class="dt"><div class="dh" style="grid-template-columns:78px 1fr 90px 92px 46px">'
+          '<span>Round</span><span>Points</span><span>Finish</span>'
+          '<span style="text-align:right">Settled</span><span style="text-align:right">R</span></div>'
+          + "".join(T('<div class="dr" style="grid-template-columns:78px 1fr 90px 92px 46px">'
+                      '<div class="num" style="font-size:13px">@@</div>'
+                      '<div><div class="num" style="font-size:13px">@@ FP</div>'
+                      '<div class="sub-line">Elite tier · Dream Club mode</div></div>'
+                      '<div style="color:var(--dim);font-size:12.5px">@@ / 1,420</div>'
+                      '<div class="pl @@" style="text-align:right">@@</div>'
+                      '<div style="text-align:right"><span class="form5" style="justify-content:flex-end">'
+                      '<i class="@@">@@</i></span></div></div>',
+                      md, pts, fin, "up" if res == "w" else "down", ftr, res, res.upper())
+                    for md, pts, fin, res, ftr in ROUNDS) +
+          '</div>'
+          '<div class="pad" style="padding-top:22px">'
+          '<div class="mini-grid" style="grid-template-columns:repeat(3,1fr)">'
+          '<div class="mini"><div class="k">Rounds won</div><div class="v lime">3 of 5</div></div>'
+          '<div class="mini"><div class="k">Best finish</div><div class="v">18th</div></div>'
+          '<div class="mini"><div class="k">Net this cycle</div><div class="v amber">+8,550</div></div>'
+          '</div></div></div>'
+
+          '</div></div>'
+          '<div class="c5" style="display:flex;flex-direction:column;gap:16px">'
+          '<div class="bezel" data-reveal><div class="core pad"><div class="k-label">Club value</div>'
+          '<div class="value-big">245,800 <small>$FTR</small></div>'
+          '<div class="delta">▲ 12,400 this week</div>'
+          '<div style="margin-top:22px;border-top:1px solid var(--hair);padding-top:6px">'
+          '<div class="b-row"><span>Starting XI</span><b>180,600</b></div>'
+          '<div class="b-row"><span>Bench (4)</span><b>45,200</b></div>'
+          '<div class="b-row"><span>Coach $Arteta</span><b>20,000</b></div>'
+          '<div class="b-row total"><span>Club value</span><b>245,800</b></div></div>'
+          '<div style="margin-top:18px">@@</div></div></div>'
+          '<div class="mini-grid" data-reveal>'
+          '<div class="mini"><div class="k">Last round</div><div class="v lime">312</div></div>'
+          '<div class="mini"><div class="k">Season FP</div><div class="v">8,420</div></div>'
+          '<div class="mini"><div class="k">Win rate</div><div class="v">62%</div></div>'
+          '<div class="mini"><div class="k">$FTR earned</div><div class="v amber">19,640</div></div></div>'
+          '<div class="bezel" data-reveal style="flex:1"><div class="core pad-sm">'
+          '<div class="k-label">Club value · last 8 rounds</div><div id="valChart"></div></div></div>'
+          '</div></div></div></section>', btn("Enter this club in FanPlay", "btn-lime btn-sm", "fanplay.html")))
+
 # builder
 cl.append(T('<section id="builder"><div class="wrap"><div class="sec-head" data-reveal>'
-          '<span class="pill">@@ Club builder</span><h2>Make it your club</h2>'
-          '<p class="lede">Choose a name, colours and formation. The pitch shows a sample squad. Buy player '
-          'shares in the Exchange to become eligible for FanPlay.</p></div>', ic("formation", "ic")))
+          '<span class="pill">@@ Club builder</span><h2>Build it in<br>eight steps</h2>'
+          '<p class="lede">Identity first, squad second. Every slot you fill checks your wallet before it accepts a '
+          'name — change the formation and the shape rebuilds around the players you own.</p></div>', ic("formation", "ic")))
 cl.append(T('<div class="bento"><div class="bezel c5" data-reveal><div class="core pad">'
-          '<h3 style="margin-bottom:20px">Club details</h3>'
+          '<div class="stepper" id="stepper">'
+          '<button aria-current="step">@@ 1 Name</button><button>@@ 2 Identity</button>'
+          '<button>@@ 3 Coach</button><button>@@ 4 Shape</button><button>@@ 5 XI</button>'
+          '<button>@@ 6 Bench</button><button>@@ 7 Review</button><button>@@ 8 Save</button></div>'
           '<div class="field"><label>Club name</label><input id="clubNameInput" value="Zero FC" style="text-align:right"></div>'
           '<div class="field"><label>Stadium</label><input id="clubStadiumInput" value="Emirates of the North" style="text-align:right;font-size:13px"></div>'
           '<div class="k-label" style="margin-top:20px">Club colours</div>'
@@ -601,14 +751,15 @@ cl.append(T('<div class="bento"><div class="bezel c5" data-reveal><div class="co
           '<div class="k-label" style="margin-top:26px">Formation</div>'
           '<div class="forms" id="forms"><button aria-pressed="true">4-3-3</button><button>4-4-2</button>'
           '<button>3-5-2</button><button>4-2-3-1</button></div>'
-          '<div class="line" style="margin-top:24px"><span>Squad preview</span><b>Illustrative lineup</b></div>'
+          '<div class="line" style="margin-top:24px"><span>Ownership check</span><b class="up">15 of 16 owned</b></div>'
           '<div class="line"><span>Projected boost</span><b>+15.0%</b></div>'
-          '@@</div></div>',
+          '@@</div></div>', ic("crest", "ic"), ic("swatch", "ic"), ic("whistle", "ic"), ic("formation", "ic"),
+                              ic("pitch", "ic"), ic("subs", "ic"), ic("check", "ic"), ic("shield", "ic"),
                               btn("Save club", tag="button", extra='id="saveClubBtn" style="margin-top:20px;width:100%;justify-content:space-between"')))
 cl.append('<div class="bezel c7" data-reveal><div class="core pitch" id="builderPitch"></div></div></div></div></section>')
 
 # chemistry
-cl.append(T('<section id="chem"><div class="wrap"><details class="ux-details"><summary>How club chemistry works</summary><div class="sec-head" data-reveal>'
+cl.append(T('<section id="chem"><div class="wrap"><div class="sec-head" data-reveal>'
           '<span class="pill amber">@@ Club chemistry</span><h2>Why one squad<br>boosts harder</h2>'
           '<p class="lede">Two managers can own the same eleven players and score differently. Chemistry rewards the '
           'club that is actually coherent, not just expensive.</p></div><div class="bento">', ic("target", "ic")))
@@ -619,11 +770,40 @@ for icon, t, d, c, am in [("whistle", "Coach compatibility", "A coach whose real
                           ("clock", "Club consistency", "Clubs that hold their shape across rounds build a consistency bonus. Constant teardowns reset it.", "c6", "")]:
     cl.append(T('<div class="bezel tight @@" data-reveal><div class="core pad f"><span class="ibox @@">@@</span>'
               '<h4>@@</h4><p>@@</p></div></div>', c, am, ic(icon, "ic-lg"), t, d))
-cl.append('</div></details></div></section>')
+cl.append('</div></div></section>')
 
-cl.append('</main>')
+# leaderboard
+LB = [("1", "Vanguard XI", "#C4F82A", "612,400", "14,980", "+19%"),
+      ("2", "Casa Blanca FC", "#E8E8E8", "588,100", "14,220", "+18%"),
+      ("3", "Northside Union", "#4DA3FF", "540,750", "13,640", "+17%"),
+      ("4", "Estádio Nove", "#FF6A1F", "498,300", "12,905", "+16%"),
+      ("124", "Zero FC", "#C4F82A", "245,800", "8,420", "+15%")]
+cl.append(T('<section><div class="wrap"><div class="sec-head" data-reveal>'
+          '<span class="pill">@@ Club table</span><h2>Where your club<br>sits this season</h2></div>'
+          '<div class="bezel" data-reveal><div class="core">'
+          '<div class="lb h"><span>Rank</span><span>Club</span><span>Club value</span><span>Season FP</span><span>Boost</span></div>', ic("trophy", "ic")))
+for r, n, col, v, fp, b in LB:
+    cl.append(T('<div class="lb@@"@@><span class="rank">@@</span><span class="cn">'
+              '<span class="mini-crest" style="background:linear-gradient(160deg,@@,rgba(0,0,0,.4))"></span>@@</span>'
+              '<span class="num">@@</span><span class="num">@@</span><span class="num up">@@</span></div>',
+              " you" if n == "Zero FC" else "", ' id="myClubLbRow"' if n == "Zero FC" else "", r, col, n, v, fp, b))
+cl.append('</div></div></div></section></main>')
 
 CL_JS = PITCH_JS + r"""
+document.querySelectorAll('#clTabs button').forEach(function(b){
+  b.addEventListener('click', function(){
+    document.querySelectorAll('#clTabs button').forEach(function(x){ x.setAttribute('aria-pressed','false'); });
+    b.setAttribute('aria-pressed', 'true');
+    document.querySelectorAll('[data-pane]').forEach(function(p){
+      p.classList.toggle('on', p.dataset.pane === b.dataset.p);
+    });
+  });
+});
+(function(){
+  var r = document.getElementById('clRung');
+  if(r) r.textContent = '#' + FT.getState().club.rank;
+})();
+
 var FORMS={
  '4-3-3':[[['ST','$Haaland']],[['LW','$Vinicius'],['CAM','$Bruno',1],['RW','$Saka']],
           [['CM','$Rice'],['CM','$Odegaard']],
@@ -878,26 +1058,104 @@ for (name, m, note, risk), icon, c in zip(TIERS, icons, spans):
                  "Low" if risk < 40 else ("Medium" if risk < 70 else "High")))
 fp.append('</div></div></section>')
 
-# live board
-FX = [("Arsenal v Chelsea", "live", "68'", "$Saka 42 FP"),
-      ("Man Utd v Spurs", "live", "54'", "$Bruno 31 FP"),
-      ("Man City v Everton", "live", "71'", "$Haaland 58 FP"),
-      ("Real Madrid v Betis", "ft", "FT", "$Vinicius 44 FP"),
-      ("Bayern v Leipzig", "soon", "19:30", "$Musiala —"),
-      ("Barcelona v Sevilla", "soon", "21:00", "$Pedri —")]
-fp.append(T('<section><div class="wrap"><div class="sec-head" data-reveal>'
-          '<span class="pill">@@ Live board</span><h2>Your club is alive<br>across nine matches</h2>'
-          '<p class="lede">Fantrade does not require your eleven to be in the same fixture. Points accrue wherever your '
-          'players are on the pitch, and the window settles them together.</p></div>'
-          '<div class="bento"><div class="bezel c8" data-reveal><div class="core">'
-          '<div class="fx h"><span>Fixture</span><span>Status</span><span>Contribution</span></div>', ic("pulse", "ic")))
-for fixture, st, clock, contrib in FX:
-    fp.append(T('<div class="fx"><span class="team">@@@@</span><span><span class="st @@">@@</span></span>'
-              '<span class="num" style="font-size:12.5px;color:var(--dim)">@@</span></div>', ic("pitch", "ic-sm"), fixture, st, clock, contrib))
-fp.append('</div></div><div class="c4" style="display:flex;flex-direction:column;gap:16px">'
+# ── matchday board ────────────────────────────────────────────────
+# (fid, home, home colour, home score, away, away colour, away score,
+#  status, clock, your asset on the pitch)
+MATCHDAY = [
+    ("eng", "Premier League", "Matchweek 7", [
+        ("m-ars", "Arsenal", "ARS", "#EF0107", "2", "Chelsea", "CHE", "#034694", "1", "live", "68'", "$Saka · 42 FP"),
+        ("m-mci", "Man City", "MCI", "#6CABDD", "3", "Everton", "EVE", "#003399", "0", "live", "71'", "$Haaland · 58 FP"),
+        ("m-mun", "Man United", "MUN", "#DA291C", "1", "Tottenham", "TOT", "#8f95a3", "1", "live", "54'", "$Bruno · 31 FP"),
+        ("m-new", "Newcastle", "NEW", "#8f95a3", "–", "Brighton", "BHA", "#0057B8", "–", "soon", "19:30", ""),
+    ]),
+    ("esp", "La Liga", "Jornada 7", [
+        ("m-rma", "Real Madrid", "RMA", "#FEBE10", "4", "Real Betis", "BET", "#00954C", "0", "ft", "FT", "$Vinicius · 44 FP"),
+        ("m-bar", "Barcelona", "BAR", "#A50044", "–", "Sevilla", "SEV", "#D4021D", "–", "soon", "21:00", "$Pedri"),
+    ]),
+    ("ger", "Bundesliga", "Spieltag 6", [
+        ("m-bay", "Bayern", "FCB", "#DC052D", "2", "RB Leipzig", "RBL", "#DD0741", "2", "ht", "HT", "$Musiala · 19 FP"),
+    ]),
+    ("ita", "Serie A", "Play-offs", [
+        ("m-sud", "Sudtirol", "SUD", "#8f95a3", "1", "Bari", "BAR", "#C8102E", "1", "aet", "AET", ""),
+        ("m-bar2", "Barnsley", "BAR", "#D2122E", "–", "Sheff Wednesday", "SHW", "#0057B8", "–", "soon", "20:30", ""),
+    ]),
+]
+
+fp.append(T('<section id="board"><div class="wrap"><div class="sec-head" data-reveal>'
+            '<span class="pill">@@ Live board</span><h2>Your club is alive<br>across nine matches</h2>'
+            '<p class="lede">Fantrade does not require your eleven to be in the same fixture. Points accrue wherever '
+            'your players are on the pitch, and the window settles them together.</p></div>'
+            '<div class="bento"><div class="bezel c8" data-reveal><div class="core">', ic("pulse", "ic")))
+
+# date strip
+fp.append(T('<div style="padding:24px 22px 18px">'
+            '<div class="datestrip">'
+            '<button class="livetgl" type="button" id="liveOnly" aria-pressed="false">'
+            '<span class="dot-live"></span>Live only</button>'
+            '<div class="dates" id="dateStrip">'
+            '<span class="nudge">@@</span>'
+            '<button type="button" aria-pressed="false"><small>Sun</small><b>28 Sep</b></button>'
+            '<button type="button" aria-pressed="true"><small>Today</small><b>29 Sep</b></button>'
+            '<button type="button" aria-pressed="false"><small>Tue</small><b>30 Sep</b></button>'
+            '<span class="nudge">@@</span></div>'
+            '<button class="bell" type="button" id="calBtn" aria-label="Open the full calendar" '
+            'style="border-radius:14px">@@</button>'
+            '</div></div>',
+            "‹", "›", ic("calendar", "ic")))
+
+# featured match
+fp.append(T('<div style="padding:0 22px">'
+            '<div class="feat islive" id="featCard">'
+            '<div class="feat-top"><button type="button" id="featHide">Hide</button>'
+            '<div class="mid"><b>Emirates Stadium</b><span>Matchweek 7 · your biggest exposure</span></div>'
+            '<a href="#board" style="color:var(--faint)">Match</a></div>'
+            '<div class="feat-mid">'
+            '<div class="side"><span class="tcrest" style="background:linear-gradient(160deg,#EF0107,#8d0104)">ARS</span>'
+            '<div class="nm">Arsenal</div><div class="ha">@@ Home</div></div>'
+            '<div class="sc" id="featScore">2 : 1</div>'
+            '<div class="side"><span class="tcrest" style="background:linear-gradient(160deg,#034694,#02295a)">CHE</span>'
+            '<div class="nm">Chelsea</div><div class="ha">Away</div></div></div>'
+            '<span class="minute live" id="featMin">68&rsquo;</span></div></div>',
+            ic("stadium", "ic")))
+
+# competition groups
+fp.append('<div id="boardList">')
+for code, comp, sub, fixtures in MATCHDAY:
+    fp.append(T('<div class="comp">@@<div><b>@@</b><span>@@</span></div>'
+                '<a class="more" href="#board">All fixtures @@</a></div>',
+                flag(code), comp, sub, ic("arrow", "ic-sm")))
+    for fid, home, hsh, hc, hs, away, ash, ac, a_s, st, clock, mine in fixtures:
+        hw = hs.isdigit() and a_s.isdigit() and int(hs) > int(a_s)
+        aw = hs.isdigit() and a_s.isdigit() and int(a_s) > int(hs)
+        fp.append(T('<div class="fixt@@" data-fid="@@" data-live="@@">'
+                    '<div class="stat">@@</div>'
+                    '<div class="teams">'
+                    '<div class="tm@@"><span class="tcrest sm" style="background:@@">@@</span>'
+                    '<span class="n">@@</span>@@<span class="g">@@</span></div>'
+                    '<div class="tm@@"><span class="tcrest sm" style="background:@@">@@</span>'
+                    '<span class="n">@@</span><span class="g">@@</span></div></div>'
+                    '<button class="star" type="button" data-fav="@@" aria-pressed="false" '
+                    'aria-label="Follow this fixture">@@</button></div>',
+                    " live" if st in ("live", "ht") else "", fid, "1" if st in ("live", "ht") else "0",
+                    ("<b>%s</b>" % clock) if st in ("live", "ht", "aet") else clock,
+                    "" if hw or not (hw or aw) else " dim", hc, hsh, home,
+                    ('<span class="mine">%s</span>' % mine) if mine else "", hs,
+                    "" if aw or not (hw or aw) else " dim", ac, ash, away, a_s,
+                    fid, ic("star", "ic")))
+fp.append('</div>')
+
+fp.append('<div style="padding:16px 22px 26px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">'
+          '<span style="font-size:11.5px;color:var(--faint);font-weight:300" id="boardNote">'
+          '9 fixtures tracked this window · 4 of them carry your assets</span></div>')
+
+fp.append('</div></div>')
+
+# side column — countdown + running total
+fp.append('<div class="c4" style="display:flex;flex-direction:column;gap:16px">'
           '<div class="bezel" data-reveal><div class="core pad"><div class="k-label">Round closes in</div>'
           '<div class="countdown"><div class="cd"><b id="cdH">04</b><span>Hours</span></div>'
-          '<div class="cd"><b id="cdM">12</b><span>Mins</span></div><div class="cd"><b id="cdS">38</b><span>Secs</span></div></div>'
+          '<div class="cd"><b id="cdM">12</b><span>Mins</span></div>'
+          '<div class="cd"><b id="cdS">38</b><span>Secs</span></div></div>'
           '<p style="font-size:13px;font-weight:300;color:var(--dim);margin-top:18px">Entries lock at the window. '
           'Lineups, captain and market tier are fixed from that moment.</p></div></div>'
           '<div class="bezel" data-reveal style="flex:1"><div class="core pad"><div class="k-label">Running total</div>'
@@ -905,7 +1163,14 @@ fp.append('</div></div><div class="c4" style="display:flex;flex-direction:column
           '<div class="delta">Club mode · Elite · +15% boost applied at settlement</div>'
           '<div style="margin-top:20px"><div class="b-row"><span>Starters scoring</span><b>7 of 11</b></div>'
           '<div class="b-row"><span>Subs activated</span><b>1</b></div>'
-          '<div class="b-row"><span>Coach modifier</span><b>+3.0%</b></div></div></div></div></div></div></div></section>')
+          '<div class="b-row"><span>Coach modifier</span><b>+3.0%</b></div>'
+          '<div class="b-row total"><span>Followed fixtures</span><b id="favCount">1</b></div></div>'
+          '<div class="k-label" style="margin-top:26px">Club form</div>'
+          '<div class="form5" style="margin-bottom:12px">'
+          '<i class="l">L</i><i class="l">L</i><i class="w">W</i><i class="w">W</i><i class="w">W</i></div>'
+          '<p style="font-size:11.5px;color:var(--faint);font-weight:300;line-height:1.6">'
+          'Three straight rounds in the top 5% of the Apex division.</p>'
+          '</div></div></div></div></div></section>')
 
 # scoring rules
 RULES = [("Goal", "6", "4", "9"), ("Assist", "4", "3", "6"), ("Clean sheet", "5", "1", "7"),
@@ -1010,6 +1275,108 @@ if(!reduce) setInterval(function(){
     el.innerHTML=run+" <small>FP</small>";
     el.style.color='#C4F82A'; setTimeout(function(){ el.style.color=''; },800); }
 },2600);
+
+// ══ matchday board ══════════════════════════════════════════════
+function $(id){ return document.getElementById(id); }
+
+// follow / unfollow a fixture — persists to FT state
+function paintStars(){
+  var n = 0;
+  document.querySelectorAll('.star[data-fav]').forEach(function(b){
+    var on = FT.isFav(b.dataset.fav);
+    b.setAttribute('aria-pressed', on ? 'true' : 'false');
+    b.setAttribute('aria-label', (on ? 'Stop following ' : 'Follow ') + 'this fixture');
+    if(on) n++;
+  });
+  if($('favCount')) $('favCount').textContent = n;
+}
+document.querySelectorAll('.star[data-fav]').forEach(function(b){
+  b.addEventListener('click', function(){
+    var added = FT.toggleFav(b.dataset.fav);
+    paintStars();
+    showToast(added ? 'Following this fixture — you will be told when it settles.'
+                    : 'Stopped following that fixture.', added ? 'success' : 'info');
+  });
+});
+paintStars();
+window.addEventListener('fantrade:statechange', paintStars);
+
+// live-only filter
+var liveOnly = false;
+function filterBoard(){
+  var shown = 0;
+  document.querySelectorAll('.fixt').forEach(function(r){
+    var keep = !liveOnly || r.dataset.live === '1';
+    r.style.display = keep ? '' : 'none';
+    if(keep) shown++;
+  });
+  document.querySelectorAll('.comp').forEach(function(c){
+    var any = false, n = c.nextElementSibling;
+    while(n && n.classList.contains('fixt')){
+      if(n.style.display !== 'none') any = true;
+      n = n.nextElementSibling;
+    }
+    c.style.display = any ? '' : 'none';
+  });
+  $('boardNote').textContent = liveOnly
+    ? shown + ' fixtures in play right now'
+    : '9 fixtures tracked this window · 4 of them carry your assets';
+}
+$('liveOnly').addEventListener('click', function(){
+  liveOnly = !liveOnly;
+  $('liveOnly').setAttribute('aria-pressed', liveOnly ? 'true' : 'false');
+  filterBoard();
+});
+
+// date strip
+document.querySelectorAll('#dateStrip button').forEach(function(b){
+  b.addEventListener('click', function(){
+    document.querySelectorAll('#dateStrip button').forEach(function(x){ x.setAttribute('aria-pressed','false'); });
+    b.setAttribute('aria-pressed', 'true');
+    var day = b.querySelector('small').textContent;
+    if(day === 'Today'){ filterBoard(); return; }
+    showToast(day + ' has no settled Fantrade window yet — the board shows today.', 'info');
+  });
+});
+
+$('calBtn').addEventListener('click', function(){
+  openModal('<h3 class="ft-modal-title">Settlement calendar</h3>'
+    + '<p class="ft-modal-desc">Rounds run on a fixed weekly clock. Entries lock at the window and settle on the '
+    + 'last final whistle inside it.</p>'
+    + '<div class="ft-modal-card">'
+    + '<div class="m-row"><span>Matchday 07</span><b style="color:var(--live)">In play · closes Fri 18:30</b></div>'
+    + '<div class="m-row"><span>Matchday 08</span><b>Opens Sat 09:00</b></div>'
+    + '<div class="m-row"><span>Matchday 09</span><b>Opens 12 Oct</b></div>'
+    + '<div class="m-row total"><span>Cycle ends</span><b>Matchday 10 · 19 Oct</b></div></div>'
+    + '<p style="font-size:11.5px;color:var(--faint);font-weight:300;line-height:1.6;margin:0">'
+    + 'Prototype build — the board shows a fixed set of fixtures.</p>');
+});
+
+// hide the featured card
+$('featHide').addEventListener('click', function(){
+  var c = $('featCard');
+  var hidden = c.dataset.hidden === '1';
+  c.dataset.hidden = hidden ? '0' : '1';
+  c.querySelector('.feat-mid').style.display = hidden ? '' : 'none';
+  c.querySelector('.minute').style.display = hidden ? '' : 'none';
+  c.style.paddingBottom = hidden ? '' : '20px';
+  $('featHide').textContent = hidden ? 'Hide' : 'Show';
+});
+
+// the featured minute ticks with the round
+(function(){
+  if(reduce) return;
+  var min = 68, hs = 2, as = 1;
+  setInterval(function(){
+    if(min >= 90){ $('featMin').textContent = "90'+" + (min - 89); }
+    else { min++; $('featMin').textContent = min + "\u2019"; }
+    if(min < 90 && Math.random() < 0.08){
+      Math.random() < 0.6 ? hs++ : as++;
+      $('featScore').textContent = hs + ' : ' + as;
+      showToast('Goal at the Emirates — ' + hs + ':' + as + '.', 'info');
+    }
+  }, 5000);
+})();
 """
 page("fanplay.html", "FanPlay — Fantrade", "".join(fp), FP_JS, FP_CSS, app=True)
 
