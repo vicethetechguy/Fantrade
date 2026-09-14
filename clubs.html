@@ -376,73 +376,80 @@ footer{border-top:1px solid var(--hair);padding:70px 0 64px;background:rgba(255,
   .phead .lede{font-size:14.5px;margin-top:16px}
   h2{font-size:clamp(23px,7vw,34px)!important;font-variation-settings:'wdth' 105,'wght' 800!important}
   .cta-sec h2{font-size:clamp(25px,7.8vw,38px)!important;font-variation-settings:'wdth' 105,'wght' 800!important}
-  .bento,.bento.halves{grid-template-columns:1fr;gap:12px;width:100%;min-width:0}
-  .bento .c6,.bento.halves .c6{grid-column:span 1}
-  .bezel{padding:6px;--r-out:1.4rem;--r-in:calc(1.4rem - .375rem);max-width:100%;min-width:0;box-sizing:border-box}
-  .bezel>.core{max-width:100%;min-width:0;box-sizing:border-box}
-  .pad{padding:26px 20px}.pad-sm{padding:20px 16px}
-  .btn{min-height:46px;padding:11px 11px 11px 20px;max-width:100%}
+  /* Bento grids on mobile: strictly flex column to prevent ANY overlapping or implicit grid bugs */
+  .bento, .bento.halves{display:flex!important;flex-direction:column!important;gap:16px!important;width:100%!important;max-width:100%!important;min-width:0!important;box-sizing:border-box!important}
+  .bento > *, .bento.halves > *,
+  .c3, .c4, .c5, .c6, .c7, .c8, .c9, .c12{grid-column:auto!important;width:100%!important;max-width:100%!important;min-width:0!important;flex:0 0 auto!important;box-sizing:border-box!important}
+  .bezel{padding:6px;--r-out:1.4rem;--r-in:calc(1.4rem - .375rem);width:100%!important;max-width:100%!important;min-width:0!important;box-sizing:border-box!important}
+  .bezel>.core{width:100%!important;max-width:100%!important;min-width:0!important;box-sizing:border-box!important}
+  .pad{padding:24px 18px}.pad-sm{padding:18px 14px}
+  .btn{min-height:46px;padding:11px 18px;max-width:100%;box-sizing:border-box!important}
 
   /* Forms & controls */
-  .field{padding:12px 14px;border-radius:14px;margin-bottom:8px}
+  .field{padding:12px 14px;border-radius:14px;margin-bottom:8px;box-sizing:border-box!important;width:100%!important}
   .field label{font-size:9px}
   .field input{font-size:16px!important;width:65%}
-  .quick{gap:6px;margin:10px 0 16px}
+  .quick{gap:6px;margin:10px 0 16px;width:100%!important;box-sizing:border-box!important}
   .quick button{min-width:52px;padding:8px 0;font-size:10.5px}
 
   /* Market Table on Exchange */
-  .rail .searchbox{width:100%;flex:1 1 100%;min-width:100%;order:-1;padding:8px 14px}
-  .rail .seg{width:100%;justify-content:space-between;padding:4px}
+  .rail .searchbox{width:100%;flex:1 1 100%;min-width:100%;order:-1;padding:8px 14px;box-sizing:border-box!important}
+  .rail .seg{width:100%;justify-content:space-between;padding:4px;box-sizing:border-box!important}
   .rail .seg button{flex:1;justify-content:center;padding:8px 10px;font-size:10px}
-  .mhead,.mrow{grid-template-columns:1.5fr 1fr 68px;gap:8px;padding:12px 14px}
+  .mhead,.mrow{grid-template-columns:1.5fr 1fr 68px;gap:8px;padding:12px 14px;box-sizing:border-box!important}
   .mhead span:nth-child(3),.mhead span:nth-child(4),.mhead span:nth-child(5){display:none}
   .mrow>div:nth-child(3),.mrow>div:nth-child(4),.mrow>div:nth-child(5){display:none}
   .mhead span:nth-child(6),.mrow>div:nth-child(6){display:block}
   .tradebtn{padding:6px 0;font-size:9.5px;width:100%;border-radius:999px}
-  .brow{grid-template-columns:1.5fr 1fr .8fr;padding:12px 14px}
+  .brow{grid-template-columns:1.5fr 1fr .8fr;padding:12px 14px;box-sizing:border-box!important}
   .bhead span:last-child,.brow>div:last-child{display:none}
 
   /* Pitch & Squad Builder */
-  .pitch{padding:20px 10px}
+  .pitch{padding:20px 10px;box-sizing:border-box!important}
   .pitch-head{flex-wrap:wrap;gap:10px;margin-bottom:20px}
   .pitch-head .name{font-size:18px}
   .pitch-head .coach{margin-left:0;width:100%;border-top:1px solid rgba(255,255,255,.07);padding-top:10px}
-  .line-row{gap:5px;margin-bottom:7px}
-  .chip{min-width:0;flex:1 1 66px;max-width:82px;padding:7px 3px;border-radius:10px}
+  .line-row{gap:5px;margin-bottom:7px;width:100%!important;box-sizing:border-box!important}
+  .chip{min-width:0;flex:1 1 66px;max-width:82px;padding:7px 3px;border-radius:10px;box-sizing:border-box!important}
   .chip:hover{transform:none}
   .chip .pos{font-size:7.5px;letter-spacing:.06em}
   .chip .nm{font-size:10px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .chip.cap .arm{font-size:7px;gap:2px}
   .chip.cap .arm .ic{width:8px;height:8px}
-  .bench{margin-top:18px;padding-top:14px}
-  .bench-row{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding-bottom:6px;margin-right:-10px;padding-right:10px}
+  .bench{margin-top:18px;padding-top:14px;width:100%!important;box-sizing:border-box!important}
+  .bench-row{display:flex;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding:4px 0 8px 0!important;margin:0!important;width:100%!important;box-sizing:border-box!important;gap:8px}
   .bench-row::-webkit-scrollbar{display:none}
   .chip.sm{flex:0 0 auto;min-width:80px;padding:6px 8px}
-  .stepper{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:6px;margin-bottom:16px}
+  .stepper{display:flex;flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding:0 0 6px 0!important;margin:0 0 16px 0!important;width:100%!important;box-sizing:border-box!important;gap:6px}
   .stepper::-webkit-scrollbar{display:none}
   .stepper button{flex:0 0 auto;padding:8px 12px;font-size:9.5px}
-  .forms{gap:6px}
+  .forms{gap:6px;width:100%!important;box-sizing:border-box!important}
   .forms button{min-width:68px;padding:11px 0;font-size:13px;border-radius:12px}
-  .swatches{gap:10px}
+  .swatches{gap:10px;width:100%!important;box-sizing:border-box!important}
   .sw{width:36px;height:36px;border-radius:10px}
 
   /* FanPlay components */
-  .tabs{flex-direction:row;gap:6px;padding:6px;border-radius:16px}
-  .tab{flex:1;padding:10px 8px;min-height:48px;border-radius:12px;gap:8px;justify-content:center}
+  .tabs{flex-direction:row;gap:6px;padding:6px;border-radius:16px;box-sizing:border-box!important;width:100%!important}
+  .tab{flex:1;padding:10px 8px;min-height:48px;border-radius:12px;gap:8px;justify-content:center;box-sizing:border-box!important}
   .tab b{font-size:12px;margin-bottom:0}
   .tab span{display:none}
   .tab .ibox{width:26px;height:26px;border-radius:8px}
-  .fp-sel{padding:14px;border-radius:16px;margin-bottom:18px}
+  .fp-sel{padding:14px;border-radius:16px;margin-bottom:18px;box-sizing:border-box!important;width:100%!important}
   .fp-sel .nm{font-size:16px}
   .fp-sel .sub{font-size:8.5px}
-  .markets{flex-wrap:nowrap;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:8px;
-    margin-right:-20px;padding-right:20px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .markets{display:flex;flex-wrap:nowrap;overflow-x:auto;scroll-snap-type:x mandatory;padding:4px 0 10px 0!important;
+    margin:0!important;width:100%!important;max-width:100%!important;box-sizing:border-box!important;scrollbar-width:none;-webkit-overflow-scrolling:touch;gap:8px}
   .markets::-webkit-scrollbar{display:none}
   .mkt{flex:0 0 auto;scroll-snap-align:start;min-height:40px;padding:8px 14px;font-size:10.5px}
   .mkt:hover{transform:none}
-  .out{padding:20px 14px;border-radius:16px;margin-top:16px}
+  .calc{width:100%!important;box-sizing:border-box!important}
+  .calc .cr,.b-row{display:flex!important;justify-content:space-between!important;align-items:center!important;gap:10px!important;width:100%!important;box-sizing:border-box!important}
+  .calc .cr span,.b-row span{min-width:0!important;flex:1 1 auto!important;overflow:hidden!important;text-overflow:ellipsis!important}
+  .calc .cr b,.b-row b{flex:0 0 auto!important;text-align:right!important;white-space:nowrap!important}
+  .out{padding:20px 14px;border-radius:16px;margin-top:16px;width:100%!important;box-sizing:border-box!important}
   .out .v{font-size:38px;margin-top:8px}
-  .countdown{gap:6px}
+  .out .n{word-break:break-word!important;white-space:normal!important;line-height:1.4!important}
+  .countdown{gap:6px;width:100%!important;box-sizing:border-box!important}
   .cd{padding:10px 4px;border-radius:12px}
   .cd b{font-size:18px}
   .cd span{font-size:8px}

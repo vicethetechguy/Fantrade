@@ -898,9 +898,13 @@ FP_CSS = """
 .cd b{display:block;font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:300}
 .cd span{font-weight:600;font-size:8.5px;letter-spacing:.16em;color:var(--faint);text-transform:uppercase}
 @media (max-width:1024px){.fp-body{grid-template-columns:1fr}.fp-left{border-right:0;border-bottom:1px solid var(--hair)}}
-@media (max-width:768px){.fp-left,.fp-right{padding:26px 22px}
- .fx,.rule{grid-template-columns:1.4fr 1fr;padding:14px 16px}
- .fx>*:nth-child(n+3),.rule>*:nth-child(n+3){display:none}}
+@media (max-width:768px){
+  .fp-body{display:flex!important;flex-direction:column!important;width:100%!important;max-width:100%!important;min-width:0!important;box-sizing:border-box!important}
+  .fp-left,.fp-right{width:100%!important;max-width:100%!important;min-width:0!important;padding:22px 16px!important;box-sizing:border-box!important}
+  .fp-left{border-right:0!important;border-bottom:1px solid var(--hair)!important}
+  .fx,.rule{grid-template-columns:1.4fr 1fr!important;padding:12px 14px!important;width:100%!important;box-sizing:border-box!important}
+  .fx>*:nth-child(n+3),.rule>*:nth-child(n+3){display:none!important}
+}
 """
 
 fp = []
