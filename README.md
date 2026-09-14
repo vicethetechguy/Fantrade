@@ -21,7 +21,8 @@ self-contained HTML file with no build step and no runtime dependencies beyond G
 | `signin.html` | Split-screen sign in — validation, password reveal, passkey/social stubs, reset-link modal |
 | `signup.html` | Account creation — password strength meter, region select, terms gate, hands off to onboarding |
 | `onboarding.html` | Four-step setup wizard — manager profile, opening grant, first share purchase, club identity |
-| `dashboard.html` | Signed-in home — net worth, club summary, live lock countdown, matchday board, movers, activity, entries |
+| `dashboard.html` | **Home** — net worth with range-switched chart, club summary, live lock countdown, matchday board, movers, activity, entries |
+| `account.html` | Account hub — identity card, and the way in to the wallet, portfolio, club, league table, notifications and settings |
 | `portfolio.html` | Portfolio & ledger — holdings table with filters and live P&L, allocation split, settlement ledger, yield, CSV export |
 | `leaderboard.html` | Global standings — division filters, search and sort, club inspection, promotion matrix, syndicate index |
 | `notifications.html` | Activity feed — day grouping, per-kind filters, unread state, per-channel toggles |
@@ -38,10 +39,21 @@ python3 -m http.server 8000
 
 ## Navigation
 
-There are two nav shells. Marketing pages (`index`, `how-it-works`) show the public nav with
-**Sign in** and **Get started**. Signed-in pages show the app nav — Dashboard, Exchange, Dream Clubs,
-FanPlay, Portfolio, Leaderboard — plus the wallet chip, the notification bell and an account menu.
-Auth pages use a stripped shell: logo, one way back, no footer.
+Three shells.
+
+**App pages** get two floating bars and nothing else — no hamburger, no slide-out menu, no page links
+up top. A slim top bar carries the logo, the $FTR balance chip (which opens the wallet) and the
+notification bell. A floating taskbar at the bottom carries the only five destinations:
+
+    Home · Exchange · FanPlay · Leaderboard · Account
+
+FanPlay sits in the middle on a lime disc. Every other page lights up one of those five — Dream Clubs
+and onboarding light Home; the wallet, portfolio, notifications and settings light Account. That
+mapping is `TAB_OF` in `common.py`, and `nav()` takes the page's filename so a page can never
+mislabel its own tab.
+
+**Marketing pages** (`index`, `how-it-works`) keep the public nav with Sign in and Get started.
+**Auth pages** use a stripped shell: logo, one way back, no footer.
 
 ## State
 
@@ -60,6 +72,7 @@ prototype stays consistent as you move between pages. Settings → Danger zone r
 - **Accents** — lime `#C4F82A` (players, actions), amber `#FF6A1F` (coaches, high-risk tiers), red `#FF3B47` reserved for live match states only
 - **Structure** — double-bezel containers (outer shell `p-8` at `2rem` radius, inner core at `calc(2rem - .5rem)`)
 - **Wallet components** — shared across wallet, dashboard and portfolio: balance hero (`.bal-big` / `.bal-delta` / `.bal-chart`), range pills (`.range`), four-up action tiles (`.acts4`), asset rows with circular marks and sparklines (`.arow` / `.coin`), receive panel (`.netsel` / `.qr` / `.addr`), amber warning strips (`.warn`)
+- **Shell** — floating top bar (`.topbar`) and floating taskbar (`.taskbar`); the taskbar reserves footer space through `.taskbar ~ footer` so nothing is covered
 - **Matchday components** — shared across FanPlay and Dream Clubs: date strip (`.dates` / `.livetgl`), featured match card (`.feat` / `.minute` / `.tcrest`), competition groups and fixture rows (`.comp` / `.fixt` / `.star`), tab strip (`.tabstrip`), form pills (`.form5`), live position ladder (`.gauge` / `.ladder` / `.rung`)
 - **Motion** — `cubic-bezier(.32,.72,0,1)` throughout; scroll entry via `IntersectionObserver`; `prefers-reduced-motion` respected
 - **Layout** — asymmetrical bento grids, collapsing to single column below 768px

@@ -881,6 +881,55 @@ APP_CSS = r"""
   box-shadow:0 0 10px rgba(196,248,42,.9);animation:blip 1.9s var(--ease) infinite}
 @keyframes blip{0%,100%{opacity:1}50%{opacity:.25}}
 
+/* ── floating taskbar ───────────────────────────────── */
+.topbar{padding:8px 8px 8px 22px}
+.topbar .logo{margin-right:26px}
+.taskbar{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:75;
+  display:flex;align-items:flex-end;gap:2px;padding:9px 10px;border-radius:999px;
+  width:max-content;max-width:calc(100vw - 24px);
+  background:rgba(9,10,11,.93);backdrop-filter:blur(26px) saturate(170%);
+  -webkit-backdrop-filter:blur(26px) saturate(170%);border:1px solid var(--hair);
+  box-shadow:var(--inset),0 26px 64px -18px rgba(0,0,0,.96)}
+.taskbar a{display:flex;flex-direction:column;align-items:center;gap:7px;padding:10px 18px 8px;
+  border-radius:999px;color:var(--faint);min-width:76px;
+  transition:color .5s var(--ease),background .5s var(--ease)}
+.taskbar a .tb-ic{display:grid;place-items:center;width:26px;height:26px}
+.taskbar a .ic{width:20px;height:20px}
+.taskbar a span:last-child{font-weight:600;font-size:9px;letter-spacing:.12em;text-transform:uppercase;
+  white-space:nowrap}
+.taskbar a:hover{color:var(--ink)}
+.taskbar a.on{color:var(--lime)}
+.taskbar a.on .tb-ic{background:rgba(196,248,42,.13);border-radius:999px;
+  box-shadow:0 0 0 1px rgba(196,248,42,.28)}
+.taskbar a.mid{padding-top:0}
+.taskbar a.mid .tb-ic{width:52px;height:52px;border-radius:999px;margin-top:-20px;
+  background:rgba(196,248,42,.14);border:1px solid rgba(196,248,42,.32);color:var(--lime);
+  transition:background .5s var(--ease),box-shadow .5s var(--ease)}
+.taskbar a.mid .ic{width:24px;height:24px}
+.taskbar a.mid:hover .tb-ic{background:rgba(196,248,42,.24)}
+.taskbar a.mid.on{color:var(--lime)}
+.taskbar a.mid.on .tb-ic{background:var(--lime);border-color:var(--lime);color:#0A0D03;
+  box-shadow:0 16px 38px -12px rgba(196,248,42,.95)}
+.taskbar ~ footer{padding-bottom:calc(128px + env(safe-area-inset-bottom))}
+.taskbar ~ .ft-toast-container{bottom:calc(104px + env(safe-area-inset-bottom))}
+
+/* ── account hub ────────────────────────────────────── */
+.hub{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.hub a{display:flex;align-items:center;gap:16px;padding:20px;border-radius:20px;
+  border:1px solid var(--hair);background:rgba(255,255,255,.03);box-shadow:var(--inset);
+  transition:border-color .5s var(--ease),background .5s var(--ease),transform .5s var(--ease)}
+.hub a:hover{border-color:rgba(196,248,42,.32);background:rgba(196,248,42,.05);transform:translateY(-3px)}
+.hub a .bd{min-width:0;flex:1}
+.hub a b{display:block;font-family:Archivo;font-variation-settings:'wdth' 118,'wght' 800;
+  text-transform:uppercase;font-size:14px;margin-bottom:5px}
+.hub a p{margin:0;font-size:11.5px;color:var(--faint);font-weight:300;line-height:1.5}
+.hub a .go{margin-left:auto;color:var(--faint);flex:none}
+.hub a .go .ic{width:15px;height:15px}
+.hub a .val{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--lime);
+  margin-top:7px;display:block}
+.idcard{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.idcard .avatar{width:64px;height:64px;font-size:20px;cursor:default}
+
 /* ── matchday: live accent ──────────────────────────── */
 :root{--live:#FF3B47;--live-soft:rgba(255,59,71,.1);--live-line:rgba(255,59,71,.34)}
 .dot-live{width:7px;height:7px;border-radius:99px;background:var(--live);display:inline-block;flex:none;
@@ -1067,6 +1116,18 @@ APP_CSS = r"""
   .ladder::before{top:50%;bottom:auto;left:6px;right:6px;width:auto;height:1px}
   .gbar{height:88px}
   .tabstrip button{padding:9px 14px;font-size:9.5px}
+  .taskbar{left:10px;right:10px;bottom:max(12px,env(safe-area-inset-bottom));transform:none;
+    width:auto;max-width:none;justify-content:space-between;padding:8px 8px;gap:0}
+  .taskbar a{min-width:0;flex:1;padding:8px 4px 6px;gap:6px}
+  .taskbar a span:last-child{font-size:8px;letter-spacing:.08em}
+  .taskbar a .ic{width:18px;height:18px}
+  .taskbar a.mid .tb-ic{width:46px;height:46px;margin-top:-17px}
+  .taskbar a.mid .ic{width:21px;height:21px}
+  .taskbar ~ footer{padding-bottom:calc(122px + env(safe-area-inset-bottom))}
+  .topbar{padding:6px 8px 6px 14px}
+  .topbar .logo{margin-right:0}
+  .hub{grid-template-columns:1fr}
+  .idcard .avatar{width:54px;height:54px;font-size:17px}
 }
 """
 
@@ -1076,15 +1137,7 @@ MARKET_NAV = [("exchange.html", "Exchange"), ("clubs.html", "Dream Clubs"),
               ("fanplay.html", "FanPlay"), ("ftr.html", "$FTR"),
               ("how-it-works.html", "How it works")]
 
-APP_NAV = [("dashboard.html", "Dashboard"), ("exchange.html", "Exchange"),
-           ("clubs.html", "Dream Clubs"), ("fanplay.html", "FanPlay"),
-           ("portfolio.html", "Portfolio"), ("leaderboard.html", "Leaderboard")]
-
 NAVITEMS = MARKET_NAV  # kept for backwards compatibility
-
-ACCOUNT_MENU = [("dashboard.html", "Dashboard", "chart"), ("portfolio.html", "Portfolio & ledger", "receipt"),
-                ("ftr.html", "$FTR wallet", "wallet"), ("notifications.html", "Notifications", "pulse"),
-                ("settings.html", "Settings", "scales")]
 
 def head(title, extra_css=""):
     return ('<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">'
@@ -1102,47 +1155,62 @@ def atmosphere():
             '  </div>'
             '</div>') + sprite()
 
-def _shell(links, over, right, over_foot):
+TASKBAR = [("dashboard.html", "Home", "chart"),
+           ("exchange.html", "Exchange", "candle"),
+           ("fanplay.html", "FanPlay", "ball"),
+           ("leaderboard.html", "Leaderboard", "rank"),
+           ("account.html", "Account", "user")]
+
+# Every app page lights up one of the five tabs.
+TAB_OF = {"dashboard.html": "dashboard.html", "clubs.html": "dashboard.html",
+          "onboarding.html": "dashboard.html",
+          "exchange.html": "exchange.html",
+          "fanplay.html": "fanplay.html",
+          "leaderboard.html": "leaderboard.html",
+          "account.html": "account.html", "ftr.html": "account.html",
+          "portfolio.html": "account.html", "notifications.html": "account.html",
+          "settings.html": "account.html"}
+
+
+def taskbar(current=""):
+    """Floating five-item bar. FanPlay sits in the middle on a lime disc."""
+    tab = TAB_OF.get(current, "")
+    out = []
+    for href, label, icon in TASKBAR:
+        mid = href == "fanplay.html"
+        on = href == tab
+        out.append('<a href="%s" class="%s%s"%s><span class="tb-ic">%s</span><span>%s</span></a>'
+                   % (href, "mid" if mid else "", " on" if on else "",
+                      ' aria-current="page"' if on else "", ic(icon, "ic"), label))
+    return '<nav class="taskbar" aria-label="Primary">%s</nav>' % "".join(out)
+
+
+def nav(current="", app=False):
+    """Floating top bar. app=True pairs it with the taskbar and drops every page link."""
+    if app:
+        top = ('<nav class="nav-island topbar"><a class="logo" href="index.html">%s Fantrade</a>'
+               '<div style="display:flex;align-items:center;gap:10px;margin-left:auto">'
+               '<a class="nav-wallet" id="navWalletBtn" href="ftr.html" title="Open your $FTR wallet">'
+               '<span class="pulse"></span><span class="num" id="navBal">128,450 $FTR</span></a>'
+               '<a class="bell" id="navBell" href="notifications.html" aria-label="Notifications">%s'
+               '<span class="dot" id="navDot" hidden></span></a>'
+               '</div></nav>') % (ic("ball", "ic"), ic("pulse", "ic"))
+        return top + taskbar(current)
+
+    links = "".join('<a href="%s"%s>%s</a>' % (h, ' class="on"' if h == current else '', l)
+                    for h, l in MARKET_NAV)
+    over = "".join('<a href="%s" data-close>%s</a>' % (h, l) for h, l in MARKET_NAV)
+    right = ('<a class="btn btn-glass btn-sm" href="signin.html">Sign in<span class="cap">%s</span></a>'
+             '<a class="btn btn-lime btn-sm" href="signup.html">Get started<span class="cap">%s</span></a>'
+             % (ic("arrow", "ic"), ic("arrow", "ic")))
+    foot = ('<a class="btn btn-glass" href="signin.html" data-close>Sign in<span class="cap">%s</span></a>'
+            '<a class="btn btn-lime" href="signup.html" data-close>Get started<span class="cap">%s</span></a>'
+            % (ic("arrow", "ic"), ic("arrow", "ic")))
     return ('<nav class="nav-island"><a class="logo" href="index.html">%s Fantrade</a>'
             '<div class="nav-links">%s</div><div style="display:flex;align-items:center;gap:10px">%s</div>'
-            '<button class="burger" id="burger" aria-label="Open menu" aria-expanded="false"><i></i><i></i></button></nav>'
-            '<div class="overlay" id="overlay">%s%s</div>') % (ic("ball", "ic"), links, right, over, over_foot)
-
-
-def nav(active="", app=False):
-    """Island nav. app=True renders the signed-in shell (wallet, bell, account menu)."""
-    items = APP_NAV if app else MARKET_NAV
-    links = "".join('<a href="%s"%s>%s</a>' % (h, ' class="on"' if l == active else '', l) for h, l in items)
-    over = "".join('<a href="%s" data-close>%s</a>' % (h, l) for h, l in items)
-
-    if not app:
-        right = ('<a class="btn btn-glass btn-sm" href="signin.html">Sign in<span class="cap">%s</span></a>'
-                 '<a class="btn btn-lime btn-sm" href="signup.html">Get started<span class="cap">%s</span></a>'
-                 % (ic("arrow", "ic"), ic("arrow", "ic")))
-        foot = ('<a class="btn btn-glass" href="signin.html" data-close>Sign in<span class="cap">%s</span></a>'
-                '<a class="btn btn-lime" href="signup.html" data-close>Get started<span class="cap">%s</span></a>'
-                % (ic("arrow", "ic"), ic("arrow", "ic")))
-        return _shell(links, over, right, foot)
-
-    menu = "".join('<a href="%s">%s%s</a>' % (h, ic(i, "ic"), l) for h, l, i in ACCOUNT_MENU)
-    right = ('<a class="nav-wallet" id="navWalletBtn" href="ftr.html" title="Open your $FTR wallet">'
-             '<span class="pulse"></span><span class="num" id="navBal">128,450 $FTR</span></a>'
-             '<a class="bell" id="navBell" href="notifications.html" aria-label="Notifications">%s'
-             '<span class="dot" id="navDot" hidden></span></a>'
-             '<div class="acct"><button class="avatar" id="navAccountBtn" type="button" aria-haspopup="true" '
-             'aria-expanded="false" aria-label="Account menu"><span id="navInitials">AM</span></button>'
-             '<div class="menu" id="navMenu" role="menu">'
-             '<div class="who"><b id="menuName">Alex Morgan</b><span id="menuHandle">@alex_trader</span>'
-             '<i id="menuRank">Apex division · rank #124</i></div>%s'
-             '<div class="sep"></div>'
-             '<button type="button" data-acct-modal>%sWallet summary</button>'
-             '<button type="button" class="danger" data-signout>%sSign out</button>'
-             '</div></div>') % (ic("pulse", "ic"), menu, ic("coin", "ic"), ic("lock", "ic"))
-    over_extra = ('<a href="notifications.html" data-close>Notifications</a>'
-                  '<a href="settings.html" data-close>Settings</a>')
-    foot = ('<button class="btn btn-glass" type="button" data-signout data-close>Sign out'
-            '<span class="cap">%s</span></button>' % ic("arrow", "ic"))
-    return _shell(links, over + over_extra, right, foot)
+            '<button class="burger" id="burger" aria-label="Open menu" aria-expanded="false"><i></i><i></i>'
+            '</button></nav><div class="overlay" id="overlay">%s%s</div>'
+            ) % (ic("ball", "ic"), links, right, over, foot)
 
 
 def nav_min(back="index.html", label="Back to Fantrade"):
@@ -1155,10 +1223,10 @@ def footer():
     return ('<footer><div class="wrap"><div class="foot">'
             '<div class="col brandcol"><a class="logo" href="index.html">%s Fantrade</a>'
             '<p>A football ownership economy. Own players and coaches, build your Dream Club, play every matchday.</p></div>'
-            '<div class="col"><b>Platform</b><a href="exchange.html">Exchange</a><a href="clubs.html">Dream Clubs</a>'
-            '<a href="fanplay.html">FanPlay</a><a href="ftr.html">$FTR</a></div>'
-            '<div class="col"><b>Your account</b><a href="dashboard.html">Dashboard</a><a href="portfolio.html">Portfolio &amp; ledger</a>'
-            '<a href="leaderboard.html">Leaderboard</a><a href="settings.html">Settings</a></div>'
+            '<div class="col"><b>Platform</b><a href="dashboard.html">Home</a><a href="exchange.html">Exchange</a>'
+            '<a href="fanplay.html">FanPlay</a><a href="leaderboard.html">Leaderboard</a></div>'
+            '<div class="col"><b>Your account</b><a href="account.html">Account</a><a href="ftr.html">$FTR wallet</a>'
+            '<a href="portfolio.html">Portfolio &amp; ledger</a><a href="settings.html">Settings</a></div>'
             '<div class="col"><b>Learn</b><a href="how-it-works.html">How it works</a><a href="fanplay.html#rules">Scoring rules</a>'
             '<a href="fanplay.html#tiers">Market tiers</a><a href="clubs.html#chem">Club chemistry</a></div>'
             '<div class="col"><b>Company</b><a href="signup.html">Create account</a><a href="signin.html">Sign in</a>'

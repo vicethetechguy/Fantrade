@@ -23,7 +23,7 @@ def btn(label, cls="btn-lime", href="#", tag="a", extra=""):
 
 def page(fname, title, body, js="", css="", app=True, chrome=True):
     """chrome=False renders the stripped auth shell (minimal nav, no footer)."""
-    shell = nav(title.split(" — ")[0], app) if chrome else nav_min()
+    shell = nav(fname, app) if chrome else nav_min()
     tail = footer() if chrome else ""
     html = (head(title, css) + atmosphere() + shell + body + tail +
             "<script>(function(){" + JS_SHELL + js + "})();</script></body></html>")
@@ -633,7 +633,7 @@ MOVERS = [("$Jackson", "Nicolas Jackson", 14.85, 11.2, 8), ("$Saka", "Bukayo Sak
           ("$Haaland", "Erling Haaland", 71.40, -1.8, 1), ("$Pedri", "Pedri González", 41.15, -0.9, 6)]
 
 da = [T('<main><section class="app-head"><div class="wrap"><div class="head-row">'
-        '<div><span class="greet" id="greet" data-reveal>Manager desk · Gameweek 28</span>'
+        '<div><span class="greet" id="greet" data-reveal>Home · Gameweek 28</span>'
         '<h1 data-reveal>Evening,<br><span data-bind="first">Alex</span></h1>'
         '<p class="lede" data-reveal><span data-bind="club">Zero FC</span> sits '
         '<span data-bind="rank">#124</span> of 1,420 syndicates. Your eleven is complete, your coach is slotted, '
@@ -917,7 +917,7 @@ renderLedger(); renderEntries(); renderCap();
 window.addEventListener('fantrade:statechange', function(){ renderLedger(); renderEntries(); renderCap(); });
 """
 
-page("dashboard.html", "Dashboard — Fantrade", "".join(da), DASH_JS, DASH_CSS)
+page("dashboard.html", "Home — Fantrade", "".join(da), DASH_JS, DASH_CSS)
 print("built dashboard.html")
 
 # ══════════════════════════════════════════════════════════════════
@@ -2134,3 +2134,153 @@ el('stClose').addEventListener('click', function(){
 
 page("settings.html", "Settings — Fantrade", "".join(st), ST_JS, ST_CSS + OB_CSS)
 print("built settings.html")
+
+# ══════════════════════════════════════════════════════════════════
+# ACCOUNT — the hub behind the fifth tab
+# ══════════════════════════════════════════════════════════════════
+AC_CSS = """
+.hub-sec{margin-bottom:12px}
+.hub-sec .k-label{margin-bottom:12px}
+"""
+
+HUB_MONEY = [
+    ("ftr.html", "wallet", "$FTR wallet",
+     "Balance, send, receive, swap and buy. Your receive QR lives here.", "balance", " $FTR"),
+    ("portfolio.html", "receipt", "Portfolio &amp; ledger",
+     "Every share you hold, unrealised P&amp;L and the full settlement audit trail.", "net", " $FTR net"),
+]
+HUB_CLUB = [
+    ("clubs.html", "crest", "Dream Club",
+     "Your eleven, the bench, the coach and the club builder.", "club", ""),
+    ("leaderboard.html", "rank", "League table",
+     "Where the club sits against 1,420 syndicates this cycle.", "rank", " worldwide"),
+]
+HUB_ACCT = [
+    ("notifications.html", "pulse", "Notifications",
+     "Settlements, order fills, teamsheet risk and account events.", "", ""),
+    ("settings.html", "scales", "Settings",
+     "Profile, club identity, security, payouts and responsible play.", "", ""),
+]
+
+
+def hub(rows):
+    out = []
+    for href, icon, title, desc, bind, suffix in rows:
+        val = ('<span class="val" data-bind="%s">—</span>' % bind) if bind else ""
+        if val and suffix:
+            val = val[:-7] + '</span><span class="val" style="display:inline">%s</span>' % suffix
+            val = ('<span class="val"><span data-bind="%s">—</span>%s</span>' % (bind, suffix))
+        out.append(T('<a href="@@"><span class="ibox">@@</span><div class="bd"><b>@@</b><p>@@</p>@@</div>'
+                     '<span class="go">@@</span></a>', href, ic(icon, "ic-lg"), title, desc, val,
+                     ic("arrow", "ic")))
+    return '<div class="hub">%s</div>' % "".join(out)
+
+
+ac = [T('<main><section class="app-head"><div class="wrap">'
+        '<span class="pill" data-reveal>@@ Account</span><h1 data-reveal>Your<br>account</h1>'
+        '<p class="lede" data-reveal>Everything that is yours rather than the market\'s — the wallet, the '
+        'portfolio, the club and the controls.</p>'
+        '</div></section>', ic("user", "ic"))]
+
+ac.append('<section style="padding:10px 0 130px"><div class="wrap"><div class="bento">')
+
+# identity
+ac.append(T('<div class="bezel c12" data-reveal><div class="core pad">'
+            '<div class="idcard">'
+            '<span class="avatar"><span data-bind="initials">AM</span></span>'
+            '<div style="min-width:0">'
+            '<div style="font-family:Archivo;font-variation-settings:\'wdth\' 125,\'wght\' 900;'
+            'text-transform:uppercase;font-size:26px;line-height:1" data-bind="name">Alex Morgan</div>'
+            '<div class="sub-line" style="font-family:\'JetBrains Mono\',monospace;color:var(--lime);'
+            'font-size:12px;margin-top:7px"><span data-bind="handle">@alex_trader</span></div>'
+            '<div class="sub-line" style="letter-spacing:.14em;text-transform:uppercase;margin-top:7px">'
+            'Apex division · manager since Sep 2026</div></div>'
+            '<div style="margin-left:auto;display:flex;gap:10px;flex-wrap:wrap">@@@@</div>'
+            '</div>'
+            '<div class="statbar" style="margin-top:26px">'
+            '<div>@@ Available <b data-bind="balance">128,450</b> $FTR</div>'
+            '<div>@@ Net worth <b data-bind="net">370,300</b></div>'
+            '<div>@@ Club <b data-bind="club">Zero FC</b></div>'
+            '<div>@@ Rank <b data-bind="rank">#124</b></div>'
+            '</div></div></div>',
+            btn("Edit profile", "btn-glass", "settings.html#profile"),
+            btn("Open wallet", href="ftr.html"),
+            ic("coin", "ic"), ic("chart", "ic"), ic("crest", "ic"), ic("rank", "ic")))
+
+ac.append(T('<div class="c12 hub-sec" data-reveal><div class="k-label">Money</div>@@</div>', hub(HUB_MONEY)))
+ac.append(T('<div class="c12 hub-sec" data-reveal><div class="k-label">Club</div>@@</div>', hub(HUB_CLUB)))
+ac.append(T('<div class="c12 hub-sec" data-reveal><div class="k-label">Account</div>@@</div>', hub(HUB_ACCT)))
+
+# quick controls
+ac.append(T('<div class="bezel c7" data-reveal><div class="core pad">'
+            '<div class="k-label">Quick controls</div>'
+            '<div class="sw-row"><div><div class="t">Round settlement alerts</div>'
+            '<div class="d">Results, points and payouts the moment a window closes.</div></div>'
+            '<button class="tgl" type="button" data-pref="settleAlerts"><i></i></button></div>'
+            '<div class="sw-row"><div><div class="t">Club &amp; teamsheet risk</div>'
+            '<div class="d">Injuries and late fitness tests before a lock.</div></div>'
+            '<button class="tgl" type="button" data-pref="clubAlerts"><i></i></button></div>'
+            '<div class="sw-row"><div><div class="t">Automatic substitutions</div>'
+            '<div class="d">Field the best eligible bench asset when a starter does not play.</div></div>'
+            '<button class="tgl" type="button" data-pref="autoSub"><i></i></button></div>'
+            '<div class="b-row" style="margin-top:18px"><span>Weekly stake cap</span>'
+            '<b id="acCap">5,000 $FTR</b></div>'
+            '<div class="b-row"><span>Two-factor authentication</span><b id="acTfa">Off</b></div>'
+            '<div style="display:flex;gap:10px;margin-top:20px;flex-wrap:wrap">@@@@</div>'
+            '</div></div>',
+            btn("All settings", "btn-glass", "settings.html",
+                extra='style="flex:1;justify-content:space-between"'),
+            btn("Responsible play", "btn-glass", "settings.html#play",
+                extra='style="flex:1;justify-content:space-between"')))
+
+# activity + session
+ac.append(T('<div class="bezel c5" data-reveal><div class="core pad">'
+            '<div style="display:flex;align-items:center;gap:12px">'
+            '<div class="k-label" style="margin:0">Latest activity</div>'
+            '<a href="notifications.html" style="margin-left:auto;font-size:11px;color:var(--lime)">'
+            'See all (<span data-unread>3</span>)</a></div>'
+            '<div id="acFeed" style="margin-top:14px"></div>'
+            '<div class="k-label" style="margin-top:26px">Session</div>'
+            '<div class="rowlink">@@ Signed in as<b data-bind="email">you@example.com</b></div>'
+            '<div class="rowlink">@@ This device<b>Chrome · London</b></div>'
+            '<div style="margin-top:20px">@@</div>'
+            '</div></div>',
+            ic("user", "ic"), ic("shield", "ic"),
+            btn("Sign out", "btn-glass", tag="button",
+                extra='data-signout style="width:100%;justify-content:space-between"')))
+
+ac.append('</div></div></section></main>')
+
+AC_JS = r"""
+(function(){
+  var s = FT.getState();
+  document.querySelectorAll('[data-bind="initials"]').forEach(function(el){ el.textContent = FT.initials(); });
+  var cap = document.getElementById('acCap');
+  if(cap) cap.textContent = s.prefs.stakeCap.toLocaleString('en-US') + ' $FTR';
+  var tfa = document.getElementById('acTfa');
+  if(tfa){
+    tfa.textContent = s.prefs.twoFactor ? 'On' : 'Off';
+    tfa.style.color = s.prefs.twoFactor ? 'var(--lime)' : 'var(--amber)';
+  }
+})();
+
+function renderAcFeed(){
+  var s = FT.getState(), box = document.getElementById('acFeed');
+  if(!box) return;
+  var list = s.notifications.slice(0, 3);
+  box.innerHTML = list.map(function(n){
+    return '<div class="rowlink" style="align-items:flex-start;gap:12px">'
+      + '<span class="ibox sm' + (n.kind === 'club' ? ' am' : '') + '" style="margin-top:2px">'
+      + '<svg class="ic-sm" aria-hidden="true"><use href="#i-' + n.icon + '"/></svg></span>'
+      + '<span style="min-width:0;flex:1"><span style="display:block;font-size:12.5px;color:var(--ink)">'
+      + n.title + '</span><span class="sub-line">' + n.time + '</span></span>'
+      + (n.amt ? '<b style="color:' + (n.tone === 'up' ? 'var(--lime)' : 'var(--red)') + '">'
+        + n.amt.replace(' $FTR', '') + '</b>' : '') + '</div>';
+  }).join('');
+}
+renderAcFeed();
+window.addEventListener('fantrade:statechange', renderAcFeed);
+"""
+
+page("account.html", "Account — Fantrade", "".join(ac), AC_JS, AC_CSS)
+print("built account.html")
