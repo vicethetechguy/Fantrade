@@ -4,7 +4,6 @@ leaderboard, notifications, settings. Same shell, same tokens as pages 1–6."""
 import os, sys
 sys.path.insert(0, os.path.dirname(__file__))
 from common import head, atmosphere, nav, nav_min, footer, ic, JS_SHELL
-from experience import prepare
 
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
 ARROW = '<span class="cap">' + ic("arrow", "ic") + '</span>'
@@ -24,7 +23,6 @@ def btn(label, cls="btn-lime", href="#", tag="a", extra=""):
 
 def page(fname, title, body, js="", css="", app=True, chrome=True):
     """chrome=False renders the stripped auth shell (minimal nav, no footer)."""
-    body, js = prepare(fname, body, js)
     shell = nav(title.split(" — ")[0], app) if chrome else nav_min()
     tail = footer() if chrome else ""
     html = (head(title, css) + atmosphere() + shell + body + tail +

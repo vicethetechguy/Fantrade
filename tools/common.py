@@ -158,12 +158,15 @@ main,header,footer,.nav-island{position:relative;z-index:1}
 .burger i:nth-child(1){top:17px}.burger i:nth-child(2){top:25px}
 body.menu-open .burger i:nth-child(1){transform:translateY(4px) rotate(45deg)}
 body.menu-open .burger i:nth-child(2){transform:translateY(-4px) rotate(-45deg)}
-.overlay{position:fixed;inset:0;z-index:65;background:#0c100e;display:flex;flex-direction:column;justify-content:center;
+.overlay{position:fixed;inset:0;z-index:65;background:rgba(5,5,5,.86);backdrop-filter:blur(34px) saturate(140%);
+  -webkit-backdrop-filter:blur(34px) saturate(140%);display:flex;flex-direction:column;justify-content:center;
   padding:0 32px;gap:6px;opacity:0;pointer-events:none;visibility:hidden;
-  transition:opacity .25s var(--ease),visibility 0s linear .25s}
-body.menu-open .overlay{opacity:1!important;pointer-events:auto;visibility:visible;transition-delay:0s}
+  transition:opacity .7s var(--ease),visibility 0s linear .7s}
+body.menu-open .overlay{opacity:1;pointer-events:auto;visibility:visible;transition-delay:0s}
 .overlay a{font-family:Archivo;font-variation-settings:'wdth' 125,'wght' 800;text-transform:uppercase;
-  font-size:clamp(30px,9vw,54px);line-height:1.15;opacity:1;transform:none}
+  font-size:clamp(30px,9vw,54px);line-height:1.15;opacity:0;transform:translateY(48px);
+  transition:opacity .8s var(--ease),transform .8s var(--ease)}
+body.menu-open .overlay a{opacity:1;transform:translateY(0)}
 body.menu-open .overlay a:nth-child(1){transition-delay:.10s}
 body.menu-open .overlay a:nth-child(2){transition-delay:.16s}
 body.menu-open .overlay a:nth-child(3){transition-delay:.22s}
@@ -193,8 +196,9 @@ section{padding:130px 0}
 .num{font-family:'JetBrains Mono',monospace;font-variant-numeric:tabular-nums}
 
 /* reveal */
-[data-reveal]{opacity:1;transform:none;filter:none;transition:opacity .6s var(--ease-out),transform .6s var(--ease-out)}
-[data-reveal].in{opacity:1;transform:none;filter:none}
+[data-reveal]{opacity:0;transform:translateY(60px);filter:blur(10px);
+  transition:opacity .9s var(--ease-out),transform .9s var(--ease-out),filter .9s var(--ease-out)}
+[data-reveal].in{opacity:1;transform:translateY(0);filter:blur(0)}
 
 /* page header */
 .phead{padding:190px 0 70px}
@@ -390,7 +394,7 @@ footer{border-top:1px solid var(--hair);padding:70px 0 64px;background:rgba(255,
 
 /* responsive */
 @media (max-width:1024px){
-  .nav-links, .nav-actions{display:none!important}.nav-island>.btn{display:none}.burger{display:block}
+  .nav-links{display:none}.nav-island>.btn{display:none}.burger{display:block}
   .nav-island{width:calc(100vw - 32px);justify-content:space-between;padding:8px 8px 8px 20px}
   .c3,.c4,.c5,.c6,.c7,.c8,.c9{grid-column:span 12}
   .bento.halves .c6{grid-column:span 6}
@@ -1100,7 +1104,7 @@ def atmosphere():
 
 def _shell(links, over, right, over_foot):
     return ('<nav class="nav-island"><a class="logo" href="index.html">%s Fantrade</a>'
-            '<div class="nav-links">%s</div><div class="nav-actions" style="display:flex;align-items:center;gap:10px">%s</div>'
+            '<div class="nav-links">%s</div><div style="display:flex;align-items:center;gap:10px">%s</div>'
             '<button class="burger" id="burger" aria-label="Open menu" aria-expanded="false"><i></i><i></i></button></nav>'
             '<div class="overlay" id="overlay">%s%s</div>') % (ic("ball", "ic"), links, right, over, over_foot)
 

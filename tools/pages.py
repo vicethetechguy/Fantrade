@@ -2,7 +2,6 @@
 import os, sys
 sys.path.insert(0, os.path.dirname(__file__))
 from common import head, atmosphere, nav, footer, ic, flag, JS_SHELL
-from experience import prepare
 
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
 os.makedirs(OUT, exist_ok=True)
@@ -24,7 +23,6 @@ def btn(label, cls="btn-lime", href="#", tag="a", extra=""):
 
 
 def page(fname, title, body, js="", css="", app=False):
-    body, js = prepare(fname, body, js)
     html = (head(title, css) + atmosphere() + nav(title.split(" — ")[0] if " — " in title else "", app) +
             body + footer() + "<script>(function(){" + JS_SHELL + js + "})();</script></body></html>")
     with open(os.path.join(OUT, fname), "w", encoding="utf-8") as f:
@@ -570,15 +568,6 @@ if(ro){
         closeModal();
         updateSupplyCard();
         calc();
-        var next=document.getElementById('tradeNext');
-        if(!next){
-          next=document.createElement('div');
-          next.id='tradeNext';
-          next.className='ux-banner';
-          var tk=document.querySelector('.ticket');
-          if(tk) tk.appendChild(next);
-        }
-        if(next) next.innerHTML='<span>Order complete. Your holdings have been updated.</span> <a href="fanplay.html">Continue to FanPlay →</a>';
       }catch(err){
         showToast(err.message, "error");
       }
