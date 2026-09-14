@@ -18,6 +18,14 @@ self-contained HTML file with no build step and no runtime dependencies beyond G
 | `fanplay.html` | Individual vs Dream Club entry, six market tiers, live matchday board, settlement countdown, scoring rules |
 | `ftr.html` | $FTR wallet — balance, GBP conversion with fees, supply distribution, full ledger |
 | `how-it-works.html` | The six-step loop in full, settlement timeline, mode comparison, FAQ |
+| `signin.html` | Split-screen sign in — validation, password reveal, passkey/social stubs, reset-link modal |
+| `signup.html` | Account creation — password strength meter, region select, terms gate, hands off to onboarding |
+| `onboarding.html` | Four-step setup wizard — manager profile, opening grant, first share purchase, club identity |
+| `dashboard.html` | Signed-in home — net worth, club summary, live lock countdown, matchday board, movers, activity, entries |
+| `portfolio.html` | Portfolio & ledger — holdings table with filters and live P&L, allocation split, settlement ledger, yield, CSV export |
+| `leaderboard.html` | Global standings — division filters, search and sort, club inspection, promotion matrix, syndicate index |
+| `notifications.html` | Activity feed — day grouping, per-kind filters, unread state, per-channel toggles |
+| `settings.html` | Profile, club identity, security and sessions, notification channels, payouts, responsible play, danger zone |
 
 ## Running it
 
@@ -27,6 +35,21 @@ No tooling required. Open `index.html` in a browser, or serve the folder:
 python3 -m http.server 8000
 # then visit http://localhost:8000
 ```
+
+## Navigation
+
+There are two nav shells. Marketing pages (`index`, `how-it-works`) show the public nav with
+**Sign in** and **Get started**. Signed-in pages show the app nav — Dashboard, Exchange, Dream Clubs,
+FanPlay, Portfolio, Leaderboard — plus the wallet chip, the notification bell and an account menu.
+Auth pages use a stripped shell: logo, one way back, no footer.
+
+## State
+
+Everything is driven by `FT`, a small localStorage-backed store in `common.py` (`JS_SHELL`). It holds the
+session (`auth`), manager and club, wallet, holdings, FanPlay entries, transactions, notifications and
+preferences, and emits `fantrade:statechange` so open pages re-render. Signing up, onboarding, buying a
+share, staking a round, claiming yield, saving settings and marking activity read all write to it, so the
+prototype stays consistent as you move between pages. Settings → Danger zone resets it.
 
 ## Design system
 
@@ -40,7 +63,7 @@ python3 -m http.server 8000
 - **Layout** — asymmetrical bento grids, collapsing to single column below 768px
 
 Source generators for the pages live in `tools/` — they emit the HTML from a shared design system so the
-six pages can't drift apart.
+fourteen pages can't drift apart.
 
 ## Icons
 

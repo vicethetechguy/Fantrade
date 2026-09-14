@@ -19,8 +19,8 @@ def btn(label, cls="btn-lime", href="#", tag="a", extra=""):
         tag, cls, ('href="%s"' % href) if tag == "a" else "", extra, label, ARROW, tag)
 
 
-def page(fname, title, body, js="", css=""):
-    html = (head(title, css) + atmosphere() + nav(title.split(" — ")[0]) +
+def page(fname, title, body, js="", css="", app=False):
+    html = (head(title, css) + atmosphere() + nav(title.split(" — ")[0], app) +
             body + footer() + "<script>(function(){" + JS_SHELL + js + "})();</script></body></html>")
     open(os.path.join(OUT, fname), "w", encoding="utf-8").write(html)
 
@@ -292,7 +292,7 @@ if(wb){
   });
 }
 """
-page("ftr.html", "$FTR — Fantrade", "".join(f), FTR_JS, FTR_CSS)
+page("ftr.html", "$FTR — Fantrade", "".join(f), FTR_JS, FTR_CSS, app=True)
 
 
 # ══════════════════════════════════════════════════════════

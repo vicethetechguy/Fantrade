@@ -115,8 +115,9 @@ body.menu-open .burger i:nth-child(1){transform:translateY(4px) rotate(45deg)}
 body.menu-open .burger i:nth-child(2){transform:translateY(-4px) rotate(-45deg)}
 .overlay{position:fixed;inset:0;z-index:65;background:rgba(5,5,5,.86);backdrop-filter:blur(34px) saturate(140%);
   -webkit-backdrop-filter:blur(34px) saturate(140%);display:flex;flex-direction:column;justify-content:center;
-  padding:0 32px;gap:6px;opacity:0;pointer-events:none;transition:opacity .7s var(--ease)}
-body.menu-open .overlay{opacity:1;pointer-events:auto}
+  padding:0 32px;gap:6px;opacity:0;pointer-events:none;visibility:hidden;
+  transition:opacity .7s var(--ease),visibility 0s linear .7s}
+body.menu-open .overlay{opacity:1;pointer-events:auto;visibility:visible;transition-delay:0s}
 .overlay a{font-family:Archivo;font-variation-settings:'wdth' 125,'wght' 800;text-transform:uppercase;
   font-size:clamp(30px,9vw,54px);line-height:1.15;opacity:0;transform:translateY(48px);
   transition:opacity .8s var(--ease),transform .8s var(--ease)}
@@ -517,9 +518,291 @@ footer{border-top:1px solid var(--hair);padding:70px 0 64px;background:rgba(255,
 }
 """
 
-NAVITEMS = [("exchange.html", "Exchange"), ("clubs.html", "Dream Clubs"),
-            ("fanplay.html", "FanPlay"), ("ftr.html", "$FTR"),
-            ("how-it-works.html", "How it works")]
+APP_CSS = r"""
+/* ── account cluster in nav ─────────────────────────── */
+.acct{position:relative;display:flex;align-items:center}
+.avatar{width:36px;height:36px;flex:none;border-radius:999px;border:1px solid var(--hair);cursor:pointer;
+  background:linear-gradient(160deg,rgba(196,248,42,.22),rgba(196,248,42,.05));color:var(--lime);
+  display:grid;place-items:center;box-shadow:var(--inset);font-family:Archivo;
+  font-variation-settings:'wdth' 110,'wght' 800;font-size:12px;letter-spacing:.02em;
+  transition:border-color .5s var(--ease),background .5s var(--ease)}
+.avatar:hover,.avatar[aria-expanded="true"]{border-color:rgba(196,248,42,.55)}
+.bell{position:relative;width:36px;height:36px;flex:none;border-radius:999px;border:1px solid var(--hair);
+  background:rgba(255,255,255,.04);color:var(--dim);display:grid;place-items:center;box-shadow:var(--inset);
+  cursor:pointer;transition:all .5s var(--ease)}
+.bell:hover{color:var(--ink);border-color:var(--hair-2)}
+.bell .ic{width:17px;height:17px}
+.bell .dot{position:absolute;top:6px;right:7px;width:8px;height:8px;border-radius:99px;background:var(--lime);
+  box-shadow:0 0 0 2px #0A0B0C,0 0 12px rgba(196,248,42,.9)}
+.menu{position:absolute;right:0;top:calc(100% + 14px);width:252px;padding:10px;border-radius:20px;z-index:95;
+  background:rgba(10,11,12,.95);backdrop-filter:blur(24px) saturate(160%);-webkit-backdrop-filter:blur(24px) saturate(160%);
+  border:1px solid var(--hair);box-shadow:var(--inset),0 26px 60px -18px rgba(0,0,0,.95);
+  opacity:0;pointer-events:none;visibility:hidden;transform:translateY(-10px) scale(.97);transform-origin:top right;
+  transition:opacity .35s var(--ease),transform .35s var(--ease),visibility 0s linear .35s}
+.menu.open{opacity:1;pointer-events:auto;visibility:visible;transform:none;transition-delay:0s}
+.menu .who{padding:10px 14px 14px;border-bottom:1px solid var(--hair);margin-bottom:8px}
+.menu .who b{display:block;font-size:13.5px;font-weight:500}
+.menu .who span{display:block;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--lime);margin-top:4px}
+.menu .who i{display:block;font-style:normal;font-size:10px;color:var(--faint);letter-spacing:.12em;
+  font-weight:600;text-transform:uppercase;margin-top:8px}
+.menu a,.menu button{display:flex;width:100%;align-items:center;gap:12px;padding:10px 14px;border-radius:12px;
+  font-size:13px;color:var(--dim);background:transparent;border:0;cursor:pointer;text-align:left;
+  font-family:Montserrat,sans-serif;transition:background .4s var(--ease),color .4s var(--ease)}
+.menu a .ic,.menu button .ic{width:16px;height:16px;color:var(--faint)}
+.menu a:hover,.menu button:hover{background:rgba(255,255,255,.055);color:var(--ink)}
+.menu a:hover .ic,.menu button:hover .ic{color:var(--lime)}
+.menu .sep{height:1px;background:var(--hair);margin:8px 4px}
+.menu button.danger:hover{color:var(--red)}
+.menu button.danger:hover .ic{color:var(--red)}
+
+/* ── text fields ────────────────────────────────────── */
+.tf{margin-bottom:15px}
+.tf label{display:block;font-weight:600;font-size:9.5px;letter-spacing:.16em;color:var(--faint);
+  text-transform:uppercase;margin-bottom:9px}
+.tf .lrow{display:flex;align-items:baseline;justify-content:space-between;gap:14px;margin-bottom:9px}
+.tf .lrow label{margin-bottom:0}
+.tf .lrow a{font-size:11px;color:var(--faint);font-weight:400;transition:color .4s var(--ease)}
+.tf .lrow a:hover{color:var(--lime)}
+.tf .inp{display:flex;align-items:center;gap:12px;border:1px solid var(--hair);border-radius:14px;
+  padding:13px 16px;background:rgba(255,255,255,.03);box-shadow:var(--inset);
+  transition:border-color .5s var(--ease),background .5s var(--ease)}
+.tf .inp:focus-within{border-color:rgba(196,248,42,.5);background:rgba(196,248,42,.045)}
+.tf .inp>.ic{width:17px;height:17px;color:var(--faint);flex:none}
+.tf input,.tf select,.tf textarea{border:0;background:transparent;color:var(--ink);outline:none;width:100%;
+  font-size:14px;font-family:Montserrat,sans-serif;font-weight:400;min-width:0}
+.tf textarea{resize:vertical;min-height:74px;line-height:1.6}
+.tf input::placeholder,.tf textarea::placeholder{color:var(--faint)}
+.tf select{cursor:pointer;-webkit-appearance:none;appearance:none}
+.tf .chev{width:0;height:0;flex:none;border-left:4.5px solid transparent;border-right:4.5px solid transparent;
+  border-top:5px solid var(--faint)}
+.tf select option{background:#0A0B0C;color:var(--ink)}
+.tf .eye{background:transparent;border:0;color:var(--faint);cursor:pointer;padding:0;display:grid;place-items:center;
+  font-size:9.5px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;flex:none;transition:color .4s var(--ease)}
+.tf .eye:hover{color:var(--lime)}
+.tf .hint{font-size:11px;color:var(--faint);margin-top:8px;font-weight:300;line-height:1.5}
+.tf .err{font-size:11px;color:#ff9a9a;margin-top:8px;display:none;font-weight:400}
+.tf.bad .inp{border-color:rgba(255,94,94,.55);background:rgba(255,94,94,.05)}
+.tf.bad .err{display:block}
+.tf.ok .inp{border-color:rgba(196,248,42,.4)}
+.tf-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.strength{display:flex;gap:5px;margin-top:10px}
+.strength i{flex:1;height:3px;border-radius:99px;background:rgba(255,255,255,.09);transition:background .5s var(--ease)}
+.strength i.on{background:var(--lime)}
+.strength i.mid{background:var(--amber)}
+.strength i.low{background:var(--red)}
+.checkrow{display:flex;align-items:flex-start;gap:12px;cursor:pointer;margin:6px 0 16px;
+  font-size:12.5px;color:var(--dim);font-weight:300;line-height:1.6}
+.checkrow input{position:absolute;opacity:0;width:0;height:0}
+.checkrow .box{width:20px;height:20px;flex:none;border-radius:7px;border:1px solid var(--hair-2);margin-top:1px;
+  background:rgba(255,255,255,.04);display:grid;place-items:center;box-shadow:var(--inset);
+  transition:all .4s var(--ease);color:transparent}
+.checkrow .box .ic{width:12px;height:12px}
+.checkrow input:checked+.box{background:var(--lime);border-color:var(--lime);color:#0A0D03}
+.checkrow input:focus-visible+.box{outline:1.5px solid var(--lime);outline-offset:3px}
+.checkrow a{color:var(--lime);border-bottom:1px solid rgba(196,248,42,.3)}
+.splitline{display:flex;align-items:center;gap:16px;margin:24px 0;color:var(--faint);
+  font-weight:600;font-size:9.5px;letter-spacing:.18em;text-transform:uppercase}
+.splitline::before,.splitline::after{content:"";flex:1;height:1px;background:var(--hair)}
+.oauth{display:flex;gap:10px}
+.oauth button{flex:1;display:flex;align-items:center;justify-content:center;gap:10px;border:1px solid var(--hair);
+  background:rgba(255,255,255,.035);color:var(--dim);border-radius:14px;padding:13px 10px;cursor:pointer;
+  font-size:12.5px;font-family:Montserrat,sans-serif;box-shadow:var(--inset);transition:all .5s var(--ease)}
+.oauth button:hover{color:var(--ink);border-color:var(--hair-2);background:rgba(255,255,255,.06)}
+.oauth button .ic{width:16px;height:16px}
+
+/* ── auth layout ────────────────────────────────────── */
+.auth{display:grid;grid-template-columns:1fr 1fr;min-height:100vh;align-items:stretch}
+.auth-brand{padding:130px 56px 70px;display:flex;flex-direction:column;justify-content:center;
+  border-right:1px solid var(--hair);position:relative}
+.auth-brand h1{font-size:clamp(34px,3.9vw,58px);font-variation-settings:'wdth' 125,'wght' 900;margin-top:24px}
+.auth-brand .lede{margin-top:24px;font-size:15px}
+.auth-form{padding:130px 56px 70px;display:flex;flex-direction:column;justify-content:center}
+.auth-form .inner{width:100%;max-width:452px;margin:0 auto}
+.auth-form h2{font-size:clamp(26px,2.6vw,36px)}
+.auth-sub{color:var(--dim);font-size:13.5px;font-weight:300;margin:14px 0 30px;line-height:1.6}
+.auth-alt{margin-top:26px;font-size:12.5px;color:var(--faint);text-align:center}
+.auth-alt a{color:var(--lime);border-bottom:1px solid rgba(196,248,42,.3);padding-bottom:1px}
+.proof{display:flex;flex-direction:column;gap:14px;margin-top:44px}
+.proof .pr{display:flex;align-items:flex-start;gap:15px;font-size:13px;color:var(--dim);font-weight:300}
+.proof .pr b{display:block;color:var(--ink);font-weight:500;font-size:13.5px;margin-bottom:3px}
+.proof .pr .ibox{width:34px;height:34px;border-radius:12px}
+.proof .pr .ibox .ic{width:16px;height:16px}
+.demo-note{margin-top:22px;border:1px dashed rgba(196,248,42,.3);border-radius:14px;padding:14px 16px;
+  font-size:11.5px;color:var(--dim);font-weight:300;background:rgba(196,248,42,.035);line-height:1.6}
+.demo-note b{font-family:'JetBrains Mono',monospace;color:var(--lime);font-weight:400}
+.nav-min{position:fixed;top:26px;left:0;right:0;z-index:70;display:flex;align-items:center;
+  justify-content:space-between;padding:0 40px}
+.nav-min a.back{font-weight:600;font-size:10.5px;letter-spacing:.16em;color:var(--faint);text-transform:uppercase;
+  display:flex;align-items:center;gap:9px;transition:color .5s var(--ease)}
+.nav-min a.back:hover{color:var(--lime)}
+.nav-min a.back .ic{width:13px;height:13px;transform:rotate(180deg)}
+
+/* ── data tables ────────────────────────────────────── */
+.dt{width:100%}
+.dh,.dr{display:grid;gap:14px;align-items:center;padding:15px 24px}
+.dh{font-weight:600;font-size:9.5px;letter-spacing:.16em;color:var(--faint);text-transform:uppercase;
+  border-bottom:1px solid var(--hair)}
+.dr{border-bottom:1px solid rgba(255,255,255,.045);font-size:13px;transition:background .6s var(--ease)}
+.dr:hover{background:rgba(255,255,255,.025)}
+.dr:last-child{border-bottom:0}
+.dr.you{background:rgba(196,248,42,.055);box-shadow:inset 2px 0 0 var(--lime)}
+.dr.you:hover{background:rgba(196,248,42,.08)}
+.dr.hide{display:none}
+.tag{display:inline-flex;align-items:center;gap:7px;border-radius:8px;padding:5px 10px;white-space:nowrap;
+  font-weight:600;font-size:9px;letter-spacing:.12em;text-transform:uppercase;
+  background:rgba(255,255,255,.05);border:1px solid var(--hair);color:var(--dim)}
+.tag .ic{width:11px;height:11px}
+.tag.lime{background:rgba(196,248,42,.09);border-color:rgba(196,248,42,.28);color:var(--lime)}
+.tag.amber{background:rgba(255,106,31,.09);border-color:rgba(255,106,31,.3);color:var(--amber)}
+.tag.red{background:rgba(255,94,94,.09);border-color:rgba(255,94,94,.3);color:#ff9a9a}
+.pl{font-family:'JetBrains Mono',monospace;font-variant-numeric:tabular-nums;font-size:13px}
+.pl.up{color:var(--lime)}.pl.down{color:var(--red)}
+.rk{font-family:Archivo;font-variation-settings:'wdth' 118,'wght' 900;font-size:17px;color:var(--faint);line-height:1}
+.rk.top{color:var(--lime)}
+.xi{display:flex;gap:5px;flex-wrap:wrap}
+.xi i{font-style:normal;font-family:'JetBrains Mono',monospace;font-size:10px;padding:4px 8px;border-radius:7px;
+  background:rgba(255,255,255,.05);border:1px solid var(--hair);color:var(--dim);white-space:nowrap}
+.sub-line{font-size:10.5px;color:var(--faint);font-weight:500;margin-top:4px;letter-spacing:.03em}
+.alloc{height:10px;border-radius:99px;overflow:hidden;display:flex;background:rgba(255,255,255,.06);
+  margin:20px 0 18px;box-shadow:var(--inset)}
+.alloc i{display:block;height:100%;transition:width .9s var(--ease)}
+.empty-state{padding:52px 24px;text-align:center;color:var(--faint);font-size:13px;font-weight:300}
+.empty-state .ic-xl{margin:0 auto 16px;color:rgba(255,255,255,.14)}
+
+/* ── toggles / settings ─────────────────────────────── */
+.sw-row{display:flex;align-items:center;justify-content:space-between;gap:24px;padding:17px 0;
+  border-bottom:1px solid rgba(255,255,255,.05)}
+.sw-row:last-child{border-bottom:0}
+.sw-row .t{font-size:13.5px;font-weight:500}
+.sw-row .d{font-size:11.5px;color:var(--faint);font-weight:300;margin-top:5px;max-width:54ch;line-height:1.55}
+.tgl{width:48px;height:27px;flex:none;border-radius:99px;border:1px solid var(--hair);cursor:pointer;
+  background:rgba(255,255,255,.05);position:relative;box-shadow:var(--inset);transition:all .45s var(--ease)}
+.tgl i{position:absolute;top:3px;left:3px;width:19px;height:19px;border-radius:99px;background:var(--dim);
+  transition:all .45s var(--ease)}
+.tgl[aria-pressed="true"]{background:rgba(196,248,42,.2);border-color:rgba(196,248,42,.5)}
+.tgl[aria-pressed="true"] i{left:24px;background:var(--lime);box-shadow:0 0 14px rgba(196,248,42,.7)}
+.setnav{display:flex;flex-direction:column;gap:4px}
+.setnav a{display:flex;align-items:center;gap:13px;padding:12px 16px;border-radius:14px;font-size:13px;
+  color:var(--dim);border:1px solid transparent;transition:all .5s var(--ease)}
+.setnav a .ic{width:16px;height:16px;color:var(--faint)}
+.setnav a:hover{background:rgba(255,255,255,.04);color:var(--ink)}
+.setnav a.on{background:rgba(196,248,42,.08);border-color:rgba(196,248,42,.22);color:var(--lime)}
+.setnav a.on .ic{color:var(--lime)}
+.sticky{position:sticky;top:118px}
+.danger-zone{border:1px solid rgba(255,94,94,.28);background:rgba(255,94,94,.04);border-radius:18px;padding:24px}
+
+/* ── activity feed ──────────────────────────────────── */
+.fd{display:flex;gap:16px;padding:19px 24px;border-bottom:1px solid rgba(255,255,255,.05);
+  transition:background .6s var(--ease)}
+.fd:hover{background:rgba(255,255,255,.022)}
+.fd:last-child{border-bottom:0}
+.fd.unread{background:rgba(196,248,42,.035)}
+.fd .bd{flex:1;min-width:0}
+.fd .tt{font-size:13.5px;font-weight:500;display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.fd.unread .tt::after{content:"";width:6px;height:6px;border-radius:99px;background:var(--lime);
+  flex:none;box-shadow:0 0 10px rgba(196,248,42,.9)}
+.fd .ms{font-size:12.5px;color:var(--dim);font-weight:300;margin-top:6px;line-height:1.6}
+.fd .tm{font-size:9.5px;color:var(--faint);margin-top:9px;letter-spacing:.14em;font-weight:600;text-transform:uppercase}
+.fd .amt{font-family:'JetBrains Mono',monospace;font-size:13.5px;flex:none;text-align:right;white-space:nowrap}
+.daysep{padding:16px 24px 12px;font-weight:600;font-size:9.5px;letter-spacing:.18em;color:var(--faint);
+  text-transform:uppercase;border-bottom:1px solid var(--hair);background:rgba(255,255,255,.015)}
+
+/* ── onboarding ─────────────────────────────────────── */
+.prog{display:flex;gap:12px;margin-bottom:38px;flex-wrap:wrap}
+.prog .st{flex:1;min-width:118px;border-top:2px solid rgba(255,255,255,.09);padding-top:13px;
+  transition:border-color .7s var(--ease)}
+.prog .st .n{font-weight:600;font-size:9px;letter-spacing:.2em;color:var(--faint);text-transform:uppercase}
+.prog .st .l{font-size:12.5px;color:var(--faint);margin-top:6px;font-weight:300}
+.prog .st.done{border-top-color:rgba(196,248,42,.4)}
+.prog .st.done .l{color:var(--dim)}
+.prog .st.on{border-top-color:var(--lime)}
+.prog .st.on .n{color:var(--lime)}
+.prog .st.on .l{color:var(--ink);font-weight:400}
+.picks{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.pick{border:1px solid var(--hair);background:rgba(255,255,255,.03);border-radius:16px;padding:16px;
+  text-align:left;cursor:pointer;box-shadow:var(--inset);color:var(--ink);font-family:Montserrat,sans-serif;
+  transition:all .6s var(--ease)}
+.pick:hover{border-color:var(--hair-2);transform:translateY(-2px)}
+.pick[aria-pressed="true"]{border-color:var(--lime);background:rgba(196,248,42,.07)}
+.pick .sym{font-family:'JetBrains Mono',monospace;font-size:13px}
+.pick .nm{font-size:11px;color:var(--faint);margin-top:4px}
+.pick .px{font-family:'JetBrains Mono',monospace;font-size:15px;margin-top:12px;font-weight:300}
+.step-pane{display:none}
+.step-pane.on{display:block}
+.wiz-foot{display:flex;gap:12px;margin-top:28px;align-items:center;flex-wrap:wrap}
+.wiz-foot .sp{margin-left:auto;font-size:11.5px;color:var(--faint)}
+
+/* ── quick actions / misc ───────────────────────────── */
+.qa{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.qa a{display:flex;flex-direction:column;gap:14px;border:1px solid var(--hair);background:rgba(255,255,255,.03);
+  border-radius:18px;padding:22px 20px;box-shadow:var(--inset);transition:all .6s var(--ease)}
+.qa a:hover{border-color:rgba(196,248,42,.32);background:rgba(196,248,42,.05);transform:translateY(-3px)}
+.qa b{font-family:Archivo;font-variation-settings:'wdth' 118,'wght' 800;text-transform:uppercase;font-size:14px;
+  display:block;margin-bottom:5px}
+.qa span{font-size:11.5px;color:var(--faint);font-weight:300;line-height:1.5}
+.clock{display:flex;gap:8px}
+.clock .u{flex:1;border:1px solid var(--hair);background:rgba(255,255,255,.03);border-radius:14px;
+  padding:14px 8px;text-align:center;box-shadow:var(--inset)}
+.clock .u b{display:block;font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:300;letter-spacing:-.02em}
+.clock .u span{display:block;font-weight:600;font-size:8.5px;letter-spacing:.16em;color:var(--faint);
+  text-transform:uppercase;margin-top:6px}
+.rowlink{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid rgba(255,255,255,.05);
+  font-size:13px;color:var(--dim);transition:color .5s var(--ease)}
+.rowlink:last-child{border-bottom:0}
+.rowlink:hover{color:var(--ink)}
+.rowlink .ic{color:var(--faint);width:16px;height:16px}
+.rowlink b{margin-left:auto;font-family:'JetBrains Mono',monospace;font-weight:400;color:var(--ink)}
+.greet{font-weight:600;font-size:10px;letter-spacing:.2em;color:var(--lime);text-transform:uppercase}
+.app-head{padding:150px 0 44px}
+.app-head h1{font-size:clamp(32px,5vw,58px);font-variation-settings:'wdth' 125,'wght' 900;margin-top:20px}
+.app-head .lede{margin-top:20px;font-size:15px}
+.head-row{display:flex;align-items:flex-end;justify-content:space-between;gap:28px;flex-wrap:wrap}
+.head-row .acts{display:flex;gap:10px;flex-wrap:wrap}
+
+@media (max-width:1024px){
+  .auth{grid-template-columns:1fr}
+  .auth-brand{display:none}
+  .qa{grid-template-columns:1fr 1fr}
+  .nav-island .bell{display:none}
+}
+@media (max-width:768px){
+  .auth-form{padding:104px 20px 54px}
+  .nav-min{padding:0 16px;top:18px}
+  .nav-min a.back span{display:none}
+  .tf-row{grid-template-columns:1fr}
+  .picks{grid-template-columns:1fr 1fr}
+  .qa{grid-template-columns:1fr}
+  .oauth{flex-direction:column}
+  .dh,.dr{padding:13px 14px;gap:10px}
+  .fd{padding:16px 14px;gap:12px}
+  .daysep{padding:14px 14px 10px}
+  .app-head{padding:104px 0 30px}
+  .app-head h1{font-size:clamp(26px,8vw,40px)!important;font-variation-settings:'wdth' 105,'wght' 800!important}
+  .head-row{align-items:flex-start}
+  .head-row .acts .btn{flex:1;justify-content:space-between}
+  .sticky{position:static}
+  .sw-row{gap:14px;padding:15px 0}
+  .prog{gap:8px}.prog .st{min-width:0;flex:1 1 42%;padding-top:10px}
+  .prog .st .l{font-size:11.5px}
+  .menu{width:calc(100vw - 32px);max-width:280px}
+}
+"""
+
+CSS = CSS + APP_CSS
+
+MARKET_NAV = [("exchange.html", "Exchange"), ("clubs.html", "Dream Clubs"),
+              ("fanplay.html", "FanPlay"), ("ftr.html", "$FTR"),
+              ("how-it-works.html", "How it works")]
+
+APP_NAV = [("dashboard.html", "Dashboard"), ("exchange.html", "Exchange"),
+           ("clubs.html", "Dream Clubs"), ("fanplay.html", "FanPlay"),
+           ("portfolio.html", "Portfolio"), ("leaderboard.html", "Leaderboard")]
+
+NAVITEMS = MARKET_NAV  # kept for backwards compatibility
+
+ACCOUNT_MENU = [("dashboard.html", "Dashboard", "chart"), ("portfolio.html", "Portfolio & ledger", "receipt"),
+                ("ftr.html", "$FTR wallet", "wallet"), ("notifications.html", "Notifications", "pulse"),
+                ("settings.html", "Settings", "scales")]
 
 def head(title, extra_css=""):
     return ('<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">'
@@ -537,17 +820,54 @@ def atmosphere():
             '  </div>'
             '</div>') + sprite()
 
-def nav(active=""):
-    links = "".join('<a href="%s"%s>%s</a>' % (h, ' class="on"' if l == active else '', l) for h, l in NAVITEMS)
-    over = "".join('<a href="%s" data-close>%s</a>' % (h, l) for h, l in NAVITEMS)
-    cta = ('<div class="nav-wallet" id="navWalletBtn" role="button" tabindex="0" title="Click to open Wallet & Account">'
-           '<span class="pulse"></span><span class="num" id="navBal">128,450 $FTR</span></div>'
-           '<button class="btn btn-lime btn-sm" id="navAccountBtn" type="button">Account<span class="cap">%s</span></button>' % ic("arrow", "ic"))
+def _shell(links, over, right, over_foot):
     return ('<nav class="nav-island"><a class="logo" href="index.html">%s Fantrade</a>'
             '<div class="nav-links">%s</div><div style="display:flex;align-items:center;gap:10px">%s</div>'
             '<button class="burger" id="burger" aria-label="Open menu" aria-expanded="false"><i></i><i></i></button></nav>'
-            '<div class="overlay" id="overlay">%s<button class="btn btn-lime" id="overlayAccountBtn" data-close type="button">Account'
-            '<span class="cap">%s</span></button></div>') % (ic("ball", "ic"), links, cta, over, ic("arrow", "ic"))
+            '<div class="overlay" id="overlay">%s%s</div>') % (ic("ball", "ic"), links, right, over, over_foot)
+
+
+def nav(active="", app=False):
+    """Island nav. app=True renders the signed-in shell (wallet, bell, account menu)."""
+    items = APP_NAV if app else MARKET_NAV
+    links = "".join('<a href="%s"%s>%s</a>' % (h, ' class="on"' if l == active else '', l) for h, l in items)
+    over = "".join('<a href="%s" data-close>%s</a>' % (h, l) for h, l in items)
+
+    if not app:
+        right = ('<a class="btn btn-glass btn-sm" href="signin.html">Sign in<span class="cap">%s</span></a>'
+                 '<a class="btn btn-lime btn-sm" href="signup.html">Get started<span class="cap">%s</span></a>'
+                 % (ic("arrow", "ic"), ic("arrow", "ic")))
+        foot = ('<a class="btn btn-glass" href="signin.html" data-close>Sign in<span class="cap">%s</span></a>'
+                '<a class="btn btn-lime" href="signup.html" data-close>Get started<span class="cap">%s</span></a>'
+                % (ic("arrow", "ic"), ic("arrow", "ic")))
+        return _shell(links, over, right, foot)
+
+    menu = "".join('<a href="%s">%s%s</a>' % (h, ic(i, "ic"), l) for h, l, i in ACCOUNT_MENU)
+    right = ('<a class="nav-wallet" id="navWalletBtn" href="ftr.html" title="Open your $FTR wallet">'
+             '<span class="pulse"></span><span class="num" id="navBal">128,450 $FTR</span></a>'
+             '<a class="bell" id="navBell" href="notifications.html" aria-label="Notifications">%s'
+             '<span class="dot" id="navDot" hidden></span></a>'
+             '<div class="acct"><button class="avatar" id="navAccountBtn" type="button" aria-haspopup="true" '
+             'aria-expanded="false" aria-label="Account menu"><span id="navInitials">AM</span></button>'
+             '<div class="menu" id="navMenu" role="menu">'
+             '<div class="who"><b id="menuName">Alex Morgan</b><span id="menuHandle">@alex_trader</span>'
+             '<i id="menuRank">Apex division · rank #124</i></div>%s'
+             '<div class="sep"></div>'
+             '<button type="button" data-acct-modal>%sWallet summary</button>'
+             '<button type="button" class="danger" data-signout>%sSign out</button>'
+             '</div></div>') % (ic("pulse", "ic"), menu, ic("coin", "ic"), ic("lock", "ic"))
+    over_extra = ('<a href="notifications.html" data-close>Notifications</a>'
+                  '<a href="settings.html" data-close>Settings</a>')
+    foot = ('<button class="btn btn-glass" type="button" data-signout data-close>Sign out'
+            '<span class="cap">%s</span></button>' % ic("arrow", "ic"))
+    return _shell(links, over + over_extra, right, foot)
+
+
+def nav_min(back="index.html", label="Back to Fantrade"):
+    """Stripped nav for auth screens — logo and one way out."""
+    return ('<div class="nav-min"><a class="logo" href="index.html">%s Fantrade</a>'
+            '<a class="back" href="%s">%s<span>%s</span></a></div>'
+            % (ic("ball", "ic"), back, ic("arrow", "ic"), label))
 
 def footer():
     return ('<footer><div class="wrap"><div class="foot">'
@@ -555,9 +875,12 @@ def footer():
             '<p>A football ownership economy. Own players and coaches, build your Dream Club, play every matchday.</p></div>'
             '<div class="col"><b>Platform</b><a href="exchange.html">Exchange</a><a href="clubs.html">Dream Clubs</a>'
             '<a href="fanplay.html">FanPlay</a><a href="ftr.html">$FTR</a></div>'
+            '<div class="col"><b>Your account</b><a href="dashboard.html">Dashboard</a><a href="portfolio.html">Portfolio &amp; ledger</a>'
+            '<a href="leaderboard.html">Leaderboard</a><a href="settings.html">Settings</a></div>'
             '<div class="col"><b>Learn</b><a href="how-it-works.html">How it works</a><a href="fanplay.html#rules">Scoring rules</a>'
             '<a href="fanplay.html#tiers">Market tiers</a><a href="clubs.html#chem">Club chemistry</a></div>'
-            '<div class="col"><b>Company</b><a href="#">About</a><a href="#">Careers</a><a href="#">Press</a><a href="#">Contact</a></div>'
+            '<div class="col"><b>Company</b><a href="signup.html">Create account</a><a href="signin.html">Sign in</a>'
+            '<a href="#">Press</a><a href="#">Contact</a></div>'
             '</div><div class="legal"><span>© 2026 Fantrade. Prototype interface — figures shown are illustrative.</span>'
             '<span>Terms · Privacy · Responsible play</span></div></div></footer>') % ic("ball", "ic")
 
@@ -629,12 +952,58 @@ function liveTicks(sel){
 var FT = (function(){
   var STORAGE_KEY = 'fantrade_v1_state';
   var defaultState = {
+    auth: {
+      signedIn: true,
+      email: "alex.morgan@fantrade.app",
+      onboarded: true,
+      verified: true,
+      since: "Sep 2026"
+    },
     user: {
       name: "Alex Morgan",
       handle: "@alex_trader",
       joined: "Matchday 01 · Sep 2026",
-      rank: 124
+      rank: 124,
+      region: "United Kingdom",
+      league: "Premier League"
     },
+    prefs: {
+      settleAlerts: true,
+      orderFills: true,
+      clubAlerts: true,
+      priceMoves: false,
+      digest: true,
+      marketing: false,
+      twoFactor: false,
+      autoSub: true,
+      stakeCap: 5000
+    },
+    notifications: [
+      { id:"n-1", kind:"settle", icon:"trophy", title:"Matchday 06 settled", read:false, day:"Today",
+        msg:"Zero FC finished 18th of 1,420 clubs with 812 FP. Your Elite-tier stake returned at 2.48x.",
+        time:"09:14 · 2h ago", amt:"+6,200 $FTR", tone:"up" },
+      { id:"n-2", kind:"order", icon:"candle", title:"Buy order filled", read:false, day:"Today",
+        msg:"10,000 $Saka filled at an average of 48.20 $FTR. Average cost basis moved to 31.40.",
+        time:"08:02 · 3h ago", amt:"-483,928 $FTR", tone:"down" },
+      { id:"n-3", kind:"club", icon:"whistle", title:"Teamsheet risk on Zero FC", read:false, day:"Today",
+        msg:"W. Saliba is listed as a late fitness test. Auto-sub will field Gabriel if he is withdrawn.",
+        time:"07:40 · 4h ago", amt:"", tone:"" },
+      { id:"n-4", kind:"settle", icon:"coin", title:"Dividend distributed", read:true, day:"Yesterday",
+        msg:"$Saka clean sheet and man-of-the-match distribution paid to all holders on the ledger.",
+        time:"Yesterday · 22:10", amt:"+420 $FTR", tone:"up" },
+      { id:"n-5", kind:"club", icon:"bolt", title:"Coach synergy unlocked", read:true, day:"Yesterday",
+        msg:"$Arteta now matches your 4-3-3 shape. Club multiplier rose from 10.0% to 15.0%.",
+        time:"Yesterday · 19:22", amt:"", tone:"" },
+      { id:"n-6", kind:"order", icon:"swap", title:"Limit order expired", read:true, day:"Yesterday",
+        msg:"Your limit buy for 2,000 $Pedri at 38.00 $FTR expired unfilled. Nothing was charged.",
+        time:"Yesterday · 11:05", amt:"", tone:"" },
+      { id:"n-7", kind:"system", icon:"shield", title:"New sign-in on Chrome, London", read:true, day:"Sep 12",
+        msg:"If this was not you, change your password and revoke the session from Settings → Security.",
+        time:"Sep 12 · 08:30", amt:"", tone:"" },
+      { id:"n-8", kind:"settle", icon:"rank", title:"Promoted to Apex division", read:true, day:"Sep 11",
+        msg:"Zero FC crossed the top-150 cutoff and now competes for 50% of the weekly prize pool.",
+        time:"Sep 11 · 23:59", amt:"", tone:"" }
+    ],
     wallet: {
       balance: 128450,
       locked: 5000,
@@ -689,10 +1058,104 @@ var FT = (function(){
 
   return {
     getState: function(){ return state; },
+    save: function(){ save(state); },
+    initials: function(){
+      return (state.user.name || 'Manager').trim().split(/\s+/).slice(0,2)
+        .map(function(w){ return w.charAt(0).toUpperCase(); }).join('') || 'FT';
+    },
+    unread: function(){
+      return (state.notifications || []).filter(function(n){ return !n.read; }).length;
+    },
+    holdingsValue: function(){
+      return Object.keys(state.holdings).reduce(function(t,k){
+        var h = state.holdings[k]; return t + h.shares * h.p;
+      }, 0);
+    },
     syncUI: function(){
-      document.querySelectorAll('#navBal').forEach(function(el){
-        el.textContent = state.wallet.balance.toLocaleString('en-US') + ' $FTR';
+      var bal = state.wallet.balance.toLocaleString('en-US') + ' $FTR';
+      document.querySelectorAll('#navBal').forEach(function(el){ el.textContent = bal; });
+      var ini = FT.initials();
+      document.querySelectorAll('#navInitials').forEach(function(el){ el.textContent = ini; });
+      document.querySelectorAll('#menuName').forEach(function(el){ el.textContent = state.user.name; });
+      document.querySelectorAll('#menuHandle').forEach(function(el){ el.textContent = state.user.handle; });
+      document.querySelectorAll('#menuRank').forEach(function(el){
+        el.textContent = 'Apex division · rank #' + state.club.rank;
       });
+      var n = FT.unread();
+      document.querySelectorAll('#navDot').forEach(function(el){ el.hidden = n === 0; });
+      document.querySelectorAll('[data-unread]').forEach(function(el){ el.textContent = n; });
+      document.querySelectorAll('[data-bind]').forEach(function(el){
+        var k = el.getAttribute('data-bind'), v;
+        if(k === 'name') v = state.user.name;
+        else if(k === 'first') v = (state.user.name || 'Manager').split(' ')[0];
+        else if(k === 'handle') v = state.user.handle;
+        else if(k === 'email') v = state.auth.email;
+        else if(k === 'club') v = state.club.name;
+        else if(k === 'formation') v = state.club.formation;
+        else if(k === 'balance') v = state.wallet.balance.toLocaleString('en-US');
+        else if(k === 'locked') v = state.wallet.locked.toLocaleString('en-US');
+        else if(k === 'earned') v = state.wallet.seasonEarned.toLocaleString('en-US');
+        else if(k === 'clubvalue') v = state.club.value.toLocaleString('en-US');
+        else if(k === 'rank') v = '#' + state.club.rank;
+        else if(k === 'fp') v = state.club.fp.toLocaleString('en-US');
+        else if(k === 'boost') v = state.club.boost.toFixed(1) + '%';
+        else if(k === 'assets') v = Math.round(FT.holdingsValue()).toLocaleString('en-US');
+        else if(k === 'net') v = Math.round(FT.holdingsValue() + state.wallet.balance + state.wallet.locked).toLocaleString('en-US');
+        if(v !== undefined) el.textContent = v;
+      });
+    },
+    isAuthed: function(){ return !!(state.auth && state.auth.signedIn); },
+    signIn: function(email, name){
+      state.auth.signedIn = true;
+      state.auth.email = email || state.auth.email;
+      if(name) state.user.name = name;
+      save(state); FT.syncUI();
+      window.dispatchEvent(new CustomEvent('fantrade:statechange', { detail: state }));
+    },
+    signUp: function(data){
+      state.auth.signedIn = true;
+      state.auth.onboarded = false;
+      state.auth.email = data.email;
+      state.auth.since = 'Sep 2026';
+      state.user.name = data.name;
+      state.user.handle = '@' + (data.name || 'manager').toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '');
+      state.user.region = data.region || state.user.region;
+      save(state); FT.syncUI();
+      window.dispatchEvent(new CustomEvent('fantrade:statechange', { detail: state }));
+    },
+    signOut: function(){
+      state.auth.signedIn = false;
+      save(state);
+      window.location.href = 'index.html';
+    },
+    completeOnboarding: function(data){
+      if(data.handle) state.user.handle = data.handle;
+      if(data.region) state.user.region = data.region;
+      if(data.league) state.user.league = data.league;
+      if(data.clubName) state.club.name = data.clubName;
+      if(data.formation) state.club.formation = data.formation;
+      if(data.colors){ state.club.colors = data.colors; state.club.colorName = data.colorName; }
+      state.auth.onboarded = true;
+      save(state); FT.syncUI();
+      window.dispatchEvent(new CustomEvent('fantrade:statechange', { detail: state }));
+    },
+    updateProfile: function(patch){
+      Object.assign(state.user, patch || {});
+      save(state); FT.syncUI();
+      window.dispatchEvent(new CustomEvent('fantrade:statechange', { detail: state }));
+    },
+    setPref: function(key, val){
+      state.prefs[key] = val; save(state);
+      window.dispatchEvent(new CustomEvent('fantrade:statechange', { detail: state }));
+    },
+    readAll: function(){
+      (state.notifications || []).forEach(function(n){ n.read = true; });
+      save(state); FT.syncUI();
+      window.dispatchEvent(new CustomEvent('fantrade:statechange', { detail: state }));
+    },
+    readOne: function(id){
+      var n = (state.notifications || []).filter(function(x){ return x.id === id; })[0];
+      if(n && !n.read){ n.read = true; save(state); FT.syncUI(); }
     },
     executeTrade: function(side, assetSymbol, assetName, shares, price, isCoach){
       var subtotal = shares * price;
@@ -897,10 +1360,53 @@ function showAccountModal(){
   });
 }
 
-document.querySelectorAll('#navAccountBtn, #overlayAccountBtn, #navWalletBtn').forEach(function(btn){
+document.querySelectorAll('[data-acct-modal], #overlayAccountBtn').forEach(function(btn){
   btn.addEventListener('click', function(e){
     e.preventDefault();
+    var m = document.getElementById('navMenu');
+    if(m) m.classList.remove('open');
     showAccountModal();
+  });
+});
+
+// Account dropdown
+(function(){
+  var trigger = document.getElementById('navAccountBtn');
+  var menu = document.getElementById('navMenu');
+  if(!trigger || !menu) return;
+  function setOpen(open){
+    menu.classList.toggle('open', open);
+    trigger.setAttribute('aria-expanded', open ? 'true' : 'false');
+  }
+  trigger.addEventListener('click', function(e){
+    e.preventDefault(); e.stopPropagation();
+    setOpen(!menu.classList.contains('open'));
+  });
+  document.addEventListener('click', function(e){
+    if(menu.classList.contains('open') && !menu.contains(e.target) && e.target !== trigger) setOpen(false);
+  });
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape' && menu.classList.contains('open')){ setOpen(false); trigger.focus(); }
+  });
+})();
+
+document.querySelectorAll('[data-signout]').forEach(function(b){
+  b.addEventListener('click', function(e){
+    e.preventDefault();
+    showToast('Signed out. See you at the next matchday.', 'info');
+    setTimeout(function(){ FT.signOut(); }, 700);
+  });
+});
+
+// Generic toggle switches — bound to FT.prefs by data-pref
+document.querySelectorAll('.tgl[data-pref]').forEach(function(t){
+  var key = t.getAttribute('data-pref');
+  var on = !!FT.getState().prefs[key];
+  t.setAttribute('aria-pressed', on ? 'true' : 'false');
+  t.addEventListener('click', function(){
+    var next = t.getAttribute('aria-pressed') !== 'true';
+    t.setAttribute('aria-pressed', next ? 'true' : 'false');
+    FT.setPref(key, next);
   });
 });
 

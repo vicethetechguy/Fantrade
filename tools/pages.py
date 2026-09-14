@@ -22,8 +22,8 @@ def btn(label, cls="btn-lime", href="#", tag="a", extra=""):
     return o
 
 
-def page(fname, title, body, js="", css=""):
-    html = (head(title, css) + atmosphere() + nav(title.split(" — ")[0] if " — " in title else "") +
+def page(fname, title, body, js="", css="", app=False):
+    html = (head(title, css) + atmosphere() + nav(title.split(" — ")[0] if " — " in title else "", app) +
             body + footer() + "<script>(function(){" + JS_SHELL + js + "})();</script></body></html>")
     with open(os.path.join(OUT, fname), "w", encoding="utf-8") as f:
         f.write(html)
@@ -587,7 +587,7 @@ loadTicket=function(){
 
 rows(); loadTicket(); liveTicks('.mrow');
 """
-page("exchange.html", "Exchange — Fantrade", "".join(ex), EX_JS, EX_CSS)
+page("exchange.html", "Exchange — Fantrade", "".join(ex), EX_JS, EX_CSS, app=True)
 
 
 # ══════════════════════════════════════════════════════════
@@ -856,7 +856,7 @@ if(vc){
     "<div class='b-row'><span>Now</span><b>245,800</b></div>";
 }
 """
-page("clubs.html", "Dream Clubs — Fantrade", "".join(cl), CL_JS, CL_CSS)
+page("clubs.html", "Dream Clubs — Fantrade", "".join(cl), CL_JS, CL_CSS, app=True)
 
 
 # ══════════════════════════════════════════════════════════
@@ -1101,6 +1101,6 @@ if(!reduce) setInterval(function(){
     el.style.color='#C4F82A'; setTimeout(function(){ el.style.color=''; },800); }
 },2600);
 """
-page("fanplay.html", "FanPlay — Fantrade", "".join(fp), FP_JS, FP_CSS)
+page("fanplay.html", "FanPlay — Fantrade", "".join(fp), FP_JS, FP_CSS, app=True)
 
 print("built:", sorted(os.listdir(OUT)))
