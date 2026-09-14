@@ -56,7 +56,7 @@ f.append(T('<header class="phead"><div class="wrap">'
            '<span class="pill" data-reveal>@@ The platform currency</span><h1 data-reveal>$FTR</h1>'
            '<p class="lede" data-reveal>One balance funds everything. You buy shares with $FTR, pay swap fees in $FTR, '
            'stake FanPlay entries in $FTR, and every settled round pays back into the same wallet.</p>'
-           '<div class="statbar" data-reveal><div>@@ Your balance <b>128,450 $FTR</b></div>'
+           '<div class="statbar" data-reveal><div>@@ Your balance <b id="ftrStatBal">128,450 $FTR</b></div>'
            '<div>@@ Locked in entries <b>5,000</b></div><div>@@ Earned this season <b>19,640</b></div></div>'
            '</div></header>',
            ic("coin", "ic"), ic("wallet", "ic"), ic("lock", "ic"), ic("trophy", "ic")))
@@ -64,13 +64,13 @@ f.append(T('<header class="phead"><div class="wrap">'
 f.append('<main><section style="padding-top:30px"><div class="wrap"><div class="bento">')
 f.append(T('<div class="bezel c5" data-reveal><div class="core pad">'
            '<div class="k-label">Available balance</div>'
-           '<div class="balance">128,450<small> $FTR</small></div>'
+           '<div class="balance" id="ftrMainBal">128,450<small> $FTR</small></div>'
            '<div class="delta">▲ 6,200 this week from settled rounds</div>'
-           '<div class="split"><div><div class="k">Locked in entries</div><div class="v">5,000</div></div>'
-           '<div><div class="k">Held in assets</div><div class="v">402,610</div></div></div>'
+           '<div class="split"><div><div class="k">Locked in entries</div><div class="v" id="ftrLockedBal">5,000</div></div>'
+           '<div><div class="k">Held in assets</div><div class="v" id="ftrAssetsBal">402,610</div></div></div>'
            '<div style="display:flex;gap:10px;margin-top:22px;flex-wrap:wrap">@@@@</div></div></div>',
-           btn("Deposit", extra='style="flex:1;justify-content:space-between"'),
-           btn("Withdraw", "btn-glass", extra='style="flex:1;justify-content:space-between"')))
+           btn("Deposit", extra='id="depositBtn" style="flex:1;justify-content:space-between"'),
+           btn("Withdraw", "btn-glass", extra='id="withdrawBtn" style="flex:1;justify-content:space-between"')))
 
 f.append(T('<div class="bezel c4" data-reveal><div class="core pad">'
            '<div class="k-label">Convert</div>'
@@ -83,7 +83,7 @@ f.append(T('<div class="bezel c4" data-reveal><div class="core pad">'
            '<div class="line"><span>Credited</span><b id="cNet">12,338 $FTR</b></div>'
            '@@</div></div>',
            ic("swap", "ic"), btn("Convert to $FTR", tag="button",
-                                 extra='style="margin-top:18px;width:100%;justify-content:space-between"')))
+                                 extra='id="convertBtn" style="margin-top:18px;width:100%;justify-content:space-between"')))
 
 f.append(T('<div class="bezel c3" data-reveal><div class="core pad">'
            '<div class="k-label">Circulating supply</div>'
@@ -119,24 +119,13 @@ for icon, t, d, c, am in [("candle", "Buys shares", "Every order on the exchange
 f.append('</div></div></section>')
 
 # ledger
-TX = [("Matchday 06 settlement", "Club · Elite", "+312 FP", "+3,744"),
-      ("Bought 10,000 $Saka", "Exchange", "—", "−483,928"),
-      ("Matchday 05 settlement", "Individual · PRO", "+140 FP", "+1,680"),
-      ("Swap $Pedri → $Musiala", "Swap fee", "—", "−184"),
-      ("Deposit", "Convert GBP", "—", "+12,338"),
-      ("Matchday 04 settlement", "Club · Elite", "+286 FP", "+3,432")]
 f.append(T('<section><div class="wrap"><div class="sec-head" data-reveal>'
            '<span class="pill">@@ Ledger</span><h2>Every movement,<br>in one place</h2></div>'
            '<div class="bezel" data-reveal><div class="core">'
-           '<div class="tx h"><span>Activity</span><span>Type</span><span>Points</span><span>$FTR</span></div>',
+           '<div class="tx h"><span>Activity</span><span>Type</span><span>Points</span><span>$FTR</span></div>'
+           '<div id="ledgerBody"></div>',
            ic("receipt", "ic")))
-for what, kind, fp, amt in TX:
-    cls = "up" if amt.startswith("+") else "down"
-    icon = "trophy" if "settlement" in what else ("swap" if "Swap" in what else ("wallet" if "Deposit" in what else "candle"))
-    f.append(T('<div class="tx"><span class="w">@@@@</span><span style="color:var(--dim);font-size:12.5px">@@</span>'
-               '<span class="num" style="font-size:12.5px;color:var(--dim)">@@</span>'
-               '<span class="num @@">@@</span></div>', ic(icon, "ic-sm"), what, kind, fp, cls, amt))
-f.append('</div></div></div></section></main>')
+f.append('</div></div></section></main>')
 
 FTR_JS = r"""
 var fi=document.getElementById('fiat'), fo=document.getElementById('ftr');
@@ -155,6 +144,152 @@ if(fi){
     b.addEventListener('click',function(){ fi.value=(+b.dataset.f).toLocaleString('en-US'); conv(); });
   });
   conv();
+}
+
+function renderLedger(){
+  var s=FT.getState();
+  var lb=document.getElementById('ledgerBody');
+  if(!lb) return;
+
+  if(!s.transactions || s.transactions.length===0){
+    lb.innerHTML="<div style='padding:24px;text-align:center;color:var(--dim);font-size:13px'>No transactions recorded yet.</div>";
+    return;
+  }
+
+  lb.innerHTML=s.transactions.map(function(t){
+    var isUp=t.type==='DEPOSIT' || t.type==='CONVERT' || t.type==='SELL' || (t.type==='SETTLE' && t.total>=0);
+    var icon=t.type==='SETTLE' ? 'trophy' : (t.type==='SWAP' ? 'swap' : (t.type==='DEPOSIT'||t.type==='CONVERT' ? 'wallet' : (t.type==='STAKE' ? 'bolt' : 'candle')));
+    var sign=isUp ? '+' : '−';
+    var amtStr=sign+Math.abs(t.total).toLocaleString('en-US');
+    var pts=t.points ? ('+'+t.points+' FP') : '—';
+    var cls=isUp ? 'up' : 'down';
+
+    var displayAct=t.type==='BUY' ? 'Bought '+t.shares.toLocaleString('en-US')+' '+t.asset :
+                  (t.type==='SELL' ? 'Sold '+t.shares.toLocaleString('en-US')+' '+t.asset :
+                  (t.type==='STAKE' ? 'Staked '+t.asset : t.asset));
+
+    return "<div class='tx'><span class='w'><svg class='ic-sm' aria-hidden='true'><use href='#i-"+icon+"'/></svg>"+
+      "<span>"+displayAct+"</span></span>"+
+      "<span style='color:var(--dim);font-size:12.5px'>"+(t.type==='BUY'||t.type==='SELL'?'Exchange':t.type)+"</span>"+
+      "<span class='num' style='font-size:12.5px;color:var(--dim)'>"+pts+"</span>"+
+      "<span class='num "+cls+"'>"+amtStr+"</span></div>";
+  }).join('');
+}
+
+function syncFTRPage(){
+  var s=FT.getState();
+  var sb=document.getElementById('ftrStatBal');
+  if(sb) sb.textContent=s.wallet.balance.toLocaleString('en-US')+' $FTR';
+
+  var mb=document.getElementById('ftrMainBal');
+  if(mb) mb.innerHTML=s.wallet.balance.toLocaleString('en-US')+'<small> $FTR</small>';
+
+  var lb=document.getElementById('ftrLockedBal');
+  if(lb) lb.textContent=s.wallet.locked.toLocaleString('en-US');
+
+  var heldVal=0;
+  Object.keys(s.holdings).forEach(function(k){
+    var h=s.holdings[k];
+    heldVal+=(h.shares * h.avg);
+  });
+  var ab=document.getElementById('ftrAssetsBal');
+  if(ab) ab.textContent=Math.round(heldVal).toLocaleString('en-US');
+
+  renderLedger();
+}
+
+syncFTRPage();
+window.addEventListener('fantrade:statechange', syncFTRPage);
+
+var cb=document.getElementById('convertBtn');
+if(cb){
+  cb.addEventListener('click',function(){
+    var v=parseInt((fi.value||'0').replace(/[^0-9]/g,''),10)||0;
+    if(v<=0){
+      showToast("Please enter an amount in GBP to convert.", "error");
+      return;
+    }
+    var net=FT.convertGbp(v);
+    showToast("Converted £"+v.toLocaleString('en-US')+" into "+net.toLocaleString('en-US')+" $FTR!", "success");
+    syncFTRPage();
+  });
+}
+
+var db=document.getElementById('depositBtn');
+if(db){
+  db.addEventListener('click',function(e){
+    e.preventDefault();
+    var modalHtml='' +
+      '<h3 class="ft-modal-title">Deposit $FTR</h3>' +
+      '<p class="ft-modal-desc">Add demo funds directly to your wallet balance.</p>' +
+      '<div class="field"><label>Amount ($FTR)</label><input id="depAmtInput" value="25,000" inputmode="numeric"></div>' +
+      '<div class="quick">' +
+        '<button data-dep="5000">5K</button>' +
+        '<button data-dep="25000">25K</button>' +
+        '<button data-dep="50000">50K</button>' +
+        '<button data-dep="100000">100K</button>' +
+      '</div>' +
+      '<div style="display:flex;gap:10px;margin-top:20px">' +
+        '<button class="btn btn-lime" id="confDepBtn" type="button" style="flex:1;justify-content:center">Confirm Deposit</button>' +
+        '<button class="btn btn-glass" id="cancelDepBtn" type="button" style="flex:1;justify-content:center">Cancel</button>' +
+      '</div>';
+    openModal(modalHtml);
+    var inEl=document.getElementById('depAmtInput');
+    document.querySelectorAll('[data-dep]').forEach(function(b){
+      b.addEventListener('click',function(){ inEl.value=(+b.dataset.dep).toLocaleString('en-US'); });
+    });
+    document.getElementById('cancelDepBtn').addEventListener('click', closeModal);
+    document.getElementById('confDepBtn').addEventListener('click',function(){
+      var amt=parseInt((inEl.value||'0').replace(/[^0-9]/g,''),10)||0;
+      if(amt<=0){ showToast("Please enter a valid amount.", "error"); return; }
+      FT.depositFtr(amt);
+      showToast("Deposited "+amt.toLocaleString('en-US')+" $FTR!", "success");
+      closeModal();
+      syncFTRPage();
+    });
+  });
+}
+
+var wb=document.getElementById('withdrawBtn');
+if(wb){
+  wb.addEventListener('click',function(e){
+    e.preventDefault();
+    var s=FT.getState();
+    var modalHtml='' +
+      '<h3 class="ft-modal-title">Withdraw $FTR</h3>' +
+      '<p class="ft-modal-desc">Transfer $FTR from your available balance to external address.</p>' +
+      '<div class="field"><label>Amount ($FTR)</label><input id="withAmtInput" value="10,000" inputmode="numeric"></div>' +
+      '<div class="ft-modal-card">' +
+        '<div class="m-row"><span>Available Balance</span><b>'+s.wallet.balance.toLocaleString('en-US')+' $FTR</b></div>' +
+        '<div class="m-row"><span>Withdrawal Fee</span><b>0 $FTR (Covered)</b></div>' +
+      '</div>' +
+      '<div style="display:flex;gap:10px;margin-top:20px">' +
+        '<button class="btn btn-lime" id="confWithBtn" type="button" style="flex:1;justify-content:center">Withdraw Funds</button>' +
+        '<button class="btn btn-glass" id="cancelWithBtn" type="button" style="flex:1;justify-content:center">Cancel</button>' +
+      '</div>';
+    openModal(modalHtml);
+    document.getElementById('cancelWithBtn').addEventListener('click', closeModal);
+    document.getElementById('confWithBtn').addEventListener('click',function(){
+      var amt=parseInt((document.getElementById('withAmtInput').value||'0').replace(/[^0-9]/g,''),10)||0;
+      if(amt<=0){ showToast("Please enter an amount.", "error"); return; }
+      if(s.wallet.balance < amt){ showToast("Insufficient balance to withdraw.", "error"); return; }
+      s.wallet.balance -= amt;
+      s.transactions.unshift({
+        type: "WITHDRAW",
+        asset: "External Wallet (0x7F...3B)",
+        shares: 1,
+        price: amt,
+        total: amt,
+        time: "Just now"
+      });
+      localStorage.setItem('fantrade_state_v1', JSON.stringify(s));
+      FT.syncUI();
+      window.dispatchEvent(new CustomEvent('fantrade:statechange', { detail: s }));
+      showToast("Withdrew "+amt.toLocaleString('en-US')+" $FTR successfully.", "success");
+      closeModal();
+      syncFTRPage();
+    });
+  });
 }
 """
 page("ftr.html", "$FTR — Fantrade", "".join(f), FTR_JS, FTR_CSS)

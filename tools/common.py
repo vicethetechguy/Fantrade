@@ -314,6 +314,38 @@ footer{border-top:1px solid var(--hair);padding:70px 0 64px;background:rgba(255,
 .legal{margin-top:52px;padding-top:26px;border-top:1px solid var(--hair);font-size:11.5px;color:var(--faint);
   display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
 
+/* toasts */
+.ft-toast-container{position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:10px;pointer-events:none;max-width:calc(100vw - 32px)}
+.ft-toast{pointer-events:auto;display:flex;align-items:center;gap:12px;padding:14px 20px;border-radius:14px;background:rgba(10,13,14,.94);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);border:1px solid var(--hair);box-shadow:var(--inset),0 20px 40px -10px rgba(0,0,0,.85);font-size:13.5px;color:var(--ink);transform:translateY(20px);opacity:0;transition:all .35s cubic-bezier(.16,1,.3,1)}
+.ft-toast.show{transform:translateY(0);opacity:1}
+.ft-toast.success{border-color:rgba(196,248,42,.45)}
+.ft-toast.success .t-icon{color:var(--lime)}
+.ft-toast.error{border-color:rgba(255,94,94,.45)}
+.ft-toast.error .t-icon{color:var(--red)}
+.ft-toast.info{border-color:rgba(255,255,255,.25)}
+.ft-toast.info .t-icon{color:var(--ink)}
+.ft-toast .t-icon{width:18px;height:18px;flex:none}
+
+/* modal */
+.ft-modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.78);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);z-index:9990;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .25s ease}
+.ft-modal-backdrop.open{opacity:1;pointer-events:auto}
+.ft-modal-box{background:var(--core);border:1px solid var(--hair);border-radius:24px;box-shadow:var(--ambient),var(--inset);max-width:540px;width:100%;max-height:90vh;overflow-y:auto;padding:32px;position:relative;transform:scale(.95);transition:transform .25s cubic-bezier(.16,1,.3,1)}
+.ft-modal-backdrop.open .ft-modal-box{transform:scale(1)}
+.ft-modal-close{position:absolute;top:18px;right:20px;background:rgba(255,255,255,.05);border:1px solid var(--hair);color:var(--dim);border-radius:50%;width:32px;height:32px;display:grid;place-items:center;font-size:18px;cursor:pointer;transition:all .2s ease}
+.ft-modal-close:hover{background:rgba(255,255,255,.1);color:var(--ink)}
+.ft-modal-title{font-family:Archivo,sans-serif;font-variation-settings:'wdth' 120,'wght' 800;text-transform:uppercase;font-size:22px;margin:0 0 8px}
+.ft-modal-desc{color:var(--dim);font-size:13.5px;font-weight:300;margin:0 0 20px;line-height:1.5}
+.ft-modal-card{border:1px solid var(--hair);border-radius:16px;padding:18px;background:rgba(255,255,255,.03);box-shadow:var(--inset);margin-bottom:16px}
+.ft-modal-card .m-row{display:flex;justify-content:space-between;padding:8px 0;font-size:13px;color:var(--dim)}
+.ft-modal-card .m-row b{color:var(--ink);font-family:'JetBrains Mono',monospace;font-weight:400}
+.ft-modal-card .m-row.total{border-top:1px solid var(--hair);margin-top:6px;padding-top:10px;font-size:14px;color:var(--ink)}
+.ft-modal-card .m-row.total b{color:var(--lime);font-weight:600}
+
+/* nav wallet badge */
+.nav-wallet{display:inline-flex;align-items:center;gap:8px;padding:6px 14px;border-radius:999px;background:rgba(255,255,255,.04);border:1px solid var(--hair);box-shadow:var(--inset);cursor:pointer;transition:all .3s ease;white-space:nowrap}
+.nav-wallet:hover{background:rgba(255,255,255,.08);border-color:var(--hair-2)}
+.nav-wallet .num{font-size:12px;color:var(--lime);font-weight:500}
+
 /* responsive */
 @media (max-width:1024px){
   .nav-links{display:none}.nav-island>.btn{display:none}.burger{display:block}
@@ -327,16 +359,25 @@ footer{border-top:1px solid var(--hair);padding:70px 0 64px;background:rgba(255,
   .bento{gap:12px}.sec-head{margin-bottom:40px}.lede{font-size:15px}.pad{padding:30px 26px}
 }
 @media (max-width:768px){
-  .wrap{padding-left:max(16px,env(safe-area-inset-left));padding-right:max(16px,env(safe-area-inset-right))}
-  .nav-island{top:max(12px,env(safe-area-inset-top));left:12px;right:12px;transform:none;width:auto;max-width:none}
+  html,body{overflow-x:hidden!important;width:100%;max-width:100vw}
+  .wrap{padding-left:max(16px,env(safe-area-inset-left));padding-right:max(16px,env(safe-area-inset-right));max-width:100vw;box-sizing:border-box}
+  .nav-island{top:max(12px,env(safe-area-inset-top));left:12px;right:12px;transform:none;width:auto;max-width:calc(100vw - 24px)!important;box-sizing:border-box}
+  .logo{font-size:15px;flex-shrink:0}
   body.menu-open{overflow:hidden}
-  .overlay{padding:100px 22px 48px;overflow-y:auto;justify-content:flex-start}
+  .overlay{padding:90px 22px 48px;overflow-y:auto;overflow-x:hidden;justify-content:flex-start;max-width:100vw}
+  .overlay a{font-size:clamp(22px,7.5vw,36px)!important;font-variation-settings:'wdth' 105,'wght' 800!important;overflow-wrap:break-word;word-break:break-word;white-space:normal;line-height:1.25}
   section{padding:88px 0}
+  .hero{padding:128px 0 0}
+  .hero h1{font-size:clamp(26px,8vw,42px)!important;font-variation-settings:'wdth' 105,'wght' 800!important;letter-spacing:-.02em!important;overflow-wrap:break-word;word-break:break-word}
   .phead{padding:126px 0 46px}
-  .bento,.bento.halves{grid-template-columns:1fr;gap:12px}
+  .phead h1{font-size:clamp(26px,8vw,42px)!important;font-variation-settings:'wdth' 105,'wght' 800!important;overflow-wrap:break-word;word-break:break-word}
+  h2{font-size:clamp(24px,7vw,36px)!important;font-variation-settings:'wdth' 105,'wght' 800!important}
+  .cta-sec h2{font-size:clamp(26px,8vw,40px)!important;font-variation-settings:'wdth' 105,'wght' 800!important}
+  .bento,.bento.halves{grid-template-columns:1fr;gap:12px;width:100%;min-width:0}
   .bento .c6,.bento.halves .c6{grid-column:span 1}
-  .bezel{padding:6px;--r-out:1.5rem;--r-in:calc(1.5rem - .375rem)}
-  .btn{min-height:46px;padding:11px 11px 11px 22px}
+  .bezel{padding:6px;--r-out:1.5rem;--r-in:calc(1.5rem - .375rem);max-width:100%;min-width:0;box-sizing:border-box}
+  .bezel>.core{max-width:100%;min-width:0;box-sizing:border-box}
+  .btn{min-height:46px;padding:11px 11px 11px 22px;max-width:100%}
   .tab{min-height:60px}.tabs{flex-direction:column}
   .markets{flex-wrap:nowrap;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:8px;
     margin-right:-22px;padding-right:22px;scrollbar-width:none}
@@ -353,22 +394,30 @@ footer{border-top:1px solid var(--hair);padding:70px 0 64px;background:rgba(255,
   .bench-row::-webkit-scrollbar{display:none}
   .chip.sm{flex:0 0 auto;min-width:94px}
   .own-alert{flex-direction:column;align-items:flex-start}.own-alert .btn{margin-left:0;width:100%;justify-content:space-between}
-  .statbar div{width:100%}
+  .statbar div{width:100%;max-width:100%;box-sizing:border-box}
+  .trust div{width:100%;max-width:100%;box-sizing:border-box}
   .foot{gap:26px}.foot .col{min-width:calc(50% - 13px)}.brandcol{min-width:100%;margin-right:0}
   .legal{flex-direction:column;gap:10px}
   footer{padding-bottom:calc(56px + env(safe-area-inset-bottom))}
 }
 @media (max-width:560px){
-  h2{font-size:clamp(28px,8.6vw,42px)}
+  h2{font-size:clamp(22px,7vw,32px)!important}
   .t-nm{display:none}
   .pitch-head{flex-wrap:wrap;gap:12px}
   .pitch-head .coach{margin-left:0;width:100%;border-top:1px solid rgba(255,255,255,.07);padding-top:12px}
   .mini-grid{grid-template-columns:1fr 1fr}
-  .value-big{font-size:32px}
+  .value-big{font-size:28px}
 }
-@media (max-width:400px){
+@media (max-width:480px){
   .wrap{padding-left:14px;padding-right:14px}
-  .chip{flex:0 1 88px;padding:7px 5px}.chip .nm{font-size:10px}
+  .nav-island{left:8px;right:8px;padding:6px 10px 6px 14px}
+  .logo{font-size:13.5px}
+  .hero h1{font-size:clamp(22px,7.5vw,32px)!important}
+  .phead h1{font-size:clamp(22px,7vw,32px)!important}
+  h2{font-size:clamp(20px,6.5vw,28px)!important}
+  .overlay a{font-size:clamp(20px,6.5vw,28px)!important}
+  .trust div{font-size:11px;padding:8px 12px}
+  .chip{flex:1 1 78px;padding:6px 4px}.chip .nm{font-size:10px}
   .mini-grid{grid-template-columns:1fr}
 }
 @media (prefers-reduced-motion:reduce){
@@ -389,17 +438,26 @@ def head(title, extra_css=""):
 
 def atmosphere():
     return ('<div class="orb orb-a"></div><div class="orb orb-b"></div><div class="orb orb-c"></div>'
-            '<div class="grain"></div>') + sprite()
+            '<div class="grain"></div>'
+            '<div id="ftToastContainer" class="ft-toast-container" aria-live="polite"></div>'
+            '<div id="ftModalBackdrop" class="ft-modal-backdrop" style="display:none">'
+            '  <div class="ft-modal-box" id="ftModalBox" role="dialog" aria-modal="true">'
+            '    <button class="ft-modal-close" id="ftModalClose" aria-label="Close modal">×</button>'
+            '    <div id="ftModalContent"></div>'
+            '  </div>'
+            '</div>') + sprite()
 
 def nav(active=""):
     links = "".join('<a href="%s"%s>%s</a>' % (h, ' class="on"' if l == active else '', l) for h, l in NAVITEMS)
     over = "".join('<a href="%s" data-close>%s</a>' % (h, l) for h, l in NAVITEMS)
-    cta = ('<a class="btn btn-lime btn-sm" href="#">Create account<span class="cap">%s</span></a>' % ic("arrow", "ic"))
+    cta = ('<div class="nav-wallet" id="navWalletBtn" role="button" tabindex="0" title="Click to open Wallet & Account">'
+           '<span class="pulse"></span><span class="num" id="navBal">128,450 $FTR</span></div>'
+           '<button class="btn btn-lime btn-sm" id="navAccountBtn" type="button">Account<span class="cap">%s</span></button>' % ic("arrow", "ic"))
     return ('<nav class="nav-island"><a class="logo" href="index.html">%s Fantrade</a>'
-            '<div class="nav-links">%s</div>%s'
+            '<div class="nav-links">%s</div><div style="display:flex;align-items:center;gap:10px">%s</div>'
             '<button class="burger" id="burger" aria-label="Open menu" aria-expanded="false"><i></i><i></i></button></nav>'
-            '<div class="overlay" id="overlay">%s<a class="btn btn-lime" href="#" data-close>Create account'
-            '<span class="cap">%s</span></a></div>') % (ic("ball", "ic"), links, cta, over, ic("arrow", "ic"))
+            '<div class="overlay" id="overlay">%s<button class="btn btn-lime" id="overlayAccountBtn" data-close type="button">Account'
+            '<span class="cap">%s</span></button></div>') % (ic("ball", "ic"), links, cta, over, ic("arrow", "ic"))
 
 def footer():
     return ('<footer><div class="wrap"><div class="foot">'
@@ -476,4 +534,286 @@ function liveTicks(sel){
     if(dx){ dx.textContent=(a.d>=0?'+':'')+a.d.toFixed(1)+'%'; dx.className='tick '+(a.d>=0?'up':'down'); }
   },1500);
 }
+
+// Global Fantrade State Management
+var FT = (function(){
+  var STORAGE_KEY = 'fantrade_v1_state';
+  var defaultState = {
+    user: {
+      name: "Alex Morgan",
+      handle: "@alex_trader",
+      joined: "Matchday 01 · Sep 2026",
+      rank: 124
+    },
+    wallet: {
+      balance: 128450,
+      locked: 5000,
+      seasonEarned: 19640,
+      gbpRate: 12.40
+    },
+    holdings: {
+      '$Saka': { n: 'Bukayo Saka', shares: 10000, avg: 31.40, p: 48.20, c: false, inClub: 'RW' },
+      '$Bruno': { n: 'Bruno Fernandes', shares: 5000, avg: 38.00, p: 39.75, c: false, inClub: 'CAM' },
+      '$Haaland': { n: 'Erling Haaland', shares: 3000, avg: 68.50, p: 71.40, c: false, inClub: 'ST' },
+      '$Arteta': { n: 'Mikel Arteta', shares: 1000, avg: 20.50, p: 22.05, c: true, inClub: 'COACH' }
+    },
+    club: {
+      name: "Zero FC",
+      stadium: "Emirates of the North",
+      colors: ["#C4F82A", "#83b300"],
+      colorName: "Lime",
+      formation: "4-3-3",
+      coach: "$Arteta",
+      rank: 124,
+      fp: 8420,
+      boost: 15.0,
+      value: 245800
+    },
+    fanplay: {
+      activeEntries: [
+        { id: "e-1", mode: "Dream Club", target: "Zero FC", tier: "Elite", mult: 2.0, stake: 2500, projectedFP: 230, status: "Active in MD 07" },
+        { id: "e-2", mode: "Individual", target: "$Saka", tier: "PRO", mult: 1.4, stake: 2500, projectedFP: 140, status: "Active in MD 07" }
+      ]
+    },
+    transactions: [
+      { type: "BUY", asset: "$Saka", shares: 10000, price: 48.20, total: 483928, time: "Today, 14:22" },
+      { type: "STAKE", asset: "FanPlay MD 07", shares: 1, price: 2500, total: 2500, time: "Yesterday, 19:10" },
+      { type: "PAYOUT", asset: "Matchday 06 Settle", shares: 1, price: 6200, total: 6200, time: "Sep 08, 02:15" },
+      { type: "CONVERT", asset: "GBP Deposit (£1,000)", shares: 1000, price: 12.40, total: 12338, time: "Sep 07, 11:45" }
+    ]
+  };
+
+  function load(){
+    try {
+      var s = localStorage.getItem(STORAGE_KEY);
+      if(s) return Object.assign({}, defaultState, JSON.parse(s));
+    } catch(e){}
+    return JSON.parse(JSON.stringify(defaultState));
+  }
+  function save(s){
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(s));
+    } catch(e){}
+  }
+  var state = load();
+
+  return {
+    getState: function(){ return state; },
+    syncUI: function(){
+      document.querySelectorAll('#navBal').forEach(function(el){
+        el.textContent = state.wallet.balance.toLocaleString('en-US') + ' $FTR';
+      });
+    },
+    executeTrade: function(side, assetSymbol, assetName, shares, price, isCoach){
+      var subtotal = shares * price;
+      var fee = subtotal * 0.004;
+      var total = Math.round(side === 'buy' ? subtotal + fee : subtotal - fee);
+
+      if(side === 'buy'){
+        if(state.wallet.balance < total){
+          throw new Error("Insufficient $FTR balance (" + state.wallet.balance.toLocaleString('en-US') + " $FTR available, need " + total.toLocaleString('en-US') + " $FTR).");
+        }
+        state.wallet.balance -= total;
+        if(!state.holdings[assetSymbol]){
+          state.holdings[assetSymbol] = { n: assetName, shares: 0, avg: price, p: price, c: isCoach, inClub: isCoach ? 'COACH' : 'SUB' };
+        }
+        var cur = state.holdings[assetSymbol];
+        var newTotal = cur.shares + shares;
+        cur.avg = ((cur.shares * cur.avg) + (shares * price)) / newTotal;
+        cur.shares = newTotal;
+        cur.p = price;
+      } else {
+        var cur = state.holdings[assetSymbol];
+        if(!cur || cur.shares < shares){
+          throw new Error("You only hold " + (cur ? cur.shares.toLocaleString('en-US') : "0") + " shares of " + assetSymbol + ".");
+        }
+        state.wallet.balance += total;
+        cur.shares -= shares;
+        if(cur.shares <= 0){
+          delete state.holdings[assetSymbol];
+        }
+      }
+
+      state.transactions.unshift({
+        type: side.toUpperCase(),
+        asset: assetSymbol,
+        shares: shares,
+        price: price,
+        total: total,
+        time: "Just now"
+      });
+
+      save(state);
+      FT.syncUI();
+      window.dispatchEvent(new CustomEvent('fantrade:statechange', { detail: state }));
+      return { total: total, remainingBalance: state.wallet.balance, shares: shares };
+    },
+    saveClub: function(clubData){
+      Object.assign(state.club, clubData);
+      save(state);
+      FT.syncUI();
+      window.dispatchEvent(new CustomEvent('fantrade:statechange', { detail: state }));
+    },
+    activateFanPlayEntry: function(entryData){
+      var stake = entryData.stake || 2500;
+      if(state.wallet.balance < stake){
+        throw new Error("Insufficient $FTR balance. Need " + stake.toLocaleString('en-US') + " $FTR.");
+      }
+      state.wallet.balance -= stake;
+      state.wallet.locked += stake;
+      var newEntry = {
+        id: "e-" + Date.now(),
+        mode: entryData.mode,
+        target: entryData.target,
+        tier: entryData.tier,
+        mult: entryData.mult,
+        stake: stake,
+        projectedFP: entryData.projectedFP,
+        status: "Active in MD 07"
+      };
+      state.fanplay.activeEntries.unshift(newEntry);
+      state.transactions.unshift({
+        type: "STAKE",
+        asset: "FanPlay MD 07 (" + entryData.tier + ")",
+        shares: 1,
+        price: stake,
+        total: stake,
+        time: "Just now"
+      });
+      save(state);
+      FT.syncUI();
+      window.dispatchEvent(new CustomEvent('fantrade:statechange', { detail: state }));
+      return newEntry;
+    },
+    convertGbp: function(gbpAmount){
+      var grossFtr = gbpAmount * state.wallet.gbpRate;
+      var fee = grossFtr * 0.005;
+      var netFtr = Math.round(grossFtr - fee);
+      state.wallet.balance += netFtr;
+      state.transactions.unshift({
+        type: "CONVERT",
+        asset: "GBP Deposit (£" + gbpAmount.toLocaleString('en-US') + ")",
+        shares: gbpAmount,
+        price: state.wallet.gbpRate,
+        total: netFtr,
+        time: "Just now"
+      });
+      save(state);
+      FT.syncUI();
+      window.dispatchEvent(new CustomEvent('fantrade:statechange', { detail: state }));
+      return netFtr;
+    },
+    depositFtr: function(amount){
+      state.wallet.balance += amount;
+      state.transactions.unshift({
+        type: "DEPOSIT",
+        asset: "Direct Deposit",
+        shares: 1,
+        price: amount,
+        total: amount,
+        time: "Just now"
+      });
+      save(state);
+      FT.syncUI();
+      window.dispatchEvent(new CustomEvent('fantrade:statechange', { detail: state }));
+    },
+    resetState: function(){
+      state = JSON.parse(JSON.stringify(defaultState));
+      save(state);
+      FT.syncUI();
+      window.dispatchEvent(new CustomEvent('fantrade:statechange', { detail: state }));
+    }
+  };
+})();
+
+// Toast Notification
+function showToast(msg, type){
+  type = type || 'success';
+  var cont = document.getElementById('ftToastContainer');
+  if(!cont) return;
+  var el = document.createElement('div');
+  el.className = 'ft-toast ' + type;
+  var icon = type==='success'
+    ? '<svg class="t-icon" aria-hidden="true"><use href="#i-check"/></svg>'
+    : (type==='error' ? '<svg class="t-icon" aria-hidden="true"><use href="#i-cross"/></svg>'
+    : '<svg class="t-icon" aria-hidden="true"><use href="#i-coin"/></svg>');
+  el.innerHTML = icon + '<span>' + msg + '</span>';
+  cont.appendChild(el);
+  requestAnimationFrame(function(){ el.classList.add('show'); });
+  setTimeout(function(){
+    el.classList.remove('show');
+    setTimeout(function(){ el.remove(); }, 400);
+  }, 3600);
+}
+
+// Universal Modal
+function openModal(html){
+  var bd = document.getElementById('ftModalBackdrop');
+  var ct = document.getElementById('ftModalContent');
+  if(!bd || !ct) return;
+  ct.innerHTML = html;
+  bd.style.display = 'flex';
+  requestAnimationFrame(function(){ bd.classList.add('open'); });
+}
+function closeModal(){
+  var bd = document.getElementById('ftModalBackdrop');
+  if(!bd) return;
+  bd.classList.remove('open');
+  setTimeout(function(){ bd.style.display = 'none'; }, 260);
+}
+var mc = document.getElementById('ftModalClose');
+if(mc) mc.addEventListener('click', closeModal);
+var bd = document.getElementById('ftModalBackdrop');
+if(bd) bd.addEventListener('click', function(e){ if(e.target === bd) closeModal(); });
+
+// Global Account / Wallet Modal Handler
+function showAccountModal(){
+  var s = FT.getState();
+  var holdingsList = Object.keys(s.holdings).map(function(k){
+    var h = s.holdings[k];
+    return '<div class="m-row"><span>' + k + ' (' + h.shares.toLocaleString('en-US') + ' sh)</span><b>' + (h.shares * h.avg).toLocaleString('en-US') + ' $FTR</b></div>';
+  }).join('') || '<div style="color:var(--faint);font-size:12px;padding:6px 0">No player shares held yet. Visit the Exchange to buy.</div>';
+
+  var html = '' +
+    '<h3 class="ft-modal-title">Manager Account</h3>' +
+    '<p class="ft-modal-desc">' + s.user.name + ' · <span style="color:var(--lime)">' + s.user.handle + '</span> · ' + s.user.joined + '</p>' +
+    '<div class="ft-modal-card">' +
+      '<div class="m-row"><span>Available Balance</span><b style="font-size:16px;color:var(--lime)">' + s.wallet.balance.toLocaleString('en-US') + ' $FTR</b></div>' +
+      '<div class="m-row"><span>Locked in FanPlay Entries</span><b>' + s.wallet.locked.toLocaleString('en-US') + ' $FTR</b></div>' +
+      '<div class="m-row"><span>Season Payouts</span><b>' + s.wallet.seasonEarned.toLocaleString('en-US') + ' $FTR</b></div>' +
+      '<div class="m-row total"><span>Active Club</span><b>' + s.club.name + ' (' + s.club.formation + ')</b></div>' +
+    '</div>' +
+    '<div class="k-label" style="margin-top:16px">Your Portfolio</div>' +
+    '<div class="ft-modal-card">' + holdingsList + '</div>' +
+    '<div style="display:flex;gap:10px;margin-top:20px;flex-wrap:wrap">' +
+      '<button class="btn btn-lime" id="faucetBtn" type="button" style="flex:1;justify-content:center">+50,000 $FTR (Faucet)</button>' +
+      '<button class="btn btn-glass" id="resetStateBtn" type="button" style="flex:1;justify-content:center">Reset Demo</button>' +
+    '</div>';
+
+  openModal(html);
+
+  var fc = document.getElementById('faucetBtn');
+  if(fc) fc.addEventListener('click', function(){
+    FT.depositFtr(50000);
+    showToast("+50,000 $FTR added to wallet!", "success");
+    closeModal();
+  });
+  var rb = document.getElementById('resetStateBtn');
+  if(rb) rb.addEventListener('click', function(){
+    FT.resetState();
+    showToast("Demo wallet and club reset to defaults.", "info");
+    closeModal();
+    setTimeout(function(){ location.reload(); }, 600);
+  });
+}
+
+document.querySelectorAll('#navAccountBtn, #overlayAccountBtn, #navWalletBtn').forEach(function(btn){
+  btn.addEventListener('click', function(e){
+    e.preventDefault();
+    showAccountModal();
+  });
+});
+
+FT.syncUI();
 """
+
