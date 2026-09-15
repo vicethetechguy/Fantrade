@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import os, sys
 sys.path.insert(0, os.path.dirname(__file__))
-from common import head, atmosphere, nav, footer, ic, JS_SHELL, qr_svg, QR_ADDRESS
+from common import head, atmosphere, nav, footer, ic, JS_SHELL
 
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
 ARROW = '<span class="cap">' + ic("arrow", "ic") + '</span>'
@@ -29,28 +29,7 @@ def page(fname, title, body, js="", css="", app=False):
 # $FTR WALLET
 # ══════════════════════════════════════════════════════════
 FTR_CSS = """
-.wal-head{display:flex;align-items:flex-start;gap:16px;flex-wrap:wrap;margin-bottom:2px}
-.wal-head .k-label{margin:0}
-.tx{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:14px;padding:15px 24px;
-  border-bottom:1px solid rgba(255,255,255,.05);font-size:13px;align-items:center}
-.tx.h{font-weight:600;font-size:9.5px;letter-spacing:.16em;color:var(--faint);text-transform:uppercase;
-  border-bottom:1px solid var(--hair)}
-.tx:last-child{border-bottom:0}
-.tx .w{display:flex;align-items:center;gap:11px;min-width:0}
-.tx .w span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.dist{display:flex;align-items:center;gap:26px;flex-wrap:wrap}
-.dist .key{display:flex;flex-direction:column;gap:12px;flex:1;min-width:180px}
-.dist .kr{display:flex;align-items:center;gap:11px;font-size:13px;color:var(--dim)}
-.dist .kr i{width:10px;height:10px;border-radius:3px;display:block;flex:none}
-.dist .kr b{margin-left:auto;font-family:'JetBrains Mono',monospace;color:var(--ink);font-weight:400}
-.maxbtn{border:1px solid rgba(196,248,42,.3);background:rgba(196,248,42,.09);color:var(--lime);
-  border-radius:999px;padding:5px 12px;font-weight:600;font-size:9px;letter-spacing:.12em;
-  text-transform:uppercase;cursor:pointer;flex:none;transition:all .5s var(--ease)}
-.maxbtn:hover{background:rgba(196,248,42,.18)}
-@media (max-width:768px){
-  .tx{grid-template-columns:1.4fr 1fr;padding:13px 14px}
-  .tx>*:nth-child(n+3){display:none}
-}
+.wcard{max-width:none}
 """
 
 # label, icon, coin tone, sparkline direction
@@ -59,367 +38,42 @@ WALLET_ASSETS = [("$Saka", "Bukayo Saka", "boot", "", 6.4, 0),
                  ("$Bruno", "Bruno Fernandes", "boot", "", 4.2, 2),
                  ("$Arteta", "Mikel Arteta", "whistle", "am", 14.2, 9)]
 
-f = [T('<main><section class="app-head" style="padding-bottom:30px"><div class="wrap">'
-       '<span class="greet" data-reveal>Wallet · FTR-012</span>'
-       '<h1 data-reveal>Hi,<br><span data-bind="first">Alex</span></h1>'
-       '<p class="lede" data-reveal>One balance funds everything — shares, swap fees, matchday stakes and '
-       'every settled payout.</p>'
-       '</div></section>')]
+# The wallet is a card and a list of what you own. Send, receive, swap, buy
+# and the ledger are destinations, not panels stacked underneath it.
+f = ['<main><section style="padding:104px 0 0"><div class="wrap">'
+     '<div class="k-label" data-reveal>Wallet · FTR-012</div></div></section>'
+     '<section style="padding:16px 0 70px"><div class="wrap"><div class="bento">']
 
-f.append('<section style="padding:0 0 130px"><div class="wrap"><div class="bento">')
-
-# ── gradient balance card + the four actions ──
-f.append(T('<div class="c7" data-reveal><div class="wcard">'
+f.append(T('<div class="c5" data-reveal><div class="wcard">'
            '<span class="tag-id">FTR-012</span>'
            '<div class="k">Total balance</div>'
            '<div class="amt" id="walBal">128,450<small> $FTR</small></div>'
            '<div class="sub" id="walDelta">@@<span>2.35% today</span>'
            '<span style="color:rgba(10,13,3,.5)">·</span><span id="walGbp">≈ £10,358</span></div>'
-           '<div class="wacts" id="walActs">'
-           '<button type="button" aria-pressed="false" data-p="send">@@<span>Send</span></button>'
-           '<button type="button" aria-pressed="true" data-p="receive">@@<span>Receive</span></button>'
-           '<button type="button" aria-pressed="false" data-p="swap">@@<span>Swap</span></button>'
-           '<button type="button" aria-pressed="false" data-p="buy">@@<span>Buy</span></button>'
-           '</div></div>',
-           ic("arrow", "ic"), ic("arrow", "ic"), ic("hand", "ic"), ic("swap", "ic"), ic("coin", "ic")))
+           '<div class="wacts">'
+           '<a href="send.html">@@<span>Send</span></a>'
+           '<a href="receive.html">@@<span>Receive</span></a>'
+           '<a href="swap.html">@@<span>Swap</span></a>'
+           '<a href="buy.html">@@<span>Buy</span></a>'
+           '</div></div></div>',
+           ic("arrow", "ic"), ic("send", "ic"), ic("receive", "ic"),
+           ic("swap", "ic"), ic("coin", "ic")))
 
-# ── the action panel sits directly under the card ──
-f.append('<div class="bezel" style="margin-top:16px"><div class="core pad">')
-
-f.append(T('<div class="pane on" data-pane="receive">'
-           '<div class="rowhead"><div class="k-label">Receive $FTR</div>'
-           '<span class="listening" style="margin-left:auto"><i></i>Listening</span></div>'
-           '<button class="netsel" type="button" id="netSel">'
-           '<span class="coin lime">@@</span>'
-           '<span style="min-width:0"><span class="k">Network</span>'
-           '<span class="v" id="netName">Fantrade L2 · Mainnet</span></span>'
-           '<span class="chev"></span></button>'
-           '<div class="qr">@@<span class="mark">@@</span></div>'
-           '<div class="addr" id="walAddr"></div>'
-           '@@'
-           '<div class="warn">@@<p>Send only $FTR and Fantrade-issued share tokens to this address. '
-           'Anything else sent here is unrecoverable.</p></div>'
-           '</div>',
-           ic("layers", "ic"), qr_svg(), ic("ball", "ic"),
-           btn("Copy address", tag="button",
-               extra='id="copyAddr" style="width:100%;justify-content:space-between"'),
-           ic("flag", "ic")))
-
-f.append(T('<div class="pane" data-pane="send">'
-           '<div class="k-label">Send $FTR</div>'
-           '<div class="tf" id="f-sendTo"><label for="sendTo">To manager or address</label>'
-           '<div class="inp">@@<input id="sendTo" type="text" placeholder="@handle or 0x…"></div>'
-           '<div class="err">Enter a handle or a wallet address.</div></div>'
-           '<div class="field"><label>Amount</label><input id="sendAmt" value="2,500" inputmode="numeric">'
-           '</div>'
-           '<div class="quick"><button data-sa="1000">1,000</button><button data-sa="5000">5,000</button>'
-           '<button data-sa="10000">10,000</button><button type="button" class="maxbtn" id="sendMax">Max</button></div>'
-           '<div class="line"><span>Network fee</span><b>0 $FTR · covered</b></div>'
-           '<div class="line"><span>Arrives</span><b>Instantly</b></div>'
-           '<div class="line"><span>Balance after</span><b id="sendAfter">125,950 $FTR</b></div>'
-           '@@'
-           '<div class="warn">@@<p>Transfers between Fantrade managers are final. Check the handle before '
-           'you send — there is no reversal.</p></div>'
-           '</div>',
-           ic("user", "ic"),
-           btn("Send $FTR", tag="button",
-               extra='id="sendGo" style="width:100%;justify-content:space-between;margin-top:18px"'),
-           ic("flag", "ic")))
-
-f.append(T('<div class="pane" data-pane="swap">'
-           '<div class="k-label">Swap one asset for another</div>'
-           '<div class="tf" id="f-swapFrom"><label for="swapFrom">From</label><div class="inp">@@'
-           '<select id="swapFrom"></select><span class="chev"></span></div>'
-           '<div class="hint" id="swapHold">—</div></div>'
-           '<div class="field"><label>Shares</label><input id="swapQty" value="1,000" inputmode="numeric"></div>'
-           '<div class="quick"><button data-sq="250">250</button><button data-sq="500">500</button>'
-           '<button data-sq="1000">1,000</button><button type="button" class="maxbtn" id="swapMax">Max</button></div>'
-           '<div class="tf" id="f-swapTo" style="margin-top:14px"><label for="swapTo">To</label>'
-           '<div class="inp">@@<select id="swapTo"></select><span class="chev"></span></div></div>'
-           '<div class="line"><span>You give</span><b id="swGive">—</b></div>'
-           '<div class="line"><span>Swap fee (0.4%)</span><b id="swFee">—</b></div>'
-           '<div class="line"><span>You receive</span><b id="swGet">—</b></div>'
-           '<div class="line"><span>Dust returned to wallet</span><b id="swDust">—</b></div>'
-           '@@</div>',
-           ic("swap", "ic"), ic("target", "ic"),
-           btn("Swap assets", tag="button",
-               extra='id="swapGo" style="width:100%;justify-content:space-between;margin-top:18px"')))
-
-f.append(T('<div class="pane" data-pane="buy">'
-           '<div class="k-label">Buy $FTR</div>'
-           '<div class="field"><label>You pay</label><input id="fiat" value="1,000" inputmode="numeric"></div>'
-           '<div style="display:flex;align-items:center;gap:12px;margin:6px 0 4px">@@'
-           '<span style="color:var(--faint);font-size:12.5px">1 GBP = 12.40 $FTR · rate held for 30s</span></div>'
-           '<div class="field"><label>You receive</label><input id="ftr" value="12,400" readonly></div>'
-           '<div class="quick"><button data-f="100">£100</button><button data-f="500">£500</button>'
-           '<button data-f="1000">£1,000</button><button data-f="5000">£5,000</button></div>'
-           '<div class="line"><span>Conversion fee (0.5%)</span><b id="cFee">62</b></div>'
-           '<div class="line"><span>Credited</span><b id="cNet">12,338 $FTR</b></div>'
-           '<div class="line"><span>Settles</span><b>Instantly</b></div>'
-           '@@'
-           '<p style="font-size:11.5px;color:var(--faint);font-weight:300;margin-top:16px;line-height:1.6">'
-           'Prototype build — no card is charged and no money moves. The rate shown is illustrative.</p>'
-           '</div>',
-           ic("swap", "ic"),
-           btn("Convert to $FTR", tag="button",
-               extra='id="convertBtn" style="width:100%;justify-content:space-between;margin-top:18px"')))
-
-f.append('</div></div></div>')
-
-# ── right column: quick send + balance chart ──
-f.append(T('<div class="c5" data-reveal style="display:flex;flex-direction:column;gap:16px">'
-           '<div class="bezel"><div class="core pad">'
-           '<div class="rowhead"><div class="k-label">Recent</div>'
-           '<a class="seeall" href="portfolio.html">See all @@</a></div>'
-           '<div class="quickrow" id="quickRow"></div>'
-           '<p style="font-size:11.5px;color:var(--faint);font-weight:300;margin:6px 0 0;line-height:1.6">'
-           'Managers you have sent $FTR to. Tap one to open a transfer with their handle filled in.</p>'
-           '</div></div>'
-           '<div class="bezel" style="flex:1"><div class="core pad">'
-           '<div class="k-label">Balance history</div>'
-           '<div class="bal-chart" id="walChart" style="height:150px"></div>'
-           '<div class="range" id="walRange" style="margin-top:6px">'
-           '<button type="button" aria-pressed="true" data-r="1D">1D</button>'
-           '<button type="button" aria-pressed="false" data-r="1W">1W</button>'
-           '<button type="button" aria-pressed="false" data-r="1M">1M</button>'
-           '<button type="button" aria-pressed="false" data-r="1Y">1Y</button>'
-           '<button type="button" aria-pressed="false" data-r="All">All</button></div>'
-           '<div class="b-row" style="margin-top:20px"><span>Locked in entries</span>'
-           '<b data-bind="locked">5,000</b></div>'
-           '<div class="b-row"><span>Held in shares</span><b data-bind="assets">917,000</b></div>'
-           '<div class="b-row total"><span>Net worth</span><b data-bind="net">1,050,450</b></div>'
-           '</div></div></div>', ic("arrow", "ic-sm")))
-
-# ── my assets ──
-f.append(T('<div class="bezel c12" data-reveal><div class="core">'
-           '<div style="padding:28px 24px 14px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">'
+f.append(T('<div class="bezel c7" data-reveal><div class="core">'
+           '<div style="padding:24px 24px 12px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">'
            '<div><div style="font-family:Archivo;font-variation-settings:\'wdth\' 120,\'wght\' 800;'
            'text-transform:uppercase;font-size:19px">My assets</div>'
            '<div class="sub-line" id="walCount">Loading…</div></div>'
-           '<a class="seeall" href="portfolio.html">See all @@</a></div>'
+           '<a class="seeall" href="activity.html">Activity @@</a></div>'
            '<div id="walAssets"></div></div></div>', ic("arrow", "ic-sm")))
-
-# ── transaction history ──
-f.append(T('<div class="bezel c7" data-reveal><div class="core pad">'
-           '<div class="rowhead"><div class="k-label">Transaction history</div>'
-           '<a class="seeall" href="portfolio.html">See all @@</a></div>'
-           '<div id="txHistory"></div></div></div>', ic("arrow", "ic-sm")))
-
-# ── supply ──
-f.append(T('<div class="bezel c5" data-reveal><div class="core pad">'
-           '<div class="k-label">Circulating supply</div>'
-           '<div class="dist" style="margin-top:10px">'
-           '<svg viewBox="0 0 42 42" style="width:112px;height:112px;flex:none">'
-           '<circle cx="21" cy="21" r="15.9" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="5"/>'
-           '<circle cx="21" cy="21" r="15.9" fill="none" stroke="#C4F82A" stroke-width="5" '
-           'stroke-dasharray="46 54" stroke-dashoffset="25" transform="rotate(-90 21 21)"/>'
-           '<circle cx="21" cy="21" r="15.9" fill="none" stroke="#FF6A1F" stroke-width="5" '
-           'stroke-dasharray="28 72" stroke-dashoffset="79" transform="rotate(-90 21 21)"/>'
-           '<circle cx="21" cy="21" r="15.9" fill="none" stroke="rgba(255,255,255,.28)" stroke-width="5" '
-           'stroke-dasharray="14 86" stroke-dashoffset="51" transform="rotate(-90 21 21)"/></svg>'
-           '<div class="key">'
-           '<div class="kr"><i style="background:#C4F82A"></i>Held by fans<b>46%</b></div>'
-           '<div class="kr"><i style="background:#FF6A1F"></i>Staked in rounds<b>28%</b></div>'
-           '<div class="kr"><i style="background:rgba(255,255,255,.28)"></i>Rewards pool<b>14%</b></div>'
-           '<div class="kr"><i style="background:rgba(255,255,255,.08)"></i>Treasury<b>12%</b></div></div></div>'
-           '<div style="display:flex;gap:10px;margin-top:24px;flex-wrap:wrap">@@@@</div>'
-           '</div></div>',
-           btn("Deposit", tag="button", extra='id="depositBtn" style="flex:1;justify-content:space-between"'),
-           btn("Withdraw", "btn-glass", tag="button",
-               extra='id="withdrawBtn" style="flex:1;justify-content:space-between"')))
 
 f.append('</div></div></section></main>')
 
 FTR_JS = ("var WASSETS=" + repr([{"t": t, "n": n, "i": i, "c": c, "d": d, "s": s}
-                                 for t, n, i, c, d, s in WALLET_ASSETS]).replace("'", '"') + ";"
-          + "var WADDR=" + ('"%s"' % QR_ADDRESS) + ";") + r"""
+                                 for t, n, i, c, d, s in WALLET_ASSETS]).replace("'", '"') + ";") + r"""
 function el(id){ return document.getElementById(id); }
-function wrap(id){ return document.getElementById('f-' + id); }
-function num(v){ return parseInt(String(v).replace(/[^0-9]/g, ''), 10) || 0; }
 function money(n){ return Math.round(n).toLocaleString('en-US'); }
 
-// ── address, coloured in four-character groups so it can be eyeballed ──
-(function(){
-  var cols = ['var(--lime)', 'var(--amber)', '#4DA6FF', 'var(--ink)'];
-  var out = '', i = 0;
-  while(i < WADDR.length){
-    out += '<i style="color:' + cols[(i / 4 | 0) % 4] + '">' + WADDR.slice(i, i + 4) + '</i>';
-    i += 4;
-  }
-  el('walAddr').innerHTML = out;
-})();
-
-el('copyAddr').addEventListener('click', function(){
-  function done(){ showToast('Receive address copied.', 'success'); }
-  if(navigator.clipboard && navigator.clipboard.writeText){
-    navigator.clipboard.writeText(WADDR).then(done, fallback);
-  } else { fallback(); }
-  function fallback(){
-    var ta = document.createElement('textarea');
-    ta.value = WADDR; ta.style.position = 'fixed'; ta.style.opacity = '0';
-    document.body.appendChild(ta); ta.select();
-    try { document.execCommand('copy'); done(); }
-    catch(e){ showToast('Copy failed — select the address manually.', 'error'); }
-    ta.remove();
-  }
-});
-
-el('netSel').addEventListener('click', function(){
-  openModal('<h3 class="ft-modal-title">Receiving network</h3>'
-    + '<p class="ft-modal-desc">$FTR settles natively on Fantrade L2. Bridged networks take longer and '
-    + 'carry their own gas cost.</p>'
-    + '<div class="ft-modal-card">'
-    + '<div class="m-row"><span>Fantrade L2 · Mainnet</span><b style="color:var(--lime)">Instant · no gas</b></div>'
-    + '<div class="m-row"><span>Ethereum · Mainnet</span><b>~3 min · gas applies</b></div>'
-    + '<div class="m-row"><span>Base</span><b>~40 sec · low gas</b></div>'
-    + '<div class="m-row total"><span>Polygon</span><b>~1 min · low gas</b></div></div>'
-    + '<p style="font-size:11.5px;color:var(--faint);font-weight:300;line-height:1.6;margin:0">'
-    + 'Prototype build — the address above is the same on every network.</p>');
-});
-
-// ── range pills + chart ──
-var SERIES = {
-  '1D': series(30, 0.12, 2.6, 11),
-  '1W': series(34, 0.35, 3.4, 23),
-  '1M': series(40, 0.9, 5.2, 47),
-  '1Y': series(48, 1.9, 7.5, 91),
-  'All': series(56, 2.6, 9.0, 137)
-};
-var DELTA = { '1D': 2.35, '1W': 6.10, '1M': 14.82, '1Y': 61.40, 'All': 184.20 };
-var WORD = { '1D': 'today', '1W': 'this week', '1M': 'this month', '1Y': 'this year', 'All': 'all time' };
-function paint(r){
-  drawArea(el('walChart'), SERIES[r], DELTA[r] >= 0);
-  el('walDelta').querySelector('span').textContent = DELTA[r].toFixed(2) + '% ' + WORD[r];
-}
-document.querySelectorAll('#walRange button').forEach(function(b){
-  b.addEventListener('click', function(){
-    document.querySelectorAll('#walRange button').forEach(function(x){ x.setAttribute('aria-pressed', 'false'); });
-    b.setAttribute('aria-pressed', 'true');
-    paint(b.dataset.r);
-  });
-});
-
-// ── action panes ──
-document.querySelectorAll('#walActs button').forEach(function(b){
-  b.addEventListener('click', function(){
-    document.querySelectorAll('#walActs button').forEach(function(x){ x.setAttribute('aria-pressed', 'false'); });
-    b.setAttribute('aria-pressed', 'true');
-    document.querySelectorAll('.pane').forEach(function(p){
-      p.classList.toggle('on', p.dataset.pane === b.dataset.p);
-    });
-  });
-});
-
-// ── send ──
-function sendAfter(){
-  var s = FT.getState();
-  el('sendAfter').textContent = money(Math.max(0, s.wallet.balance - num(el('sendAmt').value))) + ' $FTR';
-}
-el('sendAmt').addEventListener('input', sendAfter);
-document.querySelectorAll('[data-sa]').forEach(function(b){
-  b.addEventListener('click', function(){
-    el('sendAmt').value = (+b.dataset.sa).toLocaleString('en-US'); sendAfter();
-  });
-});
-el('sendMax').addEventListener('click', function(){
-  el('sendAmt').value = FT.getState().wallet.balance.toLocaleString('en-US'); sendAfter();
-});
-el('sendGo').addEventListener('click', function(){
-  var to = el('sendTo').value.trim();
-  if(to.length < 3){ wrap('sendTo').classList.add('bad'); return; }
-  wrap('sendTo').classList.remove('bad');
-  try {
-    var r = FT.sendFtr(num(el('sendAmt').value), to, 'send');
-    showToast(money(r.sent) + ' $FTR sent to ' + to + '.', 'success');
-    sendAfter();
-  } catch(e){ showToast(e.message, 'error'); }
-});
-
-// ── swap ──
-var PRICES = {};
-WASSETS.forEach(function(a){ PRICES[a.t] = 0; });
-function fillSwap(){
-  var s = FT.getState(), from = el('swapFrom'), to = el('swapTo');
-  var held = Object.keys(s.holdings);
-  var all = {};
-  held.forEach(function(k){ all[k] = s.holdings[k].p; });
-  ASSETS.forEach(function(a){ all[a.t] = a.p; PRICES[a.t] = a.p;
-    PRICES[a.t + ':name'] = a.n; PRICES[a.t + ':coach'] = a.c; });
-  held.forEach(function(k){ PRICES[k] = s.holdings[k].p; PRICES[k + ':name'] = s.holdings[k].n; });
-
-  var keepFrom = from.value, keepTo = to.value;
-  from.innerHTML = held.map(function(k){
-    return '<option value="' + k + '">' + k + ' · ' + s.holdings[k].shares.toLocaleString('en-US') + ' shares</option>';
-  }).join('') || '<option value="">Nothing held yet</option>';
-  to.innerHTML = Object.keys(all).map(function(k){
-    return '<option value="' + k + '">' + k + ' · ' + all[k].toFixed(2) + ' $FTR</option>';
-  }).join('');
-  if(keepFrom && s.holdings[keepFrom]) from.value = keepFrom;
-  if(keepTo && all[keepTo]) to.value = keepTo;
-  else if(to.value === from.value && to.options.length > 1) to.selectedIndex = 1;
-  swapCalc();
-}
-function swapCalc(){
-  var s = FT.getState(), fk = el('swapFrom').value, tk = el('swapTo').value;
-  var h = s.holdings[fk];
-  if(!h){ ['swGive','swFee','swGet','swDust'].forEach(function(i){ el(i).textContent = '—'; });
-    el('swapHold').textContent = 'Buy something on the exchange first.'; return; }
-  el('swapHold').textContent = 'You hold ' + h.shares.toLocaleString('en-US') + ' at '
-    + h.p.toFixed(2) + ' $FTR.';
-  var q = Math.min(num(el('swapQty').value), h.shares);
-  var gross = q * h.p, fee = gross * 0.004, net = gross - fee;
-  var tp = PRICES[tk] || 0, got = tp ? Math.floor(net / tp) : 0;
-  el('swGive').textContent = q.toLocaleString('en-US') + ' ' + fk + ' · ' + money(gross) + ' $FTR';
-  el('swFee').textContent = money(fee) + ' $FTR';
-  el('swGet').textContent = got.toLocaleString('en-US') + ' ' + tk;
-  el('swDust').textContent = money(Math.max(0, net - got * tp)) + ' $FTR';
-}
-['swapQty'].forEach(function(i){ el(i).addEventListener('input', swapCalc); });
-['swapFrom','swapTo'].forEach(function(i){ el(i).addEventListener('change', swapCalc); });
-document.querySelectorAll('[data-sq]').forEach(function(b){
-  b.addEventListener('click', function(){
-    el('swapQty').value = (+b.dataset.sq).toLocaleString('en-US'); swapCalc();
-  });
-});
-el('swapMax').addEventListener('click', function(){
-  var h = FT.getState().holdings[el('swapFrom').value];
-  if(h){ el('swapQty').value = h.shares.toLocaleString('en-US'); swapCalc(); }
-});
-el('swapGo').addEventListener('click', function(){
-  var fk = el('swapFrom').value, tk = el('swapTo').value;
-  if(!fk){ showToast('Nothing to swap yet.', 'error'); return; }
-  if(fk === tk){ showToast('Pick two different assets.', 'error'); return; }
-  try {
-    var r = FT.swapAssets(fk, tk, num(el('swapQty').value), PRICES);
-    showToast(r.spent.toLocaleString('en-US') + ' ' + fk + ' swapped for '
-      + r.received.toLocaleString('en-US') + ' ' + tk + '.', 'success');
-  } catch(e){ showToast(e.message, 'error'); }
-});
-
-// ── buy ──
-var fi = el('fiat'), fo = el('ftr');
-function conv(){
-  var v = num(fi.value), gross = v * 12.4, fee = gross * 0.005;
-  fo.value = money(gross);
-  el('cFee').textContent = money(fee);
-  el('cNet').textContent = money(gross - fee) + ' $FTR';
-}
-fi.addEventListener('input', function(){
-  var v = fi.value.replace(/[^0-9]/g, '');
-  fi.value = v ? (+v).toLocaleString('en-US') : '';
-  conv();
-});
-document.querySelectorAll('[data-f]').forEach(function(b){
-  b.addEventListener('click', function(){ fi.value = (+b.dataset.f).toLocaleString('en-US'); conv(); });
-});
-el('convertBtn').addEventListener('click', function(){
-  var v = num(fi.value);
-  if(v <= 0){ showToast('Enter an amount in GBP to convert.', 'error'); return; }
-  var net = FT.convertGbp(v);
-  showToast('£' + v.toLocaleString('en-US') + ' converted into ' + net.toLocaleString('en-US') + ' $FTR.', 'success');
-});
-
-// ── my assets ──
 function renderAssets(){
   var s = FT.getState(), box = el('walAssets');
   var rows = ['<div class="arow"><div class="who"><span class="coin lime">'
@@ -434,139 +88,32 @@ function renderAssets(){
     var meta = WASSETS.filter(function(a){ return a.t === k; })[0]
       || { i: h.c ? 'whistle' : 'boot', c: h.c ? 'am' : '', d: 0, s: 0 };
     var up = meta.d >= 0;
-    rows.push('<div class="arow"><div class="who"><span class="coin ' + (meta.c || '') + '">'
+    rows.push('<a class="arow" href="asset.html?a=' + encodeURIComponent(k) + '">'
+      + '<div class="who"><span class="coin ' + (meta.c || '') + '">'
       + '<svg class="ic" aria-hidden="true"><use href="#i-' + meta.i + '"/></svg></span>'
       + '<div style="min-width:0"><div class="nm">' + h.n + '</div>'
       + '<div class="qt">' + h.shares.toLocaleString('en-US') + ' ' + k + '</div></div></div>'
       + '<div data-spark="' + (up ? 1 : 0) + '"></div>'
       + '<div><div class="val">' + money(h.shares * h.p) + '</div>'
       + '<div class="chg ' + (up ? 'up' : 'down') + '">'
-      + (up ? '+' : '') + meta.d.toFixed(2) + '%</div></div></div>');
+      + (up ? '+' : '') + meta.d.toFixed(2) + '%</div></div></a>');
   });
 
   box.innerHTML = rows.join('');
-  el('walCount').textContent = Object.keys(s.holdings).length + ' share positions · '
+  el('walCount').textContent = Object.keys(s.holdings).length + ' positions · '
     + money(FT.holdingsValue()) + ' $FTR at market';
   box.querySelectorAll('[data-spark]').forEach(function(d){
     d.innerHTML = spark(d.dataset.spark === '1', 88, 26);
   });
 }
 
-// ── transaction history ──
-var LICON = { BUY:'candle', SELL:'candle', STAKE:'bolt', PAYOUT:'trophy', CONVERT:'swap',
-              DEPOSIT:'wallet', WITHDRAW:'bank', SEND:'hand', SWAP:'swap', SETTLE:'trophy' };
-function label(t){
-  if(t.type === 'BUY')  return 'Bought ' + t.shares.toLocaleString('en-US') + ' ' + t.asset;
-  if(t.type === 'SELL') return 'Sold ' + t.shares.toLocaleString('en-US') + ' ' + t.asset;
-  if(t.type === 'STAKE') return 'Staked ' + t.asset;
-  if(t.type === 'SEND') return 'Sent to ' + t.asset;
-  if(t.type === 'WITHDRAW') return 'Withdrawn to ' + t.asset;
-  if(t.type === 'SWAP') return 'Swapped ' + t.asset;
-  if(t.type === 'CONVERT') return 'Added via ' + t.asset;
-  if(t.type === 'DEPOSIT') return 'Added via direct deposit';
-  if(t.type === 'PAYOUT') return t.asset;
-  return t.asset;
-}
-function renderHistory(){
-  var s = FT.getState(), box = el('txHistory');
-  if(!box) return;
-  if(!s.transactions || !s.transactions.length){
-    box.innerHTML = '<div class="empty-state"><svg class="ic-xl" aria-hidden="true"><use href="#i-receipt"/></svg>'
-      + 'No movements yet. Buy $FTR or a first share to start the history.</div>';
-    return;
-  }
-  box.innerHTML = s.transactions.slice(0, 7).map(function(t){
-    var down = ['BUY','STAKE','SEND','WITHDRAW'].indexOf(t.type) > -1;
-    return '<div class="trow"><span class="coin' + (down ? '' : ' lime') + '">'
-      + '<svg class="ic" aria-hidden="true"><use href="#i-' + (LICON[t.type] || 'receipt') + '"/></svg></span>'
-      + '<div class="bd"><div class="t">' + label(t) + '</div><div class="d">' + t.time + '</div></div>'
-      + '<div class="a ' + (down ? 'down' : 'up') + '" style="color:' + (down ? 'var(--red)' : 'var(--lime)')
-      + '">' + (down ? '-' : '+') + money(t.total) + '</div></div>';
-  }).join('');
-}
-
-// ── quick-send row ──
-var RECENT = [{n:'GoonerDAO', h:'@gooner_dao', c:'#EF0107'}, {n:'KaiserWeb3', h:'@kaiserweb3', c:'#DC052D'},
-              {n:'MilanoWhale', h:'@milanowhale', c:'#4DA6FF'}, {n:'LagosLedger', h:'@lagosledger', c:'#C4F82A'},
-              {n:'SambaStake', h:'@sambastake', c:'#FF6A1F'}];
-function renderQuick(){
-  var box = el('quickRow');
-  if(!box) return;
-  box.innerHTML = '<button class="qp" type="button" data-add>'
-    + '<span class="av add"><svg class="ic" aria-hidden="true"><use href="#i-hand"/></svg></span>'
-    + '<span>New</span></button>'
-    + RECENT.map(function(r){
-        return '<button class="qp" type="button" data-handle="' + r.h + '">'
-          + '<span class="av" style="background:linear-gradient(160deg,' + r.c + ',rgba(0,0,0,.45))">'
-          + r.n.slice(0, 2).toUpperCase() + '</span><span>' + r.n + '</span></button>';
-      }).join('');
-  box.querySelectorAll('.qp').forEach(function(b){
-    b.addEventListener('click', function(){
-      document.querySelector('#walActs button[data-p="send"]').click();
-      if(b.dataset.handle) el('sendTo').value = b.dataset.handle;
-      el('sendTo').focus();
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
-  });
-}
-renderQuick();
-
-// ── deposit / withdraw ──
-el('depositBtn').addEventListener('click', function(e){
-  e.preventDefault();
-  openModal('<h3 class="ft-modal-title">Deposit $FTR</h3>'
-    + '<p class="ft-modal-desc">Add prototype funds straight to your wallet balance.</p>'
-    + '<div class="field"><label>Amount ($FTR)</label><input id="depAmt" value="25,000" inputmode="numeric"></div>'
-    + '<div class="quick"><button data-dep="5000">5K</button><button data-dep="25000">25K</button>'
-    + '<button data-dep="50000">50K</button><button data-dep="100000">100K</button></div>'
-    + '<div style="display:flex;gap:10px;margin-top:18px">'
-    + '<button class="btn btn-lime" id="depGo" type="button" style="flex:1;justify-content:center">Confirm deposit</button>'
-    + '<button class="btn btn-glass" id="depNo" type="button" style="flex:1;justify-content:center">Cancel</button></div>');
-  var inp = el('depAmt');
-  document.querySelectorAll('[data-dep]').forEach(function(b){
-    b.addEventListener('click', function(){ inp.value = (+b.dataset.dep).toLocaleString('en-US'); });
-  });
-  el('depNo').addEventListener('click', closeModal);
-  el('depGo').addEventListener('click', function(){
-    var a = num(inp.value);
-    if(a <= 0){ showToast('Enter a valid amount.', 'error'); return; }
-    FT.depositFtr(a); closeModal();
-    showToast(money(a) + ' $FTR deposited.', 'success');
-  });
-});
-
-el('withdrawBtn').addEventListener('click', function(e){
-  e.preventDefault();
-  var s = FT.getState();
-  openModal('<h3 class="ft-modal-title">Withdraw $FTR</h3>'
-    + '<p class="ft-modal-desc">Convert $FTR back to your verified payout account. Locked stakes cannot be '
-    + 'withdrawn until their window settles.</p>'
-    + '<div class="field"><label>Amount ($FTR)</label><input id="wdAmt" value="10,000" inputmode="numeric"></div>'
-    + '<div class="ft-modal-card">'
-    + '<div class="m-row"><span>Available</span><b>' + money(s.wallet.balance) + ' $FTR</b></div>'
-    + '<div class="m-row"><span>Locked in entries</span><b>' + money(s.wallet.locked) + ' $FTR</b></div>'
-    + '<div class="m-row total"><span>Withdrawal fee</span><b>0.5% · minimum 50 $FTR</b></div></div>'
-    + '<div style="display:flex;gap:10px">'
-    + '<button class="btn btn-lime" id="wdGo" type="button" style="flex:1;justify-content:center">Withdraw</button>'
-    + '<button class="btn btn-glass" id="wdNo" type="button" style="flex:1;justify-content:center">Cancel</button></div>');
-  el('wdNo').addEventListener('click', closeModal);
-  el('wdGo').addEventListener('click', function(){
-    try {
-      var r = FT.sendFtr(num(el('wdAmt').value), 'Payout account (GBP)', 'withdraw');
-      closeModal();
-      showToast(money(r.sent) + ' $FTR withdrawn · ' + money(r.fee) + ' $FTR fee.', 'success');
-    } catch(err){ showToast(err.message, 'error'); }
-  });
-});
-
-// ── sync ──
 function syncWallet(){
   var s = FT.getState();
   el('walBal').innerHTML = s.wallet.balance.toLocaleString('en-US') + '<small> $FTR</small>';
   el('walGbp').textContent = '≈ £' + Math.round(s.wallet.balance / 12.4).toLocaleString('en-US');
-  renderAssets(); renderHistory(); fillSwap(); sendAfter();
+  renderAssets();
 }
-paint('1D'); syncWallet(); conv();
+syncWallet();
 window.addEventListener('fantrade:statechange', syncWallet);
 """
 page("ftr.html", "$FTR — Fantrade", "".join(f), FTR_JS, FTR_CSS, app=True)

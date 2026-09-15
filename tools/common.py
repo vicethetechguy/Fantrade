@@ -924,13 +924,13 @@ APP_CSS = r"""
 .wcard .tag-id{position:absolute;top:26px;right:24px;font-family:'JetBrains Mono',monospace;
   font-size:11px;color:rgba(10,13,3,.55);z-index:1}
 .wacts{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:26px}
-.wacts button{display:flex;flex-direction:column;align-items:center;gap:9px;padding:14px 4px 12px;
+.wacts button,.wacts a{display:flex;flex-direction:column;align-items:center;gap:9px;padding:14px 4px 12px;
   border-radius:18px;border:1px solid rgba(10,13,3,.16);background:rgba(10,13,3,.08);color:#0A0D03;
-  cursor:pointer;font-family:Montserrat,sans-serif;transition:background .5s var(--ease)}
-.wacts button:hover{background:rgba(10,13,3,.16)}
+  cursor:pointer;font-family:Montserrat,sans-serif;transition:background .5s var(--ease),transform .5s var(--ease)}
+.wacts button:hover,.wacts a:hover{background:rgba(10,13,3,.16);transform:translateY(-2px)}
 .wacts button[aria-pressed="true"]{background:#0A0D03;color:var(--lime);border-color:#0A0D03}
-.wacts button .ic{width:19px;height:19px}
-.wacts button span{font-weight:600;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase}
+.wacts .ic{width:19px;height:19px}
+.wacts span{font-weight:600;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase}
 
 /* quick-send row */
 .quickrow{display:flex;gap:16px;overflow-x:auto;padding:6px 0 10px;scrollbar-width:none}
@@ -1566,11 +1566,11 @@ def atmosphere():
             '  </div>'
             '</div>') + sprite()
 
-TASKBAR = [("dashboard.html", "Home", "chart"),
-           ("exchange.html", "Exchange", "candle"),
+TASKBAR = [("dashboard.html", "Home", "home"),
+           ("exchange.html", "Exchange", "market"),
            ("fanplay.html", "FanPlay", "ball"),
-           ("leaderboard.html", "Leaderboard", "rank"),
-           ("account.html", "Account", "user")]
+           ("leaderboard.html", "Leaderboard", "podium"),
+           ("account.html", "Account", "profile")]
 
 # Every app page lights up one of the five tabs.
 TAB_OF = {"dashboard.html": "dashboard.html", "clubs.html": "dashboard.html",
@@ -1582,7 +1582,10 @@ TAB_OF = {"dashboard.html": "dashboard.html", "clubs.html": "dashboard.html",
           "leaderboard.html": "leaderboard.html",
           "account.html": "account.html", "ftr.html": "account.html",
           "portfolio.html": "account.html", "notifications.html": "account.html",
-          "settings.html": "account.html"}
+          "settings.html": "account.html",
+          "send.html": "account.html", "receive.html": "account.html",
+          "swap.html": "account.html", "buy.html": "account.html",
+          "activity.html": "account.html"}
 
 
 def taskbar(current=""):

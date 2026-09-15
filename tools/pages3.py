@@ -593,7 +593,7 @@ print("built onboarding.html")
 # DASHBOARD — the signed-in home
 # ══════════════════════════════════════════════════════════════════
 DASH_CSS = """
-.fx{display:grid;grid-template-columns:74px 1fr 150px;gap:16px;align-items:center;padding:16px 24px;
+.fx{display:grid;grid-template-columns:88px 1fr auto;gap:16px;align-items:center;padding:16px 24px;
   border-bottom:1px solid rgba(255,255,255,.05);transition:background .6s var(--ease)}
 .fx:last-child{border-bottom:0}
 .fx:hover{background:rgba(255,255,255,.022)}
@@ -602,9 +602,10 @@ DASH_CSS = """
 .fx .tie{font-size:14px;font-weight:500}
 .fx .gr{font-size:11px;color:var(--faint);margin-top:6px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 .fx .gr em{font-style:normal;font-family:'JetBrains Mono',monospace;color:var(--dim)}
-.fx .fpv{text-align:right;font-family:'JetBrains Mono',monospace;font-size:15px;color:var(--lime);font-weight:300}
-.fx .fpk{text-align:right;font-weight:600;font-size:8.5px;letter-spacing:.16em;color:var(--faint);
-  text-transform:uppercase;margin-top:5px}
+.fx .fpv{text-align:right;font-family:'JetBrains Mono',monospace;font-size:15px;color:var(--lime);
+  font-weight:300;white-space:nowrap}
+.fx .fpv em{font-style:normal;font-family:Montserrat,sans-serif;font-weight:600;font-size:8.5px;
+  letter-spacing:.16em;color:var(--faint);text-transform:uppercase;white-space:nowrap}
 .mv{border-bottom:1px solid rgba(255,255,255,.045)}
 .mv:last-child{border-bottom:0}
 .mv:hover{background:transparent}
@@ -612,20 +613,20 @@ DASH_CSS = """
   display:grid;place-items:center;font-family:Archivo;font-variation-settings:'wdth' 100,'wght' 900;
   font-size:15px;color:#0A0D03;filter:drop-shadow(0 8px 18px rgba(196,248,42,.3))}
 @media (max-width:768px){
-  .fx{grid-template-columns:56px 1fr;gap:12px;padding:14px}
-  .fx .fpv,.fx .fpk{text-align:left;grid-column:2}
+  .fx{grid-template-columns:72px 1fr;gap:12px;padding:14px}
+  .fx .fpv{text-align:left;grid-column:2}
   .mv{padding-left:0!important;padding-right:0!important}
 }
 """
 
-FIXTURES = [("ARS<br>CHE", "Arsenal vs Chelsea", "Emirates Stadium · Sat 17:30",
-             [("$Saka", "RW"), ("$Saliba", "CB")], "140 – 210"),
-            ("MCI<br>NEW", "Man City vs Newcastle", "Etihad Stadium · Sat 20:00",
-             [("$Haaland", "ST")], "95 – 165"),
-            ("MUN<br>EVE", "Man United vs Everton", "Old Trafford · Sun 14:00",
-             [("$Bruno", "CAM · captain 1.5x")], "180 – 240"),
-            ("RMA<br>ATM", "Real Madrid vs Atlético", "Santiago Bernabéu · Sun 21:00",
-             [("$Vinicius", "LW")], "110 – 180")]
+FIXTURES = [("ARS·CHE", "Arsenal vs Chelsea", "Emirates Stadium · Sat 17:30",
+             [("$Saka", "RW"), ("$Saliba", "CB")], "140–210"),
+            ("MCI·NEW", "Man City vs Newcastle", "Etihad Stadium · Sat 20:00",
+             [("$Haaland", "ST")], "95–165"),
+            ("MUN·EVE", "Man United vs Everton", "Old Trafford · Sun 14:00",
+             [("$Bruno", "CAM · captain 1.5x")], "180–240"),
+            ("RMA·ATM", "Real Madrid vs Atlético", "Santiago Bernabéu · Sun 21:00",
+             [("$Vinicius", "LW")], "110–180")]
 
 # (symbol, name, price, 24h %, index into the shared ASSETS ticker array in JS_SHELL)
 MOVERS = [("$Jackson", "Nicolas Jackson", 14.85, 11.2, 8), ("$Saka", "Bukayo Saka", 48.20, 6.4, 0),
@@ -634,10 +635,7 @@ MOVERS = [("$Jackson", "Nicolas Jackson", 14.85, 11.2, 8), ("$Saka", "Bukayo Sak
 
 da = [T('<main><section class="app-head"><div class="wrap"><div class="head-row">'
         '<div><span class="greet" id="greet" data-reveal>Home · Gameweek 28</span>'
-        '<h1 data-reveal>Evening,<br><span data-bind="first">Alex</span></h1>'
-        '<p class="lede" data-reveal><span data-bind="club">Zero FC</span> sits '
-        '<span data-bind="rank">#124</span> of 1,420 syndicates. Your eleven is complete, your coach is slotted, '
-        'and the window closes before kick-off on Saturday.</p></div>'
+        '<h1 data-reveal>Evening, <span data-bind="first">Alex</span></h1></div>'
         '<div class="acts" data-reveal>@@@@</div></div>'
         '<div class="statbar" data-reveal>'
         '<div>@@ Net worth <b data-bind="net">370,300</b> $FTR</div>'
@@ -709,8 +707,6 @@ da.append(T('<div class="bezel c3" data-reveal><div class="core pad">'
             '<div class="u"><b id="cdH">03</b><span>Hrs</span></div>'
             '<div class="u"><b id="cdM">14</b><span>Min</span></div>'
             '<div class="u"><b id="cdS">22</b><span>Sec</span></div></div>'
-            '<p style="font-size:12.5px;color:var(--dim);font-weight:300;margin:22px 0 0;line-height:1.6">'
-            'After the lock your teamsheet is frozen for the window. Auto-sub covers any starter who does not play.</p>'
             '<div class="k-label" style="margin-top:26px">Last round</div>'
             '<div class="b-row"><span>Matchday 27 finish</span><b>18th / 1,420</b></div>'
             '<div class="b-row"><span>Points scored</span><b>812 FP</b></div>'
@@ -724,7 +720,7 @@ da.append(T('<div class="bezel c7" data-reveal><div class="core">'
             '<div style="padding:30px 24px 20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">'
             '<span class="ibox">@@</span><div><div style="font-family:Archivo;'
             'font-variation-settings:\'wdth\' 120,\'wght\' 800;text-transform:uppercase;font-size:17px">'
-            'Matchday board</div><div class="sub-line">Where your assets are playing this window</div></div>'
+            'Matchday board</div><div class="sub-line">Gameweek 28</div></div>'
             '<span class="tag lime" style="margin-left:auto">@@ 4 fixtures live</span></div>',
             ic("calendar", "ic-lg"), ic("pulse", "ic")))
 for code, tie, meta, assets, fp in FIXTURES:
@@ -732,11 +728,11 @@ for code, tie, meta, assets, fp in FIXTURES:
     da.append(T('<div class="fx"><div class="code">@@</div>'
                 '<div><div class="tie">@@</div><div class="gr">@@</div>'
                 '<div class="gr" style="margin-top:4px;color:var(--faint)">@@</div></div>'
-                '<div><div class="fpv">@@</div><div class="fpk">Expected FP</div></div></div>',
+                '<div class="fpv">@@ <em>Expected FP</em></div></div>',
                 code, tie, chips, meta, fp))
 da.append(T('<div style="padding:20px 24px 28px;display:flex;gap:12px;align-items:center;flex-wrap:wrap">'
-            '<span style="font-size:11.5px;color:var(--faint);font-weight:300">'
-            'Projected club total 450 – 780 FP. Settlement is on the last final whistle of the window.</span>'
+            '<span style="font-size:11.5px;color:var(--faint);font-weight:300;white-space:nowrap">'
+            'Projected club total 450–780 FP</span>'
             '<span style="margin-left:auto">@@</span></div>'
             '</div></div>',
             btn("See scoring rules", "btn-glass", "fanplay.html#rules",
@@ -759,19 +755,19 @@ for sym, nm, px, d, idx in MOVERS:
                 sym, nm, "1" if d >= 0 else "0", "%.2f" % px,
                 "up" if d >= 0 else "down", ("+" if d >= 0 else "") + "%.1f%%" % d))
 da.append(T('<div style="margin-top:20px">@@</div></div></div>',
-            btn("Browse all 420 assets", "btn-glass", "exchange.html",
+            btn("All 420 markets", "btn-glass", "exchange.html",
                 extra='style="width:100%;justify-content:space-between"')))
 
 # quick actions
 da.append(T('<div class="c12" data-reveal><div class="qa">'
             '<a href="exchange.html"><span class="ibox">@@</span><div><b>Trade</b>'
-            '<span>Buy, sell or swap player and coach shares on the open book.</span></div></a>'
+            '<span>420 markets</span></div></a>'
             '<a href="clubs.html"><span class="ibox">@@</span><div><b>Rebalance XI</b>'
-            '<span>Change shape, swap a starter, reassign the armband before the lock.</span></div></a>'
+            '<span>4-3-3 · locked Sat 17:30</span></div></a>'
             '<a href="fanplay.html"><span class="ibox am">@@</span><div><b>Stake a round</b>'
-            '<span>Pick a market tier and put the club into the settlement window.</span></div></a>'
+            '<span>Gameweek 28 open</span></div></a>'
             '<a href="leaderboard.html"><span class="ibox">@@</span><div><b>League table</b>'
-            '<span>See where the club sits against 1,420 syndicates worldwide.</span></div></a>'
+            '<span>#124 of 1,420</span></div></a>'
             '</div></div>',
             ic("candle", "ic-lg"), ic("formation", "ic-lg"), ic("bolt", "ic-lg"), ic("rank", "ic-lg")))
 
@@ -790,8 +786,6 @@ da.append(T('<div class="bezel c5" data-reveal><div class="core pad">'
             '<div class="b-row"><span>Weekly stake cap</span><b id="dashCap">5,000 $FTR</b></div>'
             '<div class="b-row"><span>Staked this week</span><b>2,500 $FTR</b></div>'
             '<div class="supply"><i style="width:50%"></i></div>'
-            '<p style="font-size:11.5px;color:var(--faint);font-weight:300;margin-top:14px;line-height:1.6">'
-            'Caps are set by you and enforced at entry. Change yours in Settings → Responsible play.</p>'
             '<div style="margin-top:18px">@@</div>'
             '</div></div>',
             btn("Manage limits", "btn-glass", "settings.html#play",
@@ -805,7 +799,7 @@ DASH_JS = r"""
   var h = new Date().getHours();
   var word = h < 12 ? 'Morning' : (h < 18 ? 'Afternoon' : 'Evening');
   var head = document.querySelector('.app-head h1');
-  if(head) head.innerHTML = word + ',<br><span data-bind="first">Manager</span>';
+  if(head) head.innerHTML = word + ', <span data-bind="first">Manager</span>';
   FT.syncUI();
 })();
 
@@ -955,7 +949,7 @@ PF_CSS = """
 
 pf = [T('<main><section class="app-head"><div class="wrap"><div class="head-row">'
         '<div><span class="pill" data-reveal>@@ Capital &amp; tactical ledger</span>'
-        '<h1 data-reveal>Portfolio<br>&amp; ledger</h1>'
+        '<h1 data-reveal>Portfolio</h1>'
         '<p class="lede" data-reveal>Every share you hold, what it cost, what it is worth now, and every '
         'event that moved your balance — trades, stakes, dividends and settlements, in one audit trail.</p></div>'
         '<div class="acts" data-reveal>@@@@</div></div>'
@@ -1352,10 +1346,8 @@ def idx_chart(vals, w=620, h=170):
 
 
 lb = [T('<main><section class="app-head"><div class="wrap"><div class="head-row">'
-        '<div><span class="pill" data-reveal>@@ Gameweek 28 · live validation</span>'
-        '<h1 data-reveal>Global<br>standings</h1>'
-        '<p class="lede" data-reveal>1,420 Dream Clubs, one table. Clubs are ranked on accumulated Fantrade '
-        'Points across the four-week competition cycle — not on how much they spent building the squad.</p></div>'
+        '<div><span class="pill" data-reveal>@@ Gameweek 28</span>'
+        '<h1 data-reveal>Standings</h1></div>'
         '<div class="acts" data-reveal>@@@@</div></div>'
         '<div class="statbar" data-reveal>'
         '<div>@@ Your rank <b data-bind="rank">#124</b></div>'
@@ -1395,7 +1387,7 @@ lb.append(T('<div class="bezel c12" data-reveal><div class="core">'
             '<div style="padding:30px 24px 18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">'
             '<div><div style="font-family:Archivo;font-variation-settings:\'wdth\' 120,\'wght\' 800;'
             'text-transform:uppercase;font-size:19px">Gameweek 28 table</div>'
-            '<div class="sub-line" id="lbCount">Showing 13 of 1,420 clubs · updated 18 seconds ago</div></div>'
+            '<div class="sub-line" id="lbCount">13 of 1,420 clubs</div></div>'
             '<div class="markets" style="margin-left:auto" id="lbFilter">'
             '<button class="mkt" type="button" aria-pressed="true" data-d="all">All divisions</button>'
             '<button class="mkt" type="button" aria-pressed="false" data-d="apex">Apex</button>'
@@ -1412,8 +1404,6 @@ lb.append(T('<div class="bezel c12" data-reveal><div class="core">'
             '<span>Club value</span><span>Core XI &amp; tactical head</span><span>Boost</span>'
             '<span>Total FP</span><span>Est. yield</span><span></span></div>'
             '<div id="lbRows"></div></div>'
-            '<div style="padding:20px 24px 28px;font-size:11.5px;color:var(--faint);font-weight:300">'
-            'Starting elevens are frozen for the window. Ranks refresh on every settled fixture.</div>'
             '</div></div>', ic("search", "ic")))
 
 lb.append('</div></div></section></main>')
@@ -2108,7 +2098,7 @@ def hub(rows):
 
 
 ac = [T('<main><section class="app-head"><div class="wrap">'
-        '<span class="pill" data-reveal>@@ Account</span><h1 data-reveal>Your<br>account</h1>'
+        '<span class="pill" data-reveal>@@ Account</span><h1 data-reveal>Account</h1>'
         '<p class="lede" data-reveal>Everything that is yours rather than the market\'s — the wallet, the '
         'portfolio, the club and the controls.</p>'
         '</div></section>', ic("user", "ic"))]

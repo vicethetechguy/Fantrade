@@ -327,8 +327,7 @@ ex.append('<div class="bezel c12" data-reveal><div class="core">'
           '<div id="mkt"></div>'
           '<div style="padding:12px 16px 20px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">'
           '<span style="font-size:10.5px;color:var(--faint)" id="mktCount">—</span>'
-          '<a class="seeall" style="margin-left:auto" href="how-it-works.html#mechanics">'
-          'How a trade settles ' + ic("arrow", "ic-sm") + '</a></div>'
+          '</div>'
           '</div></div>')
 
 ex.append('</div></div></section>')
@@ -341,11 +340,8 @@ ex.append(T('<div class="bezel c4" data-reveal><div class="core pad"><div class=
           '<div class="movers" id="fallers"></div></div></div>', ic("pulse", "ic-sm")))
 ex.append(T('<div class="bezel c4" data-reveal><div class="core pad"><div class="k-label">@@ Coach index</div>'
           '<div class="value-big">24.65 <small>$FTR</small></div>'
-          '<div class="delta">▲ 2.1% · weighted across 186 listed coaches</div>'
+          '<div class="delta">▲ 2.1% · 186 coaches</div>'
           '<div style="margin-top:14px">@@</div>'
-          '<p style="font-size:11px;font-weight:300;color:var(--dim);margin-top:12px;line-height:1.55">'
-          'Coaches move on results, not minutes. A win, a clean sheet or a tactical turnaround feeds the '
-          'index — and your club modifier.</p>'
           '</div></div>', ic("whistle", "ic-sm"), '<div id="coachSpark"></div>'))
 ex.append('</div></div></section>')
 ex.append('</main>')
@@ -829,8 +825,6 @@ FP_CSS = """
 fp = []
 fp.append(T('<header class="phead"><div class="wrap">'
           '<span class="pill" data-reveal>@@ Matchday 07 · open</span><h1 data-reveal>FanPlay</h1>'
-          '<p class="lede" data-reveal>Put what you own to work. Activate a single player or send your whole club out, '
-          'pick how much risk you want, and let the real fixtures settle it.</p>'
           '<div class="statbar" data-reveal><div>@@ Window closes <b>Fri 18:30</b></div>'
           '<div>@@ Fixtures tracked <b>9 matches</b></div><div>@@ Your entries <b id="fpActiveCount">2 active</b></div></div>'
           '</div></header>', ic("bolt", "ic"), ic("clock", "ic"), ic("calendar", "ic"), ic("target", "ic")))
@@ -838,25 +832,25 @@ fp.append(T('<header class="phead"><div class="wrap">'
 fp.append(T('<main><section style="padding-top:30px"><div class="wrap"><div class="bezel" data-reveal><div class="core">'
           '<div class="tabs" role="tablist" aria-label="FanPlay mode">'
           '<button class="tab" role="tab" id="tab-solo" aria-controls="pane" aria-selected="false" data-mode="solo">'
-          '<span class="ibox">@@</span><div><b>Individual</b><span>Play one player you own</span></div></button>'
+          '<span class="ibox">@@</span><div><b>Individual</b><span>One player</span></div></button>'
           '<button class="tab" role="tab" id="tab-club" aria-controls="pane" aria-selected="true" data-mode="club">'
-          '<span class="ibox">@@</span><div><b>Dream Club</b><span>Play your whole club for a boost</span></div></button></div>', ic("boot", "ic-lg"), ic("crest", "ic-lg")))
+          '<span class="ibox">@@</span><div><b>Dream Club</b><span>Whole club · +15%</span></div></button></div>', ic("boot", "ic-lg"), ic("crest", "ic-lg")))
 
 fp.append(T('<div class="fp-body" id="pane" role="tabpanel" aria-labelledby="tab-club"><div class="fp-left">'
           '<div class="fp-sel"><span class="badge" id="selBadge">@@</span>'
           '<div><div class="nm" id="selName">Zero FC</div><p class="sub" id="selSub">4-3-3 · Coach $Arteta · XI + 4 bench</p></div>'
           '<div class="right">Ownership<br><span class="up">Verified</span></div></div>'
           '<div class="k-label">Select market</div><div class="markets" id="markets">', ic("crest", "ic")))
-TIERS = [("Simple", 1, "Lowest variance. Goals, assists and clean sheets only — a good place to learn how settlement works.", 18),
-         ("PRO", 1.4, "Adds key passes, duels won and expected goals to the scoring set.", 32),
-         ("Elite", 2, "Full performance data with position-weighted scoring. The standard matchday market.", 50),
-         ("Killer", 3, "High multiplier, punishing downside. Cards, misses and errors all count against you.", 68),
-         ("Viynx Move", 4.5, "Momentum market. Scoring swings with live in-match movement across the whole round.", 84),
-         ("Viynx Max", 7, "Maximum exposure. The largest payouts on Fantrade and the shortest odds of reaching them.", 100)]
+TIERS = [("Simple", 1, "Goals, assists and clean sheets.", 18),
+         ("PRO", 1.4, "Adds key passes, duels won and expected goals.", 32),
+         ("Elite", 2, "Full performance data, position-weighted.", 50),
+         ("Killer", 3, "Elite scoring plus cards, misses and errors against you.", 68),
+         ("Viynx Move", 4.5, "Scoring swings with live in-match movement.", 84),
+         ("Viynx Max", 7, "Every event counts, at maximum weight.", 100)]
 for name, m, note, risk in TIERS:
     fp.append(T('<button class="mkt"@@ data-m="@@" data-note="@@">@@</button>', ' aria-pressed="true"' if name == "Elite" else ' aria-pressed="false"', m, note, name))
-fp.append('</div><p class="mkt-note" id="mktNote">Full performance data with position-weighted scoring. The standard '
-          'matchday market.</p><div style="border-top:1px solid var(--hair);padding-top:20px">'
+fp.append('</div><p class="mkt-note" id="mktNote">Full performance data, position-weighted.</p>'
+          '<div style="border-top:1px solid var(--hair);padding-top:20px">'
           '<div class="b-row"><span>Settlement window</span><b>MD 07 · Fri 18:30</b></div>'
           '<div class="b-row"><span>Fixtures tracked</span><b id="fixtures">9 matches · 4 leagues</b></div>'
           '<div class="b-row"><span>Entry stake</span><b>2,500 $FTR</b></div></div></div>')
@@ -864,13 +858,12 @@ fp.append('</div><p class="mkt-note" id="mktNote">Full performance data with pos
 fp.append('<div class="fp-right"><div class="k-label">Projected round</div><div class="calc">'
           '<div class="cr"><span id="baseLabel">Club base points</span><b id="basePts">100 FP</b></div>'
           '<div class="cr"><span>Market multiplier</span><b id="multPts">×2.0</b></div>'
-          '<div class="cr boost" id="boostRow"><span>Club boost — chemistry + coach</span><b>+15%</b></div>'
+          '<div class="cr boost" id="boostRow"><span>Club boost</span><b>+15%</b></div>'
           '<div class="cr" id="capRow"><span>Captain $Bruno ×1.5</span><b>in base</b></div>'
           '<div class="out"><div class="k">Projected Fantrade Points</div><div class="v" id="fpOut">230</div>'
-          '<div class="n" id="fpNote">Club mode · Elite · paid in $FTR at settlement</div></div></div>'
+          '<div class="n" id="fpNote">Club mode · Elite</div></div></div>'
           + btn("Activate entry", tag="button", extra='id="activateEntryBtn" style="margin-top:20px;width:100%;justify-content:space-between"') +
-          '<p style="font-size:13px;font-weight:300;color:var(--dim);margin-top:20px">Your club scores wherever its '
-          'players are playing. The round closes on one clock, not one fixture.</p></div></div></div></div></div></section>')
+          '</div></div></div></div></div></section>')
 
 # ── matchday board ────────────────────────────────────────────────
 # (fid, home, home colour, home score, away, away colour, away score,
@@ -962,7 +955,7 @@ fp.append('</div>')
 
 fp.append('<div style="padding:16px 22px 26px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">'
           '<span style="font-size:11.5px;color:var(--faint);font-weight:300" id="boardNote">'
-          '9 fixtures tracked this window · 4 of them carry your assets</span></div>')
+          '9 fixtures · 4 with your assets</span></div>')
 
 fp.append('</div></div>')
 
@@ -972,11 +965,10 @@ fp.append('<div class="c4" style="display:flex;flex-direction:column;gap:16px">'
           '<div class="countdown"><div class="cd"><b id="cdH">04</b><span>Hours</span></div>'
           '<div class="cd"><b id="cdM">12</b><span>Mins</span></div>'
           '<div class="cd"><b id="cdS">38</b><span>Secs</span></div></div>'
-          '<p style="font-size:13px;font-weight:300;color:var(--dim);margin-top:18px">Entries lock at the window. '
-          'Lineups, captain and market tier are fixed from that moment.</p></div></div>'
+          '</div></div>'
           '<div class="bezel" data-reveal style="flex:1"><div class="core pad"><div class="k-label">Running total</div>'
           '<div class="value-big" id="runFP">175 <small>FP</small></div>'
-          '<div class="delta">Club mode · Elite · +15% boost applied at settlement</div>'
+          '<div class="delta">Club mode · Elite · +15%</div>'
           '<div style="margin-top:20px"><div class="b-row"><span>Starters scoring</span><b>7 of 11</b></div>'
           '<div class="b-row"><span>Subs activated</span><b>1</b></div>'
           '<div class="b-row"><span>Coach modifier</span><b>+3.0%</b></div>'
@@ -984,25 +976,8 @@ fp.append('<div class="c4" style="display:flex;flex-direction:column;gap:16px">'
           '<div class="k-label" style="margin-top:26px">Club form</div>'
           '<div class="form5" style="margin-bottom:12px">'
           '<i class="l">L</i><i class="l">L</i><i class="w">W</i><i class="w">W</i><i class="w">W</i></div>'
-          '<p style="font-size:11.5px;color:var(--faint);font-weight:300;line-height:1.6">'
-          'Three straight rounds in the top 5% of the Apex division.</p>'
           '</div></div></div></div></div></section>')
 
-fp.append(T('<section style="padding:0 0 30px"><div class="wrap">'
-            '<div class="bezel" data-reveal><div class="core pad">'
-            '<div style="display:flex;align-items:center;gap:20px;flex-wrap:wrap">'
-            '<span class="ibox">@@</span>'
-            '<div style="min-width:0"><div style="font-family:Archivo;'
-            'font-variation-settings:\'wdth\' 120,\'wght\' 800;text-transform:uppercase;font-size:18px">'
-            'New to the markets?</div>'
-            '<p style="font-size:12.5px;color:var(--dim);font-weight:300;margin:6px 0 0;line-height:1.6;'
-            'max-width:60ch">The six market tiers and exactly what each event is worth are set out in full '
-            'on the rules page.</p></div>'
-            '<span style="margin-left:auto;display:flex;gap:10px;flex-wrap:wrap">@@@@</span>'
-            '</div></div></div></div></section>',
-            ic("scales", "ic-lg"),
-            btn("Market tiers", "btn-glass", "how-it-works.html#tiers"),
-            btn("Scoring rules", "btn-glass", "how-it-works.html#rules")))
 fp.append('</main>')
 
 FP_JS = r"""
@@ -1014,7 +989,7 @@ function render(){
   document.getElementById('basePts').textContent=base+' FP';
   document.getElementById('multPts').textContent='×'+mult.toFixed(1);
   document.getElementById('fpOut').textContent=total.toLocaleString();
-  document.getElementById('fpNote').textContent=(mode==='club'?'Club mode':'Individual mode')+' · '+mktName+' · paid in $FTR at settlement';
+  document.getElementById('fpNote').textContent=(mode==='club'?'Club mode':'Individual mode')+' · '+mktName;
   document.getElementById('boostRow').style.display=mode==='club'?'flex':'none';
   document.getElementById('capRow').style.display=mode==='club'?'flex':'none';
   var club=mode==='club';
