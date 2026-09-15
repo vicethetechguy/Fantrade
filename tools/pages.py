@@ -307,7 +307,7 @@ ex = [T('<main><section class="app-head" style="padding-bottom:18px"><div class=
 
 # Coach index sits above the book — it is the one number that frames the whole list.
 ex.append(T('<section style="padding-top:0"><div class="wrap">'
-            '<div class="bezel" data-reveal><div class="core pad ci">'
+            '<div class="bezel flat" data-reveal><div class="core pad ci">'
             '<div class="ci-l"><div class="k-label">@@ Coach index</div>'
             '<div class="value-big">24.65 <small>$FTR</small></div>'
             '<div class="delta">▲ 2.1% · 186 coaches</div></div>'
@@ -755,6 +755,10 @@ FP_CSS = """
 .fp-sel .nm{font-family:Archivo;font-variation-settings:'wdth' 120,'wght' 800;text-transform:uppercase;font-size:18px}
 .fp-sel .sub{font-weight:600;font-size:9.5px;color:var(--faint);margin:5px 0 0;letter-spacing:.14em;text-transform:uppercase}
 .fp-sel .right{margin-left:auto;text-align:right;font-weight:600;font-size:9px;color:var(--faint);letter-spacing:.14em;text-transform:uppercase}
+.bezel.flat .tabs{padding:8px 0;background:transparent}
+.bezel.flat .fp-left{padding:30px 34px 30px 0}
+.bezel.flat .fp-right{padding:30px 0 30px 34px;background:transparent}
+@media (max-width:1024px){.bezel.flat .fp-left{padding:26px 0}.bezel.flat .fp-right{padding:26px 0}}
 .mkt-note{margin-top:22px;font-size:13.5px;font-weight:300;color:var(--dim);min-height:46px}
 .calc .cr{display:flex;justify-content:space-between;padding:13px 0;border-bottom:1px solid rgba(255,255,255,.055);font-size:12.5px;color:var(--dim)}
 .calc .cr b{color:var(--ink);font-weight:400;font-family:'JetBrains Mono',monospace}
@@ -795,7 +799,7 @@ fp = []
 fp.append('<header class="phead"><div class="wrap"><h1 data-reveal>FanPlay</h1>'
           '<span hidden id="fpActiveCount">2 active</span></div></header>')
 
-fp.append(T('<main><section style="padding-top:30px"><div class="wrap"><div class="bezel" data-reveal><div class="core">'
+fp.append(T('<main><section style="padding-top:20px"><div class="wrap"><div class="bezel flat" data-reveal><div class="core">'
           '<div class="tabs" role="tablist" aria-label="FanPlay mode">'
           '<button class="tab" role="tab" id="tab-solo" aria-controls="pane" aria-selected="false" data-mode="solo">'
           '<span class="ibox">@@</span><div><b>Individual</b><span>One player</span></div></button>'
@@ -854,95 +858,15 @@ MATCHDAY = [
     ]),
 ]
 
-fp.append(T('<section id="board" style="padding-top:40px"><div class="wrap">'
-            '<div class="rowhead" data-reveal style="margin-bottom:22px">'
+fp.append(T('<section style="padding:0 0 120px"><div class="wrap">'
+            '<div class="rowhead" data-reveal style="border-top:1px solid var(--hair);padding-top:26px">'
             '<span class="ibox">@@</span>'
             '<div><div style="font-family:Archivo;font-variation-settings:\'wdth\' 120,\'wght\' 800;'
-            'text-transform:uppercase;font-size:20px">Live board</div>'
-            '<div class="sub-line">Matchday 07</div></div></div>'
-            '<div class="bento"><div class="bezel c8" data-reveal><div class="core">', ic("pulse", "ic-lg")))
-
-# date strip
-fp.append(T('<div style="padding:24px 22px 18px">'
-            '<div class="datestrip">'
-            '<button class="livetgl" type="button" id="liveOnly" aria-pressed="false">'
-            '<span class="dot-live"></span>Live only</button>'
-            '<div class="dates" id="dateStrip">'
-            '<span class="nudge">@@</span>'
-            '<button type="button" aria-pressed="false"><small>Sun</small><b>28 Sep</b></button>'
-            '<button type="button" aria-pressed="true"><small>Today</small><b>29 Sep</b></button>'
-            '<button type="button" aria-pressed="false"><small>Tue</small><b>30 Sep</b></button>'
-            '<span class="nudge">@@</span></div>'
-            '<button class="bell" type="button" id="calBtn" aria-label="Open the full calendar" '
-            'style="border-radius:14px">@@</button>'
-            '</div></div>',
-            "‹", "›", ic("calendar", "ic")))
-
-# featured match
-fp.append(T('<div style="padding:0 22px">'
-            '<div class="feat islive" id="featCard">'
-            '<div class="feat-top"><button type="button" id="featHide">Hide</button>'
-            '<div class="mid"><b>Emirates Stadium</b><span>Matchweek 7 · your biggest exposure</span></div>'
-            '<a href="#board" style="color:var(--faint)">Match</a></div>'
-            '<div class="feat-mid">'
-            '<div class="side"><span class="tcrest" style="background:linear-gradient(160deg,#EF0107,#8d0104)">ARS</span>'
-            '<div class="nm">Arsenal</div><div class="ha">@@ Home</div></div>'
-            '<div class="sc" id="featScore">2 : 1</div>'
-            '<div class="side"><span class="tcrest" style="background:linear-gradient(160deg,#034694,#02295a)">CHE</span>'
-            '<div class="nm">Chelsea</div><div class="ha">Away</div></div></div>'
-            '<span class="minute live" id="featMin">68&rsquo;</span></div></div>',
-            ic("stadium", "ic")))
-
-# competition groups
-fp.append('<div id="boardList">')
-for code, comp, sub, fixtures in MATCHDAY:
-    fp.append(T('<div class="comp">@@<div><b>@@</b><span>@@</span></div>'
-                '<a class="more" href="#board">All fixtures @@</a></div>',
-                flag(code), comp, sub, ic("arrow", "ic-sm")))
-    for fid, home, hsh, hc, hs, away, ash, ac, a_s, st, clock, mine in fixtures:
-        hw = hs.isdigit() and a_s.isdigit() and int(hs) > int(a_s)
-        aw = hs.isdigit() and a_s.isdigit() and int(a_s) > int(hs)
-        fp.append(T('<div class="fixt@@" data-fid="@@" data-live="@@">'
-                    '<div class="stat">@@</div>'
-                    '<div class="teams">'
-                    '<div class="tm@@"><span class="tcrest sm" style="background:@@">@@</span>'
-                    '<span class="n">@@</span>@@<span class="g">@@</span></div>'
-                    '<div class="tm@@"><span class="tcrest sm" style="background:@@">@@</span>'
-                    '<span class="n">@@</span><span class="g">@@</span></div></div>'
-                    '<button class="star" type="button" data-fav="@@" aria-pressed="false" '
-                    'aria-label="Follow this fixture">@@</button></div>',
-                    " live" if st in ("live", "ht") else "", fid, "1" if st in ("live", "ht") else "0",
-                    ("<b>%s</b>" % clock) if st in ("live", "ht", "aet") else clock,
-                    "" if hw or not (hw or aw) else " dim", hc, hsh, home,
-                    ('<span class="mine">%s</span>' % mine) if mine else "", hs,
-                    "" if aw or not (hw or aw) else " dim", ac, ash, away, a_s,
-                    fid, ic("star", "ic")))
-fp.append('</div>')
-
-fp.append('<div style="padding:16px 22px 26px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">'
-          '<span style="font-size:11.5px;color:var(--faint);font-weight:300" id="boardNote">'
-          '9 fixtures · 4 with your assets</span></div>')
-
-fp.append('</div></div>')
-
-# side column — countdown + running total
-fp.append('<div class="c4" style="display:flex;flex-direction:column;gap:16px">'
-          '<div class="bezel" data-reveal><div class="core pad"><div class="k-label">Round closes in</div>'
-          '<div class="countdown"><div class="cd"><b id="cdH">04</b><span>Hours</span></div>'
-          '<div class="cd"><b id="cdM">12</b><span>Mins</span></div>'
-          '<div class="cd"><b id="cdS">38</b><span>Secs</span></div></div>'
-          '</div></div>'
-          '<div class="bezel" data-reveal style="flex:1"><div class="core pad"><div class="k-label">Running total</div>'
-          '<div class="value-big" id="runFP">175 <small>FP</small></div>'
-          '<div class="delta">Club mode · Elite · +15%</div>'
-          '<div style="margin-top:20px"><div class="b-row"><span>Starters scoring</span><b>7 of 11</b></div>'
-          '<div class="b-row"><span>Subs activated</span><b>1</b></div>'
-          '<div class="b-row"><span>Coach modifier</span><b>+3.0%</b></div>'
-          '<div class="b-row total"><span>Followed fixtures</span><b id="favCount">1</b></div></div>'
-          '<div class="k-label" style="margin-top:26px">Club form</div>'
-          '<div class="form5" style="margin-bottom:12px">'
-          '<i class="l">L</i><i class="l">L</i><i class="w">W</i><i class="w">W</i><i class="w">W</i></div>'
-          '</div></div></div></div></div></section>')
+            'text-transform:uppercase;font-size:18px">Live board</div>'
+            '<div class="sub-line">9 fixtures · 4 with your assets</div></div>'
+            '<span style="margin-left:auto">@@</span></div>'
+            '</div></section>', ic("pulse", "ic-lg"),
+            btn("Open the board", "btn-glass", "liveboard.html")))
 
 fp.append('</main>')
 
@@ -1019,6 +943,109 @@ if(actBtn){
 }
 window.addEventListener('fantrade:statechange', syncFPEntriesCount);
 
+"""
+page("fanplay.html", "FanPlay — Fantrade", "".join(fp), FP_JS, FP_CSS, app=True)
+
+
+# ══════════════════════════════════════════════════════════
+# 4b. LIVE BOARD — its own screen, nothing boxed
+# ══════════════════════════════════════════════════════════
+LB_CSS = FP_CSS + """
+.bezel.flat .datestrip{margin-bottom:4px}
+"""
+
+lb = [T('<main><section class="app-head" style="padding:92px 0 12px"><div class="wrap">'
+        '<a class="crumb" href="fanplay.html" aria-label="Back to FanPlay">@@FanPlay</a>'
+        '<h1 data-reveal style="margin-top:14px">Live board</h1>'
+        '</div></section>', ic("arrow", "ic"))]
+lb.append('<section id="board" style="padding:0 0 120px"><div class="wrap">'
+          '<div class="bento"><div class="bezel flat c8" data-reveal><div class="core">')
+
+# date strip
+lb.append(T('<div style="padding:0 0 18px">'
+            '<div class="datestrip">'
+            '<button class="livetgl" type="button" id="liveOnly" aria-pressed="false">'
+            '<span class="dot-live"></span>Live only</button>'
+            '<div class="dates" id="dateStrip">'
+            '<span class="nudge">@@</span>'
+            '<button type="button" aria-pressed="false"><small>Sun</small><b>28 Sep</b></button>'
+            '<button type="button" aria-pressed="true"><small>Today</small><b>29 Sep</b></button>'
+            '<button type="button" aria-pressed="false"><small>Tue</small><b>30 Sep</b></button>'
+            '<span class="nudge">@@</span></div>'
+            '<button class="bell" type="button" id="calBtn" aria-label="Open the full calendar" '
+            'style="border-radius:14px">@@</button>'
+            '</div></div>',
+            "‹", "›", ic("calendar", "ic")))
+
+# featured match
+lb.append(T('<div style="padding:0">'
+            '<div class="feat islive" id="featCard">'
+            '<div class="feat-top"><button type="button" id="featHide">Hide</button>'
+            '<div class="mid"><b>Emirates Stadium</b><span>Matchweek 7</span></div>'
+            '<a href="#board" style="color:var(--faint)">Match</a></div>'
+            '<div class="feat-mid">'
+            '<div class="side"><span class="tcrest" style="background:linear-gradient(160deg,#EF0107,#8d0104)">ARS</span>'
+            '<div class="nm">Arsenal</div><div class="ha">@@ Home</div></div>'
+            '<div class="sc" id="featScore">2 : 1</div>'
+            '<div class="side"><span class="tcrest" style="background:linear-gradient(160deg,#034694,#02295a)">CHE</span>'
+            '<div class="nm">Chelsea</div><div class="ha">Away</div></div></div>'
+            '<span class="minute live" id="featMin">68&rsquo;</span></div></div>',
+            ic("stadium", "ic")))
+
+# competition groups
+lb.append('<div id="boardList">')
+for code, comp, sub, fixtures in MATCHDAY:
+    lb.append(T('<div class="comp">@@<div><b>@@</b><span>@@</span></div>'
+                '<a class="more" href="#board">All fixtures @@</a></div>',
+                flag(code), comp, sub, ic("arrow", "ic-sm")))
+    for fid, home, hsh, hc, hs, away, ash, ac, a_s, st, clock, mine in fixtures:
+        hw = hs.isdigit() and a_s.isdigit() and int(hs) > int(a_s)
+        aw = hs.isdigit() and a_s.isdigit() and int(a_s) > int(hs)
+        lb.append(T('<div class="fixt@@" data-fid="@@" data-live="@@">'
+                    '<div class="stat">@@</div>'
+                    '<div class="teams">'
+                    '<div class="tm@@"><span class="tcrest sm" style="background:@@">@@</span>'
+                    '<span class="n">@@</span>@@<span class="g">@@</span></div>'
+                    '<div class="tm@@"><span class="tcrest sm" style="background:@@">@@</span>'
+                    '<span class="n">@@</span><span class="g">@@</span></div></div>'
+                    '<button class="star" type="button" data-fav="@@" aria-pressed="false" '
+                    'aria-label="Follow this fixture">@@</button></div>',
+                    " live" if st in ("live", "ht") else "", fid, "1" if st in ("live", "ht") else "0",
+                    ("<b>%s</b>" % clock) if st in ("live", "ht", "aet") else clock,
+                    "" if hw or not (hw or aw) else " dim", hc, hsh, home,
+                    ('<span class="mine">%s</span>' % mine) if mine else "", hs,
+                    "" if aw or not (hw or aw) else " dim", ac, ash, away, a_s,
+                    fid, ic("star", "ic")))
+lb.append('</div>')
+
+lb.append('<div style="padding:16px 0 26px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">'
+          '<span style="font-size:11.5px;color:var(--faint);font-weight:300" id="boardNote">'
+          '9 fixtures · 4 with your assets</span></div>')
+
+lb.append('</div></div>')
+
+# side column — countdown + running total
+lb.append('<div class="c4" style="display:flex;flex-direction:column;gap:30px">'
+          '<div class="bezel flat" data-reveal><div class="core"><div class="k-label">Round closes in</div>'
+          '<div class="countdown"><div class="cd"><b id="cdH">04</b><span>Hours</span></div>'
+          '<div class="cd"><b id="cdM">12</b><span>Mins</span></div>'
+          '<div class="cd"><b id="cdS">38</b><span>Secs</span></div></div>'
+          '</div></div>'
+          '<div class="bezel flat" data-reveal style="flex:1"><div class="core"><div class="k-label">Running total</div>'
+          '<div class="value-big" id="runFP">175 <small>FP</small></div>'
+          '<div class="delta">Club mode · Elite · +15%</div>'
+          '<div style="margin-top:20px"><div class="b-row"><span>Starters scoring</span><b>7 of 11</b></div>'
+          '<div class="b-row"><span>Subs activated</span><b>1</b></div>'
+          '<div class="b-row"><span>Coach modifier</span><b>+3.0%</b></div>'
+          '<div class="b-row total"><span>Followed fixtures</span><b id="favCount">1</b></div></div>'
+          '<div class="k-label" style="margin-top:26px">Club form</div>'
+          '<div class="form5" style="margin-bottom:12px">'
+          '<i class="l">L</i><i class="l">L</i><i class="w">W</i><i class="w">W</i><i class="w">W</i></div>'
+          '</div></div></div></div></div></section>')
+
+lb.append('</div></div></div></div></div></section></main>')
+
+LIVE_JS = r"""
 var left=4*3600+12*60+38;
 function pad(n){ return n<10?'0'+n:''+n; }
 if(!reduce) setInterval(function(){
@@ -1137,6 +1164,7 @@ $('featHide').addEventListener('click', function(){
   }, 5000);
 })();
 """
-page("fanplay.html", "FanPlay — Fantrade", "".join(fp), FP_JS, FP_CSS, app=True)
+page("liveboard.html", "Live board — Fantrade", "".join(lb), LIVE_JS, LB_CSS, app=True)
+
 
 print("built:", sorted(os.listdir(OUT)))

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Account + in-app surfaces: auth, onboarding, dashboard, portfolio,
 leaderboard, notifications, settings. Same shell, same tokens as pages 1–6."""
-import os, sys
+import os, re, sys
 sys.path.insert(0, os.path.dirname(__file__))
 from common import head, atmosphere, nav, nav_min, footer, ic, JS_SHELL
 
@@ -728,7 +728,7 @@ da.append(T('<div style="padding:20px 24px 28px;display:flex;gap:12px;align-item
             'Projected club total 450–780 FP</span>'
             '<span style="margin-left:auto">@@</span></div>'
             '</div></div>',
-            btn("See scoring rules", "btn-glass", "fanplay.html#rules",
+            btn("See scoring rules", "btn-glass", "how-it-works.html#rules",
                 extra='style="padding:7px 7px 7px 18px;font-size:11px"')))
 
 # movers
@@ -781,7 +781,7 @@ da.append(T('<div class="bezel c5" data-reveal><div class="core pad">'
             '<div class="supply"><i style="width:50%"></i></div>'
             '<div style="margin-top:18px">@@</div>'
             '</div></div>',
-            btn("Manage limits", "btn-glass", "settings.html#play",
+            btn("Manage limits", "btn-glass", "settings-play.html",
                 extra='style="width:100%;justify-content:space-between"')))
 
 da.append('</div></div></section></main>')
@@ -1338,7 +1338,7 @@ lb = [T('<main><section class="app-head"><div class="wrap"><div class="head-row"
 lb.append('<section style="padding:10px 0 120px"><div class="wrap"><div class="bento">')
 
 # your rank, as a strip
-lb.append(T('<div class="bezel c12" data-reveal><div class="core pad-sm">'
+lb.append(T('<div class="bezel flat c12" data-reveal><div class="core pad-sm">'
             '<div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">'
             '<div class="crest-lg" id="lbCrest" style="background:linear-gradient(160deg,#C4F82A,#83b300)">ZF</div>'
             '<div style="min-width:0"><div style="font-family:Archivo;'
@@ -1358,8 +1358,8 @@ lb.append(T('<div class="bezel c12" data-reveal><div class="core pad-sm">'
             btn("Division structure", "btn-glass", "divisions.html")))
 
 # standings
-lb.append(T('<div class="bezel c12" data-reveal><div class="core">'
-            '<div style="padding:30px 24px 18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">'
+lb.append(T('<div class="bezel flat c12 flat-sep" data-reveal><div class="core">'
+            '<div style="padding:0 0 18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">'
             '<div><div style="font-family:Archivo;font-variation-settings:\'wdth\' 120,\'wght\' 800;'
             'text-transform:uppercase;font-size:19px">Gameweek 28 table</div>'
             '<div class="sub-line" id="lbCount">13 of 1,420 clubs</div></div>'
@@ -1369,7 +1369,7 @@ lb.append(T('<div class="bezel c12" data-reveal><div class="core">'
             '<button class="mkt" type="button" aria-pressed="false" data-d="contender">Contender</button>'
             '<button class="mkt" type="button" aria-pressed="false" data-d="challenger">Challenger</button>'
             '</div></div>'
-            '<div class="rail" style="padding:0 24px 16px;margin:0">'
+            '<div class="rail" style="padding:0 0 16px;margin:0">'
             '<div class="searchbox">@@<input id="lbSearch" placeholder="Search club or manager handle" '
             'aria-label="Search clubs"></div>'
             '<div class="seg-sm" id="lbSort"><button type="button" aria-pressed="true" data-s="rank">By rank</button>'
@@ -1508,7 +1508,7 @@ nt = [T('<main><section class="app-head"><div class="wrap"><div class="head-row"
         '<div><h1 data-reveal>Activity</h1></div>'
         '<div class="acts" data-reveal>@@@@</div></div></div></section>',
         btn("Mark all read", "btn-glass", tag="button", extra='id="ntRead"'),
-        btn("Notification settings", href="settings.html#alerts"))]
+        btn("Notification settings", href="settings-alerts.html"))]
 
 nt.append('<section style="padding:10px 0 120px"><div class="wrap"><div class="bento">')
 
@@ -1638,25 +1638,9 @@ SETNAV = [("profile", "user", "Manager profile"), ("club", "crest", "Club identi
           ("wallet", "wallet", "Wallet & payouts"), ("play", "scales", "Responsible play"),
           ("data", "receipt", "Data & account")]
 
-st = [T('<main><section class="app-head"><div class="wrap">'
-        '<h1 data-reveal>Settings</h1>'
-        '</div></section>')]
+SECTIONS = {}
 
-st.append('<section style="padding:10px 0 120px"><div class="wrap"><div class="bento">')
-
-st.append('<div class="c3" data-reveal><div class="sticky"><div class="bezel"><div class="core pad-sm">'
-          '<div class="k-label">Jump to</div><nav class="setnav" id="setNav">')
-for i, (aid, icon, label) in enumerate(SETNAV):
-    st.append(T('<a href="#@@"@@>@@@@</a>', aid, ' class="on"' if i == 0 else '', ic(icon, "ic"), label))
-st.append(T('</nav><div style="margin-top:18px">@@</div>'
-            '</div></div></div></div>',
-            btn("Sign out", "btn-glass", tag="button",
-                extra='data-signout style="width:100%;justify-content:space-between"')))
-
-st.append('<div class="c9"><div class="bento" style="grid-template-columns:1fr;gap:16px">')
-
-# profile
-st.append(T('<div class="bezel sec-card" id="profile" data-reveal><div class="core pad">'
+SECTIONS["profile"] = T('<div class="bezel flat sec-card" data-reveal><div class="core pad">'
             '<div class="sec-title"><span class="ibox">@@</span><div><h3>Manager profile</h3>'
             '<p>Shown next to your club everywhere it appears publicly.</p></div></div>'
             '<div class="tf-row">@@@@</div>@@'
@@ -1672,10 +1656,10 @@ st.append(T('<div class="bezel sec-card" id="profile" data-reveal><div class="co
             sel("Home league", "stLeague", ["*Premier League", "La Liga", "Serie A", "Bundesliga", "Ligue 1",
                                             "Nigeria Premier Football League", "Eredivisie", "Primeira Liga"],
                 "stadium"),
-            btn("Save profile", tag="button", extra='id="stSaveProfile"')))
+            btn("Save profile", tag="button", extra='id="stSaveProfile"'))
 
 # club identity
-st.append(T('<div class="bezel sec-card" id="club" data-reveal><div class="core pad">'
+SECTIONS["club"] = T('<div class="bezel flat sec-card" data-reveal><div class="core pad">'
             '<div class="sec-title"><span class="ibox">@@</span><div><h3>Club identity</h3>'
             '<p>The name, shape and colours your Dream Club carries on the league table.</p></div></div>'
             '@@'
@@ -1705,10 +1689,10 @@ st.append(T('<div class="bezel sec-card" id="club" data-reveal><div class="core 
             ic("crest", "ic-lg"),
             tf("Club name", "stClub", "text", "Zero FC", "crest", "", "2–24 characters."),
             btn("Save club identity", tag="button", extra='id="stSaveClub"'),
-            btn("Open the club builder", "btn-glass", "clubs.html")))
+            btn("Open the club builder", "btn-glass", "clubs.html"))
 
 # security
-st.append(T('<div class="bezel sec-card" id="security" data-reveal><div class="core pad">'
+SECTIONS["security"] = T('<div class="bezel flat sec-card" data-reveal><div class="core pad">'
             '<div class="sec-title"><span class="ibox">@@</span><div><h3>Security</h3>'
             '<p>Your assets are only as safe as the way you get into the account.</p></div></div>'
             '@@@@@@'
@@ -1738,10 +1722,10 @@ st.append(T('<div class="bezel sec-card" id="security" data-reveal><div class="c
                "The two passwords do not match."),
             btn("Update password", tag="button", extra='id="stSavePw"'),
             ic("flag", "ic"),
-            ic("shield", "ic-sm"), ic("user", "ic-sm"), ic("user", "ic-sm")))
+            ic("shield", "ic-sm"), ic("user", "ic-sm"), ic("user", "ic-sm"))
 
 # notifications
-st.append(T('<div class="bezel sec-card" id="alerts" data-reveal><div class="core pad">'
+SECTIONS["alerts"] = T('<div class="bezel flat sec-card" data-reveal><div class="core pad">'
             '<div class="sec-title"><span class="ibox">@@</span><div><h3>Notifications</h3>'
             '<p>What Fantrade sends you, and when it stays quiet.</p></div></div>'
             '<div class="sw-row"><div><div class="t">Round settlements</div>'
@@ -1762,10 +1746,10 @@ st.append(T('<div class="bezel sec-card" id="alerts" data-reveal><div class="cor
             '<div class="sw-row"><div><div class="t">Product and marketing email</div>'
             '<div class="d">New features, market tiers and competitions. Off by default.</div></div>'
             '<button class="tgl" type="button" data-pref="marketing"><i></i></button></div>'
-            '</div></div>', ic("pulse", "ic-lg")))
+            '</div></div>', ic("pulse", "ic-lg"))
 
 # wallet
-st.append(T('<div class="bezel sec-card" id="wallet" data-reveal><div class="core pad">'
+SECTIONS["wallet"] = T('<div class="bezel flat sec-card" data-reveal><div class="core pad">'
             '<div class="sec-title"><span class="ibox">@@</span><div><h3>Wallet &amp; payouts</h3>'
             '<p>Where settled $FTR goes when you take it off the platform.</p></div></div>'
             '<div class="mini-grid" style="grid-template-columns:repeat(3,1fr)">'
@@ -1787,10 +1771,10 @@ st.append(T('<div class="bezel sec-card" id="wallet" data-reveal><div class="cor
             tf("Payout account", "stAcct", "text", "Sort code and account number", "", "",
                "Prototype build — no real payout details are stored."),
             btn("Save payout details", tag="button", extra='id="stSavePayout"'),
-            btn("Open your wallet", "btn-glass", "ftr.html")))
+            btn("Open your wallet", "btn-glass", "ftr.html"))
 
 # responsible play
-st.append(T('<div class="bezel sec-card" id="play" data-reveal><div class="core pad">'
+SECTIONS["play"] = T('<div class="bezel flat sec-card" data-reveal><div class="core pad">'
             '<div class="sec-title"><span class="ibox am">@@</span><div><h3>Responsible play</h3>'
             '<p>Limits you set now are enforced at entry. Raising one takes 24 hours; lowering one is immediate.</p>'
             '</div></div>'
@@ -1812,10 +1796,10 @@ st.append(T('<div class="bezel sec-card" id="play" data-reveal><div class="core 
             sel("Deposit limit", "stDep", ["*No limit", "£250 per month", "£500 per month", "£1,000 per month"],
                 "coin"),
             btn("Save limits", tag="button", extra='id="stSaveLimits"'),
-            ARROW))
+            ARROW)
 
 # data & account
-st.append(T('<div class="bezel sec-card" id="data" data-reveal><div class="core pad">'
+SECTIONS["data"] = T('<div class="bezel flat sec-card" data-reveal><div class="core pad">'
             '<div class="sec-title"><span class="ibox">@@</span><div><h3>Data &amp; account</h3>'
             '<p>Take your records with you, or close the account entirely.</p></div></div>'
             '<div class="rowlink">@@ Full ledger export (CSV)<b><a href="portfolio.html" '
@@ -1834,25 +1818,28 @@ st.append(T('<div class="bezel sec-card" id="data" data-reveal><div class="core 
             '</div></div>',
             ic("receipt", "ic-lg"), ic("receipt", "ic"), ic("scales", "ic"), ic("shield", "ic"),
             btn("Reset prototype data", "btn-glass", tag="button", extra='id="stReset"'),
-            btn("Close account", "btn-red", tag="button", extra='id="stClose"')))
-
-st.append('</div></div></div></div></section></main>')
+            btn("Close account", "btn-red", tag="button", extra='id="stClose"'))
 
 ST_JS = r"""
+// One script serves every settings screen, so nothing here assumes a field is
+// present — each section has its own page now.
 function el(id){ return document.getElementById(id); }
 function wrap(id){ return document.getElementById('f-' + id); }
 function num(v){ return parseInt(String(v).replace(/[^0-9]/g, ''), 10) || 0; }
+function set(id, v){ var e = el(id); if(e) e.value = v; }
+function on(id, ev, fn){ var e = el(id); if(e) e.addEventListener(ev, fn); }
 
 // hydrate from state
 (function(){
   var s = FT.getState();
-  el('stName').value = s.user.name;
-  el('stHandle').value = s.user.handle;
-  el('stEmail').value = s.auth.email;
-  el('stClub').value = s.club.name;
-  el('stCap').value = s.prefs.stakeCap.toLocaleString('en-US');
+  set('stName', s.user.name);
+  set('stHandle', s.user.handle);
+  set('stEmail', s.auth.email);
+  set('stClub', s.club.name);
+  set('stCap', s.prefs.stakeCap.toLocaleString('en-US'));
   [['stRegion', s.user.region], ['stLeague', s.user.league]].forEach(function(p){
     var sel = el(p[0]);
+    if(!sel) return;
     for(var i = 0; i < sel.options.length; i++){ if(sel.options[i].text === p[1]) sel.selectedIndex = i; }
   });
   document.querySelectorAll('#stForms button').forEach(function(b){
@@ -1865,11 +1852,12 @@ function num(v){ return parseInt(String(v).replace(/[^0-9]/g, ''), 10) || 0; }
 })();
 
 function capBar(){
-  var cap = num(el('stCap').value) || 1;
-  var bar = el('stCapBar');
+  var f = el('stCap'), bar = el('stCapBar');
+  if(!f || !bar) return;
+  var cap = num(f.value) || 1;
   if(bar) bar.style.width = Math.min(100, 2500 / cap * 100).toFixed(0) + '%';
 }
-el('stCap').addEventListener('input', capBar);
+on('stCap', 'input', capBar);
 
 var formation = FT.getState().club.formation;
 var colors = FT.getState().club.colors.slice();
@@ -1889,7 +1877,7 @@ document.querySelectorAll('#stSw .sw').forEach(function(b){
   });
 });
 
-el('stSaveProfile').addEventListener('click', function(){
+on('stSaveProfile', 'click', function(){
   var nm = el('stName').value.trim();
   var h = el('stHandle').value.trim().replace(/^@/, '');
   var em = el('stEmail').value.trim();
@@ -1904,7 +1892,7 @@ el('stSaveProfile').addEventListener('click', function(){
   showToast('Profile saved.', 'success');
 });
 
-el('stSaveClub').addEventListener('click', function(){
+on('stSaveClub', 'click', function(){
   var cn = el('stClub').value.trim();
   if(cn.length < 2 || cn.length > 24){ wrap('stClub').classList.add('bad');
     showToast('Club names are 2–24 characters.', 'error'); return; }
@@ -1913,7 +1901,7 @@ el('stSaveClub').addEventListener('click', function(){
   showToast(cn + ' updated — ' + formation + ', ' + colorName + '.', 'success');
 });
 
-el('stSavePw').addEventListener('click', function(){
+on('stSavePw', 'click', function(){
   var o = el('stPwOld').value, n = el('stPwNew').value, c = el('stPwConf').value;
   if(!o){ wrap('stPwOld').classList.add('bad'); showToast('Enter your current password.', 'error'); return; }
   if(n.length < 8){ wrap('stPwNew').classList.add('bad'); return; }
@@ -1923,12 +1911,12 @@ el('stSavePw').addEventListener('click', function(){
   showToast('Password updated. Other sessions were signed out.', 'success');
 });
 
-el('stSavePayout').addEventListener('click', function(){
+on('stSavePayout', 'click', function(){
   showToast('Payout details saved for ' + el('stCur').value.split(' ')[0] + ' via '
     + el('stMethod').value.toLowerCase() + '.', 'success');
 });
 
-el('stSaveLimits').addEventListener('click', function(){
+on('stSaveLimits', 'click', function(){
   var cap = num(el('stCap').value);
   if(cap < 100 || cap > 100000){ wrap('stCap').classList.add('bad'); return; }
   wrap('stCap').classList.remove('bad');
@@ -1938,7 +1926,7 @@ el('stSaveLimits').addEventListener('click', function(){
   showToast('Weekly stake cap set to ' + cap.toLocaleString('en-US') + ' $FTR.', 'success');
 });
 
-el('stBreak').addEventListener('click', function(){
+on('stBreak', 'click', function(){
   openModal('<h3 class="ft-modal-title">Take a break</h3>'
     + '<p class="ft-modal-desc">New entries and purchases are blocked for the period you choose. Holdings stay '
     + 'where they are, settled rounds still pay out, and the block cannot be lifted early.</p>'
@@ -1959,12 +1947,12 @@ document.querySelectorAll('[data-kill]').forEach(function(b){
   });
 });
 
-el('stGdpr').addEventListener('click', function(e){
+on('stGdpr', 'click', function(e){
   e.preventDefault();
   showToast('Data request logged. A copy is emailed within 30 days.', 'info');
 });
 
-el('stReset').addEventListener('click', function(){
+on('stReset', 'click', function(){
   openModal('<h3 class="ft-modal-title">Reset prototype data?</h3>'
     + '<p class="ft-modal-desc">Your wallet, holdings, club, activity and limits all return to the opening '
     + 'state. This cannot be undone.</p>'
@@ -1979,7 +1967,7 @@ el('stReset').addEventListener('click', function(){
   });
 });
 
-el('stClose').addEventListener('click', function(){
+on('stClose', 'click', function(){
   openModal('<h3 class="ft-modal-title">Close your account</h3>'
     + '<p class="ft-modal-desc">Every position is sold at the market price shown on the exchange, open entries '
     + 'settle normally, and the remaining balance is paid to your verified payout account. Your club is removed '
@@ -2007,23 +1995,61 @@ el('stClose').addEventListener('click', function(){
   sync();
 })();
 
-// section highlighting
-(function(){
-  var links = document.querySelectorAll('#setNav a');
-  var secs = Array.prototype.map.call(links, function(a){ return document.querySelector(a.getAttribute('href')); });
-  var so = new IntersectionObserver(function(es){
-    es.forEach(function(e){
-      if(!e.isIntersecting) return;
-      var i = secs.indexOf(e.target);
-      links.forEach(function(a, j){ a.classList.toggle('on', i === j); });
-    });
-  }, { rootMargin: '-130px 0px -60% 0px', threshold: 0 });
-  secs.forEach(function(s){ if(s) so.observe(s); });
-})();
 """
 
-page("settings.html", "Settings — Fantrade", "".join(st), ST_JS, ST_CSS + OB_CSS)
-print("built settings.html")
+def hub(rows):
+    out = []
+    for href, icon, title, desc, bind, suffix in rows:
+        val = ('<span class="val" data-bind="%s">—</span>' % bind) if bind else ""
+        if val and suffix:
+            val = val[:-7] + '</span><span class="val" style="display:inline">%s</span>' % suffix
+            val = ('<span class="val"><span data-bind="%s">—</span>%s</span>' % (bind, suffix))
+        out.append(T('<a href="@@"><span class="ibox">@@</span><div class="bd"><b>@@</b><p>@@</p>@@</div>'
+                     '<span class="go">@@</span></a>', href, ic(icon, "ic-lg"), title, desc, val,
+                     ic("arrow", "ic")))
+    return '<div class="hub">%s</div>' % "".join(out)
+
+
+SET_PAGES = [("profile", "settings-profile.html", "Manager profile", "user"),
+             ("club", "settings-club.html", "Club identity", "crest"),
+             ("security", "settings-security.html", "Security", "shield"),
+             ("alerts", "settings-alerts.html", "Notifications", "pulse"),
+             ("wallet", "settings-wallet.html", "Wallet & payouts", "wallet"),
+             ("play", "settings-play.html", "Responsible play", "scales"),
+             ("data", "settings-data.html", "Data & account", "receipt")]
+
+# Once a section owns a page, the card's own title block is saying it twice.
+_SECTITLE = re.compile(r'<div class="sec-title">.*?</div></div>', re.S)
+
+
+def _blurb(frag):
+    m = re.search(r'<div class="sec-title">.*?<p>(.*?)</p>', frag, re.S)
+    return m.group(1) if m else ""
+
+
+for _key, _fname, _label, _icon in SET_PAGES:
+    _frag = SECTIONS[_key]
+    _body = ('<main><section class="app-head" style="padding:92px 0 12px"><div class="wrap">'
+             '<a class="crumb" href="settings.html" aria-label="Back to settings">%s Settings</a>'
+             '<h1 data-reveal style="margin-top:14px">%s</h1>'
+             '</div></section>'
+             '<section style="padding:0 0 120px"><div class="wrap">%s</div></section></main>'
+             % (ic("arrow", "ic"), _label, _SECTITLE.sub("", _frag)))
+    page(_fname, _label + " — Fantrade", _body, ST_JS, ST_CSS + OB_CSS)
+
+sx = ['<main><section class="app-head"><div class="wrap">'
+      '<h1 data-reveal>Settings</h1>'
+      '</div></section>']
+sx.append('<section style="padding:10px 0 130px"><div class="wrap"><div class="bento">')
+sx.append(T('<div class="c12 hub-sec" data-reveal>@@</div>',
+            hub([(_fname, _icon, _label, _blurb(SECTIONS[_key]), "", "")
+                 for _key, _fname, _label, _icon in SET_PAGES])))
+sx.append(T('<div class="c12" data-reveal style="margin-top:8px">@@</div>',
+            btn("Sign out", "btn-glass", tag="button",
+                extra='data-signout style="justify-content:space-between;min-width:220px"')))
+sx.append('</div></div></section></main>')
+page("settings.html", "Settings — Fantrade", "".join(sx), "", ST_CSS + OB_CSS)
+print("built settings.html + 7 section pages")
 
 # ══════════════════════════════════════════════════════════════════
 # ACCOUNT — the hub behind the fifth tab
@@ -2053,19 +2079,6 @@ HUB_ACCT = [
 ]
 
 
-def hub(rows):
-    out = []
-    for href, icon, title, desc, bind, suffix in rows:
-        val = ('<span class="val" data-bind="%s">—</span>' % bind) if bind else ""
-        if val and suffix:
-            val = val[:-7] + '</span><span class="val" style="display:inline">%s</span>' % suffix
-            val = ('<span class="val"><span data-bind="%s">—</span>%s</span>' % (bind, suffix))
-        out.append(T('<a href="@@"><span class="ibox">@@</span><div class="bd"><b>@@</b><p>@@</p>@@</div>'
-                     '<span class="go">@@</span></a>', href, ic(icon, "ic-lg"), title, desc, val,
-                     ic("arrow", "ic")))
-    return '<div class="hub">%s</div>' % "".join(out)
-
-
 ac = [T('<main><section class="app-head"><div class="wrap">'
         '<h1 data-reveal>Account</h1>'
         '</div></section>')]
@@ -2091,7 +2104,7 @@ ac.append(T('<div class="bezel c12" data-reveal><div class="core pad">'
             '<div>@@ Club <b data-bind="club">Zero FC</b></div>'
             '<div>@@ Rank <b data-bind="rank">#124</b></div>'
             '</div></div></div>',
-            btn("Edit profile", "btn-glass", "settings.html#profile"),
+            btn("Edit profile", "btn-glass", "settings-profile.html"),
             btn("Open wallet", href="ftr.html"),
             ic("coin", "ic"), ic("chart", "ic"), ic("crest", "ic"), ic("rank", "ic")))
 
@@ -2118,7 +2131,7 @@ ac.append(T('<div class="bezel c7" data-reveal><div class="core pad">'
             '</div></div>',
             btn("All settings", "btn-glass", "settings.html",
                 extra='style="flex:1;justify-content:space-between"'),
-            btn("Responsible play", "btn-glass", "settings.html#play",
+            btn("Responsible play", "btn-glass", "settings-play.html",
                 extra='style="flex:1;justify-content:space-between"')))
 
 # activity + session

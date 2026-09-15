@@ -180,6 +180,16 @@ body.menu-open .overlay a:nth-child(4){transition-delay:.28s}
 .bezel.tight{padding:6px;--r-out:1.5rem;--r-in:calc(1.5rem - .375rem)}
 .pad{padding:36px 34px}.pad-sm{padding:26px 26px}
 
+/* ── flat: the same block with the card taken off, so the content
+      runs on the page background and keeps the full column width ── */
+.bezel.flat{background:transparent;border:0;border-radius:0;padding:0;box-shadow:none}
+.bezel.flat>.core{background:transparent;border-radius:0;box-shadow:none;overflow:visible}
+.bezel.flat>.core.pad{padding:0}
+.bezel.flat>.core.pad-sm{padding:0}
+.flat-sep{border-top:1px solid var(--hair);margin-top:30px;padding-top:30px}
+.bezel.flat .dh,.bezel.flat .dr{padding-left:0;padding-right:0}
+@media (max-width:900px){.flat-sep{margin-top:22px;padding-top:22px}}
+
 /* type */
 .pill{display:inline-flex;align-items:center;gap:9px;border-radius:999px;padding:6px 15px;
   background:rgba(196,248,42,.08);border:1px solid rgba(196,248,42,.22);
@@ -1578,11 +1588,15 @@ TAB_OF = {"dashboard.html": "dashboard.html", "clubs.html": "dashboard.html",
           "exchange.html": "exchange.html", "asset.html": "exchange.html",
           "trade.html": "exchange.html", "club-builder.html": "dashboard.html",
           "divisions.html": "leaderboard.html",
-          "fanplay.html": "fanplay.html",
           "leaderboard.html": "leaderboard.html",
+          "fanplay.html": "fanplay.html", "liveboard.html": "fanplay.html",
           "account.html": "account.html", "ftr.html": "account.html",
           "portfolio.html": "account.html", "notifications.html": "account.html",
           "settings.html": "account.html",
+          "settings-profile.html": "account.html", "settings-club.html": "account.html",
+          "settings-security.html": "account.html", "settings-alerts.html": "account.html",
+          "settings-wallet.html": "account.html", "settings-play.html": "account.html",
+          "settings-data.html": "account.html",
           "send.html": "account.html", "receive.html": "account.html",
           "swap.html": "account.html", "buy.html": "account.html",
           "activity.html": "account.html"}
@@ -1642,8 +1656,8 @@ def footer():
             '<a href="fanplay.html">FanPlay</a><a href="leaderboard.html">Leaderboard</a></div>'
             '<div class="col"><b>Your account</b><a href="account.html">Account</a><a href="ftr.html">$FTR wallet</a>'
             '<a href="portfolio.html">Portfolio &amp; ledger</a><a href="settings.html">Settings</a></div>'
-            '<div class="col"><b>Learn</b><a href="how-it-works.html">How it works</a><a href="fanplay.html#rules">Scoring rules</a>'
-            '<a href="fanplay.html#tiers">Market tiers</a><a href="clubs.html#chem">Club chemistry</a></div>'
+            '<div class="col"><b>Learn</b><a href="how-it-works.html">How it works</a><a href="how-it-works.html#rules">Scoring rules</a>'
+            '<a href="how-it-works.html#tiers">Market tiers</a><a href="how-it-works.html#chem">Club chemistry</a></div>'
             '<div class="col"><b>Company</b><a href="signup.html">Create account</a><a href="signin.html">Sign in</a>'
             '<a href="#">Press</a><a href="#">Contact</a></div>'
             '</div><div class="legal"><span>© 2026 Fantrade. Prototype interface — figures shown are illustrative.</span>'

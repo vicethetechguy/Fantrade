@@ -109,6 +109,16 @@ body.menu-open .overlay a:nth-child(4){transition-delay:.28s}
 .bezel.tight{padding:6px;--r-out:1.5rem;--r-in:calc(1.5rem - .375rem)}
 .pad{padding:36px 34px}.pad-sm{padding:26px 26px}
 
+/* ── flat: the same block with the card taken off, so the content
+      runs on the page background and keeps the full column width ── */
+.bezel.flat{background:transparent;border:0;border-radius:0;padding:0;box-shadow:none}
+.bezel.flat>.core{background:transparent;border-radius:0;box-shadow:none;overflow:visible}
+.bezel.flat>.core.pad{padding:0}
+.bezel.flat>.core.pad-sm{padding:0}
+.flat-sep{border-top:1px solid var(--hair);margin-top:30px;padding-top:30px}
+.bezel.flat .dh,.bezel.flat .dr{padding-left:0;padding-right:0}
+@media (max-width:900px){.flat-sep{margin-top:22px;padding-top:22px}}
+
 /* type */
 .pill{display:inline-flex;align-items:center;gap:9px;border-radius:999px;padding:6px 15px;
   background:rgba(196,248,42,.08);border:1px solid rgba(196,248,42,.22);
