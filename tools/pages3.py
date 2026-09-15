@@ -711,9 +711,8 @@ da.append(T('<div class="bezel c7" data-reveal><div class="core">'
             '<div style="padding:30px 24px 20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">'
             '<span class="ibox">@@</span><div><div style="font-family:Archivo;'
             'font-variation-settings:\'wdth\' 120,\'wght\' 800;text-transform:uppercase;font-size:17px">'
-            'Matchday board</div><div class="sub-line">Gameweek 28</div></div>'
-            '<span class="tag lime" style="margin-left:auto">@@ 4 fixtures live</span></div>',
-            ic("calendar", "ic-lg"), ic("pulse", "ic")))
+            'Matchday board</div><div class="sub-line">Gameweek 28</div></div></div>',
+            ic("calendar", "ic-lg")))
 for code, tie, meta, assets, fp in FIXTURES:
     chips = "".join('<em>%s</em><span style="color:var(--faint)">%s</span>' % (s, r) for s, r in assets)
     da.append(T('<div class="fx">'
@@ -721,13 +720,10 @@ for code, tie, meta, assets, fp in FIXTURES:
                 '<div class="gr" style="margin-top:4px;color:var(--faint)">@@</div></div>'
                 '<div class="fpv">@@ <em>Expected FP</em></div></div>',
                 tie, chips, meta, fp))
-da.append(T('<div style="padding:20px 24px 28px;display:flex;gap:12px;align-items:center;flex-wrap:wrap">'
-            '<span style="font-size:11.5px;color:var(--faint);font-weight:300;white-space:nowrap">'
-            'Projected club total 450–780 FP</span>'
-            '<span style="margin-left:auto">@@</span></div>'
-            '</div></div>',
-            btn("See scoring rules", "btn-glass", "how-it-works.html#rules",
-                extra='style="padding:7px 7px 7px 18px;font-size:11px"')))
+da.append('<div style="padding:20px 24px 28px">'
+          '<span style="font-size:11.5px;color:var(--faint);font-weight:300;white-space:nowrap">'
+          'Projected club total 450–780 FP</span></div>'
+          '</div></div>')
 
 # movers
 da.append(T('<div class="bezel c5" data-reveal><div class="core pad">'

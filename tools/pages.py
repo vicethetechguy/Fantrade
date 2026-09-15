@@ -464,7 +464,11 @@ CL_CSS = """
 """
 
 cl = []
-cl.append('<header class="phead"><div class="wrap"><h1 data-reveal>Zero FC</h1></div></header>')
+cl.append(T('<header class="phead"><div class="wrap">'
+            '<a class="crumb" href="dashboard.html" aria-label="Back to home">@@Home</a>'
+            '<h1 data-reveal style="margin-top:14px" id="clName">Zero FC</h1>'
+            '<div class="clubrail" id="clubRail" data-reveal></div>'
+            '</div></header>', ic("arrow", "ic")))
 
 ROUNDS = [("MD 27", "812", "18th", "w", "+6,200"), ("MD 26", "704", "41st", "w", "+4,100"),
           ("MD 25", "689", "63rd", "w", "+3,250"), ("MD 24", "512", "308th", "l", "-2,500"),
@@ -535,8 +539,8 @@ cl.append(T('<main><section style="padding-top:30px"><div class="wrap"><div clas
           '</div></div>'
           '<div class="c5" style="display:flex;flex-direction:column;gap:16px">'
           '<div class="bezel" data-reveal><div class="core pad"><div class="k-label">Club value</div>'
-          '<div class="value-big">245,800 <small>$FTR</small></div>'
-          '<div class="delta">▲ 12,400 this week</div>'
+          '<div class="value-big"><span id="clValue">245,800</span> <small>$FTR</small></div>'
+          '<div class="delta" id="clMeta">Apex division · +15.0% boost</div>'
           '<div style="margin-top:22px;border-top:1px solid var(--hair);padding-top:6px">'
           '<div class="b-row"><span>Starting XI</span><b>180,600</b></div>'
           '<div class="b-row"><span>Bench (4)</span><b>45,200</b></div>'
@@ -545,28 +549,74 @@ cl.append(T('<main><section style="padding-top:30px"><div class="wrap"><div clas
           '<div style="margin-top:18px">@@</div></div></div>'
           '<div class="mini-grid" data-reveal>'
           '<div class="mini"><div class="k">Last round</div><div class="v lime">312</div></div>'
-          '<div class="mini"><div class="k">Season FP</div><div class="v">8,420</div></div>'
+          '<div class="mini"><div class="k">Season FP</div><div class="v" id="clFp">8,420</div></div>'
           '<div class="mini"><div class="k">Win rate</div><div class="v">62%</div></div>'
           '<div class="mini"><div class="k">$FTR earned</div><div class="v amber">19,640</div></div></div>'
           '<div class="bezel" data-reveal style="flex:1"><div class="core pad-sm">'
           '<div class="k-label">Club value · last 8 rounds</div><div id="valChart"></div></div></div>'
-          '</div></div></div></section>', btn("Enter this club in FanPlay", "btn-lime btn-sm", "fanplay.html")))
+          '</div></div>', btn("Enter this club in FanPlay", "btn-lime btn-sm", "fanplay.html")))
 
 cl.append(T('<div class="bezel c12" data-reveal><div class="core pad">'
           '<div style="display:flex;align-items:center;gap:20px;flex-wrap:wrap">'
           '<span class="ibox">@@</span>'
           '<div style="min-width:0"><div style="font-family:Archivo;'
           'font-variation-settings:\'wdth\' 120,\'wght\' 800;text-transform:uppercase;font-size:18px">'
-          'Rebuild the club</div>'
+          'Your clubs</div>'
           '<p style="font-size:12.5px;color:var(--dim);font-weight:300;margin:6px 0 0;line-height:1.6;'
-          'max-width:60ch">Name, crest, coach, shape and every slot in the eleven — eight steps, and the '
-          'shape rebuilds around what you own.</p></div>'
-          '<span style="margin-left:auto">@@</span></div></div></div>',
+          'max-width:60ch" id="clCount">—</p></div>'
+          '<span style="margin-left:auto;display:flex;gap:10px;flex-wrap:wrap">@@@@</span></div></div></div>',
           ic("formation", "ic-lg"),
-          btn("Open the club builder", href="club-builder.html")))
-cl.append('</div></div></section></main>')
+          btn("Edit this club", "btn-glass", "club-builder.html"),
+          btn("New club", href="club-builder.html?new=1")))
+cl.append('</div></section></main>')
+
 
 CL_JS = PITCH_JS + r"""
+// ── the clubs you own, as a rail you can switch from ──────────────
+function crestFor(c){
+  return '<span class="rc" style="background:linear-gradient(160deg,' + c.colors[0] + ','
+    + (c.colors[1] || c.colors[0]) + ')">'
+    + c.name.split(/\s+/).map(function(w){ return w.charAt(0).toUpperCase(); }).join('').slice(0,3)
+    + '</span>';
+}
+function renderRail(){
+  var rail = document.getElementById('clubRail');
+  if(!rail) return;
+  var s = FT.getState();
+  rail.innerHTML = s.clubs.map(function(c){
+    return '<button class="clubchip" type="button" data-club="' + c.id + '"'
+      + (c.id === s.activeClub ? ' aria-pressed="true"' : ' aria-pressed="false"') + '>'
+      + crestFor(c) + '<span class="cn">' + c.name + '</span>'
+      + '<span class="cd">' + (c.division || 'Challenger') + ' · #' + c.rank + '</span></button>';
+  }).join('')
+    + '<a class="clubchip add" href="club-builder.html?new=1">'
+    + '<span class="rc plus">+</span><span class="cn">New club</span>'
+    + '<span class="cd">Build another</span></a>';
+  rail.querySelectorAll('[data-club]').forEach(function(b){
+    b.addEventListener('click', function(){
+      if(b.getAttribute('aria-pressed') === 'true') return;
+      try {
+        var c = FT.switchClub(b.dataset.club);
+        showToast('Switched to ' + c.name + '.', 'success');
+      } catch(e){ showToast(e.message, 'error'); }
+    });
+  });
+}
+function renderClubHead(){
+  var s = FT.getState(), c = s.club;
+  var set = function(id, v){ var e = document.getElementById(id); if(e) e.textContent = v; };
+  set('clName', c.name);
+  set('clValue', (c.value || 0).toLocaleString('en-US'));
+  set('clFp', (c.fp || 0).toLocaleString('en-US'));
+  set('clMeta', (c.division || 'Challenger') + ' division · +' + (c.boost || 0).toFixed(1) + '% boost');
+  set('clRung', '#' + c.rank);
+  set('clCount', s.clubs.length + (s.clubs.length === 1 ? ' club' : ' clubs')
+    + ' · staking ' + c.name + ' this round');
+  renderRail();
+}
+renderClubHead();
+window.addEventListener('fantrade:statechange', renderClubHead);
+
 document.querySelectorAll('#clTabs button').forEach(function(b){
   b.addEventListener('click', function(){
     document.querySelectorAll('#clTabs button').forEach(function(x){ x.setAttribute('aria-pressed','false'); });
@@ -576,10 +626,7 @@ document.querySelectorAll('#clTabs button').forEach(function(b){
     });
   });
 });
-(function(){
-  var r = document.getElementById('clRung');
-  if(r) r.textContent = '#' + FT.getState().club.rank;
-})();
+
 
 var FORMS={
  '4-3-3':[[['ST','$Haaland']],[['LW','$Vinicius'],['CAM','$Bruno',1],['RW','$Saka']],
@@ -613,18 +660,21 @@ function renderBuilder(shape){
   if(add) add.addEventListener('click',function(){ var o=al.classList.toggle('show'); add.setAttribute('aria-expanded',o?'true':'false'); });
 }
 
+var NEWCLUB = /[?&]new=1/.test(window.location.search);
+
 function syncClubUI(){
   var s=FT.getState();
   var c=s.club;
   curShape=c.formation||'4-3-3';
   curColor=c.color||'#C4F82A';
 
+  // building a second club starts from a blank name, not the one you already own
   var ni=document.getElementById('clubNameInput');
-  if(ni) ni.value=c.name;
+  if(ni && !NEWCLUB) ni.value=c.name;
   var si=document.getElementById('clubStadiumInput');
-  if(si) si.value=c.stadium;
+  if(si && !NEWCLUB) si.value=c.stadium;
 
-  document.querySelectorAll('h1').forEach(function(h){
+  if(!NEWCLUB) document.querySelectorAll('h1').forEach(function(h){
     if(h.textContent.indexOf('Zero')!==-1 || h.textContent.indexOf(c.name)!==-1){
       h.textContent=c.name;
     }
@@ -694,19 +744,21 @@ if(bp){
   var scb=document.getElementById('saveClubBtn');
   if(scb){
     scb.addEventListener('click',function(){
-      var name=(document.getElementById('clubNameInput').value||'Zero FC').trim();
-      var stadium=(document.getElementById('clubStadiumInput').value||'Emirates of the North').trim();
-
-      FT.saveClub({
-        name: name,
-        stadium: stadium,
-        formation: curShape,
-        color: curColor,
-        boost: 15.0
-      });
-
-      syncClubUI();
-      showToast("Club '"+name+"' ("+curShape+") saved successfully!", "success");
+      var isNew = /[?&]new=1/.test(window.location.search);
+      var name=(document.getElementById('clubNameInput').value||'').trim();
+      var stadium=(document.getElementById('clubStadiumInput').value||'Unnamed ground').trim();
+      if(name.length<2){ showToast("Give the club a name first.", "error"); return; }
+      try {
+        if(isNew){
+          FT.createClub({ name: name, stadium: stadium, formation: curShape, color: curColor });
+          showToast(name+" created and selected.", "success");
+          setTimeout(function(){ window.location.href='clubs.html'; }, 900);
+        } else {
+          FT.saveClub({ name: name, stadium: stadium, formation: curShape, color: curColor });
+          showToast(name+" ("+curShape+") saved.", "success");
+        }
+        syncClubUI();
+      } catch(err){ showToast(err.message, "error"); }
     });
   }
 }
@@ -911,13 +963,16 @@ fp.append(T('<div class="fp-flow" id="pane" role="tabpanel" aria-labelledby="tab
             '<button class="tab" role="tab" id="tab-solo" aria-controls="pane" aria-selected="false" '
             'data-mode="solo">@@<span class="l">Individual</span><span class="s">One player</span></button>'
             '<button class="tab" role="tab" id="tab-club" aria-controls="pane" aria-selected="true" '
-            'data-mode="club">@@<span class="l">Dream Club</span><span class="s">Whole club · +15%</span>'
+            'data-mode="club">@@<span class="l">Dream Club</span>'
+            '<span class="s" id="clubModeNote">Whole club</span>'
             '</button></div>'
+            '<div class="clubrail" id="fpClubs" style="margin-top:0;margin-bottom:16px"></div>'
             '<div class="fp-sel"><span class="badge" id="selBadge">@@</span>'
             '<div style="min-width:0"><div class="nm" id="selName">Zero FC</div>'
             '<p class="sub" id="selSub">4-3-3 · Coach $Arteta · XI + 4 bench</p></div>'
             '<div class="right">Ownership<span class="up">Verified</span></div></div>'
             '<div class="line"><span>Fixtures tracked</span><b id="fixtures">9 matches · 4 leagues</b></div>'
+            '<div class="line"><span>Entries live this round</span><b id="fpLive">—</b></div>'
             '</div>',
             ic("boot", "ic"), ic("crest", "ic"), ic("crest", "ic")))
 
@@ -981,34 +1036,87 @@ FP_JS = r"""
 var mode='club', mult=2, mktName='ELITE';
 var tabs=document.querySelectorAll('.tab'), mkts=document.querySelectorAll('.mkt');
 var CREST="<svg class='ic'><use href='#i-crest'/></svg>", BOOT="<svg class='ic'><use href='#i-boot'/></svg>";
+// which club this entry stakes — defaults to the one you last switched to
+var pickedClub = FT.activeClubId();
+
+function staked(id){
+  return (FT.getState().fanplay.activeEntries || []).filter(function(e){ return e.clubId === id; })[0];
+}
+function renderClubs(){
+  var rail=document.getElementById('fpClubs'), s=FT.getState();
+  if(!rail) return;
+  rail.hidden = mode!=='club';
+  if(mode!=='club') return;
+  rail.innerHTML=s.clubs.map(function(c){
+    var live=staked(c.id);
+    return '<button class="clubchip" type="button" data-club="'+c.id+'"'
+      +(c.id===pickedClub?' aria-pressed="true"':' aria-pressed="false"')+'>'
+      +'<span class="rc" style="background:linear-gradient(160deg,'+c.colors[0]+','
+      +(c.colors[1]||c.colors[0])+')">'
+      +c.name.split(/\s+/).map(function(w){ return w.charAt(0).toUpperCase(); }).join('').slice(0,3)+'</span>'
+      +'<span class="cn">'+c.name+'</span>'
+      +'<span class="cd">'+(live?'staked':'+'+(c.boost||0).toFixed(1)+'%')+'</span></button>';
+  }).join('');
+  rail.querySelectorAll('[data-club]').forEach(function(b){
+    b.addEventListener('click',function(){
+      pickedClub=b.dataset.club; renderClubs(); render();
+    });
+  });
+}
+
 function render(){
-  var base=100, total=Math.round(base*(mode==='club'?1.15:1)*mult);
+  var s=FT.getState();
+  var club=mode==='club';
+  var c=club?FT.getClub(pickedClub):null;
+  var boost=club?(c.boost||0)/100:0;
+  var base=100, total=Math.round(base*(1+boost)*mult);
   document.getElementById('basePts').textContent=base+' FP';
   document.getElementById('multPts').textContent='×'+mult.toFixed(1);
   document.getElementById('fpOut').textContent=total.toLocaleString();
-  document.getElementById('fpNote').textContent=(mode==='club'?'Club mode':'Individual mode')+' · '+mktName;
-  document.getElementById('boostRow').style.display=mode==='club'?'flex':'none';
-  document.getElementById('capRow').style.display=mode==='club'?'flex':'none';
-  var club=mode==='club';
-  var s=FT.getState();
-  var cName=s.club.name||'Zero FC';
-  var cForm=s.club.formation||'4-3-3';
+  document.getElementById('fpNote').textContent=(club?c.name:'Individual mode')+' · '+mktName;
+  var br=document.getElementById('boostRow');
+  br.style.display=club?'flex':'none';
+  br.querySelector('b').textContent='+'+(club?(c.boost||0).toFixed(1):'0.0')+'%';
+  document.getElementById('capRow').style.display=club?'flex':'none';
+  var cName=club?c.name:'$Bruno';
+  var cForm=club?(c.formation||'4-3-3'):'';
   document.getElementById('selBadge').innerHTML=club?CREST:BOOT;
-  document.getElementById('selName').textContent=club?cName:'$Bruno';
-  document.getElementById('selSub').textContent=club?cForm+' · Coach $Arteta · XI + 4 bench':'Bruno Fernandes · 10,000 shares activated';
+  document.getElementById('selName').textContent=cName;
+  document.getElementById('selSub').textContent=club
+    ? cForm+' · Coach '+(c.coach||'$Arteta')+' · '+(c.division||'Challenger')+' division'
+    : 'Bruno Fernandes · 10,000 shares activated';
+  var cmn=document.getElementById('clubModeNote');
+  if(cmn) cmn.textContent=club
+    ? c.name+' · +'+(c.boost||0).toFixed(1)+'%'
+    : s.clubs.length+(s.clubs.length===1?' club':' clubs');
   document.getElementById('baseLabel').textContent=club?'Club base points':'Player base points';
   document.getElementById('fixtures').textContent=club?'9 matches · 4 leagues':'1 match · Man Utd v Spurs';
+  var lv=document.getElementById('fpLive');
+  if(lv){
+    var n=(s.fanplay.activeEntries||[]).length;
+    lv.textContent=n+(n===1?' entry':' entries');
+  }
+  var btn=document.getElementById('activateEntryBtn');
+  if(btn){
+    var done = club && staked(pickedClub);
+    btn.innerHTML = done
+      ? "Already staked <span class='cap'><svg class='ic'><use href='#i-check'/></svg></span>"
+      : "Activate entry <span class='cap'><svg class='ic'><use href='#i-arrow'/></svg></span>";
+    btn.classList.toggle('btn-glass', !!done);
+    btn.classList.toggle('btn-lime', !done);
+  }
 }
 tabs.forEach(function(t){ t.addEventListener('click',function(){
   tabs.forEach(function(x){ x.setAttribute('aria-selected','false'); });
   t.setAttribute('aria-selected','true'); mode=t.dataset.mode;
-  document.getElementById('pane').setAttribute('aria-labelledby',t.id); render(); }); });
+  document.getElementById('pane').setAttribute('aria-labelledby',t.id);
+  renderClubs(); render(); }); });
 mkts.forEach(function(m){ m.addEventListener('click',function(){
   mkts.forEach(function(x){ x.setAttribute('aria-pressed','false'); });
   m.setAttribute('aria-pressed','true'); mult=parseFloat(m.dataset.m);
   mktName=(m.querySelector('.t')||m).textContent.trim();
   document.getElementById('mktNote').textContent=m.dataset.note; render(); }); });
-render();
+renderClubs(); render();
 
 function syncFPEntriesCount(){
   var s=FT.getState();
@@ -1022,15 +1130,17 @@ var actBtn=document.getElementById('activateEntryBtn');
 if(actBtn){
   actBtn.addEventListener('click',function(){
     var s=FT.getState();
+    var club=mode==='club'?FT.getClub(pickedClub):null;
     var base=100;
-    var total=Math.round(base*(mode==='club'?1.15:1)*mult);
-    var target=mode==='club'?s.club.name:'$Bruno';
+    var total=Math.round(base*(club?1+(club.boost||0)/100:1)*mult);
+    var target=club?club.name:'$Bruno';
 
     try{
       var stake=stakeAmount();
       if(stake<100){ showToast("The smallest stake is 100 $FTR.", "error"); return; }
       var entry=FT.activateFanPlayEntry({
-        mode: mode,
+        mode: mode==='club'?'Dream Club':'Individual',
+        clubId: club?club.id:'',
         target: target,
         tier: mktName,
         mult: mult,
@@ -1038,6 +1148,7 @@ if(actBtn){
         projectedFP: total
       });
       syncFPEntriesCount();
+      renderClubs();
       showToast("Entry activated for "+target+" in "+mktName+" tier · "
         +stake.toLocaleString('en-US')+" $FTR staked.", "success");
       actBtn.innerHTML="Entry active <span class='cap'><svg class='ic'><use href='#i-check'/></svg></span>";
@@ -1052,7 +1163,7 @@ if(actBtn){
     }
   });
 }
-window.addEventListener('fantrade:statechange', syncFPEntriesCount);
+window.addEventListener('fantrade:statechange', function(){ renderClubs(); syncFPEntriesCount(); });
 
 // ── stake field ─────────────────────────────────────────────────
 function el(id){ return document.getElementById(id); }

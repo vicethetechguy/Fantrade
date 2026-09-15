@@ -75,6 +75,7 @@ main,header,footer,.nav-island{position:relative;z-index:1}
 .btn-glass{background:rgba(255,255,255,.05);color:var(--ink);border:1px solid var(--hair);box-shadow:var(--inset)}
 .btn-glass .cap{background:rgba(255,255,255,.08)}
 .btn-glass:hover{background:rgba(255,255,255,.09);border-color:var(--hair-2)}
+.nav-cta{display:flex;align-items:center;gap:10px;flex:none}
 .btn-sm{padding:7px 7px 7px 18px;font-size:11px}
 .btn-sm .cap{width:26px;height:26px}
 .btn-red{background:rgba(255,94,94,.14);color:#ffb3b3;border:1px solid rgba(255,94,94,.3)}
@@ -115,6 +116,24 @@ body.menu-open .overlay a:nth-child(4){transition-delay:.28s}
 .bezel.flat>.core{background:transparent;border-radius:0;box-shadow:none;overflow:visible}
 .bezel.flat>.core.pad{padding:0}
 .bezel.flat>.core.pad-sm{padding:0}
+/* the clubs you own, switchable in one tap */
+.clubrail{display:flex;gap:10px;margin-top:22px;overflow-x:auto;padding-bottom:6px;scrollbar-width:none}
+.clubrail::-webkit-scrollbar{display:none}
+.clubchip{flex:none;display:flex;align-items:center;gap:11px;padding:11px 16px 11px 12px;cursor:pointer;
+  border:1px solid var(--hair);border-radius:16px;background:rgba(255,255,255,.03);box-shadow:var(--inset);
+  font-family:Montserrat,sans-serif;text-align:left;transition:all .5s var(--ease)}
+.clubchip:hover{border-color:var(--hair-2);background:rgba(255,255,255,.055)}
+.clubchip[aria-pressed="true"]{border-color:var(--lime);background:rgba(196,248,42,.08)}
+.clubchip .rc{width:30px;height:33px;flex:none;clip-path:polygon(0 0,100% 0,100% 66%,50% 100%,0 66%);
+  display:grid;place-items:center;font-family:Archivo;font-variation-settings:'wdth' 100,'wght' 900;
+  font-size:11px;color:#0A0D03}
+.clubchip .rc.plus{background:rgba(196,248,42,.12);color:var(--lime);font-size:17px;
+  clip-path:none;border-radius:10px;border:1px dashed rgba(196,248,42,.42)}
+.clubchip .cn{font-size:13px;color:var(--ink);white-space:nowrap}
+.clubchip .cd{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--faint);white-space:nowrap;
+  padding-left:11px;border-left:1px solid var(--hair)}
+.clubchip.add .cd{border-left-color:rgba(196,248,42,.25)}
+@media (max-width:560px){.clubchip .cd{display:none}}
 .flat-sep{border-top:1px solid var(--hair);margin-top:30px;padding-top:30px}
 .bezel.flat .dh,.bezel.flat .dr{padding-left:0;padding-right:0}
 @media (max-width:900px){.flat-sep{margin-top:22px;padding-top:22px}}
@@ -336,8 +355,11 @@ footer{border-top:1px solid var(--hair);padding:70px 0 64px;background:rgba(255,
 
 /* responsive */
 @media (max-width:1024px){
-  .nav-links{display:none}.nav-island>.btn{display:none}.burger{display:block}
+  .nav-links{display:none}.burger{display:block}
   .nav-island{width:calc(100vw - 32px);justify-content:space-between;padding:8px 8px 8px 20px}
+  /* Sign in moves into the menu; Get started stays out where it can be tapped */
+  .nav-cta{margin-left:auto}
+  .nav-cta .btn-glass{display:none}
   .c3,.c4,.c5,.c6,.c7,.c8,.c9{grid-column:span 12}
   .bento.halves .c6{grid-column:span 6}
   .mhead,.mrow{grid-template-columns:2fr 1fr .8fr 1fr 96px}
@@ -350,7 +372,13 @@ footer{border-top:1px solid var(--hair);padding:70px 0 64px;background:rgba(255,
   html,body{overflow-x:hidden!important;width:100%;max-width:100vw;-webkit-text-size-adjust:100%}
   input,select,textarea{font-size:16px!important} /* Prevents iOS auto-zoom */
   .wrap{padding-left:max(16px,env(safe-area-inset-left));padding-right:max(16px,env(safe-area-inset-right));max-width:100vw;box-sizing:border-box}
-  .nav-island{top:max(10px,env(safe-area-inset-top));left:10px;right:10px;transform:none;width:auto;max-width:calc(100vw - 20px)!important;box-sizing:border-box;padding:6px 8px 6px 14px}
+  .nav-island{top:max(10px,env(safe-area-inset-top));left:10px;right:10px;transform:none;width:auto;max-width:calc(100vw - 20px)!important;box-sizing:border-box;padding:6px 8px 6px 14px;gap:10px}
+  .nav-island .logo{font-size:14px}
+  .nav-island .logo .ic{width:19px;height:19px}
+  .nav-cta{gap:8px;min-width:0}
+  .nav-cta .btn-sm{padding:6px 6px 6px 14px;font-size:10px;white-space:nowrap}
+  .nav-cta .btn-sm .cap{width:22px;height:22px}
+  .nav-cta .btn-sm .cap .ic{width:13px;height:13px}
   .nav-island #navAccountBtn{display:none!important}
   .nav-wallet{padding:5px 11px;font-size:11.5px;gap:6px}
   .nav-wallet .pulse{width:5px;height:5px}
@@ -1747,22 +1775,21 @@ var FT = (function(){
       '$Haaland': { n: 'Erling Haaland', shares: 3000, avg: 68.50, p: 71.40, c: false, inClub: 'ST' },
       '$Arteta': { n: 'Mikel Arteta', shares: 1000, avg: 20.50, p: 22.05, c: true, inClub: 'COACH' }
     },
-    club: {
-      name: "Zero FC",
-      stadium: "Emirates of the North",
-      colors: ["#C4F82A", "#83b300"],
-      colorName: "Lime",
-      formation: "4-3-3",
-      coach: "$Arteta",
-      rank: 124,
-      fp: 8420,
-      boost: 15.0,
-      value: 245800
-    },
+    clubs: [
+      { id: "c-1", name: "Zero FC", stadium: "Emirates of the North",
+        colors: ["#C4F82A", "#83b300"], colorName: "Lime", formation: "4-3-3",
+        coach: "$Arteta", rank: 124, fp: 8420, boost: 15.0, value: 245800,
+        division: "Apex" },
+      { id: "c-2", name: "North Bank XI", stadium: "The Reserve",
+        colors: ["#4DA6FF", "#0b5fae"], colorName: "Azure", formation: "4-2-3-1",
+        coach: "$Pep", rank: 412, fp: 5140, boost: 9.5, value: 132400,
+        division: "Contender" }
+    ],
+    activeClub: "c-1",
     fanplay: {
       activeEntries: [
-        { id: "e-1", mode: "Dream Club", target: "Zero FC", tier: "Elite", mult: 2.0, stake: 2500, projectedFP: 230, status: "Active in MD 07" },
-        { id: "e-2", mode: "Individual", target: "$Saka", tier: "PRO", mult: 1.4, stake: 2500, projectedFP: 140, status: "Active in MD 07" }
+        { id: "e-1", mode: "Dream Club", clubId: "c-1", target: "Zero FC", tier: "Elite", mult: 2.0, stake: 2500, projectedFP: 230, status: "Active in MD 07" },
+        { id: "e-2", mode: "Individual", clubId: "", target: "$Saka", tier: "PRO", mult: 1.4, stake: 2500, projectedFP: 140, status: "Active in MD 07" }
       ]
     },
     transactions: [
@@ -1773,16 +1800,32 @@ var FT = (function(){
     ]
   };
 
+  // `state.club` is a live reference into `state.clubs`, so every page that
+  // already reads s.club keeps working while the manager owns several.
+  function link(st){
+    if(!st.clubs || !st.clubs.length){
+      st.clubs = [Object.assign({ id: 'c-1', division: 'Apex' },
+                                st.club || defaultState.clubs[0])];
+    }
+    st.clubs.forEach(function(c, i){ if(!c.id) c.id = 'c-' + (i + 1); });
+    if(!st.activeClub || !st.clubs.filter(function(c){ return c.id === st.activeClub; }).length){
+      st.activeClub = st.clubs[0].id;
+    }
+    st.club = st.clubs.filter(function(c){ return c.id === st.activeClub; })[0];
+    return st;
+  }
   function load(){
     try {
       var s = localStorage.getItem(STORAGE_KEY);
-      if(s) return Object.assign({}, defaultState, JSON.parse(s));
+      if(s) return link(Object.assign({}, defaultState, JSON.parse(s)));
     } catch(e){}
-    return JSON.parse(JSON.stringify(defaultState));
+    return link(JSON.parse(JSON.stringify(defaultState)));
   }
   function save(s){
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(s));
+      var out = {};
+      Object.keys(s).forEach(function(k){ if(k !== 'club') out[k] = s[k]; });
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(out));
     } catch(e){}
   }
   var state = load();
@@ -1941,8 +1984,70 @@ var FT = (function(){
       window.dispatchEvent(new CustomEvent('fantrade:statechange', { detail: state }));
       return { total: total, remainingBalance: state.wallet.balance, shares: shares };
     },
-    saveClub: function(clubData){
-      Object.assign(state.club, clubData);
+    saveClub: function(clubData, id){
+      var target = id
+        ? state.clubs.filter(function(c){ return c.id === id; })[0]
+        : state.club;
+      if(!target) throw new Error("That club no longer exists.");
+      Object.assign(target, clubData);
+      save(state);
+      FT.syncUI();
+      window.dispatchEvent(new CustomEvent('fantrade:statechange', { detail: state }));
+      return target;
+    },
+    clubs: function(){ return state.clubs; },
+    activeClubId: function(){ return state.activeClub; },
+    getClub: function(id){
+      return state.clubs.filter(function(c){ return c.id === id; })[0] || state.club;
+    },
+    createClub: function(clubData){
+      if(state.clubs.length >= 6){
+        throw new Error("Six clubs is the limit for one manager.");
+      }
+      var name = (clubData.name || '').trim();
+      if(name.length < 2){ throw new Error("Give the club a name first."); }
+      if(state.clubs.filter(function(c){ return c.name.toLowerCase() === name.toLowerCase(); }).length){
+        throw new Error("You already have a club called " + name + ".");
+      }
+      var club = Object.assign({
+        id: 'c-' + Date.now(),
+        stadium: "Unnamed ground",
+        colors: ["#C4F82A", "#83b300"],
+        colorName: "Lime",
+        formation: "4-3-3",
+        coach: "$Arteta",
+        rank: 900 + state.clubs.length,
+        fp: 0,
+        boost: 0,
+        value: 0,
+        division: "Challenger"
+      }, clubData, { name: name });
+      state.clubs.push(club);
+      state.activeClub = club.id;
+      link(state);
+      save(state);
+      FT.syncUI();
+      window.dispatchEvent(new CustomEvent('fantrade:statechange', { detail: state }));
+      return club;
+    },
+    switchClub: function(id){
+      if(!state.clubs.filter(function(c){ return c.id === id; }).length){
+        throw new Error("That club no longer exists.");
+      }
+      state.activeClub = id;
+      link(state);
+      save(state);
+      FT.syncUI();
+      window.dispatchEvent(new CustomEvent('fantrade:statechange', { detail: state }));
+      return state.club;
+    },
+    deleteClub: function(id){
+      if(state.clubs.length < 2){ throw new Error("Your last club cannot be deleted."); }
+      var staked = (state.fanplay.activeEntries || []).filter(function(e){ return e.clubId === id; });
+      if(staked.length){ throw new Error("That club has a live entry. It settles before you can delete it."); }
+      state.clubs = state.clubs.filter(function(c){ return c.id !== id; });
+      if(state.activeClub === id) state.activeClub = state.clubs[0].id;
+      link(state);
       save(state);
       FT.syncUI();
       window.dispatchEvent(new CustomEvent('fantrade:statechange', { detail: state }));
@@ -1954,9 +2059,21 @@ var FT = (function(){
       }
       state.wallet.balance -= stake;
       state.wallet.locked += stake;
+      // one club can hold one live entry, so a diversified manager stakes each separately
+      if(entryData.clubId){
+        var dup = (state.fanplay.activeEntries || []).filter(function(e){
+          return e.clubId === entryData.clubId;
+        })[0];
+        if(dup){
+          state.wallet.balance += stake;
+          state.wallet.locked -= stake;
+          throw new Error(entryData.target + " already has a live entry this round.");
+        }
+      }
       var newEntry = {
         id: "e-" + Date.now(),
         mode: entryData.mode,
+        clubId: entryData.clubId || "",
         target: entryData.target,
         tier: entryData.tier,
         mult: entryData.mult,
@@ -2058,7 +2175,7 @@ var FT = (function(){
       window.dispatchEvent(new CustomEvent('fantrade:statechange', { detail: state }));
     },
     resetState: function(){
-      state = JSON.parse(JSON.stringify(defaultState));
+      state = link(JSON.parse(JSON.stringify(defaultState)));
       save(state);
       FT.syncUI();
       window.dispatchEvent(new CustomEvent('fantrade:statechange', { detail: state }));
