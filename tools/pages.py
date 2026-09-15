@@ -27,7 +27,7 @@ def btn(label, cls="btn-lime", href="#", tag="a", extra=""):
 
 
 def page(fname, title, body, js="", css="", app=False):
-    html = (head(title, css) + atmosphere() + nav(fname, app) +
+    html = (head(title, css, "app" if app else "") + atmosphere() + nav(fname, app) +
             body + footer() + "<script>(function(){" + JS_SHELL + js + "})();</script></body></html>")
     with open(os.path.join(OUT, fname), "w", encoding="utf-8") as f:
         f.write(html)
@@ -291,37 +291,50 @@ EX_CSS = """
 .legend i{width:16px;height:2px;border-radius:2px;display:block}
 """
 
-ex = []
-ex.append(T('<header class="phead"><div class="wrap">'
-          '<span class="pill" data-reveal>@@ Live market</span>'
-          '<h1 data-reveal>Exchange</h1>'
-          '<p class="lede" data-reveal>Every player and every coach carries a fixed supply of ten million shares. '
-          'Price is set by what fans are willing to pay for the football underneath it.</p>'
-          '<div class="statbar" data-reveal>'
-          '<div>@@ 24h volume <b>4.28M $FTR</b></div>'
-          '<div>@@ Listed assets <b>2,140</b></div>'
-          '<div>@@ Top mover <b>$Jackson +11.2%</b></div>'
-          '<div>@@ Next settlement <b>Fri 18:30</b></div></div></div></header>', ic("candle", "ic"), ic("chart", "ic"), ic("layers", "ic"), ic("bolt", "ic"), ic("clock", "ic")))
+ex = [T('<main><section class="app-head" style="padding-bottom:14px"><div class="wrap">'
+        '<span class="greet" data-reveal>Markets</span>'
+        '<h1 data-reveal>Exchange</h1>'
+        '<div class="searchbox" style="margin-top:16px;max-width:none" data-reveal>@@'
+        '<input id="q" type="search" placeholder="Search a player, coach or ticker"></div>'
+        '<div class="statbar" data-reveal>'
+        '<div>@@ 24h volume <b>48.24M</b> $FTR</div>'
+        '<div>@@ Listed assets <b>420</b></div>'
+        '<div>@@ Top gainer <b id="topG">$Jackson</b></div>'
+        '<div>@@ Your balance <b data-bind="balance">128,450</b></div>'
+        '</div></div></section>',
+        ic("search", "ic"), ic("candle", "ic"), ic("layers", "ic"), ic("bolt", "ic"), ic("coin", "ic"))]
 
-ex.append('<main><section style="padding-top:40px"><div class="wrap">')
-ex.append(T('<div class="rail" data-reveal><div class="seg" id="seg">'
-          '<button aria-pressed="true" data-f="all">@@ All</button>'
-          '<button aria-pressed="false" data-f="player">@@ Players</button>'
-          '<button aria-pressed="false" data-f="coach">@@ Coaches</button></div>'
-          '<div class="searchbox">@@<input id="q" type="search" placeholder="Search a player or coach"></div>'
-          '<div class="seg"><button aria-pressed="false">@@ Filters</button></div></div>', ic("layers", "ic"), ic("boot", "ic"), ic("whistle", "ic"), ic("search", "ic"), ic("filter", "ic")))
+ex.append('<section style="padding-top:8px"><div class="wrap"><div class="bento">')
 
-ex.append('<div class="bento"><div class="bezel c12" data-reveal><div class="core">'
-          '<div class="mhead"><span>Asset</span><span>Price $FTR</span><span>24h</span><span>Valuation</span>'
-          '<span>Supply held</span><span></span></div><div id="mkt"></div>'
-          '<div style="padding:18px 24px 26px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">'
-          '<span style="font-size:11.5px;color:var(--faint);font-weight:300" id="mktCount">—</span>'
+ex.append('<div class="bezel c12" data-reveal><div class="core">'
+          '<div style="padding:16px 16px 0"><div class="utabs" id="exSort">'
+          '<button type="button" aria-pressed="true" data-s="all">All</button>'
+          '<button type="button" aria-pressed="false" data-s="hot">Hot</button>'
+          '<button type="button" aria-pressed="false" data-s="new">New</button>'
+          '<button type="button" aria-pressed="false" data-s="gainers">Gainers</button>'
+          '<button type="button" aria-pressed="false" data-s="losers">Losers</button>'
+          '<button type="button" aria-pressed="false" data-s="volume">Volume</button>'
+          '</div></div>'
+          '<div style="padding:12px 16px 0"><div class="utabs sm" id="exKind" style="border-bottom:0">'
+          '<button type="button" aria-pressed="true" data-f="all">All</button>'
+          '<button type="button" aria-pressed="false" data-f="holdings">Holdings</button>'
+          '<button type="button" aria-pressed="false" data-f="player">Players</button>'
+          '<button type="button" aria-pressed="false" data-f="coach">Coaches</button>'
+          '</div></div>'
+          '<div class="mkhead"><span>Asset / Volume</span>'
+          '<span style="text-align:right">Price $FTR</span>'
+          '<span style="text-align:center">24h</span></div>'
+          '<div id="mkt"></div>'
+          '<div style="padding:12px 16px 20px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">'
+          '<span style="font-size:10.5px;color:var(--faint)" id="mktCount">—</span>'
           '<a class="seeall" style="margin-left:auto" href="how-it-works.html#mechanics">'
           'How a trade settles ' + ic("arrow", "ic-sm") + '</a></div>'
-          '</div></div></div></section>')
+          '</div></div>')
+
+ex.append('</div></div></section>')
 
 # movers + coach index
-ex.append('<section style="padding-top:20px"><div class="wrap"><div class="bento">')
+ex.append('<section style="padding-top:6px"><div class="wrap"><div class="bento">')
 ex.append(T('<div class="bezel c4" data-reveal><div class="core pad"><div class="k-label">@@ Top gainers · 24h</div>'
           '<div class="movers" id="gainers"></div></div></div>', ic("bolt", "ic-sm")))
 ex.append(T('<div class="bezel c4" data-reveal><div class="core pad"><div class="k-label">@@ Fallers · 24h</div>'
@@ -329,54 +342,76 @@ ex.append(T('<div class="bezel c4" data-reveal><div class="core pad"><div class=
 ex.append(T('<div class="bezel c4" data-reveal><div class="core pad"><div class="k-label">@@ Coach index</div>'
           '<div class="value-big">24.65 <small>$FTR</small></div>'
           '<div class="delta">▲ 2.1% · weighted across 186 listed coaches</div>'
-          '<div style="margin-top:20px">@@</div>'
-          '<p style="font-size:13px;font-weight:300;color:var(--dim);margin-top:18px">Coaches move on results, not '
-          'minutes. A win, a clean sheet or a tactical turnaround feeds the index — and your club modifier.</p>'
+          '<div style="margin-top:14px">@@</div>'
+          '<p style="font-size:11px;font-weight:300;color:var(--dim);margin-top:12px;line-height:1.55">'
+          'Coaches move on results, not minutes. A win, a clean sheet or a tactical turnaround feeds the '
+          'index — and your club modifier.</p>'
           '</div></div>', ic("whistle", "ic-sm"), '<div id="coachSpark"></div>'))
 ex.append('</div></div></section>')
 ex.append('</main>')
 
 EX_JS = r"""
-var filter='all', q='';
+var kind = 'all', sort = 'all', q = '';
 function fmt(n){ return n.toLocaleString('en-US'); }
-function rows(){
-  var list = ASSETS.map(function(a,i){ return [a,i]; }).filter(function(x){
+
+function view(){
+  var s = FT.getState();
+  var list = ASSETS.map(function(a, i){ return [a, i]; }).filter(function(x){
     var a = x[0];
-    if(filter === 'player' && a.c) return false;
-    if(filter === 'coach' && !a.c) return false;
+    if(kind === 'player' && a.c) return false;
+    if(kind === 'coach' && !a.c) return false;
+    if(kind === 'holdings' && !s.holdings[a.t]) return false;
     if(q && (a.t + ' ' + a.n).toLowerCase().indexOf(q) < 0) return false;
     return true;
   });
+  if(sort === 'gainers') list.sort(function(a, b){ return b[0].d - a[0].d; });
+  else if(sort === 'losers') list.sort(function(a, b){ return a[0].d - b[0].d; });
+  else if(sort === 'volume' || sort === 'hot') list.sort(function(a, b){ return b[0].p - a[0].p; });
+  else if(sort === 'new') list.reverse();
+  return list;
+}
+
+function rows(){
+  var s = FT.getState(), list = view();
   document.getElementById('mkt').innerHTML = list.map(function(x){
-    var a = x[0], i = x[1], to = 'asset.html?a=' + encodeURIComponent(a.t);
-    return "<a class='mrow' href='" + to + "' data-i='" + i + "'><div class='asset'><span class='badge"
-      + (a.c ? " coach" : "") + "'><svg class='ic'><use href='#i-" + (a.c ? 'whistle' : 'boot')
-      + "'/></svg></span><div><div class='t-sym'>" + a.t + "</div><div class='t-nm'>" + a.n
-      + "</div></div></div><div class='tick' data-px>" + a.p.toFixed(2)
-      + "</div><div class='tick " + (a.d >= 0 ? 'up' : 'down') + "' data-dx>" + (a.d >= 0 ? '+' : '')
-      + a.d.toFixed(1) + "%</div>"
-      + "<div class='num' style='font-size:12.5px;color:var(--dim)'>" + a.cap + " $FTR</div>"
-      + "<div class='num' style='font-size:12.5px;color:var(--dim)'>" + a.h.toFixed(1) + "%</div>"
-      + "<div><span class='tradebtn' style='display:block;text-align:center;line-height:1.6'>Trade</span></div></a>";
+    var a = x[0], to = 'asset.html?a=' + encodeURIComponent(a.t);
+    var h = s.holdings[a.t];
+    return "<a class='mkrow' href='" + to + "' data-i='" + x[1] + "'>"
+      + "<div class='pair'><span class='coin" + (a.c ? " am" : "") + "'>"
+      + "<svg class='ic'><use href='#i-" + (a.c ? 'whistle' : 'boot') + "'/></svg></span>"
+      + "<div style='min-width:0'><div class='sym'>" + a.t.replace('$', '')
+      + "<em>/$FTR</em><span class='lev'>" + (a.c ? 'COACH' : 'SHARE') + "</span></div>"
+      + "<div class='meta'>" + a.n + " · " + a.cap + (h ? " · you hold " + fmt(h.shares) : "")
+      + "</div></div></div>"
+      + "<div class='px'><span data-px>" + a.p.toFixed(2)
+      + "</span><em>\u2248 \u00a3" + (a.p / 12.4).toFixed(2) + "</em></div>"
+      + "<div><span class='pct" + (a.d >= 0 ? '' : ' down') + "' data-dx>"
+      + (a.d >= 0 ? '+' : '') + a.d.toFixed(2) + "%</span></div></a>";
   }).join('') || "<div class='empty-state'><svg class='ic-xl' aria-hidden='true'><use href='#i-search'/></svg>"
     + "No assets match that search. Try a surname or a ticker like $Saka.</div>";
   document.getElementById('mktCount').textContent =
     list.length + ' of ' + ASSETS.length + ' assets · tap one for its market page';
 }
-document.querySelectorAll('#seg button').forEach(function(b){
+
+document.querySelectorAll('#exKind button').forEach(function(b){
   b.addEventListener('click', function(){
-    document.querySelectorAll('#seg button').forEach(function(x){ x.setAttribute('aria-pressed','false'); });
-    b.setAttribute('aria-pressed','true');
-    filter = b.dataset.f; rows();
+    document.querySelectorAll('#exKind button').forEach(function(x){ x.setAttribute('aria-pressed','false'); });
+    b.setAttribute('aria-pressed','true'); kind = b.dataset.f; rows();
+  });
+});
+document.querySelectorAll('#exSort button').forEach(function(b){
+  b.addEventListener('click', function(){
+    document.querySelectorAll('#exSort button').forEach(function(x){ x.setAttribute('aria-pressed','false'); });
+    b.setAttribute('aria-pressed','true'); sort = b.dataset.s; rows();
   });
 });
 var qi = document.getElementById('q');
 if(qi) qi.addEventListener('input', function(){ q = qi.value.trim().toLowerCase(); rows(); });
 
 function moverList(el, up){
-  var list = ASSETS.slice().sort(function(a,b){ return up ? b.d - a.d : a.d - b.d; }).slice(0, 4);
+  var list = ASSETS.slice().sort(function(a, b){ return up ? b.d - a.d : a.d - b.d; }).slice(0, 4);
   document.getElementById(el).innerHTML = list.map(function(a){
-    return "<a class='arow' style='padding:11px 0' href='asset.html?a=" + encodeURIComponent(a.t) + "'>"
+    return "<a class='arow' style='padding:9px 0' href='asset.html?a=" + encodeURIComponent(a.t) + "'>"
       + "<div class='who'><span class='coin" + (a.c ? " am" : "") + "'><svg class='ic'><use href='#i-"
       + (a.c ? 'whistle' : 'boot') + "'/></svg></span><div style='min-width:0'><div class='nm'>" + a.t
       + "</div><div class='qt'>" + a.n + "</div></div></div>"
@@ -387,9 +422,12 @@ function moverList(el, up){
 rows();
 moverList('gainers', true);
 moverList('fallers', false);
+document.getElementById('topG').textContent =
+  ASSETS.slice().sort(function(a, b){ return b.d - a.d; })[0].t;
 var cs = document.getElementById('coachSpark');
-if(cs) cs.innerHTML = spark(true, 260, 44);
-liveTicks('.mrow');
+if(cs) cs.innerHTML = spark(true, 240, 40);
+liveTicks('.mkrow');
+window.addEventListener('fantrade:statechange', rows);
 """
 
 page("exchange.html", "Exchange — Fantrade", "".join(ex), EX_JS, EX_CSS, app=True)

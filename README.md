@@ -14,8 +14,8 @@ self-contained HTML file with no build step and no runtime dependencies beyond G
 | --- | --- |
 | `index.html` | Landing page — the three layers (Own / Build / Play), live exchange console, Dream Club preview, the Fantrade loop, house rules |
 | `exchange.html` | Market list — player/coach filtering, search, movers and the coach index. Rows open the asset's own page |
-| `asset.html` | One asset's market page (`?a=$Saka`) — price chart with ranges, market stats, order book, recent trades, your position |
-| `trade.html` | Trade terminal (`?a=$Saka`) — depth, buy/sell ticket with market and limit orders, percentage sizing, open orders and your fills |
+| `asset.html` | One asset's market page (`?a=$Saka`) — candlestick chart with five timeframes and a volume strip, 24h stats, and Order book / Trade history / Coin info / Your position tabs |
+| `trade.html` | Trade terminal (`?a=$Saka`) — order book you can tap to load a price, Buy / Sell / Swap on one ticket, market, limit and stop-limit types, steppers, a percentage slider, resting bids and asks, fills and holdings |
 | `clubs.html` | Zero FC with Line-ups / League position / Form tabs, live position ladder and form pills, club value chart |
 | `club-builder.html` | The eight-step builder with live formation switching (4-3-3 / 4-4-2 / 3-5-2 / 4-2-3-1) and its own pitch |
 | `fanplay.html` | Individual vs Dream Club entry, live scores board — date strip, featured match with ticking minute, fixtures grouped by competition with follow stars — settlement countdown |
@@ -61,6 +61,13 @@ mislabel its own tab.
 
 The active tab expands into a filled lime pill carrying its label; the other four are icon-only.
 
+## Two type scales
+
+The landing site keeps the editorial Archivo display type — that's what sells the idea. In-app pages
+run at trading-app density instead: `<body class="app">` switches on a scoped block in `common.py`
+(`DENSE_CSS`) that drops page titles to ~22px, body copy to 12.5px, rows to ~38px and card padding to
+18px. Nothing outside `body.app` is touched, so changing one scale never disturbs the other.
+
 ## In-app pages drill down, they don't stack
 
 An in-app page shows one thing and links to the next, rather than stacking explainers underneath the
@@ -91,12 +98,21 @@ prototype stays consistent as you move between pages. Settings → Danger zone r
 - **Structure** — double-bezel containers (outer shell `p-8` at `2rem` radius, inner core at `calc(2rem - .5rem)`)
 - **Wallet components** — shared across wallet, dashboard and portfolio: balance hero (`.bal-big` / `.bal-delta` / `.bal-chart`), range pills (`.range`), four-up action tiles (`.acts4`), asset rows with circular marks and sparklines (`.arow` / `.coin`), receive panel (`.netsel` / `.qr` / `.addr`), amber warning strips (`.warn`)
 - **Shell** — floating top bar (`.topbar`) and floating taskbar (`.taskbar`); the taskbar reserves footer space through `.taskbar ~ footer` so nothing is covered
+- **Exchange components** — underline tabs (`.utabs`), dense market rows with a change pill (`.mkrow` / `.pct`), steppers (`.stp`), percentage slider (`.slider`), candlesticks (`drawCandles` / `candleData`), centred order book (`.book2`), buy/sell bar (`.stickybar`)
 - **Matchday components** — shared across FanPlay and Dream Clubs: date strip (`.dates` / `.livetgl`), featured match card (`.feat` / `.minute` / `.tcrest`), competition groups and fixture rows (`.comp` / `.fixt` / `.star`), tab strip (`.tabstrip`), form pills (`.form5`), live position ladder (`.gauge` / `.ladder` / `.rung`)
 - **Motion** — `cubic-bezier(.32,.72,0,1)` throughout; scroll entry via `IntersectionObserver`; `prefers-reduced-motion` respected
 - **Layout** — asymmetrical bento grids, collapsing to single column below 768px
 
 Source generators for the pages live in `tools/` — they emit the HTML from a shared design system so the
 fourteen pages can't drift apart.
+
+## Bidding
+
+A limit order that doesn't fill immediately rests on the book as your bid (buy) or ask (sell) until
+someone trades into it — that's what "bid" means here, not a timed auction. Market orders settle
+against `FT.executeTrade` straight away; limit and stop-limit orders go onto the open-orders list and
+can be cancelled. Swap is the third tab on the same ticket and settles both legs at once through
+`FT.swapAssets`, so you're never uncovered between them.
 
 ## The receive QR
 

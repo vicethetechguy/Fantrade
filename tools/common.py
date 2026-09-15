@@ -80,6 +80,7 @@ CSS = r"""
   --ease:cubic-bezier(.32,.72,0,1);--ease-out:cubic-bezier(.16,1,.3,1);--maxw:1280px;
 }
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}
 body{margin:0;background:var(--void);color:var(--ink);
   font-family:Montserrat,system-ui,sans-serif;font-weight:400;font-size:15px;line-height:1.7;
@@ -1228,16 +1229,331 @@ APP_CSS = r"""
 
 CSS = CSS + APP_CSS
 
+EXCHANGE_CSS = r"""
+/* ── underline tabs (KuCoin-style section switcher) ─────────── */
+.utabs{display:flex;gap:22px;border-bottom:1px solid var(--hair);overflow-x:auto;scrollbar-width:none}
+.utabs::-webkit-scrollbar{display:none}
+.utabs button{border:0;background:transparent;color:var(--faint);padding:0 0 11px;cursor:pointer;
+  position:relative;white-space:nowrap;font-family:Montserrat,sans-serif;font-size:13px;font-weight:500;
+  transition:color .4s var(--ease)}
+.utabs button::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:2px;border-radius:2px;
+  background:var(--lime);transform:scaleX(0);transition:transform .4s var(--ease)}
+.utabs button:hover{color:var(--dim)}
+.utabs button[aria-pressed="true"]{color:var(--ink);font-weight:600}
+.utabs button[aria-pressed="true"]::after{transform:scaleX(1)}
+.utabs.sm button{font-size:11.5px;padding-bottom:9px}
+
+/* ── dense market row ───────────────────────────────────────── */
+.mkhead,.mkrow{display:grid;grid-template-columns:1.6fr 1fr 96px;gap:12px;align-items:center;
+  padding:10px 16px}
+.mkhead{font-weight:600;font-size:8.5px;letter-spacing:.14em;color:var(--faint);text-transform:uppercase;
+  border-bottom:1px solid var(--hair)}
+.mkrow{border-bottom:1px solid rgba(255,255,255,.04);transition:background .4s var(--ease)}
+.mkrow:last-child{border-bottom:0}
+.mkrow:hover{background:rgba(255,255,255,.028)}
+.mkrow .pair{display:flex;align-items:center;gap:11px;min-width:0}
+.mkrow .sym{font-size:13.5px;font-weight:600;display:flex;align-items:baseline;gap:5px}
+.mkrow .sym em{font-style:normal;font-size:10.5px;color:var(--faint);font-weight:400}
+.mkrow .lev{font-family:'JetBrains Mono',monospace;font-size:8.5px;color:var(--faint);
+  border:1px solid var(--hair);background:rgba(255,255,255,.05);border-radius:4px;padding:1px 5px;
+  margin-left:2px}
+.mkrow .meta{font-size:10px;color:var(--faint);margin-top:3px}
+.mkrow .px{text-align:right;font-family:'JetBrains Mono',monospace;font-size:13.5px;font-variant-numeric:tabular-nums}
+.mkrow .px em{display:block;font-style:normal;font-size:10px;color:var(--faint);margin-top:3px}
+.pct{display:block;text-align:center;border-radius:7px;padding:8px 0;font-family:'JetBrains Mono',monospace;
+  font-size:12px;font-weight:500;background:rgba(196,248,42,.14);color:var(--lime);
+  border:1px solid rgba(196,248,42,.3)}
+.pct.down{background:rgba(255,94,94,.13);color:#ff8a92;border-color:rgba(255,94,94,.3)}
+
+/* ── steppers and slider ────────────────────────────────────── */
+.stp{display:flex;align-items:center;gap:8px;border:1px solid var(--hair);border-radius:11px;
+  padding:8px 10px;background:rgba(255,255,255,.03);box-shadow:var(--inset);margin-bottom:8px}
+.stp .lbl{font-size:9px;font-weight:600;letter-spacing:.13em;color:var(--faint);text-transform:uppercase;
+  white-space:nowrap}
+.stp input{flex:1;min-width:0;border:0;background:transparent;color:var(--ink);outline:none;
+  font-family:'JetBrains Mono',monospace;font-size:14px;text-align:right;font-variant-numeric:tabular-nums}
+.stp input::placeholder{color:var(--faint)}
+.stp button{width:24px;height:24px;flex:none;border-radius:7px;border:1px solid var(--hair);
+  background:rgba(255,255,255,.05);color:var(--dim);cursor:pointer;display:grid;place-items:center;
+  font-size:14px;line-height:1;transition:all .4s var(--ease)}
+.stp button:hover{color:var(--lime);border-color:rgba(196,248,42,.4)}
+.slider{position:relative;height:28px;display:flex;align-items:center;margin:4px 0 12px}
+.slider .track{position:absolute;left:0;right:0;height:3px;border-radius:99px;background:rgba(255,255,255,.1)}
+.slider .fill{position:absolute;left:0;height:3px;border-radius:99px;background:var(--lime);
+  transition:width .2s var(--ease)}
+.slider .notch{position:absolute;width:7px;height:7px;border-radius:99px;background:rgba(255,255,255,.14);
+  transform:translateX(-50%)}
+.slider .notch.on{background:var(--lime)}
+.slider input{position:absolute;left:0;right:0;width:100%;margin:0;opacity:0;height:28px;cursor:pointer}
+.slider .knob{position:absolute;width:15px;height:15px;border-radius:99px;background:var(--lime);
+  transform:translateX(-50%);box-shadow:0 2px 10px rgba(196,248,42,.7);pointer-events:none;
+  transition:left .2s var(--ease)}
+.slider .pcts{position:absolute;top:22px;left:0;right:0;display:flex;justify-content:space-between;
+  font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--faint)}
+
+/* ── candlestick chart ──────────────────────────────────────── */
+.candles{position:relative;height:280px}
+.candles svg{width:100%;height:100%;display:block;overflow:visible}
+.cx{display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:9px;
+  color:var(--faint);margin-top:8px}
+.ohlc{display:flex;gap:16px;flex-wrap:wrap;font-family:'JetBrains Mono',monospace;font-size:10.5px;
+  color:var(--faint)}
+.ohlc b{color:var(--ink);font-weight:400;margin-left:5px}
+
+/* ── sticky buy/sell bar ────────────────────────────────────── */
+.stickybar{display:grid;grid-template-columns:1fr 1fr;gap:10px;
+  padding:10px;border-radius:16px;margin-top:14px;
+  background:rgba(9,10,11,.94);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);
+  border:1px solid var(--hair);box-shadow:var(--inset),0 18px 44px -16px rgba(0,0,0,.9)}
+.stickybar a{display:block;text-align:center;padding:12px 0;border-radius:11px;font-family:Archivo;
+  font-variation-settings:'wdth' 112,'wght' 700;text-transform:uppercase;font-size:11.5px;
+  letter-spacing:.08em;transition:filter .3s var(--ease)}
+.stickybar a:hover{filter:brightness(1.08)}
+.stickybar .buy{background:var(--lime);color:#0A0D03}
+.stickybar .sell{background:var(--red);color:#1a0505}
+
+/* ── order-type select ──────────────────────────────────────── */
+.otype{display:flex;align-items:center;gap:10px;border:1px solid var(--hair);border-radius:11px;
+  padding:9px 13px;background:rgba(255,255,255,.03);box-shadow:var(--inset);margin-bottom:8px;
+  cursor:pointer;width:100%;color:var(--ink);font-family:Montserrat,sans-serif;font-size:12.5px}
+.otype:hover{border-color:var(--hair-2)}
+.otype select{flex:1;border:0;background:transparent;color:var(--ink);outline:none;cursor:pointer;
+  font-size:12.5px;font-family:Montserrat,sans-serif;-webkit-appearance:none;appearance:none}
+.otype select option{background:#0A0B0C}
+.otype .ic{width:14px;height:14px;color:var(--faint);flex:none}
+
+/* ── book with a centred last price ─────────────────────────── */
+.book2{display:flex;flex-direction:column}
+.book2 .bh{display:grid;grid-template-columns:1fr 1fr;gap:10px;font-weight:600;font-size:8.5px;
+  letter-spacing:.13em;color:var(--faint);text-transform:uppercase;padding-bottom:8px;
+  border-bottom:1px solid var(--hair);margin-bottom:5px}
+.book2 .bh span:last-child{text-align:right}
+.book2 .last{display:flex;align-items:baseline;gap:9px;padding:9px 0;margin:4px 0;
+  border-top:1px solid var(--hair);border-bottom:1px solid var(--hair)}
+.book2 .last b{font-family:'JetBrains Mono',monospace;font-size:17px;font-weight:400}
+.book2 .last span{font-size:10.5px;color:var(--faint)}
+.b2row{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:5px 6px;
+  font-family:'JetBrains Mono',monospace;font-size:11.5px;border-radius:5px;cursor:pointer}
+.b2row:hover{background:rgba(255,255,255,.04)}
+.b2row i{position:absolute;top:0;bottom:0;right:0;display:block;border-radius:5px}
+.b2row span{position:relative;z-index:1}
+.b2row span:last-child{text-align:right;color:var(--dim)}
+.b2row.bid i{background:rgba(196,248,42,.12)}
+.b2row.bid span:first-child{color:var(--lime)}
+.b2row.ask i{background:rgba(255,94,94,.11)}
+.b2row.ask span:first-child{color:var(--red)}
+.depthbar{display:flex;height:4px;border-radius:99px;overflow:hidden;margin-top:10px;
+  background:rgba(255,255,255,.07)}
+.depthbar i{display:block;height:100%}
+.depthkey{display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:9px;
+  margin-top:6px}
+
+body.app .asset-head .nm{font-size:clamp(17px,1.9vw,22px)}
+body.app .asset-head .sym{font-size:11px;margin-top:5px}
+body.app .asset-head .coin{width:36px;height:36px}
+body.app .asset-head .coin .ic{width:17px;height:17px}
+body.app .book2{max-width:520px}
+body.app .stickybar{max-width:520px;padding:8px;margin-top:16px}
+body.app .stickybar a{padding:11px 0;font-size:11px}
+body.app .b2row{padding:4px 6px;font-size:11px}
+body.app .book2 .last b{font-size:15px}
+body.app .ohlc{font-size:10px;gap:13px}
+body.app .candles{height:250px}
+body.app .utabs button{font-size:12px;padding-bottom:9px}
+body.app .utabs.sm button{font-size:11px;padding-bottom:8px}
+body.app .stp{padding:7px 9px;border-radius:10px}
+body.app .stp input{font-size:13px}
+body.app .stp button{width:22px;height:22px}
+body.app .mkrow .sym{font-size:12.5px}
+body.app .mkrow .meta{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+body.app .pct{font-size:11.5px;padding:7px 0}
+
+@media (max-width:768px){
+  .mkhead,.mkrow{grid-template-columns:1.4fr 1fr 78px;gap:8px;padding:9px 12px}
+  body.app .book2,body.app .stickybar{max-width:none}
+  .mkrow .sym{font-size:12.5px}
+  .pct{font-size:11px;padding:7px 0}
+  .candles{height:220px}
+  .stickybar{bottom:84px}
+  .utabs{gap:16px}
+}
+"""
+
+DENSE_CSS = r"""
+/* ══ app density ════════════════════════════════════════════════
+   In-app screens run at trading-app density: small type, short
+   rows, tight padding. The marketing pages keep the editorial
+   scale, so every rule here is scoped to body.app.
+   ═══════════════════════════════════════════════════════════════ */
+body.app{font-size:12.5px;line-height:1.55}
+body.app .wrap{max-width:1180px;padding:0 20px}
+body.app section{padding:26px 0}
+body.app .app-head{padding:96px 0 18px}
+body.app .app-head h1{font-size:clamp(19px,2vw,24px);font-variation-settings:'wdth' 118,'wght' 800;
+  letter-spacing:-.01em;margin-top:10px;line-height:1.12}
+body.app .app-head h1 span{display:inline}
+body.app .app-head .lede{font-size:12.5px;margin-top:9px;max-width:68ch;line-height:1.55}
+body.app .phead{padding:96px 0 18px}
+body.app .phead h1{font-size:clamp(19px,2vw,24px)!important;
+  font-variation-settings:'wdth' 118,'wght' 800!important;margin-top:10px}
+body.app .phead .lede{font-size:12.5px;margin-top:9px}
+body.app h2{font-size:17px!important;font-variation-settings:'wdth' 118,'wght' 800!important}
+body.app h4,body.app .f h4{font-size:13.5px;margin:10px 0 6px}
+body.app .f p{font-size:12px;line-height:1.55}
+body.app .pill{padding:4px 11px;font-size:9px;letter-spacing:.14em;gap:7px}
+body.app .pill .ic{width:11px;height:11px}
+body.app .lede{font-size:12.5px}
+body.app .greet{font-size:9px;letter-spacing:.16em}
+
+body.app .bento{gap:10px}
+body.app .bezel{padding:5px;--r-out:16px;--r-in:12px}
+body.app .bezel.tight{padding:4px;--r-out:13px;--r-in:10px}
+body.app .pad{padding:18px 16px}
+body.app .pad-sm{padding:14px 13px}
+body.app .k-label{font-size:8.5px;letter-spacing:.15em;margin-bottom:9px}
+body.app .sub-line{font-size:10px;margin-top:3px}
+
+body.app .btn{padding:8px 8px 8px 16px;font-size:10.5px;letter-spacing:.06em;min-height:0}
+body.app .btn .cap{width:22px;height:22px}
+body.app .btn .cap .ic{width:11px;height:11px}
+body.app .btn-sm{padding:6px 6px 6px 13px;font-size:9.5px}
+body.app .acts{gap:8px;margin-top:16px!important}
+
+body.app .statbar{gap:7px;margin-top:16px}
+body.app .statbar div{padding:6px 13px;font-size:10.5px;gap:7px}
+body.app .statbar .ic{width:12px;height:12px}
+body.app .mini{padding:12px;border-radius:12px}
+body.app .mini .k{font-size:8.5px;letter-spacing:.13em}
+body.app .mini .v{font-size:16px;margin-top:5px}
+body.app .mini-grid{gap:6px}
+body.app .value-big,body.app .bal-big{font-size:clamp(22px,2.4vw,30px);margin:8px 0 6px}
+body.app .value-big small,body.app .bal-big small{font-size:12px}
+body.app .bal-delta{font-size:11px}
+body.app .delta{font-size:10.5px}
+body.app .b-row{padding:7px 0;font-size:11.5px}
+body.app .b-row.total{padding-top:10px;margin-top:6px}
+body.app .rowlink{padding:10px 0;font-size:11.5px}
+body.app .tag{padding:3px 8px;font-size:8.5px;letter-spacing:.1em;gap:5px}
+body.app .tag .ic{width:10px;height:10px}
+
+body.app .dh,body.app .dr{padding:9px 16px;gap:10px}
+body.app .dh{font-size:8.5px;letter-spacing:.14em}
+body.app .dr{font-size:11.5px}
+body.app .mhead,body.app .mrow{padding:9px 16px;gap:10px}
+body.app .mhead{font-size:8.5px;letter-spacing:.14em}
+body.app .coin{width:30px;height:30px}
+body.app .coin .ic{width:15px;height:15px}
+body.app .badge{width:27px;height:27px;border-radius:9px}
+body.app .badge .ic{width:14px;height:14px}
+body.app .ibox{width:31px;height:31px;border-radius:11px}
+body.app .ibox .ic-lg{width:16px;height:16px}
+body.app .ibox .ic{width:14px;height:14px}
+body.app .t-sym{font-size:12px}
+body.app .t-nm{font-size:10px}
+body.app .arow{padding:10px 16px;gap:10px}
+body.app .arow .nm{font-size:12.5px}
+body.app .arow .qt{font-size:10px;margin-top:3px}
+body.app .arow .val{font-size:13px}
+body.app .arow .chg{font-size:10.5px;margin-top:3px}
+body.app .trow{padding:10px 0;gap:11px}
+body.app .trow .t{font-size:12px}
+body.app .trow .d{font-size:10px;margin-top:3px}
+body.app .trow .a{font-size:12px}
+
+body.app .field{padding:9px 13px;border-radius:11px;margin-bottom:7px}
+body.app .field label{font-size:8.5px}
+body.app .field input{font-size:14px}
+body.app .tf{margin-bottom:11px}
+body.app .tf label{font-size:8.5px;margin-bottom:6px}
+body.app .tf .inp{padding:9px 13px;border-radius:11px}
+body.app .tf input,body.app .tf select{font-size:12.5px}
+body.app .tf .hint,body.app .tf .err{font-size:10px;margin-top:5px}
+body.app .line{padding:8px 0;font-size:11.5px}
+body.app .quick{gap:6px;margin:8px 0 12px}
+body.app .quick button{padding:7px 0;font-size:10px;min-width:48px}
+body.app .range{padding:3px}
+body.app .range button{padding:6px 13px;font-size:10.5px}
+body.app .tabstrip{padding:3px}
+body.app .tabstrip button{padding:7px 14px;font-size:9.5px}
+body.app .markets{gap:6px}
+body.app .mkt{padding:7px 13px;font-size:9.5px}
+body.app .seg{padding:3px}
+body.app .seg button{padding:7px 13px;font-size:10px}
+body.app .searchbox{padding:8px 14px}
+body.app .searchbox input{font-size:12.5px}
+body.app .tradebtn{padding:6px 0;font-size:9.5px}
+body.app .sw-row{padding:12px 0;gap:16px}
+body.app .sw-row .t{font-size:12.5px}
+body.app .sw-row .d{font-size:10.5px;margin-top:3px}
+body.app .tgl{width:40px;height:23px}
+body.app .tgl i{width:15px;height:15px}
+body.app .tgl[aria-pressed="true"] i{left:20px}
+body.app .empty-state{padding:34px 16px;font-size:11.5px}
+body.app .warn{padding:11px 13px;border-radius:12px}
+body.app .warn p{font-size:11px}
+body.app .form5 i{width:18px;height:18px;border-radius:6px;font-size:8.5px}
+body.app .crumb{font-size:9.5px;letter-spacing:.12em}
+body.app .fd{padding:13px 16px;gap:12px}
+body.app .fd .tt{font-size:12.5px}
+body.app .fd .ms{font-size:11.5px;margin-top:4px}
+body.app .fd .tm{font-size:8.5px;margin-top:6px}
+body.app .daysep{padding:12px 16px 8px;font-size:8.5px}
+body.app footer{padding:40px 0 40px}
+body.app .foot{gap:38px}
+body.app .foot .col a{font-size:11.5px;padding:4px 0}
+body.app .foot .col b{font-size:8.5px;margin-bottom:11px}
+body.app .brandcol p{font-size:11px}
+body.app .legal{font-size:10.5px;margin-top:30px;padding-top:18px}
+body.app .sec-title h3{font-size:15px}
+body.app .sec-title p{font-size:11px}
+body.app .hub a{padding:14px;border-radius:14px;gap:13px}
+body.app .hub a b{font-size:12.5px;margin-bottom:4px}
+body.app .hub a p{font-size:10.5px}
+body.app .hub a .val{font-size:11.5px;margin-top:5px}
+body.app .idcard .avatar{width:48px;height:48px;font-size:15px}
+body.app .wcard{padding:18px 16px;border-radius:18px}
+body.app .wcard .amt{font-size:clamp(24px,3vw,34px);margin:9px 0 8px}
+body.app .wcard .amt small{font-size:12px}
+body.app .wcard .k{font-size:8.5px}
+body.app .wcard .sub{font-size:11px}
+body.app .wacts{gap:6px;margin-top:16px}
+body.app .wacts button{padding:10px 4px 9px;border-radius:13px;gap:7px}
+body.app .wacts button .ic{width:16px;height:16px}
+body.app .wacts button span{font-size:8.5px}
+body.app .qp{width:56px}
+body.app .qp .av{width:42px;height:42px;font-size:12px;margin-bottom:7px}
+body.app .qp span{font-size:10px}
+body.app .taskbar a{height:42px;padding:0 13px}
+body.app .taskbar a.on{padding:0 17px}
+body.app .taskbar a .ic{width:18px;height:18px}
+body.app .taskbar a span{font-size:10px}
+body.app .nav-island{padding:6px 6px 6px 16px}
+body.app .logo{font-size:14px}
+body.app .nav-wallet{padding:5px 12px}
+body.app .nav-wallet .num{font-size:11px}
+body.app .bell{width:31px;height:31px}
+body.app .bell .ic{width:15px;height:15px}
+body.app .taskbar ~ footer{padding-bottom:104px}
+@media (max-width:768px){
+  body.app .app-head,body.app .phead{padding:84px 0 14px}
+  body.app .pad{padding:14px 13px}
+  body.app section{padding:20px 0}
+}
+"""
+
+CSS = CSS + EXCHANGE_CSS + DENSE_CSS
+
 MARKET_NAV = [("exchange.html", "Exchange"), ("clubs.html", "Dream Clubs"),
               ("fanplay.html", "FanPlay"), ("ftr.html", "$FTR"),
               ("how-it-works.html", "How it works")]
 
 NAVITEMS = MARKET_NAV  # kept for backwards compatibility
 
-def head(title, extra_css=""):
+def head(title, extra_css="", body_class=""):
     return ('<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">'
             '<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">'
-            '<title>%s</title>%s<style>%s%s</style></head><body>' % (title, FONTS, CSS, extra_css))
+            '<title>%s</title>%s<style>%s%s</style></head><body class="%s">'
+            % (title, FONTS, CSS, extra_css, body_class))
 
 def atmosphere():
     return ('<div class="orb orb-a"></div><div class="orb orb-b"></div><div class="orb orb-c"></div>'
@@ -1331,6 +1647,70 @@ def footer():
             '<span>Terms · Privacy · Responsible play</span></div></div></footer>') % ic("ball", "ic")
 
 JS_CHART = r"""
+// ── candlesticks ─────────────────────────────────────────────
+// Builds OHLC bars from a deterministic walk so a given asset always
+// draws the same chart, then renders wicks + bodies + a volume strip.
+function candleData(n, base, vol, seed){
+  var out = [], s = seed || 11, px = base;
+  for(var i = 0; i < n; i++){
+    s = (s * 9301 + 49297) % 233280;
+    var r1 = s / 233280;
+    s = (s * 9301 + 49297) % 233280;
+    var r2 = s / 233280;
+    var o = px;
+    var c2 = o * (1 + (r1 - 0.48) * vol);
+    var hi = Math.max(o, c2) * (1 + r2 * vol * 0.55);
+    var lo = Math.min(o, c2) * (1 - (1 - r2) * vol * 0.55);
+    out.push({ o: o, h: hi, l: lo, c: c2, v: 0.3 + r2 * 0.7 });
+    px = c2;
+  }
+  return out;
+}
+function drawCandles(el, data){
+  if(!el || !data || !data.length) return;
+  var w = 720, h = 300, volH = 52, padR = 52, plot = h - volH - 8;
+  var hi = Math.max.apply(null, data.map(function(d){ return d.h; }));
+  var lo = Math.min.apply(null, data.map(function(d){ return d.l; }));
+  var rng = (hi - lo) || 1;
+  hi += rng * 0.06; lo -= rng * 0.06; rng = hi - lo;
+  var cw = (w - padR) / data.length, bw = Math.max(1.6, cw * 0.58);
+  function y(v){ return plot - ((v - lo) / rng) * plot; }
+  var parts = [], grid = [];
+  for(var g = 0; g <= 3; g++){
+    var gv = lo + (rng / 3) * g, gy = y(gv);
+    grid.push('<line x1="0" y1="' + gy.toFixed(1) + '" x2="' + (w - padR) + '" y2="' + gy.toFixed(1)
+      + '" stroke="rgba(255,255,255,.05)" stroke-width="1"/>');
+    grid.push('<text x="' + (w - padR + 7) + '" y="' + (gy + 3.5).toFixed(1)
+      + '" fill="#5A605B" font-size="10" font-family="JetBrains Mono, monospace">'
+      + gv.toFixed(2) + '</text>');
+  }
+  data.forEach(function(d, i){
+    var x = i * cw + cw / 2, up = d.c >= d.o;
+    var col = up ? '#C4F82A' : '#FF5E5E';
+    var top = y(Math.max(d.o, d.c)), bot = y(Math.min(d.o, d.c));
+    parts.push('<line x1="' + x.toFixed(1) + '" y1="' + y(d.h).toFixed(1) + '" x2="' + x.toFixed(1)
+      + '" y2="' + y(d.l).toFixed(1) + '" stroke="' + col + '" stroke-width="1"/>');
+    parts.push('<rect x="' + (x - bw / 2).toFixed(1) + '" y="' + top.toFixed(1) + '" width="' + bw.toFixed(1)
+      + '" height="' + Math.max(1, bot - top).toFixed(1) + '" fill="' + col + '" rx="0.5"/>');
+    var vh = d.v * volH;
+    parts.push('<rect x="' + (x - bw / 2).toFixed(1) + '" y="' + (h - vh).toFixed(1) + '" width="'
+      + bw.toFixed(1) + '" height="' + vh.toFixed(1) + '" fill="' + col + '" opacity=".22" rx="0.5"/>');
+  });
+  var last = data[data.length - 1];
+  var ly = y(last.c);
+  parts.push('<line x1="0" y1="' + ly.toFixed(1) + '" x2="' + (w - padR) + '" y2="' + ly.toFixed(1)
+    + '" stroke="' + (last.c >= last.o ? '#C4F82A' : '#FF5E5E')
+    + '" stroke-width="1" stroke-dasharray="3 3" opacity=".65"/>');
+  parts.push('<rect x="' + (w - padR + 2) + '" y="' + (ly - 9).toFixed(1) + '" width="46" height="18" rx="4" fill="'
+    + (last.c >= last.o ? '#C4F82A' : '#FF5E5E') + '"/>');
+  parts.push('<text x="' + (w - padR + 25) + '" y="' + (ly + 4).toFixed(1)
+    + '" text-anchor="middle" fill="#0A0D03" font-size="10" font-family="JetBrains Mono, monospace">'
+    + last.c.toFixed(2) + '</text>');
+  el.innerHTML = '<svg viewBox="0 0 ' + w + ' ' + h + '" preserveAspectRatio="none">'
+    + grid.join('') + parts.join('') + '</svg>';
+  return last;
+}
+
 // Shared lime area chart. Draws into `el` from a plain array of numbers.
 function drawArea(el, vals, up){
   if(!el || !vals || vals.length < 2) return;
