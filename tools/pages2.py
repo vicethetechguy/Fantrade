@@ -195,7 +195,7 @@ WALK = [
      "projected points update before you commit anything.",
      ["Six tiers from Simple to Viynx Max", "Club mode earns a configurable boost"], False),
     ("05", "clock", "The window settles", "Real fixtures do the scoring. When the matchday clock closes, every "
-     "eligible performance is collected and converted into Fantrade Points.",
+     "eligible performance is collected and converted into Fans Point.",
      ["Your players can be in different matches", "Bench subs in under your own rules"], False),
     ("06", "trophy", "Get paid, then reinvest", "Points convert to $FTR and land back in your wallet. Most managers "
      "put it straight back into the next player.",

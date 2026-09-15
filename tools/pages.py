@@ -151,7 +151,7 @@ land.append('<div class="bento"><div class="bezel c5" data-reveal>' +
                   cls="amber", icon="crest") +
             '</div><div class="bezel c12" data-reveal>' +
             layer("Layer 03", "Play", "Enter FanPlay with a single player or your whole club. Real match data settles "
-                  "the round into Fantrade Points, then $FTR.",
+                  "the round into Fans Point, then $FTR.",
                   ["Six market tiers, Simple to Viynx Max", "Club mode earns a configurable boost"],
                   cls="lime", icon="bolt") +
             '</div></div></div></div></section>')
@@ -189,7 +189,7 @@ steps = [("01 / Buy", "Take a position", "Deposit, convert to $FTR and buy into 
          ("02 / Own", "Hold the shares", "Ownership is the key that unlocks every other part of the platform.", "c3", ""),
          ("03 / Build", "Assemble the club", "Name it, badge it, pick a coach and a shape, fill the XI and the bench.", "c5", ""),
          ("04 / Play", "Enter a round", "Solo or club, choose your market tier, verify ownership and activate.", "c5", ""),
-         ("05 / Earn", "Settle in $FTR", "Real match data converts performance into Fantrade Points.", "c3", ""),
+         ("05 / Earn", "Settle in $FTR", "Real match data converts performance into Fans Point.", "c3", ""),
          ("06 / Reinvest", "Grow the portfolio", "Buy the next player. Club value rises with the squad underneath it.", "c4", "end")]
 land.append(T('<section id="loop"><div class="wrap"><div class="sec-head center" data-reveal>'
             '<span class="pill">@@ The Fantrade loop</span><h2>Buy, own, build,<br>play, earn, reinvest</h2></div>'
@@ -1018,7 +1018,7 @@ fp.append(T('<aside class="fp-side" data-reveal>'
             '<div class="cr"><span>Market multiplier</span><b id="multPts">×2.0</b></div>'
             '<div class="cr boost" id="boostRow"><span>Club boost</span><b>+15%</b></div>'
             '<div class="cr" id="capRow"><span>Captain $Bruno ×1.5</span><b>in base</b></div>'
-            '<div class="out"><div class="k">Projected Fantrade Points</div>'
+            '<div class="out"><div class="k">Projected Fans Point</div>'
             '<div class="v" id="fpOut">230</div>'
             '<div class="n" id="fpNote">Club mode · Elite</div></div></div>'
             '@@'

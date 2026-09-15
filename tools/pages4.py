@@ -49,10 +49,11 @@ function held(){ return FT.getState().holdings[A.t] || null; }
 // Order book, built deterministically around the last price so the same
 // asset always shows the same depth. Asks render top-down (worst first),
 // bids top-down (best first), the way a real book reads.
+var TICK = 1;
 function book2(box, side, count, onPick){
   var rows = [], px = A.p, total = 0;
   for(var i = 0; i < count; i++){
-    var step = (i + 1) * (px * 0.0016);
+    var step = (i + 1) * (px * 0.0016) * TICK;
     var p = side === 'bid' ? px - step : px + step;
     var size = Math.round(3100 + Math.abs(Math.sin((i + 1) * 2.7)) * 41000);
     total += size;
@@ -292,39 +293,147 @@ page("asset.html", "Market — Fantrade", "".join(asset), ASSET_JS)
 # ══════════════════════════════════════════════════════════════════
 # TRADE — the terminal: bid, buy, sell, swap
 # ══════════════════════════════════════════════════════════════════
-trade = [T('<main><section class="app-head" style="padding:92px 0 10px"><div class="wrap">'
-           '<div class="asset-head" data-reveal>'
-           '<a class="crumb" href="asset.html" id="tBack" aria-label="Market page">@@</a>'
+TRADE_CSS = """
+@media (max-width:640px){
+  /* drop the "placed" column so side, size, price and the action stay on one row */
+  #tLedger .dh,#tLedger .dr{grid-template-columns:52px 1fr 1fr 76px!important;gap:8px;padding:12px 0}
+  #tLedger .dh>*:nth-child(4),#tLedger .dr>*:nth-child(4){display:none}
+  #tLedger .dh>*:nth-child(5),#tLedger .dr>*:nth-child(5){text-align:right}
+  #tLedger .dh{font-size:8px;letter-spacing:.12em}
+}
+#tLedger .dh,#tLedger .dr{padding-left:0;padding-right:0}
+/* The terminal reads like a spot exchange: the book and the ticket side by
+   side at every width, then the ledger under them. */
+.tgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.16fr);gap:16px;align-items:start}
+@media (min-width:1100px){.tgrid{grid-template-columns:minmax(0,360px) minmax(0,1fr);gap:34px}}
+@media (max-width:420px){.tgrid{gap:10px}}
+
+.pairhead{display:flex;align-items:center;gap:13px;flex-wrap:wrap}
+.pairhead .coin{width:38px;height:38px}
+.pairhead .coin .ic{width:18px;height:18px}
+.pairhead .pr{font-family:Archivo;font-variation-settings:'wdth' 120,'wght' 800;text-transform:uppercase;
+  font-size:clamp(17px,2.4vw,22px);line-height:1;white-space:nowrap}
+.pairhead .pr em{font-style:normal;color:var(--faint)}
+.pairhead .dlt{font-family:'JetBrains Mono',monospace;font-size:13px}
+.pairhead .chip{margin-left:auto;display:flex;align-items:center;gap:8px;flex:none}
+.pairhead .chip a{display:grid;place-items:center;width:34px;height:34px;border-radius:11px;
+  border:1px solid var(--hair);background:rgba(255,255,255,.04);color:var(--dim);box-shadow:var(--inset);
+  transition:all .5s var(--ease)}
+.pairhead .chip a:hover{color:var(--lime);border-color:rgba(196,248,42,.4)}
+.pairhead .chip .ic{width:16px;height:16px}
+
+/* order book footer: tick size + depth split */
+.bkfoot{display:flex;align-items:center;gap:8px;margin-top:12px}
+.ticksel{display:flex;align-items:center;gap:8px;flex:1;min-width:0;border:1px solid var(--hair);
+  border-radius:10px;background:rgba(255,255,255,.03);box-shadow:var(--inset);padding:6px 10px}
+.ticksel select{flex:1;min-width:0;border:0;background:transparent;color:var(--ink);outline:none;
+  cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px}
+.ticksel select option{background:#0A0B0C}
+.ticksel .chev{flex:none}
+.bkbtn{display:grid;place-items:center;width:36px;height:34px;flex:none;border-radius:10px;
+  border:1px solid var(--hair);background:rgba(255,255,255,.04);color:var(--dim);box-shadow:var(--inset);
+  transition:all .5s var(--ease)}
+.bkbtn:hover{color:var(--lime);border-color:rgba(196,248,42,.4)}
+.bkbtn .ic{width:15px;height:15px}
+/* the ladder tints stay behind the numbers, not in front of them */
+.book2 .b2row i{opacity:.72}
+.book2 .last span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media (max-width:420px){
+  .book2 .bh{font-size:8px}
+  .b2row{padding:4px 5px;font-size:10.5px}
+  .book2 .last b{font-size:14px}
+  .book2 .last span{font-size:9.5px}
+  .bkfoot{gap:6px}
+  .ticksel{padding:6px 8px}
+  .ticksel select{font-size:10.5px}
+}
+
+/* buy / sell / swap */
+.sideseg{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:4px;border-radius:14px;
+  background:rgba(255,255,255,.035);border:1px solid var(--hair);box-shadow:var(--inset);margin-bottom:12px}
+.sideseg button{border:0;background:transparent;color:var(--faint);border-radius:11px;padding:11px 0;
+  cursor:pointer;font-family:Montserrat,sans-serif;font-weight:600;font-size:11px;letter-spacing:.12em;
+  text-transform:uppercase;transition:all .45s var(--ease)}
+.sideseg button:hover{color:var(--ink)}
+.sideseg button[aria-pressed="true"]{background:rgba(196,248,42,.14);color:var(--lime);
+  box-shadow:inset 0 0 0 1px rgba(196,248,42,.34)}
+.sideseg button[data-m="sell"][aria-pressed="true"]{background:rgba(255,94,94,.14);color:var(--red);
+  box-shadow:inset 0 0 0 1px rgba(255,94,94,.34)}
+.sideseg button[data-m="swap"][aria-pressed="true"]{background:rgba(255,255,255,.09);color:var(--ink);
+  box-shadow:inset 0 0 0 1px var(--hair-2)}
+
+/* a field carries its label above the value, steppers on the right */
+.tfield{display:flex;align-items:center;gap:10px;border:1px solid var(--hair);border-radius:12px;
+  background:rgba(255,255,255,.03);box-shadow:var(--inset);padding:9px 4px 9px 13px;margin-bottom:8px}
+.tfield .bd{flex:1;min-width:0}
+.tfield .lbl{display:block;font-weight:600;font-size:8.5px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--faint);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tfield input{display:block;width:100%;border:0;background:transparent;color:var(--ink);outline:none;
+  font-family:'JetBrains Mono',monospace;font-size:15px;padding:4px 0 0}
+.tfield input::placeholder{color:var(--faint)}
+.tfield input:read-only{color:var(--dim)}
+.tfield .pm{flex:none;display:flex;align-items:stretch;align-self:stretch}
+.tfield .pm button{width:34px;border:0;background:transparent;color:var(--dim);cursor:pointer;
+  font-size:17px;line-height:1;transition:color .4s var(--ease)}
+.tfield .pm button:first-child{border-right:1px solid var(--hair)}
+.tfield .pm button:hover{color:var(--lime)}
+.tfield[hidden]{display:none}
+
+.tline{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:7px 0;font-size:11.5px;
+  color:var(--faint)}
+.tline b{font-family:'JetBrains Mono',monospace;font-weight:400;color:var(--ink);font-size:12px}
+.tline .dash{border-bottom:1px dashed var(--hair-2);padding-bottom:1px}
+.bigbtn{display:block;width:100%;border:0;border-radius:14px;padding:16px 0;margin-top:14px;cursor:pointer;
+  font-family:Montserrat,sans-serif;font-weight:600;font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;
+  background:var(--lime);color:#0A0D03;box-shadow:var(--inset),0 16px 38px -16px rgba(196,248,42,.75);
+  transition:filter .4s var(--ease)}
+.bigbtn:hover{filter:brightness(1.06)}
+.bigbtn.sell{background:var(--red);color:#fff;box-shadow:var(--inset),0 16px 38px -16px rgba(255,94,94,.7)}
+.bigbtn.neutral{background:rgba(255,255,255,.08);color:var(--ink);border:1px solid var(--hair-2);
+  box-shadow:var(--inset)}
+
+@media (max-width:420px){
+  .tfield .lbl .unit{display:none}
+  .tfield{padding:8px 2px 8px 10px}
+  .tfield input{font-size:13.5px}
+  .tfield .pm button{width:28px;font-size:15px}
+  .sideseg button{font-size:9.5px;letter-spacing:.08em;padding:10px 0}
+}
+"""
+
+trade = [T('<main><section class="app-head" style="padding:92px 0 14px"><div class="wrap">'
+           '<a class="crumb" href="asset.html" id="tBack" aria-label="Market page">@@Market</a>'
+           '<div class="pairhead" data-reveal style="margin-top:13px">'
            '<span class="coin" id="tCoin">@@</span>'
-           '<div style="min-width:0"><div class="nm" id="tName" style="font-size:clamp(17px,2vw,22px)">'
-           'Bukayo Saka</div>'
-           '<div class="sym"><span id="tSym">$Saka</span> / $FTR</div></div>'
-           '<div style="margin-left:auto;text-align:right">'
-           '<div class="num" id="tPx" style="font-size:18px">48.20</div>'
-           '<div class="num" id="tDelta" style="font-size:11px;margin-top:4px">+6.40%</div></div>'
+           '<div class="pr"><span id="tSym">$Saka</span><em>/$FTR</em></div>'
+           '<div class="dlt" id="tDelta">+6.40%</div>'
+           '<span class="chip"><a href="asset.html" id="tChart" aria-label="Open the chart">@@</a></span>'
            '</div></div></section>',
-           ic("arrow", "ic"), ic("boot", "ic"))]
+           ic("arrow", "ic"), ic("boot", "ic"), ic("market", "ic"))]
 
-trade.append('<section style="padding:0 0 120px"><div class="wrap"><div class="bento">')
+trade.append('<section style="padding:0 0 120px"><div class="wrap"><div class="tgrid">')
 
-# ── book ──
-trade.append('<div class="bezel c5" data-reveal><div class="core pad">'
-             '<div class="book2"><div class="bh"><span>Price $FTR</span><span>Shares</span></div>'
-             '<div id="tAsks"></div>'
-             '<div class="last"><b id="tLast">—</b><span id="tLastSub">last traded</span></div>'
-             '<div id="tBids"></div>'
-             '<div class="depthbar"><i id="tdBid" style="width:58%;background:var(--lime)"></i>'
-             '<i id="tdAsk" style="width:42%;background:var(--red)"></i></div>'
-             '<div class="depthkey"><span style="color:var(--lime)" id="tdBidK">B 58%</span>'
-             '<span style="color:var(--red)" id="tdAskK">42% S</span></div></div>'
-             '<p style="font-size:10.5px;color:var(--faint);font-weight:300;margin:14px 0 0;line-height:1.55">'
-             'Tap any row to load that price into the ticket. A limit order that does not fill immediately '
-             'rests on the book as your bid or ask until it does.</p>'
-             '</div></div>')
+# ── the book ──
+trade.append(T('<div data-reveal>'
+               '<div class="book2"><div class="bh"><span>Price $FTR</span><span>Shares</span></div>'
+               '<div id="tAsks"></div>'
+               '<div class="last"><b id="tLast">—</b><span id="tLastSub">last traded</span></div>'
+               '<div id="tBids"></div>'
+               '<div class="depthbar"><i id="tdBid" style="width:58%;background:var(--lime)"></i>'
+               '<i id="tdAsk" style="width:42%;background:var(--red)"></i></div>'
+               '<div class="depthkey"><span style="color:var(--lime)" id="tdBidK">B 58%</span>'
+               '<span style="color:var(--red)" id="tdAskK">42% S</span></div></div>'
+               '<div class="bkfoot"><span class="ticksel">'
+               '<select id="tTick" aria-label="Price grouping">'
+               '<option value="1">0.01</option><option value="5">0.05</option>'
+               '<option value="10">0.10</option><option value="50">0.50</option></select>'
+               '<span class="chev"></span></span>'
+               '<a class="bkbtn" href="#tLedger" id="tJump" aria-label="Jump to your orders">@@</a></div>'
+               '</div>', ic("receipt", "ic")))
 
-# ── ticket ──
-trade.append(T('<div class="bezel c7" data-reveal><div class="core pad">'
-               '<div class="utabs" id="tMode" style="margin-bottom:16px">'
+# ── the ticket ──
+trade.append(T('<div data-reveal>'
+               '<div class="sideseg" id="tMode">'
                '<button type="button" aria-pressed="true" data-m="buy">Buy</button>'
                '<button type="button" aria-pressed="false" data-m="sell">Sell</button>'
                '<button type="button" aria-pressed="false" data-m="swap">Swap</button>'
@@ -337,18 +446,29 @@ trade.append(T('<div class="bezel c7" data-reveal><div class="core pad">'
                '<option value="market">Market</option>'
                '<option value="stop">Stop-limit</option></select>'
                '<span class="chev"></span></button>'
-               '<div class="stp" id="tStopWrap" hidden><span class="lbl">Stop ($FTR)</span>'
-               '<button type="button" data-step="-1" data-for="tStop" aria-label="Lower">&minus;</button>'
-               '<input id="tStop" inputmode="decimal">'
-               '<button type="button" data-step="1" data-for="tStop" aria-label="Raise">+</button></div>'
-               '<div class="stp" id="tLimitWrap"><span class="lbl">Limit ($FTR)</span>'
-               '<button type="button" data-step="-1" data-for="tLimit" aria-label="Lower">&minus;</button>'
-               '<input id="tLimit" inputmode="decimal">'
-               '<button type="button" data-step="1" data-for="tLimit" aria-label="Raise">+</button></div>'
-               '<div class="stp"><span class="lbl">Shares</span>'
-               '<button type="button" data-step="-1" data-for="tQty" aria-label="Fewer">&minus;</button>'
-               '<input id="tQty" inputmode="numeric" value="1,000">'
-               '<button type="button" data-step="1" data-for="tQty" aria-label="More">+</button></div>'
+
+               '<div class="tfield" id="tStopWrap" hidden><div class="bd">'
+               '<span class="lbl">Stop ($FTR)</span><input id="tStop" inputmode="decimal"></div>'
+               '<span class="pm"><button type="button" data-step="-1" data-for="tStop" '
+               'aria-label="Lower the stop">&minus;</button>'
+               '<button type="button" data-step="1" data-for="tStop" aria-label="Raise the stop">+</button>'
+               '</span></div>'
+
+               '<div class="tfield" id="tLimitWrap"><div class="bd">'
+               '<span class="lbl">Limit ($FTR)</span><input id="tLimit" inputmode="decimal"></div>'
+               '<span class="pm"><button type="button" data-step="-1" data-for="tLimit" '
+               'aria-label="Lower the price">&minus;</button>'
+               '<button type="button" data-step="1" data-for="tLimit" aria-label="Raise the price">+</button>'
+               '</span></div>'
+
+               '<div class="tfield"><div class="bd">'
+               '<span class="lbl">Quantity<span class="unit"> (<span id="tQtyUnit">$Saka</span>)</span></span>'
+               '<input id="tQty" inputmode="numeric" value="1,000"></div>'
+               '<span class="pm"><button type="button" data-step="-1" data-for="tQty" '
+               'aria-label="Fewer shares">&minus;</button>'
+               '<button type="button" data-step="1" data-for="tQty" aria-label="More shares">+</button>'
+               '</span></div>'
+
                '<div class="slider" id="tSlider">'
                '<span class="track"></span><span class="fill" id="tFill"></span>'
                '<span class="notch" style="left:0"></span><span class="notch" style="left:25%"></span>'
@@ -359,14 +479,15 @@ trade.append(T('<div class="bezel c7" data-reveal><div class="core pad">'
                'aria-label="Percentage of balance">'
                '<span class="pcts"><span>0%</span><span>25%</span><span>50%</span><span>75%</span>'
                '<span>100%</span></span></div>'
-               '<div class="stp" style="margin-top:18px"><span class="lbl">Order value</span>'
-               '<input id="tAmt" readonly></div>'
-               '<div class="line"><span>Protocol fee (0.4%)</span><b id="tFee">—</b></div>'
-               '<div class="line"><span id="tTotLabel">Total cost</span><b id="tTot">—</b></div>'
-               '<div class="line"><span id="tAvailLabel">Available</span><b id="tAvail">—</b></div>'
-               '@@'
-               '<p style="font-size:10.5px;color:var(--faint);font-weight:300;margin-top:12px;line-height:1.55" '
-               'id="tHint">A limit buy below the market rests as your bid until someone sells into it.</p>'
+
+               '<div class="tfield" style="margin-top:20px"><div class="bd">'
+               '<span class="lbl">Amount ($FTR)</span><input id="tAmt" readonly></div></div>'
+
+               '<div class="tline"><span>Fee (0.4%)</span><b id="tFee">—</b></div>'
+               '<div class="tline"><span id="tTotLabel">Total cost</span><b id="tTot">—</b></div>'
+               '<div class="tline"><span id="tAvailLabel">Avail.</span><b id="tAvail">—</b></div>'
+               '<div class="tline"><span class="dash" id="tMaxLabel">Max buy</span><b id="tMax">—</b></div>'
+               '<button class="bigbtn" type="button" id="tGo">Buy $Saka</button>'
                '</div>'
 
                # swap
@@ -374,38 +495,37 @@ trade.append(T('<div class="bezel c7" data-reveal><div class="core pad">'
                '<div class="tf" id="f-swFrom"><label for="swFrom">From</label><div class="inp">@@'
                '<select id="swFrom"></select><span class="chev"></span></div>'
                '<div class="hint" id="swHold">—</div></div>'
-               '<div class="stp"><span class="lbl">Shares</span>'
-               '<button type="button" data-step="-1" data-for="swQty" aria-label="Fewer">&minus;</button>'
-               '<input id="swQty" inputmode="numeric" value="500">'
-               '<button type="button" data-step="1" data-for="swQty" aria-label="More">+</button></div>'
+               '<div class="tfield"><div class="bd"><span class="lbl">Shares</span>'
+               '<input id="swQty" inputmode="numeric" value="500"></div>'
+               '<span class="pm"><button type="button" data-step="-1" data-for="swQty" '
+               'aria-label="Fewer shares">&minus;</button>'
+               '<button type="button" data-step="1" data-for="swQty" aria-label="More shares">+</button>'
+               '</span></div>'
                '<div class="tf" style="margin-top:12px"><label for="swTo">To</label><div class="inp">@@'
                '<select id="swTo"></select><span class="chev"></span></div></div>'
-               '<div class="line"><span>You give</span><b id="swGive">—</b></div>'
-               '<div class="line"><span>Swap fee (0.4%)</span><b id="swFee">—</b></div>'
-               '<div class="line"><span>You receive</span><b id="swGet">—</b></div>'
-               '<div class="line"><span>Dust back to wallet</span><b id="swDust">—</b></div>'
-               '@@'
-               '<p style="font-size:10.5px;color:var(--faint);font-weight:300;margin-top:12px;line-height:1.55">'
-               'A swap sells one asset and buys the other in a single settlement, so you are never '
-               'uncovered between the two legs.</p>'
+               '<div class="tline"><span>You give</span><b id="swGive">—</b></div>'
+               '<div class="tline"><span>Fee (0.4%)</span><b id="swFee">—</b></div>'
+               '<div class="tline"><span>You receive</span><b id="swGet">—</b></div>'
+               '<div class="tline"><span>Dust back to wallet</span><b id="swDust">—</b></div>'
+               '<button class="bigbtn neutral" type="button" id="swGo">Swap assets</button>'
                '</div>'
-               '</div></div>',
-               ic("candle", "ic"),
-               btn("Place order", tag="button",
-                   extra='id="tGo" style="width:100%;justify-content:space-between;margin-top:14px"'),
-               ic("swap", "ic"), ic("target", "ic"),
-               btn("Swap assets", tag="button",
-                   extra='id="swGo" style="width:100%;justify-content:space-between;margin-top:14px"')))
+               '</div>',
+               ic("candle", "ic"), ic("swap", "ic"), ic("target", "ic")))
 
-# ── open orders / fills ──
-trade.append('<div class="bezel c12" data-reveal><div class="core">'
-             '<div style="padding:16px 16px 0"><div class="utabs" id="tLedgerTabs">'
-             '<button type="button" aria-pressed="true" data-l="open">Open orders</button>'
-             '<button type="button" aria-pressed="false" data-l="fills">Your fills</button>'
-             '<button type="button" aria-pressed="false" data-l="assets">Assets</button>'
-             '</div></div><div id="tLedger"></div></div></div>')
+trade.append('</div>')
 
-trade.append('</div></div></section></main>')
+# ── open orders / your fills / assets ──
+trade.append('<div class="flat-sep" data-reveal>'
+             '<div class="utabs" id="tLedgerTabs">'
+             '<button type="button" aria-pressed="true" data-l="open">Open orders '
+             '<span id="tcOpen">(0)</span></button>'
+             '<button type="button" aria-pressed="false" data-l="fills">Your fills '
+             '<span id="tcFills">(0)</span></button>'
+             '<button type="button" aria-pressed="false" data-l="assets">Assets '
+             '<span id="tcAssets">(0)</span></button>'
+             '</div><div id="tLedger"></div></div>')
+
+trade.append('</div></section></main>')
 
 TRADE_JS = PICK_JS + r"""
 document.title = 'Trade ' + A.t + ' — Fantrade';
@@ -416,20 +536,26 @@ el('tBack').href = 'asset.html?a=' + encodeURIComponent(A.t);
 el('tCoin').className = 'coin' + (A.c ? ' am' : '');
 el('tCoin').innerHTML = '<svg class="ic" aria-hidden="true"><use href="#i-' + (A.c ? 'whistle' : 'boot')
   + '"/></svg>';
-el('tName').textContent = A.n;
 el('tSym').textContent = A.t;
-el('tPx').textContent = A.p.toFixed(2);
+el('tQtyUnit').textContent = A.t;
+el('tChart').href = 'asset.html?a=' + encodeURIComponent(A.t);
 el('tDelta').textContent = (A.d >= 0 ? '+' : '') + A.d.toFixed(2) + '%';
 el('tDelta').style.color = A.d >= 0 ? 'var(--lime)' : 'var(--red)';
-el('tPx').style.color = A.d >= 0 ? 'var(--lime)' : 'var(--red)';
 el('tLimit').value = A.p.toFixed(2);
 el('tStop').value = (A.p * 0.96).toFixed(2);
 
-book2('tAsks', 'ask', 8, function(px){ el('tLimit').value = px.toFixed(2); calc(); });
-book2('tBids', 'bid', 8, function(px){ el('tLimit').value = px.toFixed(2); calc(); });
+function drawBook(){
+  book2('tAsks', 'ask', 8, function(px){ el('tLimit').value = px.toFixed(2); calc(); });
+  book2('tBids', 'bid', 8, function(px){ el('tLimit').value = px.toFixed(2); calc(); });
+}
+drawBook();
+el('tTick').addEventListener('change', function(){
+  TICK = parseFloat(el('tTick').value) || 1;
+  drawBook();
+});
 el('tLast').textContent = A.p.toFixed(2);
 el('tLast').style.color = A.d >= 0 ? 'var(--lime)' : 'var(--red)';
-el('tLastSub').textContent = '≈ £' + (A.p / 12.4).toFixed(2) + ' · last traded';
+el('tLastSub').textContent = '≈ £' + (A.p / 12.4).toFixed(2);
 (function(){
   var b = Math.max(12, Math.min(88, Math.round(48 + A.d)));
   el('tdBid').style.width = b + '%'; el('tdAsk').style.width = (100 - b) + '%';
@@ -477,20 +603,19 @@ function calc(){
   el('tFee').textContent = fmt(fee) + ' $FTR';
   el('tTotLabel').textContent = mode === 'buy' ? 'Total cost' : 'You receive';
   el('tTot').textContent = fmt(mode === 'buy' ? sub + fee : sub - fee) + ' $FTR';
-  el('tAvailLabel').textContent = mode === 'buy' ? 'Available $FTR' : 'Shares held';
+  el('tAvailLabel').textContent = 'Avail.';
   el('tAvail').textContent = mode === 'buy'
     ? fmt(s.wallet.balance) + ' $FTR'
     : (h ? h.shares.toLocaleString('en-US') + ' ' + A.t : '0 ' + A.t);
+  el('tMaxLabel').textContent = mode === 'buy' ? 'Max buy' : 'Max sell';
+  el('tMax').textContent = mode === 'buy'
+    ? Math.floor(s.wallet.balance / (px * 1.004)).toLocaleString('en-US') + ' ' + A.t
+    : (h ? h.shares.toLocaleString('en-US') + ' ' + A.t : '0 ' + A.t);
   var go = el('tGo');
   var verb = otype === 'market' ? (mode === 'buy' ? 'Buy ' : 'Sell ')
-    : (mode === 'buy' ? 'Place bid for ' : 'Place ask for ');
-  go.childNodes[0].nodeValue = verb + A.t;
-  go.className = 'btn ' + (mode === 'buy' ? 'btn-lime' : 'btn-red');
-  el('tHint').textContent = otype === 'market'
-    ? 'A market order fills straight from the book at the best available price.'
-    : (mode === 'buy'
-       ? 'A limit buy below the market rests as your bid until someone sells into it.'
-       : 'A limit sell above the market rests as your ask until someone buys it.');
+    : (mode === 'buy' ? 'Bid for ' : 'Ask for ');
+  go.textContent = verb + A.t;
+  go.className = 'bigbtn' + (mode === 'buy' ? '' : ' sell');
 }
 
 document.querySelectorAll('#tMode button').forEach(function(b){
@@ -583,7 +708,8 @@ var OPEN = [{ side:'buy', q:2000, px:A.p * 0.94, t:'Today, 09:12', type:'limit' 
             { side:'sell', q:1500, px:A.p * 1.08, t:'Yesterday, 18:40', type:'limit' }];
 function renderLedger(){
   var box = el('tLedger'), s = FT.getState();
-  var cols = 'grid-template-columns:82px 1fr 1fr 1fr 96px';
+  if(el('tcOpen')) counts();
+  var cols = 'grid-template-columns:62px 1fr 1fr 1.3fr 82px';
   if(view === 'open'){
     if(!OPEN.length){
       box.innerHTML = '<div class="empty-state"><svg class="ic-xl" aria-hidden="true">'
@@ -649,6 +775,13 @@ function renderLedger(){
         + (down ? '-' : '+') + fmt(t.total) + '</div></div>';
     }).join('');
 }
+function counts(){
+  var s = FT.getState();
+  el('tcOpen').textContent = '(' + OPEN.length + ')';
+  el('tcFills').textContent = '(' + s.transactions.filter(function(t){
+    return (t.type === 'BUY' || t.type === 'SELL') && t.asset === A.t; }).length + ')';
+  el('tcAssets').textContent = '(' + Object.keys(s.holdings).length + ')';
+}
 document.querySelectorAll('#tLedgerTabs button').forEach(function(b){
   b.addEventListener('click', function(){
     document.querySelectorAll('#tLedgerTabs button').forEach(function(x){
@@ -658,11 +791,13 @@ document.querySelectorAll('#tLedgerTabs button').forEach(function(b){
 });
 
 if(mode === 'sell') document.querySelector('#tMode button[data-m="sell"]').click();
-paintSlider(0); calc(); fillSwap(); renderLedger();
-window.addEventListener('fantrade:statechange', function(){ calc(); fillSwap(); renderLedger(); });
+paintSlider(0); calc(); fillSwap(); renderLedger(); counts();
+window.addEventListener('fantrade:statechange', function(){
+  calc(); fillSwap(); renderLedger(); counts();
+});
 """
 
-page("trade.html", "Trade — Fantrade", "".join(trade), TRADE_JS)
+page("trade.html", "Trade — Fantrade", "".join(trade), TRADE_JS, TRADE_CSS)
 
 print("built asset.html + trade.html")
 
