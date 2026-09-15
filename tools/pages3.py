@@ -593,12 +593,10 @@ print("built onboarding.html")
 # DASHBOARD — the signed-in home
 # ══════════════════════════════════════════════════════════════════
 DASH_CSS = """
-.fx{display:grid;grid-template-columns:88px 1fr auto;gap:16px;align-items:center;padding:16px 24px;
+.fx{display:grid;grid-template-columns:1fr auto;gap:16px;align-items:center;padding:16px 24px;
   border-bottom:1px solid rgba(255,255,255,.05);transition:background .6s var(--ease)}
 .fx:last-child{border-bottom:0}
 .fx:hover{background:rgba(255,255,255,.022)}
-.fx .code{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--faint);letter-spacing:.06em;
-  border:1px solid var(--hair);border-radius:9px;padding:7px 0;text-align:center;background:rgba(255,255,255,.03)}
 .fx .tie{font-size:14px;font-weight:500}
 .fx .gr{font-size:11px;color:var(--faint);margin-top:6px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 .fx .gr em{font-style:normal;font-family:'JetBrains Mono',monospace;color:var(--dim)}
@@ -613,8 +611,8 @@ DASH_CSS = """
   display:grid;place-items:center;font-family:Archivo;font-variation-settings:'wdth' 100,'wght' 900;
   font-size:15px;color:#0A0D03;filter:drop-shadow(0 8px 18px rgba(196,248,42,.3))}
 @media (max-width:768px){
-  .fx{grid-template-columns:72px 1fr;gap:12px;padding:14px}
-  .fx .fpv{text-align:left;grid-column:2}
+  .fx{grid-template-columns:1fr;gap:8px;padding:14px}
+  .fx .fpv{text-align:left}
   .mv{padding-left:0!important;padding-right:0!important}
 }
 """
@@ -718,11 +716,11 @@ da.append(T('<div class="bezel c7" data-reveal><div class="core">'
             ic("calendar", "ic-lg"), ic("pulse", "ic")))
 for code, tie, meta, assets, fp in FIXTURES:
     chips = "".join('<em>%s</em><span style="color:var(--faint)">%s</span>' % (s, r) for s, r in assets)
-    da.append(T('<div class="fx"><div class="code">@@</div>'
+    da.append(T('<div class="fx">'
                 '<div><div class="tie">@@</div><div class="gr">@@</div>'
                 '<div class="gr" style="margin-top:4px;color:var(--faint)">@@</div></div>'
                 '<div class="fpv">@@ <em>Expected FP</em></div></div>',
-                code, tie, chips, meta, fp))
+                tie, chips, meta, fp))
 da.append(T('<div style="padding:20px 24px 28px;display:flex;gap:12px;align-items:center;flex-wrap:wrap">'
             '<span style="font-size:11.5px;color:var(--faint);font-weight:300;white-space:nowrap">'
             'Projected club total 450–780 FP</span>'
@@ -749,39 +747,6 @@ for sym, nm, px, d, idx in MOVERS:
                 "up" if d >= 0 else "down", ("+" if d >= 0 else "") + "%.1f%%" % d))
 da.append(T('<div style="margin-top:20px">@@</div></div></div>',
             btn("All 420 markets", "btn-glass", "exchange.html",
-                extra='style="width:100%;justify-content:space-between"')))
-
-# quick actions
-da.append(T('<div class="c12" data-reveal><div class="qa">'
-            '<a href="exchange.html"><span class="ibox">@@</span><div><b>Trade</b>'
-            '<span>420 markets</span></div></a>'
-            '<a href="clubs.html"><span class="ibox">@@</span><div><b>Rebalance XI</b>'
-            '<span>4-3-3 · locked Sat 17:30</span></div></a>'
-            '<a href="fanplay.html"><span class="ibox am">@@</span><div><b>Stake a round</b>'
-            '<span>Gameweek 28 open</span></div></a>'
-            '<a href="leaderboard.html"><span class="ibox">@@</span><div><b>League table</b>'
-            '<span>#124 of 1,420</span></div></a>'
-            '</div></div>',
-            ic("candle", "ic-lg"), ic("formation", "ic-lg"), ic("bolt", "ic-lg"), ic("rank", "ic-lg")))
-
-# activity + entries
-da.append(T('<div class="bezel c7" data-reveal><div class="core">'
-            '<div style="padding:30px 24px 18px;display:flex;align-items:center;gap:12px">'
-            '<div class="k-label" style="margin:0">Recent activity</div>'
-            '<a href="notifications.html" style="margin-left:auto;font-size:11px;color:var(--lime)">'
-            'All activity (<span data-unread>3</span> unread)</a></div>'
-            '<div class="dt" id="dashLedger"></div></div></div>'))
-
-da.append(T('<div class="bezel c5" data-reveal><div class="core pad">'
-            '<div class="k-label">Active entries</div>'
-            '<div id="dashEntries"></div>'
-            '<div class="k-label" style="margin-top:28px">Responsible play</div>'
-            '<div class="b-row"><span>Weekly stake cap</span><b id="dashCap">5,000 $FTR</b></div>'
-            '<div class="b-row"><span>Staked this week</span><b>2,500 $FTR</b></div>'
-            '<div class="supply"><i style="width:50%"></i></div>'
-            '<div style="margin-top:18px">@@</div>'
-            '</div></div>',
-            btn("Manage limits", "btn-glass", "settings-play.html",
                 extra='style="width:100%;justify-content:space-between"')))
 
 da.append('</div></div></section></main>')

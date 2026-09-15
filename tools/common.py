@@ -367,6 +367,8 @@ footer{border-top:1px solid var(--hair);padding:70px 0 64px;background:rgba(255,
 .foot .col a{display:block;font-size:13px;color:var(--dim);padding:6px 0;transition:color .5s var(--ease)}
 .foot .col a:hover{color:var(--lime)}
 .brandcol{margin-right:auto;max-width:300px}
+.foot .brandcol a.logo{display:flex;align-items:center;gap:10px;padding:0;font-size:16px;color:var(--ink)}
+.foot .brandcol a.logo:hover{color:var(--lime)}
 .brandcol p{font-size:12.5px;font-weight:300;color:var(--dim);margin-top:18px}
 .legal{margin-top:52px;padding-top:26px;border-top:1px solid var(--hair);font-size:11.5px;color:var(--faint);
   display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
@@ -1055,6 +1057,18 @@ APP_CSS = r"""
 .dates button[aria-pressed="true"]{background:rgba(255,255,255,.07);color:var(--ink);box-shadow:var(--inset)}
 .dates button[aria-pressed="true"] small{color:var(--live)}
 .dates .nudge{padding:10px 12px;color:var(--faint);font-size:13px}
+.dateline{display:flex;align-items:center;gap:10px;flex:1;min-width:0}
+@media (max-width:760px){
+  /* on a phone the toggle gets its own line and the dates take the rest */
+  .datestrip{flex-direction:column;align-items:stretch;gap:12px}
+  .datestrip .livetgl{align-self:flex-start}
+  .dateline{width:100%}
+  .dates{flex:1;min-width:0;justify-content:space-between;overflow-x:auto;scrollbar-width:none}
+  .dates::-webkit-scrollbar{display:none}
+  .dates button{flex:1;padding:8px 10px;white-space:nowrap}
+  .dates .nudge{padding:10px 6px}
+  .dateline .bell{flex:none}
+}
 .livetgl{display:inline-flex;align-items:center;gap:9px;border-radius:999px;padding:10px 17px;cursor:pointer;
   border:1px solid var(--hair);background:rgba(255,255,255,.04);color:var(--faint);box-shadow:var(--inset);
   font-weight:600;font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;font-family:Montserrat,sans-serif;
@@ -1129,6 +1143,13 @@ APP_CSS = r"""
 .star .ic{width:19px;height:19px}
 .star:hover{color:var(--dim);transform:scale(1.12)}
 .star[aria-pressed="true"]{color:var(--lime)}
+@media (max-width:560px){
+  .fixt{grid-template-columns:50px 1fr 24px;gap:10px;padding:12px;margin:0 0 8px}
+  .fixt .tm{flex-wrap:wrap;row-gap:5px}
+  .fixt .tm .n{flex:1 1 auto;min-width:0}
+  .fixt .tm .g{order:2}
+  .fixt .mine{order:3;flex-basis:100%;margin-left:33px}
+}
 
 /* tab strip */
 .tabstrip{display:flex;gap:4px;padding:5px;border-radius:999px;background:rgba(255,255,255,.035);
@@ -1623,7 +1644,7 @@ def nav(current="", app=False):
                '<span class="pulse"></span><span class="num" id="navBal">128,450 $FTR</span></a>'
                '<a class="bell" id="navBell" href="notifications.html" aria-label="Notifications">%s'
                '<span class="dot" id="navDot" hidden></span></a>'
-               '</div></nav>') % (ic("ball", "ic"), ic("pulse", "ic"))
+               '</div></nav>') % (ic("ball", "ic"), ic("bell", "ic"))
         return top + taskbar(current)
 
     links = "".join('<a href="%s"%s>%s</a>' % (h, ' class="on"' if h == current else '', l)

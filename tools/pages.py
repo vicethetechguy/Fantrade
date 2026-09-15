@@ -305,14 +305,14 @@ ex = [T('<main><section class="app-head" style="padding-bottom:18px"><div class=
         '<input id="q" type="search" placeholder="Search a player, coach or ticker"></div>'
         '</div></section>', ic("search", "ic"))]
 
-# Coach index sits above the book — it is the one number that frames the whole list.
+# What the squad is worth, right above the book you would rebuild it from.
 ex.append(T('<section style="padding-top:0"><div class="wrap">'
             '<div class="bezel flat" data-reveal><div class="core pad ci">'
-            '<div class="ci-l"><div class="k-label">@@ Coach index</div>'
-            '<div class="value-big">24.65 <small>$FTR</small></div>'
-            '<div class="delta">▲ 2.1% · 186 coaches</div></div>'
-            '<div class="ci-r" id="coachSpark"></div>'
-            '</div></div></div></section>', ic("whistle", "ic-sm")))
+            '<div class="ci-l"><div class="k-label">@@ Team index</div>'
+            '<div class="value-big"><span id="teamVal">—</span> <small>$FTR</small></div>'
+            '<div class="delta" id="teamDelta">—</div></div>'
+            '<div class="ci-r" id="teamSpark"></div>'
+            '</div></div></div></section>', ic("crest", "ic-sm")))
 
 # The book itself is not a card. It runs straight down the page.
 ex.append('<section style="padding-top:22px;padding-bottom:120px"><div class="wrap">'
@@ -398,8 +398,31 @@ var qi = document.getElementById('q');
 if(qi) qi.addEventListener('input', function(){ q = qi.value.trim().toLowerCase(); rows(); });
 
 rows();
-var cs = document.getElementById('coachSpark');
-if(cs) cs.innerHTML = spark(true, 300, 54);
+
+// ── team index: every share you hold, players and coach together ──
+function teamIndex(){
+  var s = FT.getState(), total = 0, players = 0, coaches = 0, weighted = 0;
+  Object.keys(s.holdings).forEach(function(k){
+    var h = s.holdings[k], v = h.shares * h.p;
+    var a = ASSETS.filter(function(x){ return x.t === k; })[0];
+    var isCoach = h.c || (a && a.c);
+    total += v;
+    if(isCoach) coaches++; else players++;
+    weighted += v * (a ? a.d : 0);
+  });
+  var pct = total ? weighted / total : 0;
+  var up = pct >= 0;
+  document.getElementById('teamVal').textContent = Math.round(total).toLocaleString('en-US');
+  var d = document.getElementById('teamDelta');
+  d.textContent = (up ? '\u25b2 ' : '\u25bc ') + (up ? '+' : '') + pct.toFixed(2) + '% today · '
+    + players + (players === 1 ? ' player' : ' players') + ' + '
+    + coaches + (coaches === 1 ? ' coach' : ' coaches');
+  d.style.color = up ? 'var(--lime)' : 'var(--red)';
+  var sp = document.getElementById('teamSpark');
+  if(sp) sp.innerHTML = spark(up, 300, 54);
+}
+teamIndex();
+window.addEventListener('fantrade:statechange', teamIndex);
 liveTicks('.mkrow');
 window.addEventListener('fantrade:statechange', rows);
 """
@@ -747,19 +770,92 @@ page("club-builder.html", "Club builder — Fantrade", "".join(bd), CL_JS, CL_CS
 # 4. FANPLAY
 # ══════════════════════════════════════════════════════════
 FP_CSS = """
-.fp-body{display:grid;grid-template-columns:1fr 1fr}
-.fp-left{padding:38px 34px;border-right:1px solid var(--hair)}
-.fp-right{padding:38px 34px;background:rgba(255,255,255,.018)}
-.fp-sel{display:flex;align-items:center;gap:16px;border:1px solid var(--hair);border-radius:20px;padding:18px 20px;
-  margin-bottom:28px;background:rgba(255,255,255,.03);box-shadow:var(--inset)}
-.fp-sel .nm{font-family:Archivo;font-variation-settings:'wdth' 120,'wght' 800;text-transform:uppercase;font-size:18px}
-.fp-sel .sub{font-weight:600;font-size:9.5px;color:var(--faint);margin:5px 0 0;letter-spacing:.14em;text-transform:uppercase}
-.fp-sel .right{margin-left:auto;text-align:right;font-weight:600;font-size:9px;color:var(--faint);letter-spacing:.14em;text-transform:uppercase}
-.bezel.flat .tabs{padding:8px 0;background:transparent}
-.bezel.flat .fp-left{padding:30px 34px 30px 0}
-.bezel.flat .fp-right{padding:30px 0 30px 34px;background:transparent}
-@media (max-width:1024px){.bezel.flat .fp-left{padding:26px 0}.bezel.flat .fp-right{padding:26px 0}}
-.mkt-note{margin-top:22px;font-size:13.5px;font-weight:300;color:var(--dim);min-height:46px}
+/* head */
+.fp-head{display:flex;align-items:flex-start;gap:18px}
+.fp-head .bell{margin-left:auto;margin-top:6px}
+.fp-round{display:flex;align-items:center;gap:9px;margin-top:12px;font-weight:600;font-size:10px;
+  letter-spacing:.16em;text-transform:uppercase;color:var(--faint)}
+
+/* two columns: the decisions, and the answer */
+.fp-grid{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:46px;align-items:start}
+.fp-side{position:sticky;top:96px}
+.fp-card{border:1px solid var(--hair);border-radius:24px;padding:26px 24px;
+  background:rgba(255,255,255,.028);box-shadow:var(--inset)}
+
+/* one numbered step per decision */
+.fstep{padding:30px 0;border-top:1px solid var(--hair)}
+.fstep:first-child{padding-top:0;border-top:0}
+.fstep-h{display:flex;align-items:center;gap:13px;margin-bottom:20px;font-family:Archivo;
+  font-variation-settings:'wdth' 120,'wght' 800;text-transform:uppercase;font-size:14px}
+.fstep-h .n{width:24px;height:24px;border-radius:999px;display:grid;place-items:center;flex:none;
+  background:rgba(196,248,42,.12);border:1px solid rgba(196,248,42,.3);color:var(--lime);
+  font-family:'JetBrains Mono',monospace;font-size:11px}
+
+/* mode */
+.seg2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px}
+.seg2 button{display:flex;flex-direction:column;align-items:flex-start;gap:4px;padding:16px 18px;cursor:pointer;
+  border:1px solid var(--hair);border-radius:18px;background:rgba(255,255,255,.03);color:var(--dim);
+  box-shadow:var(--inset);font-family:Montserrat,sans-serif;text-align:left;
+  transition:all .5s var(--ease)}
+.seg2 button .ic{width:19px;height:19px;margin-bottom:5px;color:var(--faint)}
+.seg2 button .l{font-family:Archivo;font-variation-settings:'wdth' 120,'wght' 800;text-transform:uppercase;
+  font-size:14px;color:var(--ink)}
+.seg2 button .s{font-size:11px;color:var(--faint)}
+.seg2 button:hover{border-color:var(--hair-2)}
+.seg2 button[aria-selected="true"]{background:var(--lime);border-color:var(--lime);box-shadow:var(--inset),
+  0 16px 40px -16px rgba(196,248,42,.7)}
+.seg2 button[aria-selected="true"] .l,.seg2 button[aria-selected="true"] .ic{color:#0A0D03}
+.seg2 button[aria-selected="true"] .s{color:rgba(10,13,3,.66)}
+/* the old .tab rules hide their label on a phone — these buttons need theirs */
+.seg2 button.tab{flex:none;padding:16px 18px;min-height:0;border-radius:18px;gap:4px;justify-content:flex-start}
+.seg2 button.tab .l,.seg2 button.tab .s{display:block}
+.seg2 button.tab[aria-selected="true"]{color:#0A0D03}
+
+.fp-sel{display:flex;align-items:center;gap:16px;border:1px solid var(--hair);border-radius:20px;
+  padding:16px 18px;background:rgba(255,255,255,.03);box-shadow:var(--inset)}
+.fp-sel .nm{font-family:Archivo;font-variation-settings:'wdth' 120,'wght' 800;text-transform:uppercase;font-size:17px}
+.fp-sel .sub{font-weight:600;font-size:9.5px;color:var(--faint);margin:5px 0 0;letter-spacing:.14em;
+  text-transform:uppercase}
+.fp-sel .right{margin-left:auto;text-align:right;font-weight:600;font-size:9px;color:var(--faint);
+  letter-spacing:.14em;text-transform:uppercase;white-space:nowrap}
+.fp-sel .right .up{display:block;margin-top:5px}
+
+/* tiers as cards, so the multiplier and the variance are visible at once */
+.tierrail{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.tiercard{display:flex;flex-direction:column;align-items:flex-start;gap:9px;padding:15px 16px;cursor:pointer;
+  border:1px solid var(--hair);border-radius:16px;background:rgba(255,255,255,.03);box-shadow:var(--inset);
+  font-family:Montserrat,sans-serif;text-align:left;transition:all .5s var(--ease)}
+.tiercard .t{font-weight:600;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink)}
+.tiercard .x{font-family:'JetBrains Mono',monospace;font-size:19px;font-weight:300;color:var(--lime);line-height:1}
+.tiercard .risk{width:100%;height:3px;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden}
+.tiercard .risk i{display:block;height:100%;border-radius:99px;
+  background:linear-gradient(90deg,#C4F82A,#FF6A1F)}
+.tiercard:hover{border-color:var(--hair-2)}
+.tiercard[aria-pressed="true"]{border-color:var(--lime);background:rgba(196,248,42,.09)}
+.tiercard[aria-pressed="true"] .x{color:var(--lime)}
+.mkt-note{margin-top:16px;font-size:13px;font-weight:300;color:var(--dim);min-height:22px}
+
+.capbar{height:4px;border-radius:99px;background:rgba(255,255,255,.07);overflow:hidden;margin-top:14px}
+.capbar i{display:block;height:100%;border-radius:99px;background:var(--lime)}
+
+.fp-boardlink{display:flex;align-items:center;gap:12px;margin-top:18px;padding:14px 16px;border-radius:16px;
+  border:1px solid var(--hair);background:rgba(255,255,255,.03);transition:all .5s var(--ease)}
+.fp-boardlink:hover{border-color:var(--hair-2);background:rgba(255,255,255,.055)}
+.fp-boardlink .ic{color:var(--live);width:17px;height:17px}
+.fp-boardlink span{font-weight:600;font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+  white-space:nowrap}
+.fp-boardlink em{font-style:normal;font-size:10.5px;color:var(--faint);margin-left:auto;white-space:nowrap}
+.fp-boardlink .ic-sm{color:var(--faint);margin-left:4px}
+
+@media (max-width:1080px){
+  .fp-grid{grid-template-columns:1fr;gap:0}
+  .fp-side{position:static;margin-top:30px;padding-top:30px;border-top:1px solid var(--hair)}
+}
+@media (max-width:560px){
+  .tierrail{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .seg2{grid-template-columns:1fr}
+  .fp-boardlink em{display:none}
+}
 .calc .cr{display:flex;justify-content:space-between;padding:13px 0;border-bottom:1px solid rgba(255,255,255,.055);font-size:12.5px;color:var(--dim)}
 .calc .cr b{color:var(--ink);font-weight:400;font-family:'JetBrains Mono',monospace}
 .calc .cr.boost b{color:var(--amber)}
@@ -796,21 +892,38 @@ FP_CSS = """
 """
 
 fp = []
-fp.append('<header class="phead"><div class="wrap"><h1 data-reveal>FanPlay</h1>'
-          '<span hidden id="fpActiveCount">2 active</span></div></header>')
+fp.append(T('<header class="phead"><div class="wrap"><div class="fp-head" data-reveal>'
+            '<div><h1>FanPlay</h1>'
+            '<div class="fp-round"><span class="dot-live"></span>'
+            '<span>Matchday 07 · closes Fri 18:30</span></div></div>'
+            '<button class="bell" type="button" id="fpBell" aria-label="Matchday alerts" '
+            'aria-haspopup="dialog">@@<span class="dot" id="fpBellDot" hidden></span></button>'
+            '</div><span hidden id="fpActiveCount">2 active</span></div></header>',
+            ic("bell", "ic")))
 
-fp.append(T('<main><section style="padding-top:20px"><div class="wrap"><div class="bezel flat" data-reveal><div class="core">'
-          '<div class="tabs" role="tablist" aria-label="FanPlay mode">'
-          '<button class="tab" role="tab" id="tab-solo" aria-controls="pane" aria-selected="false" data-mode="solo">'
-          '<span class="ibox">@@</span><div><b>Individual</b><span>One player</span></div></button>'
-          '<button class="tab" role="tab" id="tab-club" aria-controls="pane" aria-selected="true" data-mode="club">'
-          '<span class="ibox">@@</span><div><b>Dream Club</b><span>Whole club · +15%</span></div></button></div>', ic("boot", "ic-lg"), ic("crest", "ic-lg")))
+fp.append('<main><section style="padding:26px 0 120px"><div class="wrap"><div class="fp-grid">')
 
-fp.append(T('<div class="fp-body" id="pane" role="tabpanel" aria-labelledby="tab-club"><div class="fp-left">'
-          '<div class="fp-sel"><span class="badge" id="selBadge">@@</span>'
-          '<div><div class="nm" id="selName">Zero FC</div><p class="sub" id="selSub">4-3-3 · Coach $Arteta · XI + 4 bench</p></div>'
-          '<div class="right">Ownership<br><span class="up">Verified</span></div></div>'
-          '<div class="k-label">Select market</div><div class="markets" id="markets">', ic("crest", "ic")))
+# ── the three decisions, in the order you make them ──
+fp.append(T('<div class="fp-flow" id="pane" role="tabpanel" aria-labelledby="tab-club">'
+            '<div class="fstep" data-reveal>'
+            '<div class="fstep-h"><span class="n">1</span>What you are playing</div>'
+            '<div class="seg2" role="tablist" aria-label="FanPlay mode">'
+            '<button class="tab" role="tab" id="tab-solo" aria-controls="pane" aria-selected="false" '
+            'data-mode="solo">@@<span class="l">Individual</span><span class="s">One player</span></button>'
+            '<button class="tab" role="tab" id="tab-club" aria-controls="pane" aria-selected="true" '
+            'data-mode="club">@@<span class="l">Dream Club</span><span class="s">Whole club · +15%</span>'
+            '</button></div>'
+            '<div class="fp-sel"><span class="badge" id="selBadge">@@</span>'
+            '<div style="min-width:0"><div class="nm" id="selName">Zero FC</div>'
+            '<p class="sub" id="selSub">4-3-3 · Coach $Arteta · XI + 4 bench</p></div>'
+            '<div class="right">Ownership<span class="up">Verified</span></div></div>'
+            '<div class="line"><span>Fixtures tracked</span><b id="fixtures">9 matches · 4 leagues</b></div>'
+            '</div>',
+            ic("boot", "ic"), ic("crest", "ic"), ic("crest", "ic")))
+
+fp.append('<div class="fstep" data-reveal>'
+          '<div class="fstep-h"><span class="n">2</span>Market</div>'
+          '<div class="tierrail" id="markets">')
 TIERS = [("Simple", 1, "Goals, assists and clean sheets.", 18),
          ("PRO", 1.4, "Adds key passes, duels won and expected goals.", 32),
          ("Elite", 2, "Full performance data, position-weighted.", 50),
@@ -818,56 +931,50 @@ TIERS = [("Simple", 1, "Goals, assists and clean sheets.", 18),
          ("Viynx Move", 4.5, "Scoring swings with live in-match movement.", 84),
          ("Viynx Max", 7, "Every event counts, at maximum weight.", 100)]
 for name, m, note, risk in TIERS:
-    fp.append(T('<button class="mkt"@@ data-m="@@" data-note="@@">@@</button>', ' aria-pressed="true"' if name == "Elite" else ' aria-pressed="false"', m, note, name))
-fp.append('</div><p class="mkt-note" id="mktNote">Full performance data, position-weighted.</p>'
-          '<div style="border-top:1px solid var(--hair);padding-top:20px">'
-          '<div class="b-row"><span>Settlement window</span><b>MD 07 · Fri 18:30</b></div>'
-          '<div class="b-row"><span>Fixtures tracked</span><b id="fixtures">9 matches · 4 leagues</b></div>'
-          '<div class="b-row"><span>Entry stake</span><b>2,500 $FTR</b></div></div></div>')
+    fp.append(T('<button class="mkt tiercard"@@ data-m="@@" data-note="@@">'
+                '<span class="t">@@</span><span class="x">×@@</span>'
+                '<span class="risk"><i style="width:@@%"></i></span></button>',
+                ' aria-pressed="true"' if name == "Elite" else ' aria-pressed="false"',
+                m, note, name, ("%g" % m), risk))
+fp.append('</div><p class="mkt-note" id="mktNote">Full performance data, position-weighted.</p></div>')
 
-fp.append('<div class="fp-right"><div class="k-label">Projected round</div><div class="calc">'
-          '<div class="cr"><span id="baseLabel">Club base points</span><b id="basePts">100 FP</b></div>'
-          '<div class="cr"><span>Market multiplier</span><b id="multPts">×2.0</b></div>'
-          '<div class="cr boost" id="boostRow"><span>Club boost</span><b>+15%</b></div>'
-          '<div class="cr" id="capRow"><span>Captain $Bruno ×1.5</span><b>in base</b></div>'
-          '<div class="out"><div class="k">Projected Fantrade Points</div><div class="v" id="fpOut">230</div>'
-          '<div class="n" id="fpNote">Club mode · Elite</div></div></div>'
-          + btn("Activate entry", tag="button", extra='id="activateEntryBtn" style="margin-top:20px;width:100%;justify-content:space-between"') +
-          '</div></div></div></div></div></section>')
+fp.append(T('<div class="fstep" data-reveal>'
+            '<div class="fstep-h"><span class="n">3</span>Stake</div>'
+            '<div class="field"><label>Amount</label>'
+            '<input id="fpStake" value="2,500" inputmode="numeric"></div>'
+            '<div class="quick"><button type="button" data-st="1000">1,000</button>'
+            '<button type="button" data-st="2500">2,500</button>'
+            '<button type="button" data-st="5000">5,000</button>'
+            '<button type="button" class="maxbtn" id="fpMax">Max</button></div>'
+            '<div class="line"><span>Available</span><b><span data-bind="balance">128,450</span> $FTR</b></div>'
+            '<div class="line"><span>Weekly cap remaining</span><b id="fpCapLeft">—</b></div>'
+            '<div class="capbar"><i id="fpCapBar" style="width:50%"></i></div>'
+            '</div></div>'))
 
-# ── matchday board ────────────────────────────────────────────────
-# (fid, home, home colour, home score, away, away colour, away score,
-#  status, clock, your asset on the pitch)
-MATCHDAY = [
-    ("eng", "Premier League", "Matchweek 7", [
-        ("m-ars", "Arsenal", "ARS", "#EF0107", "2", "Chelsea", "CHE", "#034694", "1", "live", "68'", "$Saka · 42 FP"),
-        ("m-mci", "Man City", "MCI", "#6CABDD", "3", "Everton", "EVE", "#003399", "0", "live", "71'", "$Haaland · 58 FP"),
-        ("m-mun", "Man United", "MUN", "#DA291C", "1", "Tottenham", "TOT", "#8f95a3", "1", "live", "54'", "$Bruno · 31 FP"),
-        ("m-new", "Newcastle", "NEW", "#8f95a3", "–", "Brighton", "BHA", "#0057B8", "–", "soon", "19:30", ""),
-    ]),
-    ("esp", "La Liga", "Jornada 7", [
-        ("m-rma", "Real Madrid", "RMA", "#FEBE10", "4", "Real Betis", "BET", "#00954C", "0", "ft", "FT", "$Vinicius · 44 FP"),
-        ("m-bar", "Barcelona", "BAR", "#A50044", "–", "Sevilla", "SEV", "#D4021D", "–", "soon", "21:00", "$Pedri"),
-    ]),
-    ("ger", "Bundesliga", "Spieltag 6", [
-        ("m-bay", "Bayern", "FCB", "#DC052D", "2", "RB Leipzig", "RBL", "#DD0741", "2", "ht", "HT", "$Musiala · 19 FP"),
-    ]),
-    ("ita", "Serie A", "Play-offs", [
-        ("m-sud", "Sudtirol", "SUD", "#8f95a3", "1", "Bari", "BAR", "#C8102E", "1", "aet", "AET", ""),
-        ("m-bar2", "Barnsley", "BAR", "#D2122E", "–", "Sheff Wednesday", "SHW", "#0057B8", "–", "soon", "20:30", ""),
-    ]),
-]
+# ── the running answer, pinned beside the form ──
+fp.append(T('<aside class="fp-side" data-reveal>'
+            '<div class="fp-card">'
+            '<div class="k-label">Round closes in</div>'
+            '<div class="countdown"><div class="cd"><b id="fpH">04</b><span>Hours</span></div>'
+            '<div class="cd"><b id="fpM">12</b><span>Mins</span></div>'
+            '<div class="cd"><b id="fpS">38</b><span>Secs</span></div></div>'
+            '<div class="calc" style="margin-top:24px">'
+            '<div class="cr"><span id="baseLabel">Club base points</span><b id="basePts">100 FP</b></div>'
+            '<div class="cr"><span>Market multiplier</span><b id="multPts">×2.0</b></div>'
+            '<div class="cr boost" id="boostRow"><span>Club boost</span><b>+15%</b></div>'
+            '<div class="cr" id="capRow"><span>Captain $Bruno ×1.5</span><b>in base</b></div>'
+            '<div class="out"><div class="k">Projected Fantrade Points</div>'
+            '<div class="v" id="fpOut">230</div>'
+            '<div class="n" id="fpNote">Club mode · Elite</div></div></div>'
+            '@@'
+            '<a class="fp-boardlink" href="liveboard.html">@@<span>Live board</span>'
+            '<em id="fpBoardNote">9 fixtures · 4 with your assets</em>@@</a>'
+            '</div></aside>',
+            btn("Activate entry", tag="button",
+                extra='id="activateEntryBtn" style="margin-top:20px;width:100%;justify-content:space-between"'),
+            ic("pulse", "ic"), ic("arrow", "ic-sm")))
 
-fp.append(T('<section style="padding:0 0 120px"><div class="wrap">'
-            '<div class="rowhead" data-reveal style="border-top:1px solid var(--hair);padding-top:26px">'
-            '<span class="ibox">@@</span>'
-            '<div><div style="font-family:Archivo;font-variation-settings:\'wdth\' 120,\'wght\' 800;'
-            'text-transform:uppercase;font-size:18px">Live board</div>'
-            '<div class="sub-line">9 fixtures · 4 with your assets</div></div>'
-            '<span style="margin-left:auto">@@</span></div>'
-            '</div></section>', ic("pulse", "ic-lg"),
-            btn("Open the board", "btn-glass", "liveboard.html")))
-
+fp.append('</div></div></section>')
 fp.append('</main>')
 
 FP_JS = r"""
@@ -898,7 +1005,8 @@ tabs.forEach(function(t){ t.addEventListener('click',function(){
   document.getElementById('pane').setAttribute('aria-labelledby',t.id); render(); }); });
 mkts.forEach(function(m){ m.addEventListener('click',function(){
   mkts.forEach(function(x){ x.setAttribute('aria-pressed','false'); });
-  m.setAttribute('aria-pressed','true'); mult=parseFloat(m.dataset.m); mktName=m.textContent.trim();
+  m.setAttribute('aria-pressed','true'); mult=parseFloat(m.dataset.m);
+  mktName=(m.querySelector('.t')||m).textContent.trim();
   document.getElementById('mktNote').textContent=m.dataset.note; render(); }); });
 render();
 
@@ -919,17 +1027,20 @@ if(actBtn){
     var target=mode==='club'?s.club.name:'$Bruno';
 
     try{
+      var stake=stakeAmount();
+      if(stake<100){ showToast("The smallest stake is 100 $FTR.", "error"); return; }
       var entry=FT.activateFanPlayEntry({
         mode: mode,
         target: target,
         tier: mktName,
         mult: mult,
-        stake: 2500,
+        stake: stake,
         projectedFP: total
       });
       syncFPEntriesCount();
-      showToast("Entry activated for "+target+" in "+mktName+" tier! 2,500 $FTR staked.", "success");
-      actBtn.innerHTML="Entry Active · 2,500 $FTR Staked <span class='cap'><svg class='ic'><use href='#i-check'/></svg></span>";
+      showToast("Entry activated for "+target+" in "+mktName+" tier · "
+        +stake.toLocaleString('en-US')+" $FTR staked.", "success");
+      actBtn.innerHTML="Entry active <span class='cap'><svg class='ic'><use href='#i-check'/></svg></span>";
       setTimeout(function(){
         actBtn.innerHTML="Activate another entry <span class='cap'><svg class='ic'><use href='#i-arrow'/></svg></span>";
       },3200);
@@ -943,6 +1054,80 @@ if(actBtn){
 }
 window.addEventListener('fantrade:statechange', syncFPEntriesCount);
 
+// ── stake field ─────────────────────────────────────────────────
+function el(id){ return document.getElementById(id); }
+function stakeAmount(){ return parseInt(String(el('fpStake').value).replace(/[^0-9]/g,''),10)||0; }
+function capBar(){
+  var s=FT.getState(), cap=s.prefs.stakeCap||5000, used=stakeAmount();
+  var left=Math.max(0, cap-used);
+  el('fpCapLeft').textContent=left.toLocaleString('en-US')+' of '+cap.toLocaleString('en-US')+' $FTR';
+  el('fpCapBar').style.width=Math.min(100, used/cap*100).toFixed(0)+'%';
+  el('fpCapBar').style.background=used>cap?'var(--red)':'var(--lime)';
+}
+el('fpStake').addEventListener('input',function(){
+  var v=el('fpStake').value.replace(/[^0-9]/g,'');
+  el('fpStake').value=v?(+v).toLocaleString('en-US'):'';
+  capBar();
+});
+document.querySelectorAll('[data-st]').forEach(function(b){
+  b.addEventListener('click',function(){
+    el('fpStake').value=(+b.dataset.st).toLocaleString('en-US'); capBar();
+  });
+});
+el('fpMax').addEventListener('click',function(){
+  var s=FT.getState();
+  el('fpStake').value=Math.min(s.wallet.balance, s.prefs.stakeCap||5000).toLocaleString('en-US');
+  capBar();
+});
+capBar();
+window.addEventListener('fantrade:statechange', capBar);
+
+// ── round clock ─────────────────────────────────────────────────
+var left=4*3600+12*60+38;
+function pad(n){ return n<10?'0'+n:''+n; }
+if(!reduce) setInterval(function(){
+  if(left<=0) return; left--;
+  el('fpH').textContent=pad(Math.floor(left/3600));
+  el('fpM').textContent=pad(Math.floor(left%3600/60));
+  el('fpS').textContent=pad(left%60);
+},1000);
+
+// ── matchday alerts, from the same feed the bell in the top bar reads ──
+var KIND={settle:'Settlement', order:'Order', club:'Club', system:'Account'};
+el('fpBell').addEventListener('click',function(){
+  var s=FT.getState();
+  var rows=(s.notifications||[]).filter(function(n){
+    return n.kind==='settle'||n.kind==='club';
+  }).slice(0,5);
+  var html='<h3 class="ft-modal-title">Matchday alerts</h3>';
+  if(!rows.length){
+    html+='<div class="empty-state"><svg class="ic-xl" aria-hidden="true"><use href="#i-pulse"/></svg>'
+      +'Nothing on the round yet.</div>';
+  } else {
+    html+='<div style="max-height:52vh;overflow:auto;margin-bottom:18px">'+rows.map(function(n){
+      return '<div class="trow"><span class="coin'+(n.tone==='up'?' lime':'')+'">'
+        +'<svg class="ic" aria-hidden="true"><use href="#i-'+n.icon+'"/></svg></span>'
+        +'<div class="bd"><div class="t">'+n.title+(n.read?'':' <span class="tag lime">New</span>')+'</div>'
+        +'<div class="d">'+KIND[n.kind]+' · '+n.time+'</div></div>'
+        +(n.amt?'<div class="a" style="color:'+(n.tone==='down'?'var(--red)':'var(--lime)')+'">'+n.amt+'</div>':'')
+        +'</div>';
+    }).join('')+'</div>';
+  }
+  html+='<div style="display:flex;gap:10px;flex-wrap:wrap">'
+    +'<a class="btn btn-lime" href="notifications.html" style="flex:1;justify-content:center">All activity</a>'
+    +'<button class="btn btn-glass" id="fpBellRead" type="button" style="flex:1;justify-content:center">'
+    +'Mark read</button></div>';
+  openModal(html);
+  var r=el('fpBellRead');
+  if(r) r.addEventListener('click',function(){ FT.readAll(); closeModal(); paintBell(); });
+});
+function paintBell(){
+  var n=FT.unread();
+  el('fpBellDot').hidden = n===0;
+  el('fpBell').setAttribute('aria-label', n ? n+' unread matchday alerts' : 'Matchday alerts');
+}
+paintBell();
+window.addEventListener('fantrade:statechange', paintBell);
 """
 page("fanplay.html", "FanPlay — Fantrade", "".join(fp), FP_JS, FP_CSS, app=True)
 
@@ -950,6 +1135,29 @@ page("fanplay.html", "FanPlay — Fantrade", "".join(fp), FP_JS, FP_CSS, app=Tru
 # ══════════════════════════════════════════════════════════
 # 4b. LIVE BOARD — its own screen, nothing boxed
 # ══════════════════════════════════════════════════════════
+# ── matchday board ────────────────────────────────────────────────
+# (fid, home, home code, home colour, home score, away, away code,
+#  away colour, away score, status, clock, your asset on the pitch)
+MATCHDAY = [
+    ("eng", "Premier League", "Matchweek 7", [
+        ("m-ars", "Arsenal", "ARS", "#EF0107", "2", "Chelsea", "CHE", "#034694", "1", "live", "68'", "$Saka · 42 FP"),
+        ("m-mci", "Man City", "MCI", "#6CABDD", "3", "Everton", "EVE", "#003399", "0", "live", "71'", "$Haaland · 58 FP"),
+        ("m-mun", "Man United", "MUN", "#DA291C", "1", "Tottenham", "TOT", "#8f95a3", "1", "live", "54'", "$Bruno · 31 FP"),
+        ("m-new", "Newcastle", "NEW", "#8f95a3", "\u2013", "Brighton", "BHA", "#0057B8", "\u2013", "soon", "19:30", ""),
+    ]),
+    ("esp", "La Liga", "Jornada 7", [
+        ("m-rma", "Real Madrid", "RMA", "#FEBE10", "4", "Real Betis", "BET", "#00954C", "0", "ft", "FT", "$Vinicius · 44 FP"),
+        ("m-bar", "Barcelona", "BAR", "#A50044", "\u2013", "Sevilla", "SEV", "#D4021D", "\u2013", "soon", "21:00", "$Pedri"),
+    ]),
+    ("ger", "Bundesliga", "Spieltag 6", [
+        ("m-bay", "Bayern", "FCB", "#DC052D", "2", "RB Leipzig", "RBL", "#DD0741", "2", "ht", "HT", "$Musiala · 19 FP"),
+    ]),
+    ("ita", "Serie A", "Play-offs", [
+        ("m-sud", "Sudtirol", "SUD", "#8f95a3", "1", "Bari", "BAR", "#C8102E", "1", "aet", "AET", ""),
+        ("m-bar2", "Barnsley", "BAR", "#D2122E", "\u2013", "Sheff Wednesday", "SHW", "#0057B8", "\u2013", "soon", "20:30", ""),
+    ]),
+]
+
 LB_CSS = FP_CSS + """
 .bezel.flat .datestrip{margin-bottom:4px}
 """
@@ -966,6 +1174,7 @@ lb.append(T('<div style="padding:0 0 18px">'
             '<div class="datestrip">'
             '<button class="livetgl" type="button" id="liveOnly" aria-pressed="false">'
             '<span class="dot-live"></span>Live only</button>'
+            '<div class="dateline">'
             '<div class="dates" id="dateStrip">'
             '<span class="nudge">@@</span>'
             '<button type="button" aria-pressed="false"><small>Sun</small><b>28 Sep</b></button>'
@@ -974,7 +1183,7 @@ lb.append(T('<div style="padding:0 0 18px">'
             '<span class="nudge">@@</span></div>'
             '<button class="bell" type="button" id="calBtn" aria-label="Open the full calendar" '
             'style="border-radius:14px">@@</button>'
-            '</div></div>',
+            '</div></div></div>',
             "‹", "›", ic("calendar", "ic")))
 
 # featured match
