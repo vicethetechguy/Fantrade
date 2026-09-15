@@ -885,33 +885,129 @@ APP_CSS = r"""
 .topbar{padding:8px 8px 8px 22px}
 .topbar .logo{margin-right:26px}
 .taskbar{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:75;
-  display:flex;align-items:flex-end;gap:2px;padding:9px 10px;border-radius:999px;
+  display:flex;align-items:center;gap:4px;padding:8px;border-radius:999px;
   width:max-content;max-width:calc(100vw - 24px);
-  background:rgba(9,10,11,.93);backdrop-filter:blur(26px) saturate(170%);
+  background:rgba(9,10,11,.94);backdrop-filter:blur(26px) saturate(170%);
   -webkit-backdrop-filter:blur(26px) saturate(170%);border:1px solid var(--hair);
   box-shadow:var(--inset),0 26px 64px -18px rgba(0,0,0,.96)}
-.taskbar a{display:flex;flex-direction:column;align-items:center;gap:7px;padding:10px 18px 8px;
-  border-radius:999px;color:var(--faint);min-width:76px;
-  transition:color .5s var(--ease),background .5s var(--ease)}
-.taskbar a .tb-ic{display:grid;place-items:center;width:26px;height:26px}
-.taskbar a .ic{width:20px;height:20px}
-.taskbar a span:last-child{font-weight:600;font-size:9px;letter-spacing:.12em;text-transform:uppercase;
-  white-space:nowrap}
+.taskbar a{display:flex;align-items:center;gap:0;height:46px;padding:0 15px;border-radius:999px;
+  color:var(--faint);transition:color .5s var(--ease),background .55s var(--ease),padding .55s var(--ease)}
+.taskbar a .ic{width:20px;height:20px;flex:none}
+.taskbar a span{max-width:0;overflow:hidden;white-space:nowrap;opacity:0;
+  font-weight:600;font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+  transition:max-width .55s var(--ease),opacity .4s var(--ease),margin .55s var(--ease)}
 .taskbar a:hover{color:var(--ink)}
-.taskbar a.on{color:var(--lime)}
-.taskbar a.on .tb-ic{background:rgba(196,248,42,.13);border-radius:999px;
-  box-shadow:0 0 0 1px rgba(196,248,42,.28)}
-.taskbar a.mid{padding-top:0}
-.taskbar a.mid .tb-ic{width:52px;height:52px;border-radius:999px;margin-top:-20px;
-  background:rgba(196,248,42,.14);border:1px solid rgba(196,248,42,.32);color:var(--lime);
-  transition:background .5s var(--ease),box-shadow .5s var(--ease)}
-.taskbar a.mid .ic{width:24px;height:24px}
-.taskbar a.mid:hover .tb-ic{background:rgba(196,248,42,.24)}
-.taskbar a.mid.on{color:var(--lime)}
-.taskbar a.mid.on .tb-ic{background:var(--lime);border-color:var(--lime);color:#0A0D03;
-  box-shadow:0 16px 38px -12px rgba(196,248,42,.95)}
-.taskbar ~ footer{padding-bottom:calc(128px + env(safe-area-inset-bottom))}
-.taskbar ~ .ft-toast-container{bottom:calc(104px + env(safe-area-inset-bottom))}
+.taskbar a.on{background:var(--lime);color:#0A0D03;padding:0 20px;
+  box-shadow:var(--inset),0 14px 32px -12px rgba(196,248,42,.85)}
+.taskbar a.on span{max-width:130px;opacity:1;margin-left:10px}
+.taskbar ~ footer{padding-bottom:calc(126px + env(safe-area-inset-bottom))}
+.taskbar ~ .ft-toast-container{bottom:calc(102px + env(safe-area-inset-bottom))}
+
+/* ── wallet: gradient balance card ──────────────────── */
+.wcard{position:relative;border-radius:26px;padding:26px 24px 22px;overflow:hidden;
+  background:linear-gradient(150deg,#d7ff55 0%,#C4F82A 44%,#8ab800 100%);color:#0A0D03;
+  box-shadow:0 26px 62px -22px rgba(196,248,42,.5),var(--inset)}
+.wcard::after{content:"";position:absolute;right:-80px;top:-100px;width:270px;height:270px;
+  border-radius:50%;background:rgba(255,255,255,.17);pointer-events:none}
+.wcard::before{content:"";position:absolute;left:-60px;bottom:-120px;width:230px;height:230px;
+  border-radius:50%;background:rgba(10,13,3,.07);pointer-events:none}
+.wcard>*{position:relative;z-index:1}
+.wcard .k{font-weight:600;font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;
+  color:rgba(10,13,3,.58)}
+.wcard .amt{font-family:'JetBrains Mono',monospace;font-weight:300;font-size:clamp(32px,4.4vw,52px);
+  letter-spacing:-.04em;line-height:1;margin:13px 0 11px}
+.wcard .amt small{font-size:16px;color:rgba(10,13,3,.5);letter-spacing:0}
+.wcard .sub{display:flex;align-items:center;gap:8px;font-size:12.5px;color:rgba(10,13,3,.74);
+  font-weight:500}
+.wcard .sub .ic{width:13px;height:13px}
+.wcard .tag-id{position:absolute;top:26px;right:24px;font-family:'JetBrains Mono',monospace;
+  font-size:11px;color:rgba(10,13,3,.55);z-index:1}
+.wacts{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:26px}
+.wacts button{display:flex;flex-direction:column;align-items:center;gap:9px;padding:14px 4px 12px;
+  border-radius:18px;border:1px solid rgba(10,13,3,.16);background:rgba(10,13,3,.08);color:#0A0D03;
+  cursor:pointer;font-family:Montserrat,sans-serif;transition:background .5s var(--ease)}
+.wacts button:hover{background:rgba(10,13,3,.16)}
+.wacts button[aria-pressed="true"]{background:#0A0D03;color:var(--lime);border-color:#0A0D03}
+.wacts button .ic{width:19px;height:19px}
+.wacts button span{font-weight:600;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase}
+
+/* quick-send row */
+.quickrow{display:flex;gap:16px;overflow-x:auto;padding:6px 0 10px;scrollbar-width:none}
+.quickrow::-webkit-scrollbar{display:none}
+.qp{flex:none;width:66px;text-align:center;background:transparent;border:0;cursor:pointer;
+  color:var(--dim);font-family:Montserrat,sans-serif;padding:0}
+.qp .av{width:52px;height:52px;border-radius:999px;margin:0 auto 9px;display:grid;place-items:center;
+  border:1px solid var(--hair);box-shadow:var(--inset);font-family:Archivo;
+  font-variation-settings:'wdth' 100,'wght' 800;font-size:15px;color:#0A0D03;
+  transition:transform .5s var(--ease)}
+.qp:hover .av{transform:translateY(-3px)}
+.qp .av.add{border-style:dashed;border-color:rgba(196,248,42,.42);color:var(--lime);
+  background:rgba(196,248,42,.07)}
+.qp .av.add .ic{width:20px;height:20px}
+.qp span{display:block;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.qp:hover{color:var(--ink)}
+
+/* transaction history */
+.trow{display:flex;align-items:center;gap:14px;padding:14px 0;
+  border-bottom:1px solid rgba(255,255,255,.05)}
+.trow:last-child{border-bottom:0}
+.trow .bd{min-width:0;flex:1}
+.trow .t{font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.trow .d{font-size:11px;color:var(--faint);margin-top:4px}
+.trow .a{font-family:'JetBrains Mono',monospace;font-size:13.5px;flex:none;white-space:nowrap}
+.seeall{margin-left:auto;font-size:11.5px;color:var(--lime);display:flex;align-items:center;gap:7px}
+.seeall .ic{width:12px;height:12px}
+.rowhead{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.rowhead .k-label{margin:0}
+
+/* ── market pages ───────────────────────────────────── */
+.crumb{display:inline-flex;align-items:center;gap:9px;font-weight:600;font-size:10.5px;letter-spacing:.14em;
+  color:var(--faint);text-transform:uppercase;transition:color .4s var(--ease)}
+.crumb:hover{color:var(--lime)}
+.crumb .ic{width:13px;height:13px;transform:rotate(180deg)}
+.asset-head{display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.asset-head .coin{width:62px;height:62px}
+.asset-head .coin .ic{width:28px;height:28px}
+.asset-head .nm{font-family:Archivo;font-variation-settings:'wdth' 125,'wght' 900;text-transform:uppercase;
+  font-size:clamp(26px,3.2vw,40px);line-height:1}
+.asset-head .sym{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--lime);margin-top:7px}
+.asset-head .px{margin-left:auto;text-align:right}
+.asset-head .px .v{font-family:'JetBrains Mono',monospace;font-weight:300;font-size:clamp(26px,3vw,38px);
+  letter-spacing:-.03em;line-height:1}
+.asset-head .px .d{font-family:'JetBrains Mono',monospace;font-size:13px;margin-top:8px}
+.book{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.book .side .h{display:flex;justify-content:space-between;font-weight:600;font-size:9px;letter-spacing:.14em;
+  color:var(--faint);text-transform:uppercase;padding-bottom:10px;border-bottom:1px solid var(--hair);
+  margin-bottom:4px}
+.brow{position:relative;display:flex;justify-content:space-between;padding:7px 8px;
+  font-family:'JetBrains Mono',monospace;font-size:12px;border-radius:7px;overflow:hidden}
+.brow i{position:absolute;top:0;bottom:0;right:0;display:block;border-radius:7px}
+.brow span{position:relative;z-index:1}
+.book .bid .brow i{background:rgba(196,248,42,.13)}
+.book .bid .brow span:first-child{color:var(--lime)}
+.book .ask .brow i{background:rgba(255,94,94,.12)}
+.book .ask .brow span:first-child{color:var(--red)}
+.spread{text-align:center;padding:12px 0;margin:6px 0;border-top:1px solid var(--hair);
+  border-bottom:1px solid var(--hair);font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--faint)}
+.sideseg{display:flex;gap:5px;padding:5px;border-radius:16px;background:rgba(255,255,255,.035);
+  border:1px solid var(--hair);box-shadow:var(--inset);margin-bottom:18px}
+.sideseg button{flex:1;border:0;background:transparent;color:var(--dim);border-radius:12px;padding:13px 0;
+  cursor:pointer;font-family:Montserrat,sans-serif;font-weight:600;font-size:11.5px;letter-spacing:.1em;
+  text-transform:uppercase;transition:all .5s var(--ease)}
+.sideseg button[aria-pressed="true"][data-s="buy"]{background:var(--lime);color:#0A0D03}
+.sideseg button[aria-pressed="true"][data-s="sell"]{background:var(--red);color:#1a0505}
+.sideseg button:hover:not([aria-pressed="true"]){color:var(--ink)}
+.statgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.statgrid .mini{padding:16px}
+.statgrid .mini .v{font-size:19px}
+.tr-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;padding:9px 0;
+  font-family:'JetBrains Mono',monospace;font-size:12px;border-bottom:1px solid rgba(255,255,255,.04)}
+.tr-row:last-child{border-bottom:0}
+@media (max-width:768px){
+  .book{grid-template-columns:1fr;gap:26px}
+  .statgrid{grid-template-columns:1fr 1fr}
+  .asset-head .px{margin-left:0;text-align:left;width:100%}
+}
 
 /* ── account hub ────────────────────────────────────── */
 .hub{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
@@ -1116,14 +1212,13 @@ APP_CSS = r"""
   .ladder::before{top:50%;bottom:auto;left:6px;right:6px;width:auto;height:1px}
   .gbar{height:88px}
   .tabstrip button{padding:9px 14px;font-size:9.5px}
-  .taskbar{left:10px;right:10px;bottom:max(12px,env(safe-area-inset-bottom));transform:none;
-    width:auto;max-width:none;justify-content:space-between;padding:8px 8px;gap:0}
-  .taskbar a{min-width:0;flex:1;padding:8px 4px 6px;gap:6px}
-  .taskbar a span:last-child{font-size:8px;letter-spacing:.08em}
-  .taskbar a .ic{width:18px;height:18px}
-  .taskbar a.mid .tb-ic{width:46px;height:46px;margin-top:-17px}
-  .taskbar a.mid .ic{width:21px;height:21px}
-  .taskbar ~ footer{padding-bottom:calc(122px + env(safe-area-inset-bottom))}
+  .taskbar{left:12px;right:12px;bottom:max(12px,env(safe-area-inset-bottom));transform:none;
+    width:auto;max-width:none;justify-content:space-between;padding:7px;gap:2px}
+  .taskbar a{height:44px;padding:0 13px}
+  .taskbar a.on{padding:0 16px}
+  .taskbar a.on span{max-width:110px;font-size:10px;margin-left:9px}
+  .taskbar a .ic{width:19px;height:19px}
+  .taskbar ~ footer{padding-bottom:calc(120px + env(safe-area-inset-bottom))}
   .topbar{padding:6px 8px 6px 14px}
   .topbar .logo{margin-right:0}
   .hub{grid-template-columns:1fr}
@@ -1164,7 +1259,9 @@ TASKBAR = [("dashboard.html", "Home", "chart"),
 # Every app page lights up one of the five tabs.
 TAB_OF = {"dashboard.html": "dashboard.html", "clubs.html": "dashboard.html",
           "onboarding.html": "dashboard.html",
-          "exchange.html": "exchange.html",
+          "exchange.html": "exchange.html", "asset.html": "exchange.html",
+          "trade.html": "exchange.html", "club-builder.html": "dashboard.html",
+          "divisions.html": "leaderboard.html",
           "fanplay.html": "fanplay.html",
           "leaderboard.html": "leaderboard.html",
           "account.html": "account.html", "ftr.html": "account.html",
@@ -1173,15 +1270,14 @@ TAB_OF = {"dashboard.html": "dashboard.html", "clubs.html": "dashboard.html",
 
 
 def taskbar(current=""):
-    """Floating five-item bar. FanPlay sits in the middle on a lime disc."""
+    """Floating five-item bar — the current tab expands into a filled pill."""
     tab = TAB_OF.get(current, "")
     out = []
     for href, label, icon in TASKBAR:
-        mid = href == "fanplay.html"
         on = href == tab
-        out.append('<a href="%s" class="%s%s"%s><span class="tb-ic">%s</span><span>%s</span></a>'
-                   % (href, "mid" if mid else "", " on" if on else "",
-                      ' aria-current="page"' if on else "", ic(icon, "ic"), label))
+        out.append('<a href="%s"%s%s aria-label="%s">%s<span>%s</span></a>'
+                   % (href, ' class="on"' if on else "", ' aria-current="page"' if on else "",
+                      label, ic(icon, "ic"), label))
     return '<nav class="taskbar" aria-label="Primary">%s</nav>' % "".join(out)
 
 

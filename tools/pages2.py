@@ -59,57 +59,35 @@ WALLET_ASSETS = [("$Saka", "Bukayo Saka", "boot", "", 6.4, 0),
                  ("$Bruno", "Bruno Fernandes", "boot", "", 4.2, 2),
                  ("$Arteta", "Mikel Arteta", "whistle", "am", 14.2, 9)]
 
-f = [T('<main><section class="app-head"><div class="wrap"><div class="head-row">'
-       '<div><span class="pill" data-reveal>@@ The platform currency</span>'
-       '<h1 data-reveal>Your<br>wallet</h1>'
-       '<p class="lede" data-reveal>One balance funds everything. Shares clear in $FTR, swap fees settle in $FTR, '
-       'FanPlay stakes lock in $FTR, and every settled round pays back into the same wallet.</p></div>'
-       '<div class="acts" data-reveal>@@@@</div></div>'
-       '<div class="statbar" data-reveal>'
-       '<div>@@ Available <b data-bind="balance">128,450</b> $FTR</div>'
-       '<div>@@ Locked in entries <b data-bind="locked">5,000</b></div>'
-       '<div>@@ Held in shares <b data-bind="assets">402,610</b></div>'
-       '<div>@@ Earned this season <b data-bind="earned">19,640</b></div>'
-       '</div></div></section>',
-       ic("coin", "ic"),
-       btn("Deposit", tag="button", extra='id="depositBtn"'),
-       btn("Withdraw", "btn-glass", tag="button", extra='id="withdrawBtn"'),
-       ic("wallet", "ic"), ic("lock", "ic"), ic("supply", "ic"), ic("trophy", "ic"))]
+f = [T('<main><section class="app-head" style="padding-bottom:30px"><div class="wrap">'
+       '<span class="greet" data-reveal>Wallet · FTR-012</span>'
+       '<h1 data-reveal>Hi,<br><span data-bind="first">Alex</span></h1>'
+       '<p class="lede" data-reveal>One balance funds everything — shares, swap fees, matchday stakes and '
+       'every settled payout.</p>'
+       '</div></section>')]
 
-f.append('<section style="padding:10px 0 120px"><div class="wrap"><div class="bento">')
+f.append('<section style="padding:0 0 130px"><div class="wrap"><div class="bento">')
 
-# ── balance hero ──
-f.append(T('<div class="bezel c7" data-reveal><div class="core pad">'
-           '<div class="wal-head"><div><div class="k-label">Total balance</div>'
-           '<div class="bal-big" id="walBal">128,450<small> $FTR</small></div>'
-           '<div class="bal-delta" id="walDelta">@@<span>2.35% today</span>'
-           '<em id="walGbp">≈ £10,358</em></div></div>'
-           '<div style="margin-left:auto;text-align:right">'
-           '<div class="k-label">Wallet</div>'
-           '<div class="num" style="font-size:13px">FTR-012</div>'
-           '<div class="sub-line">Non-custodial</div></div></div>'
-           '<div class="bal-chart" id="walChart"></div>'
-           '<div class="range" id="walRange">'
-           '<button type="button" aria-pressed="true" data-r="1D">1D</button>'
-           '<button type="button" aria-pressed="false" data-r="1W">1W</button>'
-           '<button type="button" aria-pressed="false" data-r="1M">1M</button>'
-           '<button type="button" aria-pressed="false" data-r="1Y">1Y</button>'
-           '<button type="button" aria-pressed="false" data-r="All">All</button></div>'
-           '<div class="acts4" id="walActs">'
+# ── gradient balance card + the four actions ──
+f.append(T('<div class="c7" data-reveal><div class="wcard">'
+           '<span class="tag-id">FTR-012</span>'
+           '<div class="k">Total balance</div>'
+           '<div class="amt" id="walBal">128,450<small> $FTR</small></div>'
+           '<div class="sub" id="walDelta">@@<span>2.35% today</span>'
+           '<span style="color:rgba(10,13,3,.5)">·</span><span id="walGbp">≈ £10,358</span></div>'
+           '<div class="wacts" id="walActs">'
            '<button type="button" aria-pressed="false" data-p="send">@@<span>Send</span></button>'
            '<button type="button" aria-pressed="true" data-p="receive">@@<span>Receive</span></button>'
            '<button type="button" aria-pressed="false" data-p="swap">@@<span>Swap</span></button>'
            '<button type="button" aria-pressed="false" data-p="buy">@@<span>Buy</span></button>'
-           '</div></div></div>',
+           '</div></div>',
            ic("arrow", "ic"), ic("arrow", "ic"), ic("hand", "ic"), ic("swap", "ic"), ic("coin", "ic")))
 
-# ── action panel ──
-f.append('<div class="bezel c5" data-reveal><div class="core pad">')
+# ── the action panel sits directly under the card ──
+f.append('<div class="bezel" style="margin-top:16px"><div class="core pad">')
 
-# receive
 f.append(T('<div class="pane on" data-pane="receive">'
-           '<div style="display:flex;align-items:center;gap:12px;margin-bottom:18px">'
-           '<div class="k-label" style="margin:0">Receive $FTR</div>'
+           '<div class="rowhead"><div class="k-label">Receive $FTR</div>'
            '<span class="listening" style="margin-left:auto"><i></i>Listening</span></div>'
            '<button class="netsel" type="button" id="netSel">'
            '<span class="coin lime">@@</span>'
@@ -127,7 +105,6 @@ f.append(T('<div class="pane on" data-pane="receive">'
                extra='id="copyAddr" style="width:100%;justify-content:space-between"'),
            ic("flag", "ic")))
 
-# send
 f.append(T('<div class="pane" data-pane="send">'
            '<div class="k-label">Send $FTR</div>'
            '<div class="tf" id="f-sendTo"><label for="sendTo">To manager or address</label>'
@@ -149,7 +126,6 @@ f.append(T('<div class="pane" data-pane="send">'
                extra='id="sendGo" style="width:100%;justify-content:space-between;margin-top:18px"'),
            ic("flag", "ic")))
 
-# swap
 f.append(T('<div class="pane" data-pane="swap">'
            '<div class="k-label">Swap one asset for another</div>'
            '<div class="tf" id="f-swapFrom"><label for="swapFrom">From</label><div class="inp">@@'
@@ -169,7 +145,6 @@ f.append(T('<div class="pane" data-pane="swap">'
            btn("Swap assets", tag="button",
                extra='id="swapGo" style="width:100%;justify-content:space-between;margin-top:18px"')))
 
-# buy
 f.append(T('<div class="pane" data-pane="buy">'
            '<div class="k-label">Buy $FTR</div>'
            '<div class="field"><label>You pay</label><input id="fiat" value="1,000" inputmode="numeric"></div>'
@@ -189,34 +164,52 @@ f.append(T('<div class="pane" data-pane="buy">'
            btn("Convert to $FTR", tag="button",
                extra='id="convertBtn" style="width:100%;justify-content:space-between;margin-top:18px"')))
 
-f.append('</div></div>')
+f.append('</div></div></div>')
+
+# ── right column: quick send + balance chart ──
+f.append(T('<div class="c5" data-reveal style="display:flex;flex-direction:column;gap:16px">'
+           '<div class="bezel"><div class="core pad">'
+           '<div class="rowhead"><div class="k-label">Recent</div>'
+           '<a class="seeall" href="portfolio.html">See all @@</a></div>'
+           '<div class="quickrow" id="quickRow"></div>'
+           '<p style="font-size:11.5px;color:var(--faint);font-weight:300;margin:6px 0 0;line-height:1.6">'
+           'Managers you have sent $FTR to. Tap one to open a transfer with their handle filled in.</p>'
+           '</div></div>'
+           '<div class="bezel" style="flex:1"><div class="core pad">'
+           '<div class="k-label">Balance history</div>'
+           '<div class="bal-chart" id="walChart" style="height:150px"></div>'
+           '<div class="range" id="walRange" style="margin-top:6px">'
+           '<button type="button" aria-pressed="true" data-r="1D">1D</button>'
+           '<button type="button" aria-pressed="false" data-r="1W">1W</button>'
+           '<button type="button" aria-pressed="false" data-r="1M">1M</button>'
+           '<button type="button" aria-pressed="false" data-r="1Y">1Y</button>'
+           '<button type="button" aria-pressed="false" data-r="All">All</button></div>'
+           '<div class="b-row" style="margin-top:20px"><span>Locked in entries</span>'
+           '<b data-bind="locked">5,000</b></div>'
+           '<div class="b-row"><span>Held in shares</span><b data-bind="assets">917,000</b></div>'
+           '<div class="b-row total"><span>Net worth</span><b data-bind="net">1,050,450</b></div>'
+           '</div></div></div>', ic("arrow", "ic-sm")))
 
 # ── my assets ──
 f.append(T('<div class="bezel c12" data-reveal><div class="core">'
-           '<div style="padding:30px 24px 16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">'
+           '<div style="padding:28px 24px 14px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">'
            '<div><div style="font-family:Archivo;font-variation-settings:\'wdth\' 120,\'wght\' 800;'
            'text-transform:uppercase;font-size:19px">My assets</div>'
            '<div class="sub-line" id="walCount">Loading…</div></div>'
-           '<a href="portfolio.html" style="margin-left:auto;font-size:11.5px;color:var(--lime);'
-           'display:flex;align-items:center;gap:8px">See all @@</a></div>'
+           '<a class="seeall" href="portfolio.html">See all @@</a></div>'
            '<div id="walAssets"></div></div></div>', ic("arrow", "ic-sm")))
 
-# ── activity ──
-f.append(T('<div class="bezel c7" data-reveal><div class="core">'
-           '<div style="padding:30px 24px 18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">'
-           '<div><div style="font-family:Archivo;font-variation-settings:\'wdth\' 120,\'wght\' 800;'
-           'text-transform:uppercase;font-size:19px">Wallet activity</div>'
-           '<div class="sub-line">Every movement in and out of this balance</div></div>'
-           '<a href="portfolio.html" style="margin-left:auto;font-size:11.5px;color:var(--lime)">'
-           'Full ledger</a></div>'
-           '<div class="tx h"><span>Activity</span><span>Type</span><span>Points</span><span>$FTR</span></div>'
-           '<div id="ledgerBody"></div></div></div>'))
+# ── transaction history ──
+f.append(T('<div class="bezel c7" data-reveal><div class="core pad">'
+           '<div class="rowhead"><div class="k-label">Transaction history</div>'
+           '<a class="seeall" href="portfolio.html">See all @@</a></div>'
+           '<div id="txHistory"></div></div></div>', ic("arrow", "ic-sm")))
 
 # ── supply ──
 f.append(T('<div class="bezel c5" data-reveal><div class="core pad">'
            '<div class="k-label">Circulating supply</div>'
            '<div class="dist" style="margin-top:10px">'
-           '<svg viewBox="0 0 42 42" style="width:118px;height:118px;flex:none">'
+           '<svg viewBox="0 0 42 42" style="width:112px;height:112px;flex:none">'
            '<circle cx="21" cy="21" r="15.9" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="5"/>'
            '<circle cx="21" cy="21" r="15.9" fill="none" stroke="#C4F82A" stroke-width="5" '
            'stroke-dasharray="46 54" stroke-dashoffset="25" transform="rotate(-90 21 21)"/>'
@@ -229,15 +222,11 @@ f.append(T('<div class="bezel c5" data-reveal><div class="core pad">'
            '<div class="kr"><i style="background:#FF6A1F"></i>Staked in rounds<b>28%</b></div>'
            '<div class="kr"><i style="background:rgba(255,255,255,.28)"></i>Rewards pool<b>14%</b></div>'
            '<div class="kr"><i style="background:rgba(255,255,255,.08)"></i>Treasury<b>12%</b></div></div></div>'
-           '<div class="k-label" style="margin-top:28px">What $FTR does</div>'
-           '<div class="rowlink">@@ Clears every exchange order<b>0.4% fee</b></div>'
-           '<div class="rowlink">@@ Settles swap differences<b>0.4% fee</b></div>'
-           '<div class="rowlink">@@ Locks FanPlay stakes<b>No fee</b></div>'
-           '<div class="rowlink">@@ Pays out settled rounds<b>No fee</b></div>'
-           '<p style="font-size:11.5px;color:var(--faint);font-weight:300;margin-top:18px;line-height:1.6">'
-           'Locked balances are shown separately and release the moment a settlement window closes.</p>'
+           '<div style="display:flex;gap:10px;margin-top:24px;flex-wrap:wrap">@@@@</div>'
            '</div></div>',
-           ic("candle", "ic"), ic("swap", "ic"), ic("bolt", "ic"), ic("trophy", "ic")))
+           btn("Deposit", tag="button", extra='id="depositBtn" style="flex:1;justify-content:space-between"'),
+           btn("Withdraw", "btn-glass", tag="button",
+               extra='id="withdrawBtn" style="flex:1;justify-content:space-between"')))
 
 f.append('</div></div></section></main>')
 
@@ -300,9 +289,7 @@ var DELTA = { '1D': 2.35, '1W': 6.10, '1M': 14.82, '1Y': 61.40, 'All': 184.20 };
 var WORD = { '1D': 'today', '1W': 'this week', '1M': 'this month', '1Y': 'this year', 'All': 'all time' };
 function paint(r){
   drawArea(el('walChart'), SERIES[r], DELTA[r] >= 0);
-  var d = el('walDelta');
-  d.className = 'bal-delta' + (DELTA[r] >= 0 ? '' : ' down');
-  d.querySelector('span').textContent = (DELTA[r] >= 0 ? '' : '') + DELTA[r].toFixed(2) + '% ' + WORD[r];
+  el('walDelta').querySelector('span').textContent = DELTA[r].toFixed(2) + '% ' + WORD[r];
 }
 document.querySelectorAll('#walRange button').forEach(function(b){
   b.addEventListener('click', function(){
@@ -465,34 +452,64 @@ function renderAssets(){
   });
 }
 
-// ── ledger ──
+// ── transaction history ──
 var LICON = { BUY:'candle', SELL:'candle', STAKE:'bolt', PAYOUT:'trophy', CONVERT:'swap',
               DEPOSIT:'wallet', WITHDRAW:'bank', SEND:'hand', SWAP:'swap', SETTLE:'trophy' };
-function renderLedger(){
-  var s = FT.getState(), lb = el('ledgerBody');
-  if(!lb) return;
+function label(t){
+  if(t.type === 'BUY')  return 'Bought ' + t.shares.toLocaleString('en-US') + ' ' + t.asset;
+  if(t.type === 'SELL') return 'Sold ' + t.shares.toLocaleString('en-US') + ' ' + t.asset;
+  if(t.type === 'STAKE') return 'Staked ' + t.asset;
+  if(t.type === 'SEND') return 'Sent to ' + t.asset;
+  if(t.type === 'WITHDRAW') return 'Withdrawn to ' + t.asset;
+  if(t.type === 'SWAP') return 'Swapped ' + t.asset;
+  if(t.type === 'CONVERT') return 'Added via ' + t.asset;
+  if(t.type === 'DEPOSIT') return 'Added via direct deposit';
+  if(t.type === 'PAYOUT') return t.asset;
+  return t.asset;
+}
+function renderHistory(){
+  var s = FT.getState(), box = el('txHistory');
+  if(!box) return;
   if(!s.transactions || !s.transactions.length){
-    lb.innerHTML = '<div class="empty-state"><svg class="ic-xl" aria-hidden="true"><use href="#i-receipt"/></svg>'
-      + 'No movements yet. Buy $FTR or a first share to start the ledger.</div>';
+    box.innerHTML = '<div class="empty-state"><svg class="ic-xl" aria-hidden="true"><use href="#i-receipt"/></svg>'
+      + 'No movements yet. Buy $FTR or a first share to start the history.</div>';
     return;
   }
-  lb.innerHTML = s.transactions.slice(0, 8).map(function(t){
+  box.innerHTML = s.transactions.slice(0, 7).map(function(t){
     var down = ['BUY','STAKE','SEND','WITHDRAW'].indexOf(t.type) > -1;
-    var label = t.type === 'BUY' ? 'Bought ' + t.shares.toLocaleString('en-US') + ' ' + t.asset
-      : (t.type === 'SELL' ? 'Sold ' + t.shares.toLocaleString('en-US') + ' ' + t.asset
-      : (t.type === 'STAKE' ? 'Staked ' + t.asset
-      : (t.type === 'SEND' ? 'Sent to ' + t.asset
-      : (t.type === 'SWAP' ? 'Swapped ' + t.asset : t.asset))));
-    return '<div class="tx"><span class="w">'
-      + '<svg class="ic-sm" aria-hidden="true"><use href="#i-' + (LICON[t.type] || 'receipt') + '"/></svg>'
-      + '<span>' + label + '</span></span>'
-      + '<span style="color:var(--dim);font-size:12.5px">'
-      + (t.type === 'BUY' || t.type === 'SELL' ? 'Exchange' : t.type) + '</span>'
-      + '<span class="num" style="font-size:12.5px;color:var(--faint)">' + (t.points ? '+' + t.points + ' FP' : '—') + '</span>'
-      + '<span class="num ' + (down ? 'down' : 'up') + '">' + (down ? '−' : '+')
-      + money(Math.abs(t.total)) + '</span></div>';
+    return '<div class="trow"><span class="coin' + (down ? '' : ' lime') + '">'
+      + '<svg class="ic" aria-hidden="true"><use href="#i-' + (LICON[t.type] || 'receipt') + '"/></svg></span>'
+      + '<div class="bd"><div class="t">' + label(t) + '</div><div class="d">' + t.time + '</div></div>'
+      + '<div class="a ' + (down ? 'down' : 'up') + '" style="color:' + (down ? 'var(--red)' : 'var(--lime)')
+      + '">' + (down ? '-' : '+') + money(t.total) + '</div></div>';
   }).join('');
 }
+
+// ── quick-send row ──
+var RECENT = [{n:'GoonerDAO', h:'@gooner_dao', c:'#EF0107'}, {n:'KaiserWeb3', h:'@kaiserweb3', c:'#DC052D'},
+              {n:'MilanoWhale', h:'@milanowhale', c:'#4DA6FF'}, {n:'LagosLedger', h:'@lagosledger', c:'#C4F82A'},
+              {n:'SambaStake', h:'@sambastake', c:'#FF6A1F'}];
+function renderQuick(){
+  var box = el('quickRow');
+  if(!box) return;
+  box.innerHTML = '<button class="qp" type="button" data-add>'
+    + '<span class="av add"><svg class="ic" aria-hidden="true"><use href="#i-hand"/></svg></span>'
+    + '<span>New</span></button>'
+    + RECENT.map(function(r){
+        return '<button class="qp" type="button" data-handle="' + r.h + '">'
+          + '<span class="av" style="background:linear-gradient(160deg,' + r.c + ',rgba(0,0,0,.45))">'
+          + r.n.slice(0, 2).toUpperCase() + '</span><span>' + r.n + '</span></button>';
+      }).join('');
+  box.querySelectorAll('.qp').forEach(function(b){
+    b.addEventListener('click', function(){
+      document.querySelector('#walActs button[data-p="send"]').click();
+      if(b.dataset.handle) el('sendTo').value = b.dataset.handle;
+      el('sendTo').focus();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  });
+}
+renderQuick();
 
 // ── deposit / withdraw ──
 el('depositBtn').addEventListener('click', function(e){
@@ -547,7 +564,7 @@ function syncWallet(){
   var s = FT.getState();
   el('walBal').innerHTML = s.wallet.balance.toLocaleString('en-US') + '<small> $FTR</small>';
   el('walGbp').textContent = '≈ £' + Math.round(s.wallet.balance / 12.4).toLocaleString('en-US');
-  renderAssets(); renderLedger(); fillSwap(); sendAfter();
+  renderAssets(); renderHistory(); fillSwap(); sendAfter();
 }
 paint('1D'); syncWallet(); conv();
 window.addEventListener('fantrade:statechange', syncWallet);
@@ -559,6 +576,24 @@ page("ftr.html", "$FTR — Fantrade", "".join(f), FTR_JS, FTR_CSS, app=True)
 # HOW IT WORKS
 # ══════════════════════════════════════════════════════════
 HIW_CSS = """
+.tier{height:100%}
+.tier .top{display:flex;align-items:center;gap:14px;margin-bottom:16px}
+.tier h4{font-size:19px}
+.tier .x{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:20px;color:var(--lime)}
+.tier p{font-size:13px;font-weight:300;color:var(--dim);margin:0 0 16px}
+.risk{height:4px;border-radius:99px;background:rgba(255,255,255,.07);overflow:hidden}
+.risk i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#C4F82A,#FF6A1F)}
+.risk-k{display:flex;justify-content:space-between;font-weight:600;font-size:9px;letter-spacing:.14em;
+  color:var(--faint);margin-top:10px;text-transform:uppercase}
+.rule{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:14px;padding:14px 24px;
+  border-bottom:1px solid rgba(255,255,255,.05);font-size:13px}
+.rule.h{font-weight:600;font-size:9.5px;letter-spacing:.16em;color:var(--faint);text-transform:uppercase;
+  border-bottom:1px solid var(--hair)}
+.rule .num{color:var(--ink)}
+@media (max-width:768px){
+  .rule{grid-template-columns:1.4fr 1fr!important;padding:12px 14px!important}
+  .rule>*:nth-child(n+3){display:none!important}
+}
 .walk{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:center;margin-bottom:16px}
 .walk.flip .art{order:-1}
 .walk .body{padding:44px 40px}
@@ -698,6 +733,87 @@ for q, a in FAQ:
     h.append(T('<details><summary>@@<span class="pm">@@</span></summary><p>@@</p></details>',
                q, ic("cross", "ic-sm"), a))
 h.append('</div></div></div></section>')
+
+# ── rehomed from the in-app pages ──────────────────────────────
+h.append(T('<section id="mechanics"><div class="wrap"><div class="sec-head" data-reveal>'
+           '<span class="pill">@@ Order mechanics</span><h2>How a trade<br>settles here</h2>'
+           '<p class="lede">Every order on the exchange clears the same way, whether it is your first '
+           'fifty shares or a full squad rebuild.</p></div><div class="bento">', ic("swap", "ic")))
+for icon, t, d in [("wallet", "Fund in $FTR",
+                    "Deposit, convert to $FTR, and your balance is ready to trade against any listed asset."),
+                   ("candle", "Buy at market",
+                    "Orders fill against the live book. Fees are 0.4% on both sides and are always shown "
+                    "before you confirm."),
+                   ("shield", "Ownership recorded",
+                    "Settled shares land in your wallet immediately and become eligible for FanPlay and "
+                    "club selection.")]:
+    h.append(T('<div class="bezel tight c4" data-reveal><div class="core pad f"><span class="ibox">@@</span>'
+               '<h4>@@</h4><p>@@</p></div></div>', ic(icon, "ic-lg"), t, d))
+h.append('</div></div></section>')
+
+TIERS = [("Simple", 1, "Lowest variance. Goals, assists and clean sheets only — a good place to learn how "
+          "settlement works.", 18, "target"),
+         ("PRO", 1.4, "Adds key passes, duels won and expected goals to the scoring set.", 32, "chart"),
+         ("Elite", 2, "Full performance data with position-weighted scoring. The standard matchday market.",
+          50, "shield"),
+         ("Killer", 3, "High multiplier, punishing downside. Cards, misses and errors all count against you.",
+          68, "bolt"),
+         ("Viynx Move", 4.5, "Momentum market. Scoring swings with live in-match movement across the whole "
+          "round.", 84, "pulse"),
+         ("Viynx Max", 7, "Maximum exposure. The largest payouts on Fantrade and the shortest odds of "
+          "reaching them.", 100, "trophy")]
+h.append(T('<section id="tiers"><div class="wrap"><div class="sec-head" data-reveal>'
+           '<span class="pill">@@ Market tiers</span><h2>Six ways to<br>take the round</h2>'
+           '<p class="lede">Every tier scores the same match from a different data set. Higher tiers pay '
+           'more because they count more of what can go wrong.</p></div><div class="bento">',
+           ic("candle", "ic")))
+for name, m, note, risk, icon in TIERS:
+    h.append(T('<div class="bezel tight c4" data-reveal><div class="core pad tier">'
+               '<div class="top"><span class="ibox @@">@@</span><h4>@@</h4><span class="x">×@@</span></div>'
+               '<p>@@</p><div class="risk"><i style="width:@@%"></i></div>'
+               '<div class="risk-k"><span>Variance</span><span>@@</span></div></div></div>',
+               "am" if risk > 60 else "", ic(icon, "ic-lg"), name, ("%g" % m), note, risk,
+               "Low" if risk < 40 else ("Medium" if risk < 70 else "High")))
+h.append('</div></div></section>')
+
+RULES = [("Goal", "6", "4", "9"), ("Assist", "4", "3", "6"), ("Clean sheet", "5", "1", "7"),
+         ("Key pass", "—", "1", "2"), ("Duel won", "—", "0.5", "1"), ("Yellow card", "−1", "−1", "−3"),
+         ("Big chance missed", "—", "−2", "−4")]
+h.append(T('<section id="rules"><div class="wrap"><div class="sec-head" data-reveal>'
+           '<span class="pill amber">@@ Scoring</span><h2>What counts,<br>and for how much</h2>'
+           '<p class="lede">Values shown for an outfield player. Goalkeepers and defenders carry their own '
+           'weighting, and the coach scores on team outcomes rather than individual events.</p></div>'
+           '<div class="bezel" data-reveal><div class="core">'
+           '<div class="rule h"><span>Event</span><span>Simple</span><span>Elite</span>'
+           '<span>Viynx Max</span></div>', ic("check", "ic")))
+for ev, a, b, c in RULES:
+    h.append(T('<div class="rule"><span>@@</span><span class="num">@@</span><span class="num">@@</span>'
+               '<span class="num">@@</span></div>', ev, a, b, c))
+h.append('</div></div></div></section>')
+
+h.append(T('<section id="chem"><div class="wrap"><div class="sec-head" data-reveal>'
+           '<span class="pill amber">@@ Club chemistry</span><h2>Why one squad<br>boosts harder</h2>'
+           '<p class="lede">Two managers can own the same eleven players and score differently. Chemistry '
+           'rewards the club that is actually coherent, not just expensive.</p></div><div class="bento">',
+           ic("target", "ic")))
+for icon, t, d, c, am in [("whistle", "Coach compatibility",
+                           "A coach whose real-world shape matches your formation contributes his full "
+                           "modifier. Mismatch it and the bonus shrinks.", "c4", "am"),
+                          ("pitch", "Natural positions",
+                           "Players scored in the role they actually play carry full weight. A winger at "
+                           "left-back will cost you.", "c4", ""),
+                          ("subs", "Squad completeness",
+                           "A full bench is worth more than four names and a gap, because it guarantees "
+                           "cover on matchday.", "c4", ""),
+                          ("flag", "Players actually starting",
+                           "Chemistry reads real team news. A squad of confirmed starters outperforms a "
+                           "squad of big names on the bench.", "c6", ""),
+                          ("clock", "Club consistency",
+                           "Clubs that hold their shape across rounds build a consistency bonus. Constant "
+                           "teardowns reset it.", "c6", "")]:
+    h.append(T('<div class="bezel tight @@" data-reveal><div class="core pad f"><span class="ibox @@">@@</span>'
+               '<h4>@@</h4><p>@@</p></div></div>', c, am, ic(icon, "ic-lg"), t, d))
+h.append('</div></div></section>')
 
 h.append(T('<section style="padding-top:60px"><div class="wrap" style="text-align:center">'
            '<h2 data-reveal>Ready to own<br>your first player?</h2>'

@@ -16,6 +16,10 @@ def T(tpl, *args):
 ARROW = '<span class="cap">' + ic("arrow", "ic") + '</span>'
 
 
+def crumb(href, label):
+    return '<a class="crumb" href="%s">%s%s</a>' % (href, ic("arrow", "ic"), label)
+
+
 def btn(label, cls="btn-lime", href="#", tag="a", extra=""):
     o = '<%s class="btn %s" %s %s>%s%s</%s>' % (
         tag, cls, ('href="%s"' % href) if tag == "a" else "", extra, label, ARROW, tag)
@@ -307,44 +311,14 @@ ex.append(T('<div class="rail" data-reveal><div class="seg" id="seg">'
           '<div class="searchbox">@@<input id="q" type="search" placeholder="Search a player or coach"></div>'
           '<div class="seg"><button aria-pressed="false">@@ Filters</button></div></div>', ic("layers", "ic"), ic("boot", "ic"), ic("whistle", "ic"), ic("search", "ic"), ic("filter", "ic")))
 
-ex.append('<div class="bento"><div class="bezel c8" data-reveal><div class="core">'
+ex.append('<div class="bento"><div class="bezel c12" data-reveal><div class="core">'
           '<div class="mhead"><span>Asset</span><span>Price $FTR</span><span>24h</span><span>Valuation</span>'
-          '<span>Supply held</span><span></span></div><div id="mkt"></div></div></div>')
-
-# trade ticket
-ex.append('<div class="c4" style="display:flex;flex-direction:column;gap:16px">'
-          '<div class="bezel" data-reveal><div class="core pad ticket">'
-          '<div style="display:flex;align-items:center;gap:13px;margin-bottom:20px">'
-          '<span class="badge">%s</span><div><div style="font-family:Archivo;font-variation-settings:\'wdth\' 118,\'wght\' 800;'
-          'text-transform:uppercase;font-size:17px" id="tkSym">$Saka</div>'
-          '<div class="k-label" style="margin:4px 0 0" id="tkName">Bukayo Saka · Arsenal</div></div>'
-          '<div style="margin-left:auto;text-align:right"><div class="num" style="font-size:18px" id="tkPx">48.20</div>'
-          '<div class="num up" style="font-size:11px" id="tkD">+6.4%%</div></div></div>'
-          '<div class="seg" style="width:100%%;margin-bottom:16px"><button style="flex:1;justify-content:center" '
-          'aria-pressed="true" data-side="buy">Buy</button><button style="flex:1;justify-content:center" '
-          'aria-pressed="false" data-side="sell">Sell</button></div>'
-          '<div class="field"><label>Shares</label><input id="qty" value="10,000" inputmode="numeric"></div>'
-          '<div class="quick"><button data-q="1000">1K</button><button data-q="10000">10K</button>'
-          '<button data-q="50000">50K</button><button data-q="100000">100K</button></div>'
-          '<div class="line"><span>Price per share</span><b id="sumPx">48.20 $FTR</b></div>'
-          '<div class="line"><span>Subtotal</span><b id="sumSub">482,000</b></div>'
-          '<div class="line"><span>Exchange fee (0.4%%)</span><b id="sumFee">1,928</b></div>'
-          '<div class="line"><span>Total</span><b id="sumTot">483,928 $FTR</b></div>'
-          '%s</div></div>' % (ic("boot", "ic"), btn("Review order", tag="button", extra='id="reviewOrderBtn" style="margin-top:20px;width:100%;justify-content:space-between"')))
-
-ex.append('<div class="bezel" data-reveal><div class="core pad-sm">'
-          '<div class="k-label">Supply</div><div class="ringwrap">'
-          '<svg class="ring" viewBox="0 0 100 100"><circle cx="50" cy="50" r="42" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="6"/>'
-          '<circle id="spRing" cx="50" cy="50" r="42" fill="none" stroke="#C4F82A" stroke-width="6" stroke-linecap="round" '
-          'stroke-dasharray="264" stroke-dashoffset="166" transform="rotate(-90 50 50)"/></svg>'
-          '<div><div class="num" style="font-size:24px" id="spHeld">3,712,480</div>'
-          '<div class="k-label" style="margin:6px 0 0">Held by fans</div>'
-          '<div class="num" style="font-size:13px;color:var(--dim);margin-top:10px" id="spPct">37.1% of 10,000,000</div></div></div>'
-          '<div class="b-row"><span>Your holding</span><b id="spYourHolding">10,000</b></div>'
-          '<div class="b-row"><span>Average entry</span><b id="spAvgEntry">31.40</b></div>'
-          '<div class="b-row"><span>Unrealised</span><b class="up" id="spUnrealised">+168,000</b></div>'
-          '<div class="b-row"><span>In your club</span><b id="spInClub">ZERO FC · RW</b></div></div></div></div></div>')
-ex.append('</div></section>')
+          '<span>Supply held</span><span></span></div><div id="mkt"></div>'
+          '<div style="padding:18px 24px 26px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">'
+          '<span style="font-size:11.5px;color:var(--faint);font-weight:300" id="mktCount">—</span>'
+          '<a class="seeall" style="margin-left:auto" href="how-it-works.html#mechanics">'
+          'How a trade settles ' + ic("arrow", "ic-sm") + '</a></div>'
+          '</div></div></div></section>')
 
 # movers + coach index
 ex.append('<section style="padding-top:20px"><div class="wrap"><div class="bento">')
@@ -360,233 +334,64 @@ ex.append(T('<div class="bezel c4" data-reveal><div class="core pad"><div class=
           'minutes. A win, a clean sheet or a tactical turnaround feeds the index — and your club modifier.</p>'
           '</div></div>', ic("whistle", "ic-sm"), '<div id="coachSpark"></div>'))
 ex.append('</div></div></section>')
-
-# how trading works
-ex.append(T('<section><div class="wrap"><div class="sec-head" data-reveal>'
-          '<span class="pill">@@ Order mechanics</span><h2>How a trade<br>settles here</h2></div>'
-          '<div class="bento">', ic("swap", "ic")))
-for icon, t, d, c in [("wallet", "Fund in $FTR", "Deposit, convert to $FTR, and your balance is ready to trade against any listed asset.", "c4"),
-                      ("candle", "Buy at market", "Orders fill against the live book. Fees are 0.4% on both sides and are always shown before you confirm.", "c4"),
-                      ("shield", "Ownership recorded", "Settled shares land in your wallet immediately and become eligible for FanPlay and club selection.", "c4")]:
-    ex.append(T('<div class="bezel tight @@" data-reveal><div class="core pad f"><span class="ibox">@@</span>'
-              '<h4>@@</h4><p>@@</p></div></div>', c, ic(icon, "ic-lg"), t, d))
-ex.append('</div></div></section></main>')
+ex.append('</main>')
 
 EX_JS = r"""
-var filter='all', q='', side='buy', sel=0;
+var filter='all', q='';
 function fmt(n){ return n.toLocaleString('en-US'); }
 function rows(){
-  var list=ASSETS.map(function(a,i){ return [a,i]; }).filter(function(x){
-    var a=x[0];
-    if(filter==='player'&&a.c) return false;
-    if(filter==='coach'&&!a.c) return false;
-    if(q && (a.t+' '+a.n).toLowerCase().indexOf(q)<0) return false;
+  var list = ASSETS.map(function(a,i){ return [a,i]; }).filter(function(x){
+    var a = x[0];
+    if(filter === 'player' && a.c) return false;
+    if(filter === 'coach' && !a.c) return false;
+    if(q && (a.t + ' ' + a.n).toLowerCase().indexOf(q) < 0) return false;
     return true;
   });
   document.getElementById('mkt').innerHTML = list.map(function(x){
-    var a=x[0], i=x[1];
-    return "<div class='mrow"+(i===sel?" sel":"")+"' data-i='"+i+"'><div class='asset'><span class='badge"+(a.c?" coach":"")+
-      "'><svg class='ic'><use href='#i-"+(a.c?'whistle':'boot')+"'/></svg></span><div><div class='t-sym'>"+a.t+
-      "</div><div class='t-nm'>"+a.n+"</div></div></div><div class='tick' data-px>"+a.p.toFixed(2)+
-      "</div><div class='tick "+(a.d>=0?'up':'down')+"' data-dx>"+(a.d>=0?'+':'')+a.d.toFixed(1)+"%</div>"+
-      "<div class='num' style='font-size:12.5px;color:var(--dim)'>"+a.cap+" $FTR</div>"+
-      "<div class='num' style='font-size:12.5px;color:var(--dim)'>"+a.h.toFixed(1)+"%</div>"+
-      "<div><button class='tradebtn' data-trade='"+i+"'>Trade</button></div></div>";
-  }).join('') || "<div style='padding:40px 24px;color:var(--dim);font-size:14px'>No assets match that search. Try a surname or a ticker like $Saka.</div>";
-  document.querySelectorAll('[data-trade]').forEach(function(b){
-    b.addEventListener('click',function(e){
-      e.stopPropagation();
-      sel=+b.dataset.trade;
-      loadTicket();
-      rows();
-      if(window.innerWidth <= 768){
-        var tk=document.querySelector('.ticket');
-        if(tk) tk.scrollIntoView({ behavior:'smooth', block:'start' });
-      }
-    });
-  });
-  document.querySelectorAll('.mrow').forEach(function(row){
-    row.addEventListener('click',function(e){
-      if(e.target.closest('[data-trade]')) return;
-      sel=+row.dataset.i;
-      loadTicket();
-      rows();
-      if(window.innerWidth <= 768){
-        var tk=document.querySelector('.ticket');
-        if(tk) tk.scrollIntoView({ behavior:'smooth', block:'start' });
-      }
-    });
-  });
-}
-function loadTicket(){
-  var a=ASSETS[sel];
-  document.getElementById('tkSym').textContent=a.t;
-  document.getElementById('tkName').textContent=a.n+(a.c?' · Coach':' · Player');
-  document.getElementById('tkPx').textContent=a.p.toFixed(2);
-  var d=document.getElementById('tkD');
-  d.textContent=(a.d>=0?'+':'')+a.d.toFixed(1)+'%'; d.className='num '+(a.d>=0?'up':'down');
-  calc();
-}
-function calc(){
-  var a=ASSETS[sel];
-  var qty=parseInt((document.getElementById('qty').value||'0').replace(/[^0-9]/g,''),10)||0;
-  var sub=qty*a.p, fee=sub*0.004;
-  document.getElementById('sumPx').textContent=a.p.toFixed(2)+' $FTR';
-  document.getElementById('sumSub').textContent=fmt(Math.round(sub));
-  document.getElementById('sumFee').textContent=fmt(Math.round(fee));
-  document.getElementById('sumTot').textContent=fmt(Math.round(side==='buy'?sub+fee:sub-fee))+' $FTR';
-}
-var qty=document.getElementById('qty');
-if(qty){
-  qty.addEventListener('input',function(){
-    var v=qty.value.replace(/[^0-9]/g,''); qty.value=v?(+v).toLocaleString('en-US'):''; calc();
-  });
-  document.querySelectorAll('[data-q]').forEach(function(b){
-    b.addEventListener('click',function(){ qty.value=(+b.dataset.q).toLocaleString('en-US'); calc(); });
-  });
-  document.querySelectorAll('[data-side]').forEach(function(b){
-    b.addEventListener('click',function(){
-      document.querySelectorAll('[data-side]').forEach(function(x){ x.setAttribute('aria-pressed','false'); });
-      b.setAttribute('aria-pressed','true'); side=b.dataset.side; calc();
-    });
-  });
+    var a = x[0], i = x[1], to = 'asset.html?a=' + encodeURIComponent(a.t);
+    return "<a class='mrow' href='" + to + "' data-i='" + i + "'><div class='asset'><span class='badge"
+      + (a.c ? " coach" : "") + "'><svg class='ic'><use href='#i-" + (a.c ? 'whistle' : 'boot')
+      + "'/></svg></span><div><div class='t-sym'>" + a.t + "</div><div class='t-nm'>" + a.n
+      + "</div></div></div><div class='tick' data-px>" + a.p.toFixed(2)
+      + "</div><div class='tick " + (a.d >= 0 ? 'up' : 'down') + "' data-dx>" + (a.d >= 0 ? '+' : '')
+      + a.d.toFixed(1) + "%</div>"
+      + "<div class='num' style='font-size:12.5px;color:var(--dim)'>" + a.cap + " $FTR</div>"
+      + "<div class='num' style='font-size:12.5px;color:var(--dim)'>" + a.h.toFixed(1) + "%</div>"
+      + "<div><span class='tradebtn' style='display:block;text-align:center;line-height:1.6'>Trade</span></div></a>";
+  }).join('') || "<div class='empty-state'><svg class='ic-xl' aria-hidden='true'><use href='#i-search'/></svg>"
+    + "No assets match that search. Try a surname or a ticker like $Saka.</div>";
+  document.getElementById('mktCount').textContent =
+    list.length + ' of ' + ASSETS.length + ' assets · tap one for its market page';
 }
 document.querySelectorAll('#seg button').forEach(function(b){
-  b.addEventListener('click',function(){
+  b.addEventListener('click', function(){
     document.querySelectorAll('#seg button').forEach(function(x){ x.setAttribute('aria-pressed','false'); });
-    b.setAttribute('aria-pressed','true'); filter=b.dataset.f; rows();
+    b.setAttribute('aria-pressed','true');
+    filter = b.dataset.f; rows();
   });
 });
-var qi=document.getElementById('q');
-if(qi) qi.addEventListener('input',function(){ q=qi.value.toLowerCase().trim(); rows(); });
+var qi = document.getElementById('q');
+if(qi) qi.addEventListener('input', function(){ q = qi.value.trim().toLowerCase(); rows(); });
 
-function moverRow(a){
-  return "<div class='mv'><span class='badge'><svg class='ic'><use href='#i-"+(a.c?'whistle':'boot')+"'/></svg></span>"+
-    "<div><div class='t-sym'>"+a.t+"</div><div class='t-nm'>"+a.n+"</div></div>"+
-    "<div class='r'><div class='p'>"+a.p.toFixed(2)+"</div><div class='d "+(a.d>=0?'up':'down')+"'>"+
-    (a.d>=0?'+':'')+a.d.toFixed(1)+"%</div></div></div>";
+function moverList(el, up){
+  var list = ASSETS.slice().sort(function(a,b){ return up ? b.d - a.d : a.d - b.d; }).slice(0, 4);
+  document.getElementById(el).innerHTML = list.map(function(a){
+    return "<a class='arow' style='padding:11px 0' href='asset.html?a=" + encodeURIComponent(a.t) + "'>"
+      + "<div class='who'><span class='coin" + (a.c ? " am" : "") + "'><svg class='ic'><use href='#i-"
+      + (a.c ? 'whistle' : 'boot') + "'/></svg></span><div style='min-width:0'><div class='nm'>" + a.t
+      + "</div><div class='qt'>" + a.n + "</div></div></div>"
+      + "<div></div><div><div class='val'>" + a.p.toFixed(2) + "</div><div class='chg "
+      + (a.d >= 0 ? 'up' : 'down') + "'>" + (a.d >= 0 ? '+' : '') + a.d.toFixed(1) + "%</div></div></a>";
+  }).join('');
 }
-var sorted=ASSETS.slice().sort(function(x,y){ return y.d-x.d; });
-var g=document.getElementById('gainers'), f=document.getElementById('fallers');
-if(g) g.innerHTML=sorted.slice(0,4).map(moverRow).join('');
-if(f) f.innerHTML=sorted.slice(-3).reverse().map(moverRow).join('');
-var cs=document.getElementById('coachSpark');
-if(cs) cs.innerHTML=spark(true,320,64).replace("class='spark'","class='spark' style='height:64px'");
-
-function updateSupplyCard(){
-  var a=ASSETS[sel];
-  if(!a) return;
-  var s=FT.getState();
-  var h=s.holdings[a.t];
-  var heldFans=Math.round(10000000*(a.h/100));
-  var dashoffset=Math.round(264*(1-a.h/100));
-
-  var elHeld=document.getElementById('spHeld');
-  if(elHeld) elHeld.textContent=fmt(heldFans);
-
-  var elRing=document.getElementById('spRing');
-  if(elRing) elRing.setAttribute('stroke-dashoffset', dashoffset);
-
-  var elPct=document.getElementById('spPct');
-  if(elPct) elPct.textContent=a.h.toFixed(1)+'% of 10,000,000';
-
-  var elYour=document.getElementById('spYourHolding');
-  if(elYour) elYour.textContent=h?fmt(h.shares)+' shares':'0 shares';
-
-  var elAvg=document.getElementById('spAvgEntry');
-  if(elAvg) elAvg.textContent=h?h.avg.toFixed(2):'—';
-
-  var elUn=document.getElementById('spUnrealised');
-  if(elUn){
-    if(h && h.shares>0){
-      var diff=(a.p-h.avg)*h.shares;
-      elUn.textContent=(diff>=0?'+':'')+fmt(Math.round(diff));
-      elUn.className='up '+(diff>=0?'up':'down');
-    } else {
-      elUn.textContent='—';
-      elUn.className='num';
-    }
-  }
-
-  var elClub=document.getElementById('spInClub');
-  if(elClub){
-    if(h && h.inClub){
-      elClub.textContent=s.club.name+' · '+h.inClub;
-    } else {
-      elClub.textContent=a.c?'Not appointed':'Not in active XI';
-    }
-  }
-}
-
-var ro=document.getElementById('reviewOrderBtn');
-if(ro){
-  ro.addEventListener('click',function(){
-    var a=ASSETS[sel];
-    var qtyVal=parseInt((document.getElementById('qty').value||'0').replace(/[^0-9]/g,''),10)||0;
-    if(qtyVal<=0){
-      showToast("Please enter a valid share quantity greater than 0.", "error");
-      return;
-    }
-    var sub=qtyVal*a.p, fee=sub*0.004;
-    var tot=Math.round(side==='buy'?sub+fee:sub-fee);
-    var s=FT.getState();
-    var curH=s.holdings[a.t];
-
-    var modalHtml='' +
-      '<h3 class="ft-modal-title">Confirm '+(side==='buy'?'Buy Order':'Sell Order')+'</h3>' +
-      '<p class="ft-modal-desc">Review execution details against the live Fantrade order book.</p>' +
-      '<div class="ft-modal-card">' +
-        '<div class="m-row"><span>Action</span><b style="color:'+(side==='buy'?'var(--lime)':'var(--amber)')+'">'+side.toUpperCase()+'</b></div>' +
-        '<div class="m-row"><span>Asset</span><b>'+a.t+' ('+a.n+')</b></div>' +
-        '<div class="m-row"><span>Quantity</span><b>'+fmt(qtyVal)+' shares</b></div>' +
-        '<div class="m-row"><span>Price per Share</span><b>'+a.p.toFixed(2)+' $FTR</b></div>' +
-        '<div class="m-row"><span>Subtotal</span><b>'+fmt(Math.round(sub))+' $FTR</b></div>' +
-        '<div class="m-row"><span>Exchange Fee (0.4%)</span><b>'+fmt(Math.round(fee))+' $FTR</b></div>' +
-        '<div class="m-row total"><span>Total '+(side==='buy'?'Cost':'Payout')+'</span><b style="color:'+(side==='buy'?'var(--lime)':'var(--amber)')+'">'+fmt(tot)+' $FTR</b></div>' +
-      '</div>' +
-      '<div class="ft-modal-card">' +
-        '<div class="m-row"><span>Your Available Balance</span><b>'+fmt(s.wallet.balance)+' $FTR</b></div>' +
-        '<div class="m-row"><span>Balance After Order</span><b style="color:'+(side==='buy'&&s.wallet.balance<tot?'var(--red)':'var(--ink)')+'">' +
-          (side==='buy'?fmt(s.wallet.balance-tot):fmt(s.wallet.balance+tot))+' $FTR</b></div>' +
-        '<div class="m-row"><span>Current Position</span><b>'+(curH?fmt(curH.shares):'0')+' shares</b></div>' +
-      '</div>' +
-      '<div style="display:flex;gap:10px;margin-top:20px">' +
-        '<button class="btn btn-lime" id="confirmTradeBtn" type="button" style="flex:1;justify-content:center">Execute '+side.toUpperCase()+'</button>' +
-        '<button class="btn btn-glass" id="cancelTradeBtn" type="button" style="flex:1;justify-content:center">Cancel</button>' +
-      '</div>';
-
-    openModal(modalHtml);
-
-    var cancelBtn=document.getElementById('cancelTradeBtn');
-    if(cancelBtn) cancelBtn.addEventListener('click', closeModal);
-
-    var confBtn=document.getElementById('confirmTradeBtn');
-    if(confBtn) confBtn.addEventListener('click',function(){
-      try{
-        var res=FT.executeTrade(side, a.t, a.n, qtyVal, a.p, a.c);
-        showToast("Trade executed! "+(side==='buy'?'Bought ':'Sold ')+fmt(qtyVal)+" "+a.t+" shares.", "success");
-        closeModal();
-        updateSupplyCard();
-        calc();
-      }catch(err){
-        showToast(err.message, "error");
-      }
-    });
-  });
-}
-
-window.addEventListener('fantrade:statechange',function(){
-  updateSupplyCard();
-});
-
-var origLoadTicket=loadTicket;
-loadTicket=function(){
-  origLoadTicket();
-  updateSupplyCard();
-};
-
-rows(); loadTicket(); liveTicks('.mrow');
+rows();
+moverList('gainers', true);
+moverList('fallers', false);
+var cs = document.getElementById('coachSpark');
+if(cs) cs.innerHTML = spark(true, 260, 44);
+liveTicks('.mrow');
 """
+
 page("exchange.html", "Exchange — Fantrade", "".join(ex), EX_JS, EX_CSS, app=True)
 
 
@@ -718,65 +523,19 @@ cl.append(T('<main><section style="padding-top:30px"><div class="wrap"><div clas
           '<div class="k-label">Club value · last 8 rounds</div><div id="valChart"></div></div></div>'
           '</div></div></div></section>', btn("Enter this club in FanPlay", "btn-lime btn-sm", "fanplay.html")))
 
-# builder
-cl.append(T('<section id="builder"><div class="wrap"><div class="sec-head" data-reveal>'
-          '<span class="pill">@@ Club builder</span><h2>Build it in<br>eight steps</h2>'
-          '<p class="lede">Identity first, squad second. Every slot you fill checks your wallet before it accepts a '
-          'name — change the formation and the shape rebuilds around the players you own.</p></div>', ic("formation", "ic")))
-cl.append(T('<div class="bento"><div class="bezel c5" data-reveal><div class="core pad">'
-          '<div class="stepper" id="stepper">'
-          '<button aria-current="step">@@ 1 Name</button><button>@@ 2 Identity</button>'
-          '<button>@@ 3 Coach</button><button>@@ 4 Shape</button><button>@@ 5 XI</button>'
-          '<button>@@ 6 Bench</button><button>@@ 7 Review</button><button>@@ 8 Save</button></div>'
-          '<div class="field"><label>Club name</label><input id="clubNameInput" value="Zero FC" style="text-align:right"></div>'
-          '<div class="field"><label>Stadium</label><input id="clubStadiumInput" value="Emirates of the North" style="text-align:right;font-size:13px"></div>'
-          '<div class="k-label" style="margin-top:20px">Club colours</div>'
-          '<div class="swatches">'
-          '<button class="sw" aria-pressed="true" style="background:linear-gradient(160deg,#C4F82A,#83b300)" aria-label="Lime"></button>'
-          '<button class="sw" style="background:linear-gradient(160deg,#FF6A1F,#a83c00)" aria-label="Amber"></button>'
-          '<button class="sw" style="background:linear-gradient(160deg,#4DA3FF,#0a4d99)" aria-label="Blue"></button>'
-          '<button class="sw" style="background:linear-gradient(160deg,#E8E8E8,#8a8a8a)" aria-label="Silver"></button>'
-          '<button class="sw" style="background:linear-gradient(160deg,#B14DFF,#5c1799)" aria-label="Violet"></button></div>'
-          '<div class="k-label" style="margin-top:26px">Formation</div>'
-          '<div class="forms" id="forms"><button aria-pressed="true">4-3-3</button><button>4-4-2</button>'
-          '<button>3-5-2</button><button>4-2-3-1</button></div>'
-          '<div class="line" style="margin-top:24px"><span>Ownership check</span><b class="up">15 of 16 owned</b></div>'
-          '<div class="line"><span>Projected boost</span><b>+15.0%</b></div>'
-          '@@</div></div>', ic("crest", "ic"), ic("swatch", "ic"), ic("whistle", "ic"), ic("formation", "ic"),
-                              ic("pitch", "ic"), ic("subs", "ic"), ic("check", "ic"), ic("shield", "ic"),
-                              btn("Save club", tag="button", extra='id="saveClubBtn" style="margin-top:20px;width:100%;justify-content:space-between"')))
-cl.append('<div class="bezel c7" data-reveal><div class="core pitch" id="builderPitch"></div></div></div></div></section>')
-
-# chemistry
-cl.append(T('<section id="chem"><div class="wrap"><div class="sec-head" data-reveal>'
-          '<span class="pill amber">@@ Club chemistry</span><h2>Why one squad<br>boosts harder</h2>'
-          '<p class="lede">Two managers can own the same eleven players and score differently. Chemistry rewards the '
-          'club that is actually coherent, not just expensive.</p></div><div class="bento">', ic("target", "ic")))
-for icon, t, d, c, am in [("whistle", "Coach compatibility", "A coach whose real-world shape matches your formation contributes his full modifier. Mismatch it and the bonus shrinks.", "c4", "am"),
-                          ("pitch", "Natural positions", "Players scored in the role they actually play carry full weight. A winger at left-back will cost you.", "c4", ""),
-                          ("subs", "Squad completeness", "A full bench is worth more than four names and a gap, because it guarantees cover on matchday.", "c4", ""),
-                          ("flag", "Players actually starting", "Chemistry reads real team news. A squad of confirmed starters outperforms a squad of big names on the bench.", "c6", ""),
-                          ("clock", "Club consistency", "Clubs that hold their shape across rounds build a consistency bonus. Constant teardowns reset it.", "c6", "")]:
-    cl.append(T('<div class="bezel tight @@" data-reveal><div class="core pad f"><span class="ibox @@">@@</span>'
-              '<h4>@@</h4><p>@@</p></div></div>', c, am, ic(icon, "ic-lg"), t, d))
-cl.append('</div></div></section>')
-
-# leaderboard
-LB = [("1", "Vanguard XI", "#C4F82A", "612,400", "14,980", "+19%"),
-      ("2", "Casa Blanca FC", "#E8E8E8", "588,100", "14,220", "+18%"),
-      ("3", "Northside Union", "#4DA3FF", "540,750", "13,640", "+17%"),
-      ("4", "Estádio Nove", "#FF6A1F", "498,300", "12,905", "+16%"),
-      ("124", "Zero FC", "#C4F82A", "245,800", "8,420", "+15%")]
-cl.append(T('<section><div class="wrap"><div class="sec-head" data-reveal>'
-          '<span class="pill">@@ Club table</span><h2>Where your club<br>sits this season</h2></div>'
-          '<div class="bezel" data-reveal><div class="core">'
-          '<div class="lb h"><span>Rank</span><span>Club</span><span>Club value</span><span>Season FP</span><span>Boost</span></div>', ic("trophy", "ic")))
-for r, n, col, v, fp, b in LB:
-    cl.append(T('<div class="lb@@"@@><span class="rank">@@</span><span class="cn">'
-              '<span class="mini-crest" style="background:linear-gradient(160deg,@@,rgba(0,0,0,.4))"></span>@@</span>'
-              '<span class="num">@@</span><span class="num">@@</span><span class="num up">@@</span></div>',
-              " you" if n == "Zero FC" else "", ' id="myClubLbRow"' if n == "Zero FC" else "", r, col, n, v, fp, b))
-cl.append('</div></div></div></section></main>')
+cl.append(T('<div class="bezel c12" data-reveal><div class="core pad">'
+          '<div style="display:flex;align-items:center;gap:20px;flex-wrap:wrap">'
+          '<span class="ibox">@@</span>'
+          '<div style="min-width:0"><div style="font-family:Archivo;'
+          'font-variation-settings:\'wdth\' 120,\'wght\' 800;text-transform:uppercase;font-size:18px">'
+          'Rebuild the club</div>'
+          '<p style="font-size:12.5px;color:var(--dim);font-weight:300;margin:6px 0 0;line-height:1.6;'
+          'max-width:60ch">Name, crest, coach, shape and every slot in the eleven — eight steps, and the '
+          'shape rebuilds around what you own.</p></div>'
+          '<span style="margin-left:auto">@@</span></div></div></div>',
+          ic("formation", "ic-lg"),
+          btn("Open the club builder", href="club-builder.html")))
+cl.append('</div></div></section></main>')
 
 CL_JS = PITCH_JS + r"""
 document.querySelectorAll('#clTabs button').forEach(function(b){
@@ -937,6 +696,49 @@ if(vc){
 """
 page("clubs.html", "Dream Clubs — Fantrade", "".join(cl), CL_JS, CL_CSS, app=True)
 
+# ══════════════════════════════════════════════════════════
+# CLUB BUILDER
+# ══════════════════════════════════════════════════════════
+# builder
+bd = [T('<main><section class="app-head" style="padding-bottom:24px"><div class="wrap">'
+        '<div data-reveal>@@</div>'
+        '<span class="pill" style="margin-top:20px" data-reveal>@@ Club builder</span>'
+        '<h1 data-reveal>Build it in<br>eight steps</h1>'
+        '<p class="lede" data-reveal>Identity first, squad second. Every slot you fill checks your wallet '
+        'before it accepts a name — change the formation and the shape rebuilds around the players you own.</p>'
+        '</div></section>',
+        crumb("clubs.html", "Back to the club"), ic("formation", "ic"))]
+bd.append('<section style="padding:6px 0 130px"><div class="wrap">')
+bd.append(T('<div class="bento"><div class="bezel c5" data-reveal><div class="core pad">'
+          '<div class="stepper" id="stepper">'
+          '<button aria-current="step">@@ 1 Name</button><button>@@ 2 Identity</button>'
+          '<button>@@ 3 Coach</button><button>@@ 4 Shape</button><button>@@ 5 XI</button>'
+          '<button>@@ 6 Bench</button><button>@@ 7 Review</button><button>@@ 8 Save</button></div>'
+          '<div class="field"><label>Club name</label><input id="clubNameInput" value="Zero FC" style="text-align:right"></div>'
+          '<div class="field"><label>Stadium</label><input id="clubStadiumInput" value="Emirates of the North" style="text-align:right;font-size:13px"></div>'
+          '<div class="k-label" style="margin-top:20px">Club colours</div>'
+          '<div class="swatches">'
+          '<button class="sw" aria-pressed="true" style="background:linear-gradient(160deg,#C4F82A,#83b300)" aria-label="Lime"></button>'
+          '<button class="sw" style="background:linear-gradient(160deg,#FF6A1F,#a83c00)" aria-label="Amber"></button>'
+          '<button class="sw" style="background:linear-gradient(160deg,#4DA3FF,#0a4d99)" aria-label="Blue"></button>'
+          '<button class="sw" style="background:linear-gradient(160deg,#E8E8E8,#8a8a8a)" aria-label="Silver"></button>'
+          '<button class="sw" style="background:linear-gradient(160deg,#B14DFF,#5c1799)" aria-label="Violet"></button></div>'
+          '<div class="k-label" style="margin-top:26px">Formation</div>'
+          '<div class="forms" id="forms"><button aria-pressed="true">4-3-3</button><button>4-4-2</button>'
+          '<button>3-5-2</button><button>4-2-3-1</button></div>'
+          '<div class="line" style="margin-top:24px"><span>Ownership check</span><b class="up">15 of 16 owned</b></div>'
+          '<div class="line"><span>Projected boost</span><b>+15.0%</b></div>'
+          '@@</div></div>', ic("crest", "ic"), ic("swatch", "ic"), ic("whistle", "ic"), ic("formation", "ic"),
+                              ic("pitch", "ic"), ic("subs", "ic"), ic("check", "ic"), ic("shield", "ic"),
+                              btn("Save club", tag="button", extra='id="saveClubBtn" style="margin-top:20px;width:100%;justify-content:space-between"')))
+bd.append('<div class="bezel c7" data-reveal><div class="core pitch" id="builderPitch"></div></div></div></div></section>')
+
+bd.append('</main>')
+
+page("club-builder.html", "Club builder — Fantrade", "".join(bd), CL_JS, CL_CSS, app=True)
+
+
+
 
 # ══════════════════════════════════════════════════════════
 # 4. FANPLAY
@@ -1032,21 +834,6 @@ fp.append('<div class="fp-right"><div class="k-label">Projected round</div><div 
           '<p style="font-size:13px;font-weight:300;color:var(--dim);margin-top:20px">Your club scores wherever its '
           'players are playing. The round closes on one clock, not one fixture.</p></div></div></div></div></div></section>')
 
-# tiers
-fp.append(T('<section id="tiers"><div class="wrap"><div class="sec-head" data-reveal>'
-          '<span class="pill">@@ Market tiers</span><h2>Six ways to<br>take the round</h2>'
-          '<p class="lede">Every tier scores the same match from a different data set. Higher tiers pay more because '
-          'they count more of what can go wrong.</p></div><div class="bento">', ic("candle", "ic")))
-icons = ["target", "chart", "shield", "bolt", "pulse", "trophy"]
-spans = ["c4", "c4", "c4", "c4", "c4", "c4"]
-for (name, m, note, risk), icon, c in zip(TIERS, icons, spans):
-    fp.append(T('<div class="bezel tight @@" data-reveal><div class="core pad tier">'
-              '<div class="top"><span class="ibox @@">@@</span><h4>@@</h4><span class="x">×@@</span></div>'
-              '<p>@@</p><div class="risk"><i style="width:%d%"></i></div>'
-              '<div class="risk-k"><span>Variance</span><span>@@</span></div></div></div>', c, "am" if risk > 60 else "", ic(icon, "ic-lg"), name, ("%g" % m), note, risk,
-                 "Low" if risk < 40 else ("Medium" if risk < 70 else "High")))
-fp.append('</div></div></section>')
-
 # ── matchday board ────────────────────────────────────────────────
 # (fid, home, home colour, home score, away, away colour, away score,
 #  status, clock, your asset on the pitch)
@@ -1070,11 +857,13 @@ MATCHDAY = [
     ]),
 ]
 
-fp.append(T('<section id="board"><div class="wrap"><div class="sec-head" data-reveal>'
-            '<span class="pill">@@ Live board</span><h2>Your club is alive<br>across nine matches</h2>'
-            '<p class="lede">Fantrade does not require your eleven to be in the same fixture. Points accrue wherever '
-            'your players are on the pitch, and the window settles them together.</p></div>'
-            '<div class="bento"><div class="bezel c8" data-reveal><div class="core">', ic("pulse", "ic")))
+fp.append(T('<section id="board" style="padding-top:40px"><div class="wrap">'
+            '<div class="rowhead" data-reveal style="margin-bottom:22px">'
+            '<span class="ibox">@@</span>'
+            '<div><div style="font-family:Archivo;font-variation-settings:\'wdth\' 120,\'wght\' 800;'
+            'text-transform:uppercase;font-size:20px">Live board</div>'
+            '<div class="sub-line">Your eleven, wherever they are playing this window</div></div></div>'
+            '<div class="bento"><div class="bezel c8" data-reveal><div class="core">', ic("pulse", "ic-lg")))
 
 # date strip
 fp.append(T('<div style="padding:24px 22px 18px">'
@@ -1161,20 +950,22 @@ fp.append('<div class="c4" style="display:flex;flex-direction:column;gap:16px">'
           'Three straight rounds in the top 5% of the Apex division.</p>'
           '</div></div></div></div></div></section>')
 
-# scoring rules
-RULES = [("Goal", "6", "4", "9"), ("Assist", "4", "3", "6"), ("Clean sheet", "5", "1", "7"),
-         ("Key pass", "—", "1", "2"), ("Duel won", "—", "0.5", "1"), ("Yellow card", "−1", "−1", "−3"),
-         ("Big chance missed", "—", "−2", "−4")]
-fp.append(T('<section id="rules"><div class="wrap"><div class="sec-head" data-reveal>'
-          '<span class="pill amber">@@ Scoring</span><h2>What counts,<br>and for how much</h2>'
-          '<p class="lede">Values shown for an outfield player. Goalkeepers and defenders carry their own weighting, '
-          'and the coach scores on team outcomes rather than individual events.</p></div>'
-          '<div class="bezel" data-reveal><div class="core">'
-          '<div class="rule h"><span>Event</span><span>Simple</span><span>Elite</span><span>Viynx Max</span></div>', ic("check", "ic")))
-for ev, a, b, c in RULES:
-    fp.append(T('<div class="rule"><span>@@</span><span class="num">@@</span><span class="num">@@</span>'
-              '<span class="num">@@</span></div>', ev, a, b, c))
-fp.append('</div></div></div></section></main>')
+fp.append(T('<section style="padding:0 0 30px"><div class="wrap">'
+            '<div class="bezel" data-reveal><div class="core pad">'
+            '<div style="display:flex;align-items:center;gap:20px;flex-wrap:wrap">'
+            '<span class="ibox">@@</span>'
+            '<div style="min-width:0"><div style="font-family:Archivo;'
+            'font-variation-settings:\'wdth\' 120,\'wght\' 800;text-transform:uppercase;font-size:18px">'
+            'New to the markets?</div>'
+            '<p style="font-size:12.5px;color:var(--dim);font-weight:300;margin:6px 0 0;line-height:1.6;'
+            'max-width:60ch">The six market tiers and exactly what each event is worth are set out in full '
+            'on the rules page.</p></div>'
+            '<span style="margin-left:auto;display:flex;gap:10px;flex-wrap:wrap">@@@@</span>'
+            '</div></div></div></div></section>',
+            ic("scales", "ic-lg"),
+            btn("Market tiers", "btn-glass", "how-it-works.html#tiers"),
+            btn("Scoring rules", "btn-glass", "how-it-works.html#rules")))
+fp.append('</main>')
 
 FP_JS = r"""
 var mode='club', mult=2, mktName='ELITE';

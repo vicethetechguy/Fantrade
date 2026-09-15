@@ -1370,47 +1370,25 @@ lb = [T('<main><section class="app-head"><div class="wrap"><div class="head-row"
 
 lb.append('<section style="padding:10px 0 120px"><div class="wrap"><div class="bento">')
 
-# your position
-lb.append(T('<div class="bezel c4" data-reveal><div class="core pad">'
-            '<div class="k-label">Your position</div>'
-            '<div style="display:flex;align-items:center;gap:16px">'
+# your rank, as a strip
+lb.append(T('<div class="bezel c12" data-reveal><div class="core pad-sm">'
+            '<div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">'
             '<div class="crest-lg" id="lbCrest" style="background:linear-gradient(160deg,#C4F82A,#83b300)">ZF</div>'
-            '<div><div style="font-family:Archivo;font-variation-settings:\'wdth\' 125,\'wght\' 900;'
-            'text-transform:uppercase;font-size:23px;line-height:1" data-bind="club">Zero FC</div>'
+            '<div style="min-width:0"><div style="font-family:Archivo;'
+            'font-variation-settings:\'wdth\' 125,\'wght\' 900;text-transform:uppercase;font-size:21px;'
+            'line-height:1" data-bind="club">Zero FC</div>'
             '<div class="sub-line" style="letter-spacing:.14em;text-transform:uppercase">'
-            'Apex division · <span data-bind="handle">@alex_trader</span></div></div></div>'
-            '<div class="value-big" style="font-size:clamp(40px,4.6vw,62px);color:var(--lime);margin-top:22px" '
-            'data-bind="rank">#124</div>'
-            '<div class="delta">▲ 27 places since Gameweek 24</div>'
-            '<div class="mini-grid" style="margin-top:22px">'
-            '<div class="mini"><div class="k">Season FP</div><div class="v" data-bind="fp">8,420</div></div>'
-            '<div class="mini"><div class="k">Multiplier</div><div class="v amber" data-bind="boost">15.0%</div></div>'
-            '</div>'
-            '<div class="b-row" style="margin-top:18px"><span>Distance to top 100</span><b>410 FP</b></div>'
-            '<div class="b-row"><span>Distance to relegation</span><b>3,970 FP</b></div>'
-            '<div class="b-row total"><span>Projected GW28 yield</span>'
-            '<b style="color:var(--lime)">+18,400 $FTR</b></div>'
-            '</div></div>'))
-
-# index chart
-lb.append(T('<div class="bezel c8" data-reveal><div class="core pad">'
-            '<div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">'
-            '<div><div class="k-label" style="margin:0">Syndicate portfolio index</div>'
-            '<div class="sub-line">Mean Dream Club valuation, gameweek over gameweek</div></div>'
-            '<span class="tag lime" style="margin-left:auto">▲ 28.4% since GW24</span></div>'
-            '<div class="idx">@@</div>'
-            '<div class="chart-x" style="margin-top:12px"><span>GW24</span><span>GW25</span><span>GW26</span>'
-            '<span>GW27</span><span>GW28</span></div>'
-            '<div class="mini-grid" style="grid-template-columns:repeat(4,1fr);margin-top:22px">'
-            '<div class="mini"><div class="k">Mean club</div><div class="v">148.6K</div></div>'
-            '<div class="mini"><div class="k">Median club</div><div class="v">92.4K</div></div>'
-            '<div class="mini"><div class="k">New clubs</div><div class="v lime">+48</div></div>'
-            '<div class="mini"><div class="k">Coach alpha</div><div class="v amber">+15–18.5%</div></div>'
-            '</div>'
-            '<p style="font-size:11.5px;color:var(--faint);font-weight:300;margin-top:18px;line-height:1.6">'
-            'Solid line is the index. Dashed line is the same basket without coach equities — the gap is what '
-            'tactical synergy has been worth over the cycle.</p>'
-            '</div></div>', idx_chart(IDX)))
+            'Apex division · <span data-bind="handle">@alex_trader</span></div></div>'
+            '<div style="display:flex;gap:28px;flex-wrap:wrap;margin-left:auto;align-items:center">'
+            '<div><div class="k-label" style="margin:0 0 6px">Rank</div>'
+            '<div class="num" style="font-size:22px;color:var(--lime)" data-bind="rank">#124</div></div>'
+            '<div><div class="k-label" style="margin:0 0 6px">Season FP</div>'
+            '<div class="num" style="font-size:22px" data-bind="fp">8,420</div></div>'
+            '<div><div class="k-label" style="margin:0 0 6px">Form</div>'
+            '<div class="form5"><i class="l">L</i><i class="l">L</i><i class="w">W</i><i class="w">W</i>'
+            '<i class="w">W</i></div></div>'
+            '<span>@@</span></div></div></div></div>',
+            btn("Division structure", "btn-glass", "divisions.html")))
 
 # standings
 lb.append(T('<div class="bezel c12" data-reveal><div class="core">'
@@ -1437,53 +1415,6 @@ lb.append(T('<div class="bezel c12" data-reveal><div class="core">'
             '<div style="padding:20px 24px 28px;font-size:11.5px;color:var(--faint);font-weight:300">'
             'Starting elevens are frozen for the window. Ranks refresh on every settled fixture.</div>'
             '</div></div>', ic("search", "ic")))
-
-# promotion matrix
-lb.append(T('<div class="bezel c5" data-reveal><div class="core pad">'
-            '<div class="k-label">Division structure</div>'
-            '<p style="font-size:12.5px;color:var(--dim);font-weight:300;margin:0 0 20px;line-height:1.6">'
-            'Clubs move between tiers at the end of each four-week cycle on accumulated points. Value does not '
-            'promote you — points do.</p>'
-            '<div class="div-card"><span class="dot" style="background:#C4F82A"></span>'
-            '<div><b>Apex · Tier 1</b><span class="r">Ranks 1–150 worldwide. Your club is here.</span></div>'
-            '<div class="pp"><em>50%</em><span>Prize pool</span></div></div>'
-            '<div class="div-card"><span class="dot" style="background:#4DA6FF"></span>'
-            '<div><b>Contender · Tier 2</b><span class="r">Ranks 151–500. Relegation zone below 450.</span></div>'
-            '<div class="pp"><em>30%</em><span>Prize pool</span></div></div>'
-            '<div class="div-card"><span class="dot" style="background:rgba(255,255,255,.34)"></span>'
-            '<div><b>Challenger &amp; Rising Star</b><span class="r">Ranks 501+ and academy formations.</span></div>'
-            '<div class="pp"><em>20%</em><span>Prize pool</span></div></div>'
-            '<div class="b-row" style="margin-top:22px"><span>Cycle ends</span><b>Gameweek 30 · 28 Sep</b></div>'
-            '<div class="b-row total"><span>Your standing</span><b style="color:var(--lime)">Safe in Apex</b></div>'
-            '</div></div>'))
-
-# how ranking works
-lb.append(T('<div class="bezel c7" data-reveal><div class="core pad">'
-            '<div class="k-label">How the table is built</div>'
-            '<div class="bento" style="grid-template-columns:repeat(2,1fr);gap:10px;margin-top:6px">'
-            '<div class="mini"><div class="k">01 · Raw performance</div>'
-            '<p style="font-size:12.5px;color:var(--dim);font-weight:300;margin:10px 0 0;line-height:1.6">'
-            'Every eligible appearance by an asset you own scores against the published rules — goals, assists, '
-            'clean sheets, duels, defensive actions.</p></div>'
-            '<div class="mini"><div class="k">02 · Captain weighting</div>'
-            '<p style="font-size:12.5px;color:var(--dim);font-weight:300;margin:10px 0 0;line-height:1.6">'
-            'The armband multiplies one player\'s return by 1.5x. Choosing it is the single biggest weekly decision '
-            'most managers get wrong.</p></div>'
-            '<div class="mini"><div class="k">03 · Squad synergy</div>'
-            '<p style="font-size:12.5px;color:var(--dim);font-weight:300;margin:10px 0 0;line-height:1.6">'
-            'A full eleven in natural positions, teammate links and a coach whose real shape matches yours '
-            'compound into the club multiplier.</p></div>'
-            '<div class="mini"><div class="k">04 · Settlement</div>'
-            '<p style="font-size:12.5px;color:var(--dim);font-weight:300;margin:10px 0 0;line-height:1.6">'
-            'Points convert to $FTR at the tier rate you staked at. Top-150 clubs are paid first, on the last '
-            'final whistle of the window.</p></div>'
-            '</div>'
-            '<div style="display:flex;gap:10px;margin-top:20px;flex-wrap:wrap">@@@@</div>'
-            '</div></div>',
-            btn("Read the scoring rules", "btn-glass", "fanplay.html#rules",
-                extra='style="flex:1;justify-content:space-between"'),
-            btn("Improve your synergy", href="clubs.html#chem",
-                extra='style="flex:1;justify-content:space-between"')))
 
 lb.append('</div></div></section></main>')
 

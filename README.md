@@ -13,18 +13,22 @@ self-contained HTML file with no build step and no runtime dependencies beyond G
 | File | What it covers |
 | --- | --- |
 | `index.html` | Landing page — the three layers (Own / Build / Play), live exchange console, Dream Club preview, the Fantrade loop, house rules |
-| `exchange.html` | Market table with player/coach filtering and search, working buy/sell ticket with live fee calculation, supply ring, movers, coach index |
-| `clubs.html` | Zero FC dashboard with Line-ups / League position / Form tabs, live position ladder and form pills, club value chart, eight-step club builder with live formation switching (4-3-3 / 4-4-2 / 3-5-2 / 4-2-3-1), chemistry factors, club table |
-| `fanplay.html` | Individual vs Dream Club entry, six market tiers, live scores board — date strip, featured match with ticking minute, fixtures grouped by competition with follow stars — settlement countdown, scoring rules |
-| `ftr.html` | $FTR wallet — balance hero with range-switched chart, Send / Receive / Swap / Buy panes, scannable receive QR, asset list, activity, supply distribution |
-| `how-it-works.html` | The six-step loop in full, settlement timeline, mode comparison, FAQ |
+| `exchange.html` | Market list — player/coach filtering, search, movers and the coach index. Rows open the asset's own page |
+| `asset.html` | One asset's market page (`?a=$Saka`) — price chart with ranges, market stats, order book, recent trades, your position |
+| `trade.html` | Trade terminal (`?a=$Saka`) — depth, buy/sell ticket with market and limit orders, percentage sizing, open orders and your fills |
+| `clubs.html` | Zero FC with Line-ups / League position / Form tabs, live position ladder and form pills, club value chart |
+| `club-builder.html` | The eight-step builder with live formation switching (4-3-3 / 4-4-2 / 3-5-2 / 4-2-3-1) and its own pitch |
+| `fanplay.html` | Individual vs Dream Club entry, live scores board — date strip, featured match with ticking minute, fixtures grouped by competition with follow stars — settlement countdown |
+| `ftr.html` | $FTR wallet — gradient balance card with Send / Receive / Swap / Buy inside it, quick-send row, scannable receive QR, balance history, asset list, transaction history |
+| `how-it-works.html` | The six-step loop, settlement timeline, mode comparison, FAQ, plus the reference material the app links out to: order mechanics, market tiers, scoring rules, club chemistry |
 | `signin.html` | Split-screen sign in — validation, password reveal, passkey/social stubs, reset-link modal |
 | `signup.html` | Account creation — password strength meter, region select, terms gate, hands off to onboarding |
 | `onboarding.html` | Four-step setup wizard — manager profile, opening grant, first share purchase, club identity |
 | `dashboard.html` | **Home** — net worth with range-switched chart, club summary, live lock countdown, matchday board, movers, activity, entries |
 | `account.html` | Account hub — identity card, and the way in to the wallet, portfolio, club, league table, notifications and settings |
 | `portfolio.html` | Portfolio & ledger — holdings table with filters and live P&L, allocation split, settlement ledger, yield, CSV export |
-| `leaderboard.html` | Global standings — division filters, search and sort, club inspection, promotion matrix, syndicate index |
+| `leaderboard.html` | The table and nothing else — a rank strip, then division filters, search, sort and club inspection |
+| `divisions.html` | Tier structure, promotion rules, the syndicate index and how the table is built |
 | `notifications.html` | Activity feed — day grouping, per-kind filters, unread state, per-channel toggles |
 | `settings.html` | Profile, club identity, security and sessions, notification channels, payouts, responsible play, danger zone |
 
@@ -54,6 +58,20 @@ mislabel its own tab.
 
 **Marketing pages** (`index`, `how-it-works`) keep the public nav with Sign in and Get started.
 **Auth pages** use a stripped shell: logo, one way back, no footer.
+
+The active tab expands into a filled lime pill carrying its label; the other four are icon-only.
+
+## In-app pages drill down, they don't stack
+
+An in-app page shows one thing and links to the next, rather than stacking explainers underneath the
+working part. Exchange is a list; a row opens `asset.html`; its Trade button opens `trade.html`.
+Dream Clubs is the club; the builder is `club-builder.html`. Leaderboard is the table; the tier
+structure is `divisions.html`.
+
+The explanatory writing lives on the landing site, at `how-it-works.html#mechanics`, `#tiers`,
+`#rules` and `#chem`. In-app pages link to it instead of repeating it. If you add a section to an
+in-app page, ask whether a first-time reader needs it *here* — if not, it belongs on the landing
+site with a link.
 
 ## State
 
