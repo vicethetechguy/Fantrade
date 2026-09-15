@@ -117,11 +117,11 @@ main,header,footer,.nav-island{position:relative;z-index:1}
 /* island nav */
 .nav-island{position:fixed;top:22px;left:50%;transform:translateX(-50%);z-index:70;
   display:flex;align-items:center;gap:26px;width:max-content;max-width:calc(100vw - 32px);
-  padding:8px 8px 8px 22px;border-radius:999px;background:rgba(10,11,12,.62);
+  height:45px;box-sizing:border-box;padding:0 6px 0 18px;border-radius:999px;background:rgba(10,11,12,.62);
   backdrop-filter:blur(22px) saturate(160%);-webkit-backdrop-filter:blur(22px) saturate(160%);
   border:1px solid var(--hair);box-shadow:var(--inset),0 20px 50px -20px rgba(0,0,0,.9)}
 .logo{display:flex;align-items:center;gap:10px;font-family:Archivo;font-variation-settings:'wdth' 125,'wght' 900;
-  text-transform:uppercase;font-size:16px;white-space:nowrap}
+  text-transform:uppercase;font-size:14px;white-space:nowrap}
 .logo .ic{color:var(--lime);width:22px;height:22px}
 .nav-links{display:flex;gap:24px;font-size:13px;color:var(--dim)}
 .nav-links a{position:relative;padding:4px 0;transition:color .5s var(--ease)}
@@ -147,19 +147,20 @@ main,header,footer,.nav-island{position:relative;z-index:1}
 .btn-glass .cap{background:rgba(255,255,255,.08)}
 .btn-glass:hover{background:rgba(255,255,255,.09);border-color:var(--hair-2)}
 .nav-cta{display:flex;align-items:center;gap:10px;flex:none}
-.btn-sm{padding:7px 7px 7px 18px;font-size:11px}
-.btn-sm .cap{width:26px;height:26px}
+.btn-sm{padding:4px 4px 4px 15px;font-size:10px;border:1px solid transparent;box-sizing:border-box}
+.btn-sm .cap{width:21px;height:21px}
+.btn-sm .cap .ic{width:12px;height:12px}
 .btn-red{background:rgba(255,94,94,.14);color:#ffb3b3;border:1px solid rgba(255,94,94,.3)}
 .btn-red .cap{background:rgba(255,94,94,.16)}
 
 /* burger + overlay */
-.burger{display:none;width:44px;height:44px;border-radius:999px;background:rgba(255,255,255,.06);
+.burger{display:none;width:33px;height:33px;border-radius:999px;background:rgba(255,255,255,.06);
   border:1px solid var(--hair);cursor:pointer;position:relative;flex:none}
-.burger i{position:absolute;left:13px;width:18px;height:1.4px;background:var(--ink);border-radius:2px;
+.burger i{position:absolute;left:9px;width:15px;height:1.4px;background:var(--ink);border-radius:2px;
   transition:transform .7s var(--ease)}
-.burger i:nth-child(1){top:17px}.burger i:nth-child(2){top:25px}
-body.menu-open .burger i:nth-child(1){transform:translateY(4px) rotate(45deg)}
-body.menu-open .burger i:nth-child(2){transform:translateY(-4px) rotate(-45deg)}
+.burger i:nth-child(1){top:13px}.burger i:nth-child(2){top:19px}
+body.menu-open .burger i:nth-child(1){transform:translateY(3px) rotate(45deg)}
+body.menu-open .burger i:nth-child(2){transform:translateY(-3px) rotate(-45deg)}
 .overlay{position:fixed;inset:0;z-index:65;background:rgba(5,5,5,.86);backdrop-filter:blur(34px) saturate(140%);
   -webkit-backdrop-filter:blur(34px) saturate(140%);display:flex;flex-direction:column;justify-content:center;
   padding:0 32px;gap:6px;opacity:0;pointer-events:none;visibility:hidden;
@@ -427,7 +428,7 @@ footer{border-top:1px solid var(--hair);padding:70px 0 64px;background:rgba(255,
 /* responsive */
 @media (max-width:1024px){
   .nav-links{display:none}.burger{display:block}
-  .nav-island{width:calc(100vw - 32px);justify-content:space-between;padding:8px 8px 8px 20px}
+  .nav-island{width:calc(100vw - 32px);justify-content:space-between;padding:0 8px 0 20px}
   /* Sign in moves into the menu; Get started stays out where it can be tapped */
   .nav-cta{margin-left:auto}
   .nav-cta .btn-glass{display:none}
@@ -443,23 +444,22 @@ footer{border-top:1px solid var(--hair);padding:70px 0 64px;background:rgba(255,
   html,body{overflow-x:hidden!important;width:100%;max-width:100vw;-webkit-text-size-adjust:100%}
   input,select,textarea{font-size:16px!important} /* Prevents iOS auto-zoom */
   .wrap{padding-left:max(16px,env(safe-area-inset-left));padding-right:max(16px,env(safe-area-inset-right));max-width:100vw;box-sizing:border-box}
-  .nav-island{top:max(10px,env(safe-area-inset-top));left:10px;right:10px;transform:none;width:auto;max-width:calc(100vw - 20px)!important;box-sizing:border-box;padding:6px 8px 6px 14px;gap:10px}
-  .nav-island .logo{font-size:14px}
+  .nav-island{top:max(10px,env(safe-area-inset-top));left:10px;right:10px;transform:none;width:auto;max-width:calc(100vw - 20px)!important;height:43px;padding:0 6px 0 14px;gap:10px}
+  .nav-island .logo{font-size:13px}
   .nav-island .logo .ic{width:19px;height:19px}
   .nav-cta{gap:8px;min-width:0}
-  .nav-cta .btn-sm{padding:6px 6px 6px 14px;font-size:10px;white-space:nowrap}
-  .nav-cta .btn-sm .cap{width:22px;height:22px}
-  .nav-cta .btn-sm .cap .ic{width:13px;height:13px}
+  .nav-island .btn-sm{min-height:0;padding:4px 4px 4px 13px;font-size:9.5px;white-space:nowrap}
+  .nav-island .btn-sm .cap{width:21px;height:21px}
+  .nav-island .btn-sm .cap .ic{width:12px;height:12px}
+  .burger{width:33px;height:33px}
+  .burger i{left:9px;width:15px}
+  .burger i:nth-child(1){top:13px}.burger i:nth-child(2){top:19px}
   .nav-island #navAccountBtn{display:none!important}
   .nav-wallet{padding:5px 11px;font-size:11.5px;gap:6px}
   .nav-wallet .pulse{width:5px;height:5px}
   .logo{font-size:14px;flex-shrink:0;gap:8px}
   .logo .ic{width:19px;height:19px}
-  .burger{width:38px;height:38px}
-  .burger i{left:10px;width:16px}
-  .burger i:nth-child(1){top:15px}.burger i:nth-child(2){top:22px}
-  body.menu-open .burger i:nth-child(1){transform:translateY(3.5px) rotate(45deg)}
-  body.menu-open .burger i:nth-child(2){transform:translateY(-3.5px) rotate(-45deg)}
+
   body.menu-open{overflow:hidden}
   .overlay{padding:calc(82px + env(safe-area-inset-top)) 20px calc(36px + env(safe-area-inset-bottom));overflow-y:auto;overflow-x:hidden;justify-content:flex-start;max-width:100vw}
   .overlay a{font-size:clamp(22px,7.5vw,34px)!important;font-variation-settings:'wdth' 105,'wght' 800!important;overflow-wrap:break-word;word-break:break-word;white-space:normal;line-height:1.25;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.05)}
@@ -586,7 +586,7 @@ footer{border-top:1px solid var(--hair);padding:70px 0 64px;background:rgba(255,
 }
 @media (max-width:480px){
   .wrap{padding-left:12px;padding-right:12px}
-  .nav-island{left:6px;right:6px;padding:5px 8px 5px 12px}
+  .nav-island{left:6px;right:6px;padding:0 6px 0 12px}
   .logo{font-size:13px}
   .hero h1{font-size:clamp(22px,7.5vw,30px)!important}
   .phead h1{font-size:clamp(22px,7vw,30px)!important}
@@ -1475,7 +1475,7 @@ body.app .sub-line{font-size:10px;margin-top:3px}
 body.app .btn{padding:8px 8px 8px 16px;font-size:10.5px;letter-spacing:.06em;min-height:0}
 body.app .btn .cap{width:22px;height:22px}
 body.app .btn .cap .ic{width:11px;height:11px}
-body.app .btn-sm{padding:6px 6px 6px 13px;font-size:9.5px}
+body.app .btn-sm{padding:4px 4px 4px 13px;font-size:9.5px}
 body.app .acts{gap:8px;margin-top:16px!important}
 
 body.app .statbar{gap:7px;margin-top:16px}
@@ -1586,8 +1586,7 @@ body.app .taskbar a{height:42px;padding:0 13px}
 body.app .taskbar a.on{padding:0 17px}
 body.app .taskbar a .ic{width:18px;height:18px}
 body.app .taskbar a span{font-size:10px}
-body.app .nav-island{padding:6px 6px 6px 16px}
-body.app .logo{font-size:14px}
+body.app .nav-island{padding:0 6px 0 16px}
 body.app .nav-wallet{padding:5px 12px}
 body.app .nav-wallet .num{font-size:11px}
 body.app .bell{width:31px;height:31px}
