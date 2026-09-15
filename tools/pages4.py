@@ -693,12 +693,9 @@ def idx_chart(vals, w=620, h=180):
 
 dv = [T('<main><section class="app-head" style="padding-bottom:26px"><div class="wrap">'
         '<div data-reveal>@@</div>'
-        '<span class="pill" style="margin-top:20px" data-reveal>@@ Competition structure</span>'
-        '<h1 data-reveal>Divisions<br>&amp; promotion</h1>'
-        '<p class="lede" data-reveal>Clubs move between tiers at the end of each four-week cycle on '
-        'accumulated points. Value does not promote you — points do.</p>'
+        '<h1 data-reveal style="margin-top:20px">Divisions</h1>'
         '</div></section>',
-        crumb("leaderboard.html", "Back to the table"), ic("layers", "ic"))]
+        crumb("leaderboard.html", "Back to the table"))]
 
 dv.append('<section style="padding:6px 0 130px"><div class="wrap"><div class="bento">')
 

@@ -40,9 +40,7 @@ WALLET_ASSETS = [("$Saka", "Bukayo Saka", "boot", "", 6.4, 0),
 
 # The wallet is a card and a list of what you own. Send, receive, swap, buy
 # and the ledger are destinations, not panels stacked underneath it.
-f = ['<main><section style="padding:104px 0 0"><div class="wrap">'
-     '<div class="k-label" data-reveal>Wallet · FTR-012</div></div></section>'
-     '<section style="padding:16px 0 70px"><div class="wrap"><div class="bento">']
+f = ['<main><section style="padding:118px 0 70px"><div class="wrap"><div class="bento">']
 
 f.append(T('<div class="c5" data-reveal><div class="wcard">'
            '<span class="tag-id">FTR-012</span>'

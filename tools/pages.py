@@ -276,6 +276,14 @@ page("index.html", "Home — Fantrade", "".join(land), PITCH_JS, LAND_CSS)
 # 2. EXCHANGE
 # ══════════════════════════════════════════════════════════
 EX_CSS = """
+.ci{display:flex;align-items:center;gap:26px;flex-wrap:wrap}
+.ci-l{min-width:0}
+.ci-r{flex:1;min-width:200px;display:flex;justify-content:flex-end}
+.ci-r svg{width:100%;max-width:300px;height:auto}
+.board .mkhead,.board .mkrow{padding-left:0;padding-right:0}
+.board .mkhead{margin-top:18px}
+.board .mkrow{border-radius:0}
+.board .mkrow:hover{background:rgba(255,255,255,.035)}
 .ticket .line:last-of-type{border-bottom:0}
 .movers{display:flex;flex-direction:column;gap:2px}
 .mv{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.05)}
@@ -291,59 +299,44 @@ EX_CSS = """
 .legend i{width:16px;height:2px;border-radius:2px;display:block}
 """
 
-ex = [T('<main><section class="app-head" style="padding-bottom:14px"><div class="wrap">'
-        '<span class="greet" data-reveal>Markets</span>'
+ex = [T('<main><section class="app-head" style="padding-bottom:18px"><div class="wrap">'
         '<h1 data-reveal>Exchange</h1>'
         '<div class="searchbox" style="margin-top:16px;max-width:none" data-reveal>@@'
         '<input id="q" type="search" placeholder="Search a player, coach or ticker"></div>'
-        '<div class="statbar" data-reveal>'
-        '<div>@@ 24h volume <b>48.24M</b> $FTR</div>'
-        '<div>@@ Listed assets <b>420</b></div>'
-        '<div>@@ Top gainer <b id="topG">$Jackson</b></div>'
-        '<div>@@ Your balance <b data-bind="balance">128,450</b></div>'
-        '</div></div></section>',
-        ic("search", "ic"), ic("candle", "ic"), ic("layers", "ic"), ic("bolt", "ic"), ic("coin", "ic"))]
+        '</div></section>', ic("search", "ic"))]
 
-ex.append('<section style="padding-top:8px"><div class="wrap"><div class="bento">')
+# Coach index sits above the book — it is the one number that frames the whole list.
+ex.append(T('<section style="padding-top:0"><div class="wrap">'
+            '<div class="bezel" data-reveal><div class="core pad ci">'
+            '<div class="ci-l"><div class="k-label">@@ Coach index</div>'
+            '<div class="value-big">24.65 <small>$FTR</small></div>'
+            '<div class="delta">▲ 2.1% · 186 coaches</div></div>'
+            '<div class="ci-r" id="coachSpark"></div>'
+            '</div></div></div></section>', ic("whistle", "ic-sm")))
 
-ex.append('<div class="bezel c12" data-reveal><div class="core">'
-          '<div style="padding:16px 16px 0"><div class="utabs" id="exSort">'
+# The book itself is not a card. It runs straight down the page.
+ex.append('<section style="padding-top:22px;padding-bottom:120px"><div class="wrap">'
+          '<div class="board" data-reveal>'
+          '<div class="utabs" id="exSort">'
           '<button type="button" aria-pressed="true" data-s="all">All</button>'
           '<button type="button" aria-pressed="false" data-s="hot">Hot</button>'
           '<button type="button" aria-pressed="false" data-s="new">New</button>'
           '<button type="button" aria-pressed="false" data-s="gainers">Gainers</button>'
           '<button type="button" aria-pressed="false" data-s="losers">Losers</button>'
           '<button type="button" aria-pressed="false" data-s="volume">Volume</button>'
-          '</div></div>'
-          '<div style="padding:12px 16px 0"><div class="utabs sm" id="exKind" style="border-bottom:0">'
+          '</div>'
+          '<div class="utabs sm" id="exKind" style="border-bottom:0;margin-top:14px">'
           '<button type="button" aria-pressed="true" data-f="all">All</button>'
           '<button type="button" aria-pressed="false" data-f="holdings">Holdings</button>'
           '<button type="button" aria-pressed="false" data-f="player">Players</button>'
           '<button type="button" aria-pressed="false" data-f="coach">Coaches</button>'
-          '</div></div>'
+          '</div>'
           '<div class="mkhead"><span>Asset / Volume</span>'
           '<span style="text-align:right">Price $FTR</span>'
           '<span style="text-align:center">24h</span></div>'
           '<div id="mkt"></div>'
-          '<div style="padding:12px 16px 20px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">'
-          '<span style="font-size:10.5px;color:var(--faint)" id="mktCount">—</span>'
-          '</div>'
-          '</div></div>')
-
-ex.append('</div></div></section>')
-
-# movers + coach index
-ex.append('<section style="padding-top:6px"><div class="wrap"><div class="bento">')
-ex.append(T('<div class="bezel c4" data-reveal><div class="core pad"><div class="k-label">@@ Top gainers · 24h</div>'
-          '<div class="movers" id="gainers"></div></div></div>', ic("bolt", "ic-sm")))
-ex.append(T('<div class="bezel c4" data-reveal><div class="core pad"><div class="k-label">@@ Fallers · 24h</div>'
-          '<div class="movers" id="fallers"></div></div></div>', ic("pulse", "ic-sm")))
-ex.append(T('<div class="bezel c4" data-reveal><div class="core pad"><div class="k-label">@@ Coach index</div>'
-          '<div class="value-big">24.65 <small>$FTR</small></div>'
-          '<div class="delta">▲ 2.1% · 186 coaches</div>'
-          '<div style="margin-top:14px">@@</div>'
-          '</div></div>', ic("whistle", "ic-sm"), '<div id="coachSpark"></div>'))
-ex.append('</div></div></section>')
+          '<div style="padding:14px 0 0;font-size:10.5px;color:var(--faint)" id="mktCount">—</div>'
+          '</div></div></section>')
 ex.append('</main>')
 
 EX_JS = r"""
@@ -386,7 +379,7 @@ function rows(){
   }).join('') || "<div class='empty-state'><svg class='ic-xl' aria-hidden='true'><use href='#i-search'/></svg>"
     + "No assets match that search. Try a surname or a ticker like $Saka.</div>";
   document.getElementById('mktCount').textContent =
-    list.length + ' of ' + ASSETS.length + ' assets · tap one for its market page';
+    list.length + ' of ' + ASSETS.length + ' assets';
 }
 
 document.querySelectorAll('#exKind button').forEach(function(b){
@@ -404,24 +397,9 @@ document.querySelectorAll('#exSort button').forEach(function(b){
 var qi = document.getElementById('q');
 if(qi) qi.addEventListener('input', function(){ q = qi.value.trim().toLowerCase(); rows(); });
 
-function moverList(el, up){
-  var list = ASSETS.slice().sort(function(a, b){ return up ? b.d - a.d : a.d - b.d; }).slice(0, 4);
-  document.getElementById(el).innerHTML = list.map(function(a){
-    return "<a class='arow' style='padding:9px 0' href='asset.html?a=" + encodeURIComponent(a.t) + "'>"
-      + "<div class='who'><span class='coin" + (a.c ? " am" : "") + "'><svg class='ic'><use href='#i-"
-      + (a.c ? 'whistle' : 'boot') + "'/></svg></span><div style='min-width:0'><div class='nm'>" + a.t
-      + "</div><div class='qt'>" + a.n + "</div></div></div>"
-      + "<div></div><div><div class='val'>" + a.p.toFixed(2) + "</div><div class='chg "
-      + (a.d >= 0 ? 'up' : 'down') + "'>" + (a.d >= 0 ? '+' : '') + a.d.toFixed(1) + "%</div></div></a>";
-  }).join('');
-}
 rows();
-moverList('gainers', true);
-moverList('fallers', false);
-document.getElementById('topG').textContent =
-  ASSETS.slice().sort(function(a, b){ return b.d - a.d; })[0].t;
 var cs = document.getElementById('coachSpark');
-if(cs) cs.innerHTML = spark(true, 240, 40);
+if(cs) cs.innerHTML = spark(true, 300, 54);
 liveTicks('.mkrow');
 window.addEventListener('fantrade:statechange', rows);
 """
@@ -463,13 +441,7 @@ CL_CSS = """
 """
 
 cl = []
-cl.append(T('<header class="phead"><div class="wrap">'
-          '<span class="pill" data-reveal>@@ Dream Clubs</span><h1 data-reveal>Zero FC</h1>'
-          '<p class="lede" data-reveal>Your club is a portfolio wearing a badge. Everything in the squad is owned '
-          'outright, and its value moves with the market underneath it.</p>'
-          '<div class="statbar" data-reveal><div>@@ Club value <b>245,800 $FTR</b></div>'
-          '<div>@@ Rank <b>#124 of 48,206</b></div><div>@@ Club FP <b>8,420</b></div>'
-          '<div>@@ Boost <b>+15%</b></div></div></div></header>', ic("crest", "ic"), ic("coin", "ic"), ic("trophy", "ic"), ic("bolt", "ic"), ic("target", "ic")))
+cl.append('<header class="phead"><div class="wrap"><h1 data-reveal>Zero FC</h1></div></header>')
 
 ROUNDS = [("MD 27", "812", "18th", "w", "+6,200"), ("MD 26", "704", "41st", "w", "+4,100"),
           ("MD 25", "689", "63rd", "w", "+3,250"), ("MD 24", "512", "308th", "l", "-2,500"),
@@ -736,12 +708,9 @@ page("clubs.html", "Dream Clubs — Fantrade", "".join(cl), CL_JS, CL_CSS, app=T
 # builder
 bd = [T('<main><section class="app-head" style="padding-bottom:24px"><div class="wrap">'
         '<div data-reveal>@@</div>'
-        '<span class="pill" style="margin-top:20px" data-reveal>@@ Club builder</span>'
-        '<h1 data-reveal>Build it in<br>eight steps</h1>'
-        '<p class="lede" data-reveal>Identity first, squad second. Every slot you fill checks your wallet '
-        'before it accepts a name — change the formation and the shape rebuilds around the players you own.</p>'
+        '<h1 data-reveal style="margin-top:20px">Club builder</h1>'
         '</div></section>',
-        crumb("clubs.html", "Back to the club"), ic("formation", "ic"))]
+        crumb("clubs.html", "Back to the club"))]
 bd.append('<section style="padding:6px 0 130px"><div class="wrap">')
 bd.append(T('<div class="bento"><div class="bezel c5" data-reveal><div class="core pad">'
           '<div class="stepper" id="stepper">'
@@ -823,11 +792,8 @@ FP_CSS = """
 """
 
 fp = []
-fp.append(T('<header class="phead"><div class="wrap">'
-          '<span class="pill" data-reveal>@@ Matchday 07 · open</span><h1 data-reveal>FanPlay</h1>'
-          '<div class="statbar" data-reveal><div>@@ Window closes <b>Fri 18:30</b></div>'
-          '<div>@@ Fixtures tracked <b>9 matches</b></div><div>@@ Your entries <b id="fpActiveCount">2 active</b></div></div>'
-          '</div></header>', ic("bolt", "ic"), ic("clock", "ic"), ic("calendar", "ic"), ic("target", "ic")))
+fp.append('<header class="phead"><div class="wrap"><h1 data-reveal>FanPlay</h1>'
+          '<span hidden id="fpActiveCount">2 active</span></div></header>')
 
 fp.append(T('<main><section style="padding-top:30px"><div class="wrap"><div class="bezel" data-reveal><div class="core">'
           '<div class="tabs" role="tablist" aria-label="FanPlay mode">'
@@ -893,7 +859,7 @@ fp.append(T('<section id="board" style="padding-top:40px"><div class="wrap">'
             '<span class="ibox">@@</span>'
             '<div><div style="font-family:Archivo;font-variation-settings:\'wdth\' 120,\'wght\' 800;'
             'text-transform:uppercase;font-size:20px">Live board</div>'
-            '<div class="sub-line">Your eleven, wherever they are playing this window</div></div></div>'
+            '<div class="sub-line">Matchday 07</div></div></div>'
             '<div class="bento"><div class="bezel c8" data-reveal><div class="core">', ic("pulse", "ic-lg")))
 
 # date strip

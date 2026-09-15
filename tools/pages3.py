@@ -307,7 +307,7 @@ STEPS = [("01", "Manager profile"), ("02", "Fund your wallet"),
          ("03", "First asset"), ("04", "Name your club")]
 
 ob = [T('<main><section class="app-head" style="padding-bottom:0"><div class="wrap">'
-        '<span class="pill" data-reveal>@@ Account setup</span>'
+        '<span hidden>@@</span>'
         '<h1 data-reveal>Set up<br>your desk</h1>'
         '<p class="lede" data-reveal>Four steps. At the end of them you own shares, you have a club with a name '
         'and a shape, and you are eligible for the next settlement window.</p>'
@@ -634,18 +634,11 @@ MOVERS = [("$Jackson", "Nicolas Jackson", 14.85, 11.2, 8), ("$Saka", "Bukayo Sak
           ("$Haaland", "Erling Haaland", 71.40, -1.8, 1), ("$Pedri", "Pedri González", 41.15, -0.9, 6)]
 
 da = [T('<main><section class="app-head"><div class="wrap"><div class="head-row">'
-        '<div><span class="greet" id="greet" data-reveal>Home · Gameweek 28</span>'
-        '<h1 data-reveal>Evening, <span data-bind="first">Alex</span></h1></div>'
+        '<div><h1 data-reveal>Evening, <span data-bind="first">Alex</span></h1></div>'
         '<div class="acts" data-reveal>@@@@</div></div>'
-        '<div class="statbar" data-reveal>'
-        '<div>@@ Net worth <b data-bind="net">370,300</b> $FTR</div>'
-        '<div>@@ Liquid <b data-bind="balance">128,450</b> $FTR</div>'
-        '<div>@@ Season FP <b data-bind="fp">8,420</b></div>'
-        '<div>@@ Multiplier <b data-bind="boost">15.0%</b></div>'
-        '</div></div></section>',
+        '</div></section>',
         btn("Enter matchday", href="fanplay.html"),
-        btn("Buy shares", "btn-glass", "exchange.html"),
-        ic("chart", "ic"), ic("crest", "ic"), ic("trophy", "ic"), ic("bolt", "ic"))]
+        btn("Buy shares", "btn-glass", "exchange.html"))]
 
 da.append('<section style="padding:10px 0 120px"><div class="wrap"><div class="bento">')
 
@@ -948,21 +941,11 @@ PF_CSS = """
 """
 
 pf = [T('<main><section class="app-head"><div class="wrap"><div class="head-row">'
-        '<div><span class="pill" data-reveal>@@ Capital &amp; tactical ledger</span>'
-        '<h1 data-reveal>Portfolio</h1>'
-        '<p class="lede" data-reveal>Every share you hold, what it cost, what it is worth now, and every '
-        'event that moved your balance — trades, stakes, dividends and settlements, in one audit trail.</p></div>'
+        '<div><h1 data-reveal>Portfolio</h1></div>'
         '<div class="acts" data-reveal>@@@@</div></div>'
-        '<div class="statbar" data-reveal>'
-        '<div>@@ Net worth <b data-bind="net">370,300</b> $FTR</div>'
-        '<div>@@ Liquid <b data-bind="balance">128,450</b></div>'
-        '<div>@@ Locked <b data-bind="locked">5,000</b></div>'
-        '<div>@@ Season payouts <b data-bind="earned">19,640</b></div>'
-        '</div></div></section>',
-        ic("receipt", "ic"),
+        '</div></section>',
         btn("Export CSV", "btn-glass", tag="button", extra='id="pfExport"'),
-        btn("Rebalance squad", href="clubs.html"),
-        ic("chart", "ic"), ic("coin", "ic"), ic("lock", "ic"), ic("trophy", "ic"))]
+        btn("Rebalance squad", href="clubs.html"))]
 
 pf.append('<section style="padding:10px 0 120px"><div class="wrap"><div class="bento">')
 
@@ -1346,19 +1329,11 @@ def idx_chart(vals, w=620, h=170):
 
 
 lb = [T('<main><section class="app-head"><div class="wrap"><div class="head-row">'
-        '<div><span class="pill" data-reveal>@@ Gameweek 28</span>'
-        '<h1 data-reveal>Standings</h1></div>'
+        '<div><h1 data-reveal>Standings</h1></div>'
         '<div class="acts" data-reveal>@@@@</div></div>'
-        '<div class="statbar" data-reveal>'
-        '<div>@@ Your rank <b data-bind="rank">#124</b></div>'
-        '<div>@@ Registered clubs <b>1,420</b></div>'
-        '<div>@@ GW28 prize pool <b>250,000</b> $FTR</div>'
-        '<div>@@ Mean club value <b>148,600</b></div>'
-        '</div></div></section>',
-        ic("rank", "ic"),
+        '</div></section>',
         btn("Rebalance your XI", href="clubs.html"),
-        btn("Enter this round", "btn-glass", "fanplay.html"),
-        ic("crest", "ic"), ic("layers", "ic"), ic("trophy", "ic"), ic("chart", "ic"))]
+        btn("Enter this round", "btn-glass", "fanplay.html"))]
 
 lb.append('<section style="padding:10px 0 120px"><div class="wrap"><div class="bento">')
 
@@ -1472,7 +1447,7 @@ function renderBoard(){
       + 'No clubs match that search.</div>';
 
   document.getElementById('lbCount').textContent =
-    'Showing ' + rows.length + ' of 1,420 clubs · updated 18 seconds ago';
+    rows.length + ' of 1,420 clubs';
 
   document.querySelectorAll('[data-inspect]').forEach(function(btn){
     btn.addEventListener('click', function(){
@@ -1530,12 +1505,8 @@ NT_CSS = """
 """
 
 nt = [T('<main><section class="app-head"><div class="wrap"><div class="head-row">'
-        '<div><span class="pill" data-reveal>@@ <span data-unread>3</span> unread</span>'
-        '<h1 data-reveal>Activity</h1>'
-        '<p class="lede" data-reveal>Settlements, order fills, teamsheet risks and account events — everything '
-        'Fantrade did on your behalf or needs you to know about, newest first.</p></div>'
+        '<div><h1 data-reveal>Activity</h1></div>'
         '<div class="acts" data-reveal>@@@@</div></div></div></section>',
-        ic("pulse", "ic"),
         btn("Mark all read", "btn-glass", tag="button", extra='id="ntRead"'),
         btn("Notification settings", href="settings.html#alerts"))]
 
@@ -1668,10 +1639,8 @@ SETNAV = [("profile", "user", "Manager profile"), ("club", "crest", "Club identi
           ("data", "receipt", "Data & account")]
 
 st = [T('<main><section class="app-head"><div class="wrap">'
-        '<span class="pill" data-reveal>@@ Account</span><h1 data-reveal>Settings</h1>'
-        '<p class="lede" data-reveal>Who you are on the league table, how your club is identified, what Fantrade '
-        'is allowed to tell you, and the limits you have set for yourself.</p>'
-        '</div></section>', ic("scales", "ic"))]
+        '<h1 data-reveal>Settings</h1>'
+        '</div></section>')]
 
 st.append('<section style="padding:10px 0 120px"><div class="wrap"><div class="bento">')
 
@@ -2098,10 +2067,8 @@ def hub(rows):
 
 
 ac = [T('<main><section class="app-head"><div class="wrap">'
-        '<span class="pill" data-reveal>@@ Account</span><h1 data-reveal>Account</h1>'
-        '<p class="lede" data-reveal>Everything that is yours rather than the market\'s — the wallet, the '
-        'portfolio, the club and the controls.</p>'
-        '</div></section>', ic("user", "ic"))]
+        '<h1 data-reveal>Account</h1>'
+        '</div></section>')]
 
 ac.append('<section style="padding:10px 0 130px"><div class="wrap"><div class="bento">')
 
