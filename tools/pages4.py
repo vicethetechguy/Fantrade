@@ -24,6 +24,7 @@ def btn(label, cls="btn-lime", href="#", tag="a", extra=""):
 
 def page(fname, title, body, js="", css="", app=True):
     html = (head(title, css, "app" if app else "") + atmosphere() + nav(fname, app) + body + footer() +
+            "<script src=\"public/fantrade-api.js\"></script>" +
             "<script>(function(){" + JS_SHELL + js + "})();</script></body></html>")
     with open(os.path.join(OUT, fname), "w", encoding="utf-8") as f:
         f.write(html)

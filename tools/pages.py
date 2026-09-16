@@ -28,7 +28,7 @@ def btn(label, cls="btn-lime", href="#", tag="a", extra=""):
 
 def page(fname, title, body, js="", css="", app=False):
     html = (head(title, css, "app" if app else "") + atmosphere() + nav(fname, app) +
-            body + footer() + "<script>(function(){" + JS_SHELL + js + "})();</script></body></html>")
+            body + footer() + "<script src=\"public/fantrade-api.js\"></script><script>(function(){" + JS_SHELL + js + "})();</script></body></html>")
     with open(os.path.join(OUT, fname), "w", encoding="utf-8") as f:
         f.write(html)
     return len(html)
@@ -362,10 +362,11 @@ function view(){
 
 function rows(){
   var s = FT.getState(), list = view();
-  document.getElementById('mkt').innerHTML = list.map(function(x){
+  var host = document.getElementById('mkt');
+  host.innerHTML = list.map(function(x){
     var a = x[0], to = 'asset.html?a=' + encodeURIComponent(a.t);
     var h = s.holdings[a.t];
-    return "<a class='mkrow' href='" + to + "' data-i='" + x[1] + "'>"
+    return "<a class='mkrow mrow' href='" + to + "' data-i='" + x[1] + "' data-trade='" + a.t + "'>"
       + "<div class='pair'><span class='coin" + (a.c ? " am" : "") + "'>"
       + "<svg class='ic'><use href='#i-" + (a.c ? 'whistle' : 'boot') + "'/></svg></span>"
       + "<div style='min-width:0'><div class='sym'>" + a.t.replace('$', '')
@@ -380,6 +381,60 @@ function rows(){
     + "No assets match that search. Try a surname or a ticker like $Saka.</div>";
   document.getElementById('mktCount').textContent =
     list.length + ' of ' + ASSETS.length + ' assets';
+
+  host.querySelectorAll('[data-trade]').forEach(function(el){
+    el.addEventListener('click', function(e){
+      e.preventDefault();
+      openTradeModal(el.dataset.trade);
+    });
+  });
+}
+
+function openTradeModal(sym){
+  var a = ASSETS.filter(function(x){ return x.t === sym; })[0] || ASSETS[0];
+  var html = '<h3 class="ft-modal-title">Trade ' + a.n + ' (' + a.t + ')</h3>'
+    + '<p class="ft-modal-desc">Market price: <span style="color:var(--lime)">' + a.p.toFixed(2) + ' $FTR</span></p>'
+    + '<div style="margin:16px 0"><label class="ux-label" for="qty">Quantity to Buy</label>'
+    + '<input type="number" id="qty" class="ux-select" style="width:100%" value="1" min="1"></div>'
+    + '<div id="tradeSummary" style="font-size:12px;color:var(--dim);margin:10px 0">Estimated Total: <b id="tradeTotal" style="color:var(--ink)">' + Math.round(a.p * 1.004) + ' $FTR</b> (incl. 0.4% fee)</div>'
+    + '<div style="display:flex;gap:10px;margin-top:16px">'
+    + '<button type="button" class="btn btn-lime" id="reviewOrderBtn" style="flex:1;justify-content:center">Review Order</button>'
+    + '<button type="button" class="btn btn-lime" id="confirmTradeBtn" style="display:none;flex:1;justify-content:center">Confirm Trade</button>'
+    + '</div>'
+    + '<div id="tradeNext" style="display:none;margin-top:14px;padding:12px;background:rgba(196,248,42,0.08);border-radius:8px;font-size:12px;color:var(--lime);text-align:center">'
+    + 'Trade confirmed! <a href="exchange.html" style="color:inherit;font-weight:bold;margin-left:6px">Trade another →</a></div>';
+
+  openModal(html);
+
+  var qi = document.getElementById('qty');
+  if(qi) qi.addEventListener('input', function(){
+    var qv = Math.max(1, parseInt(qi.value || '1', 10));
+    var tot = Math.round(qv * a.p * 1.004);
+    var el = document.getElementById('tradeTotal');
+    if(el) el.textContent = tot.toLocaleString('en-US') + ' $FTR';
+  });
+
+  var rev = document.getElementById('reviewOrderBtn');
+  var conf = document.getElementById('confirmTradeBtn');
+  var next = document.getElementById('tradeNext');
+
+  if(rev) rev.addEventListener('click', function(e){
+    e.preventDefault();
+    rev.style.display = 'none';
+    if(conf) conf.style.display = 'flex';
+  });
+
+  if(conf) conf.addEventListener('click', function(e){
+    e.preventDefault();
+    var qv = Math.max(1, parseInt(qi.value || '1', 10));
+    try {
+      FT.executeTrade('buy', a.t, a.n, qv, a.p, a.c);
+      conf.style.display = 'none';
+      if(next) next.style.display = 'block';
+    } catch(err){
+      alert(err.message);
+    }
+  });
 }
 
 document.querySelectorAll('#exKind button').forEach(function(b){

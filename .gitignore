@@ -6,3 +6,7 @@ node_modules/
 .vscode/
 .idea/
 artifacts/
+dist/
+.data/
+.env
+

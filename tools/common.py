@@ -2154,6 +2154,46 @@ var FT = (function(){
       save(state);
       FT.syncUI();
       window.dispatchEvent(new CustomEvent('fantrade:statechange', { detail: state }));
+
+      // Authoritative PostgreSQL backend sync
+      if(window.FantradeAPI && typeof window.FantradeAPI.placeOrder === 'function'){
+        window.FantradeAPI.placeOrder({
+          assetSymbol: assetSymbol,
+          side: side.toUpperCase(),
+          quantity: shares,
+          limitPrice: price
+        }).then(function(res){
+          console.log('[FantradeAPI] Order matched & recorded on PostgreSQL backend:', res);
+          if(window.FantradeAPI.getWallet && window.FantradeAPI.getPortfolio){
+            Promise.all([window.FantradeAPI.getWallet(), window.FantradeAPI.getPortfolio()]).then(function(results){
+              var w = results[0] && results[0].wallet;
+              var p = results[1] && results[1].portfolio;
+              if(w){
+                state.wallet.balance = Math.round(w.availableFtr);
+                state.wallet.locked = Math.round(w.reservedFtr);
+              }
+              if(p && p.holdings){
+                p.holdings.forEach(function(h){
+                  var sym = '$' + h.assetSymbol.replace(/^\$/, '');
+                  if(!state.holdings[sym]){
+                    state.holdings[sym] = { n: h.assetName, shares: h.quantity, avg: h.averageCost, p: h.currentPrice, c: isCoach, inClub: isCoach ? 'COACH' : 'SUB' };
+                  } else {
+                    state.holdings[sym].shares = h.quantity;
+                    state.holdings[sym].avg = h.averageCost;
+                    state.holdings[sym].p = h.currentPrice;
+                  }
+                });
+              }
+              save(state);
+              FT.syncUI();
+              window.dispatchEvent(new CustomEvent('fantrade:statechange', { detail: state }));
+            }).catch(function(){});
+          }
+        }).catch(function(err){
+          console.warn('[FantradeAPI] Live order sync notice:', err.message);
+        });
+      }
+
       return { total: total, remainingBalance: state.wallet.balance, shares: shares };
     },
     saveClub: function(clubData, id){

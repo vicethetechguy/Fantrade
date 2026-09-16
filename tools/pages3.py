@@ -26,7 +26,7 @@ def page(fname, title, body, js="", css="", app=True, chrome=True):
     shell = nav(fname, app) if chrome else nav_min()
     tail = footer() if chrome else ""
     html = (head(title, css, "app" if (app and chrome) else "") + atmosphere() + shell + body + tail +
-            "<script>(function(){" + JS_SHELL + js + "})();</script></body></html>")
+            "<script src=\"public/fantrade-api.js\"></script><script>(function(){" + JS_SHELL + js + "})();</script></body></html>")
     with open(os.path.join(OUT, fname), "w", encoding="utf-8") as f:
         f.write(html)
     return len(html)

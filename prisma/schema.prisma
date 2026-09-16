@@ -1,0 +1,441 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserStatus {
+  ACTIVE
+  SUSPENDED
+  DEACTIVATED
+}
+
+enum AssetType {
+  PLAYER
+  COACH
+}
+
+enum AssetStatus {
+  ACTIVE
+  HALTED
+  DELISTED
+}
+
+enum OrderSide {
+  BUY
+  SELL
+}
+
+enum OrderType {
+  LIMIT
+  MARKET
+}
+
+enum OrderStatus {
+  PENDING
+  OPEN
+  PARTIALLY_FILLED
+  FILLED
+  CANCELLED
+  EXPIRED
+  REJECTED
+}
+
+enum TimeInForce {
+  GTC // Good 'Til Cancelled
+  IOC // Immediate Or Cancel
+}
+
+enum ReservationPurpose {
+  ORDER
+  FANPLAY
+  SWAP
+}
+
+enum ReservationStatus {
+  ACTIVE
+  SETTLED
+  RELEASED
+}
+
+enum AccountType {
+  USER_AVAILABLE
+  USER_RESERVED
+  PLATFORM_TREASURY
+  PLATFORM_FEES
+}
+
+enum LedgerEntryType {
+  DEBIT
+  CREDIT
+}
+
+enum LedgerCategory {
+  SHARE_PURCHASE
+  SHARE_SALE
+  TRADE_SETTLEMENT
+  FEE
+  FANPLAY_SETTLEMENT
+  REFUND
+  RESERVATION
+  RELEASE
+  DEPOSIT
+}
+
+enum SwapStatus {
+  COMPLETED
+  FAILED
+}
+
+model User {
+  id               String            @id @default(uuid())
+  email            String            @unique
+  displayName      String
+  passwordHash     String?
+  status           UserStatus        @default(ACTIVE)
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+
+  sessions         AuthSession[]
+  wallet           Wallet?
+  holdings         Holding[]
+  reservations     ShareReservation[]
+  orders           Order[]
+  buyTrades        Trade[]           @relation("BuyerTrades")
+  sellTrades       Trade[]           @relation("SellerTrades")
+  swaps            Swap[]
+  idempotencyLogs  IdempotencyRecord[]
+
+  @@map("users")
+}
+
+model AuthSession {
+  id        String   @id @default(uuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([token])
+  @@map("auth_sessions")
+}
+
+model Asset {
+  id                 String             @id @default(uuid())
+  type               AssetType
+  symbol             String             @unique // e.g. "$Saka"
+  name               String
+  slug               String             @unique
+  externalId         String?            @unique
+  status             AssetStatus        @default(ACTIVE)
+  referenceValuation Decimal            @db.Decimal(18, 4)
+  currentPrice       Decimal            @db.Decimal(18, 4)
+  
+  // 10,000,000 total shares product rule
+  totalShares        Int                @default(10000000)
+  circulatingShares  Int                @default(0)
+  treasuryShares     Int                @default(10000000)
+  
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+
+  playerProfile      PlayerProfile?
+  coachProfile       CoachProfile?
+  market             Market?
+  holdings           Holding[]
+  reservations       ShareReservation[]
+  orders             Order[]
+  trades             Trade[]
+  fromSwaps          Swap[]             @relation("FromAsset")
+  toSwaps            Swap[]             @relation("ToAsset")
+
+  @@map("assets")
+}
+
+model PlayerProfile {
+  id          String   @id @default(uuid())
+  assetId     String   @unique
+  club        String
+  position    String
+  nationality String?
+  age         Int?
+  jerseyNumber Int?
+
+  asset       Asset    @relation(fields: [assetId], references: [id], onDelete: Cascade)
+
+  @@map("player_profiles")
+}
+
+model CoachProfile {
+  id                 String   @id @default(uuid())
+  assetId            String   @unique
+  club               String
+  preferredFormation String?
+  experienceYears    Int?
+
+  asset              Asset    @relation(fields: [assetId], references: [id], onDelete: Cascade)
+
+  @@map("coach_profiles")
+}
+
+model Holding {
+  id                String             @id @default(uuid())
+  userId            String
+  assetId           String
+  quantity          Int                @default(0)
+  availableQuantity Int                @default(0)
+  lockedQuantity    Int                @default(0)
+  averageCost       Decimal            @default(0) @db.Decimal(18, 4)
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+
+  user              User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  asset             Asset              @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  reservations      ShareReservation[]
+
+  @@unique([userId, assetId])
+  @@index([userId])
+  @@index([assetId])
+  @@map("holdings")
+}
+
+model ShareReservation {
+  id          String             @id @default(uuid())
+  holdingId   String
+  userId      String
+  assetId     String
+  quantity    Int
+  purpose     ReservationPurpose
+  referenceId String?            // e.g. orderId or fanplayEntryId
+  status      ReservationStatus  @default(ACTIVE)
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+
+  holding     Holding            @relation(fields: [holdingId], references: [id], onDelete: Cascade)
+  user        User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  asset       Asset              @relation(fields: [assetId], references: [id], onDelete: Cascade)
+
+  @@index([userId, status])
+  @@index([referenceId])
+  @@map("share_reservations")
+}
+
+model Wallet {
+  id             String          @id @default(uuid())
+  userId         String          @unique
+  currency       String          @default("FTR")
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  user           User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accounts       LedgerAccount[]
+
+  @@map("wallets")
+}
+
+model LedgerAccount {
+  id          String          @id @default(uuid())
+  walletId    String?
+  accountType AccountType
+  balance     Decimal         @default(0) @db.Decimal(18, 4)
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  wallet      Wallet?         @relation(fields: [walletId], references: [id], onDelete: Cascade)
+  entries     LedgerEntry[]
+
+  @@index([walletId, accountType])
+  @@map("ledger_accounts")
+}
+
+model LedgerEntry {
+  id               String          @id @default(uuid())
+  transactionGroup String          // UUID tying together all debits and credits in an atomic transaction
+  accountId        String
+  entryType        LedgerEntryType
+  amount           Decimal         @db.Decimal(18, 4)
+  category         LedgerCategory
+  referenceId      String?
+  description      String?
+  createdAt        DateTime        @default(now()) // Immutable: no updatedAt
+
+  account          LedgerAccount   @relation(fields: [accountId], references: [id], onDelete: Restrict)
+
+  @@index([transactionGroup])
+  @@index([accountId])
+  @@index([category])
+  @@map("ledger_entries")
+}
+
+model Market {
+  id           String              @id @default(uuid())
+  baseAssetId  String              @unique
+  quoteAsset   String              @default("FTR")
+  status       AssetStatus         @default(ACTIVE)
+  lastPrice    Decimal?            @db.Decimal(18, 4)
+  bestBid      Decimal?            @db.Decimal(18, 4)
+  bestAsk      Decimal?            @db.Decimal(18, 4)
+  high24h      Decimal?            @db.Decimal(18, 4)
+  low24h       Decimal?            @db.Decimal(18, 4)
+  volume24h    Decimal?            @db.Decimal(18, 4)
+  change24h    Decimal?            @db.Decimal(18, 4)
+  createdAt    DateTime            @default(now())
+  updatedAt    DateTime            @updatedAt
+
+  baseAsset    Asset               @relation(fields: [baseAssetId], references: [id], onDelete: Cascade)
+  orders       Order[]
+  trades       Trade[]
+  priceHistory PriceHistoryPoint[]
+
+  @@map("markets")
+}
+
+model Order {
+  id                String        @id @default(uuid())
+  userId            String
+  marketId          String
+  assetId           String
+  side              OrderSide
+  type              OrderType     @default(LIMIT)
+  quantity          Int
+  remainingQuantity Int
+  limitPrice        Decimal       @db.Decimal(18, 4)
+  status            OrderStatus   @default(OPEN)
+  timeInForce       TimeInForce   @default(GTC)
+  idempotencyKey    String?       @unique
+  expiresAt         DateTime?
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  user              User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  market            Market        @relation(fields: [marketId], references: [id], onDelete: Cascade)
+  asset             Asset         @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  buyTrades         Trade[]       @relation("BuyOrderTrades")
+  sellTrades        Trade[]       @relation("SellOrderTrades")
+  fills             TradeFill[]
+
+  @@index([marketId, status, side, limitPrice, createdAt])
+  @@index([userId, status])
+  @@map("orders")
+}
+
+model Trade {
+  id          String      @id @default(uuid())
+  marketId    String
+  assetId     String
+  buyerId     String
+  sellerId    String
+  buyOrderId  String
+  sellOrderId String
+  price       Decimal     @db.Decimal(18, 4)
+  quantity    Int
+  totalAmount Decimal     @db.Decimal(18, 4) // price * quantity
+  buyerFee    Decimal     @db.Decimal(18, 4)
+  sellerFee   Decimal     @db.Decimal(18, 4)
+  takerSide   OrderSide
+  createdAt   DateTime    @default(now())
+
+  market      Market      @relation(fields: [marketId], references: [id], onDelete: Cascade)
+  asset       Asset       @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  buyer       User        @relation("BuyerTrades", fields: [buyerId], references: [id], onDelete: Restrict)
+  seller      User        @relation("SellerTrades", fields: [sellerId], references: [id], onDelete: Restrict)
+  buyOrder    Order       @relation("BuyOrderTrades", fields: [buyOrderId], references: [id], onDelete: Restrict)
+  sellOrder   Order       @relation("SellOrderTrades", fields: [sellOrderId], references: [id], onDelete: Restrict)
+  fills       TradeFill[]
+
+  @@index([marketId, createdAt])
+  @@index([assetId, createdAt])
+  @@index([buyerId])
+  @@index([sellerId])
+  @@map("trades")
+}
+
+model TradeFill {
+  id           String   @id @default(uuid())
+  tradeId      String
+  orderId      String
+  fillQuantity Int
+  fillPrice    Decimal  @db.Decimal(18, 4)
+  createdAt    DateTime @default(now())
+
+  trade        Trade    @relation(fields: [tradeId], references: [id], onDelete: Cascade)
+  order        Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([orderId])
+  @@index([tradeId])
+  @@map("trade_fills")
+}
+
+model Swap {
+  id             String     @id @default(uuid())
+  userId         String
+  fromAssetId    String
+  toAssetId      String
+  fromShares     Int
+  toShares       Int
+  fromPrice      Decimal    @db.Decimal(18, 4)
+  toPrice        Decimal    @db.Decimal(18, 4)
+  fee            Decimal    @db.Decimal(18, 4)
+  dustRefund     Decimal    @db.Decimal(18, 4)
+  idempotencyKey String?    @unique
+  status         SwapStatus @default(COMPLETED)
+  createdAt      DateTime   @default(now())
+
+  user           User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  fromAsset      Asset      @relation("FromAsset", fields: [fromAssetId], references: [id], onDelete: Restrict)
+  toAsset        Asset      @relation("ToAsset", fields: [toAssetId], references: [id], onDelete: Restrict)
+
+  @@index([userId])
+  @@map("swaps")
+}
+
+model PriceHistoryPoint {
+  id        String   @id @default(uuid())
+  marketId  String
+  interval  String   // e.g. "1m", "5m", "15m", "1h", "1d"
+  open      Decimal  @db.Decimal(18, 4)
+  high      Decimal  @db.Decimal(18, 4)
+  low       Decimal  @db.Decimal(18, 4)
+  close     Decimal  @db.Decimal(18, 4)
+  volume    Int
+  timestamp DateTime
+
+  market    Market   @relation(fields: [marketId], references: [id], onDelete: Cascade)
+
+  @@unique([marketId, interval, timestamp])
+  @@index([marketId, interval, timestamp])
+  @@map("price_history_points")
+}
+
+model FeeConfiguration {
+  id           String   @id @default("default")
+  buyFeeRate   Decimal  @default(0.004) @db.Decimal(8, 4)  // 0.4%
+  sellFeeRate  Decimal  @default(0.004) @db.Decimal(8, 4)  // 0.4%
+  swapFeeRate  Decimal  @default(0.004) @db.Decimal(8, 4)  // 0.4%
+  feeAccountId String
+  notes        String?  // e.g. "0.4% is inherited prototype configuration and remains subject to final economic approval."
+  updatedAt    DateTime @updatedAt
+
+  @@map("fee_configurations")
+}
+
+model IdempotencyRecord {
+  id             String   @id @default(uuid())
+  key            String   @unique
+  endpoint       String
+  userId         String
+  responseStatus Int
+  responseBody   String   @db.Text
+  expiresAt      DateTime
+  createdAt      DateTime @default(now())
+
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([key])
+  @@map("idempotency_records")
+}
