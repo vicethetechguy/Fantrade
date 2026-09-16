@@ -75,221 +75,436 @@ function book2(box, side, count, onPick){
 """
 
 # ══════════════════════════════════════════════════════════════════
-# ASSET — one player or coach's market page
+# ASSET — one player or coach's market page (Screenshot 2 Match)
 # ══════════════════════════════════════════════════════════════════
-asset = [T('<main><section class="app-head" style="padding:92px 0 10px"><div class="wrap">'
-           '<div class="asset-head" data-reveal>'
-           '<a class="crumb" href="exchange.html" aria-label="All markets">@@</a>'
-           '<span class="coin" id="aCoin">@@</span>'
-           '<div style="min-width:0"><div class="nm" id="aName">Bukayo Saka</div>'
-           '<div class="sym"><span id="aSym">$Saka</span> · <span id="aRole">Player</span></div></div>'
-           '<span style="margin-left:auto;display:flex;gap:8px">'
-           '<button class="bell" type="button" id="aFav" aria-pressed="false" '
-           'aria-label="Add to favourites" style="border-radius:11px">@@</button></span>'
-           '</div></div></section>',
-           ic("arrow", "ic"), ic("boot", "ic"), ic("star", "ic"))]
+ASSET_CSS = """
+/* KuCoin-style Asset Info & Candlestick Chart Page */
+.kc-asset-wrap{max-width:680px;margin:0 auto;padding:10px 16px 84px}
+.kc-asset-topbar{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:4px 0 10px;border-bottom:1px solid rgba(255,255,255,.05)}
+.kc-top-left{display:flex;align-items:center;gap:10px}
+.kc-icon-btn{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);display:grid;place-items:center;color:var(--ink);cursor:pointer;text-decoration:none;transition:background .2s}
+.kc-icon-btn:hover{background:rgba(255,255,255,.09)}
+.kc-asset-title-box{text-align:left;margin-left:4px}
+.kc-asset-pair-head{font-family:Archivo,sans-serif;font-variation-settings:'wdth' 115,'wght' 800;font-size:16px;line-height:1.1;color:var(--ink)}
+.kc-asset-sub-head{font-size:11px;color:#767c82;margin-top:2px}
+.kc-top-right{display:flex;align-items:center;gap:8px;margin-left:auto}
+.kc-tool-ai{height:28px;padding:0 10px;border-radius:999px;background:rgba(196,248,42,.1);border:1px solid rgba(196,248,42,.3);color:var(--lime);font-family:Archivo,sans-serif;font-weight:700;font-size:11px;display:flex;align-items:center;gap:4px;cursor:pointer}
 
-asset.append('<section style="padding:0 0 120px"><div class="wrap">')
+/* Main View Tabs */
+.kc-asset-tabs{display:flex;align-items:center;gap:24px;border-bottom:1px solid rgba(255,255,255,.07);margin-bottom:12px}
+.kc-asset-tab{background:transparent;border:0;outline:0;padding:10px 0 10px;font-family:Montserrat,sans-serif;font-size:14px;font-weight:500;color:#767c82;cursor:pointer;position:relative;transition:color .2s}
+.kc-asset-tab:hover{color:var(--ink)}
+.kc-asset-tab.on{color:var(--ink);font-weight:700}
+.kc-asset-tab.on::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2.5px;background:var(--lime);border-radius:2px}
 
-# ── price header + candles ──
-asset.append('<div class="bezel" data-reveal><div class="core pad">'
-             '<div style="display:flex;gap:22px;flex-wrap:wrap;align-items:flex-start">'
-             '<div><div class="bal-big" id="aPx" style="margin:0;color:var(--lime)">48.20</div>'
-             '<div class="bal-delta" id="aDelta" style="margin-top:7px"><span>+6.4% today</span>'
-             '<em id="aGbp">≈ £3.89</em></div></div>'
-             '<div class="statgrid" style="margin-left:auto;grid-template-columns:repeat(2,minmax(0,1fr));'
-             'gap:6px 22px;min-width:240px">'
-             '<div class="b-row" style="padding:3px 0"><span>24h high</span><b id="sHigh">—</b></div>'
-             '<div class="b-row" style="padding:3px 0"><span>24h low</span><b id="sLow">—</b></div>'
-             '<div class="b-row" style="padding:3px 0"><span>24h vol (shares)</span><b id="sVolS">—</b></div>'
-             '<div class="b-row" style="padding:3px 0"><span>24h vol ($FTR)</span><b id="sVol">—</b></div>'
-             '</div></div>'
-             '<div class="utabs sm" id="aTf" style="margin-top:16px;border-bottom:0;gap:18px">'
-             '<button type="button" aria-pressed="false" data-t="15m">15m</button>'
-             '<button type="button" aria-pressed="true" data-t="1h">1h</button>'
-             '<button type="button" aria-pressed="false" data-t="8h">8h</button>'
-             '<button type="button" aria-pressed="false" data-t="1D">1D</button>'
-             '<button type="button" aria-pressed="false" data-t="1W">1W</button></div>'
-             '<div class="ohlc" id="aOhlc" style="margin-top:10px"></div>'
-             '<div class="candles" id="aChart"></div>'
-             '<div class="cx" id="aCx"></div>'
-             '<div class="stickybar"><a class="buy" id="aBuy" href="#">Buy</a>'
-             '<a class="sell" id="aSell" href="#">Sell</a></div>'
-             '</div></div>')
+/* Price & 24h Summary Section */
+.kc-price-sec{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:12px}
+.kc-hero-px{font-family:'JetBrains Mono',monospace;font-size:32px;font-weight:700;line-height:1;letter-spacing:-.02em;color:var(--lime)}
+.kc-hero-sub{display:flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:12.5px;color:#767c82;margin-top:6px}
+.kc-hero-delta{color:var(--lime);font-weight:600}
+.kc-hero-delta.down{color:#FF3B47}
+.kc-pop-badge{display:inline-flex;align-items:center;gap:5px;background:rgba(255,106,31,.1);border:1px solid rgba(255,106,31,.25);color:var(--amber);font-size:10.5px;font-weight:600;padding:3px 8px;border-radius:999px;margin-top:8px}
 
-# ── book / trades / stats ──
-asset.append('<div class="bezel" style="margin-top:10px" data-reveal><div class="core">'
-             '<div style="padding:16px 16px 0"><div class="utabs" id="aPanes">'
-             '<button type="button" aria-pressed="true" data-p="book">Order book</button>'
-             '<button type="button" aria-pressed="false" data-p="trades">Trade history</button>'
-             '<button type="button" aria-pressed="false" data-p="stats">Coin info</button>'
-             '<button type="button" aria-pressed="false" data-p="pos">Your position</button>'
-             '</div></div>'
-             '<div class="pad">'
-             '<div class="pane on" data-pane="book">'
-             '<div class="book2"><div class="bh"><span>Price $FTR</span><span>Shares</span></div>'
-             '<div id="aAsks"></div>'
-             '<div class="last"><b id="aLast">—</b><span id="aLastSub">last traded</span></div>'
-             '<div id="aBids"></div>'
-             '<div class="depthbar"><i id="dBid" style="width:58%;background:var(--lime)"></i>'
-             '<i id="dAsk" style="width:42%;background:var(--red)"></i></div>'
-             '<div class="depthkey"><span style="color:var(--lime)" id="dBidK">B 58%</span>'
-             '<span style="color:var(--red)" id="dAskK">42% S</span></div></div></div>'
-             '<div class="pane" data-pane="trades">'
-             '<div class="tr-row" style="color:var(--faint);font-size:8.5px;letter-spacing:.13em;'
-             'text-transform:uppercase;border-bottom:1px solid var(--hair);padding-bottom:8px">'
-             '<span>Price</span><span style="text-align:center">Shares</span>'
-             '<span style="text-align:right">Time</span></div><div id="aTrades"></div></div>'
-             '<div class="pane" data-pane="stats">'
-             '<div class="statgrid">'
-             '<div class="mini"><div class="k">Market cap</div><div class="v" id="sCap">—</div></div>'
-             '<div class="mini"><div class="k">Held by fans</div><div class="v lime" id="sHeld">—</div></div>'
-             '<div class="mini"><div class="k">Fixed supply</div><div class="v">10.00M</div></div>'
-             '<div class="mini"><div class="k">52w high</div><div class="v" id="sYH">—</div></div>'
-             '<div class="mini"><div class="k">52w low</div><div class="v" id="sYL">—</div></div>'
-             '<div class="mini"><div class="k">Holders</div><div class="v" id="sHolders">—</div></div>'
-             '</div>'
-             '<div class="b-row" style="margin-top:14px"><span>Season FP contributed</span>'
-             '<b id="aFp">—</b></div>'
-             '<div class="b-row"><span>Tactical perk</span><b id="aPerk">—</b></div>'
-             '<div class="b-row"><span>Eligible for</span><b>Club XI · FanPlay</b></div>'
-             '<div class="b-row total"><span>Form, last five</span>'
-             '<b><span class="form5" style="justify-content:flex-end"><i class="w">W</i><i class="w">W</i>'
-             '<i class="d">D</i><i class="l">L</i><i class="w">W</i></span></b></div></div>'
-             '<div class="pane" data-pane="pos"><div id="aPos"></div></div>'
-             '</div></div></div>')
+.kc-stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px 18px;min-width:170px;text-align:right}
+.kc-stat-row{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:11px}
+.kc-stat-row span{color:#767c82}
+.kc-stat-row b{font-family:'JetBrains Mono',monospace;font-weight:600;color:var(--ink)}
 
-asset.append('</div></section></main>')
+/* News Ticker */
+.kc-news{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:8px;padding:7px 12px;margin-bottom:12px;font-size:11.5px;color:#8B918A}
+.kc-news-txt{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kc-news-close{background:transparent;border:0;color:#767c82;cursor:pointer;padding:0 2px}
+
+/* Timeframe Bar */
+.kc-tf-bar{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
+.kc-tf-lbl{font-size:12px;color:#767c82;font-weight:500;padding-right:4px}
+.kc-tf-pills{display:flex;align-items:center;gap:14px;flex:1}
+.kc-tf-pill{background:transparent;border:0;outline:0;font-family:Montserrat,sans-serif;font-size:12px;font-weight:500;color:#767c82;cursor:pointer;padding:3px 0}
+.kc-tf-pill:hover{color:var(--ink)}
+.kc-tf-pill.on{color:var(--ink);font-weight:700}
+.kc-tf-tools{display:flex;align-items:center;gap:12px;color:#767c82}
+.kc-tf-tool{background:transparent;border:0;color:inherit;cursor:pointer;padding:2px}
+
+/* Chart Canvas */
+.kc-chart-box{position:relative;background:rgba(10,11,12,.7);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:10px 4px 6px;margin-bottom:8px}
+.kc-chart-svg{width:100%;height:260px;display:block}
+.kc-chart-axis-x{display:flex;justify-content:space-between;padding:4px 10px 0;font-family:'JetBrains Mono',monospace;font-size:9.5px;color:#5A605B}
+
+/* Technical Indicators Row */
+.kc-ind-row{display:flex;align-items:center;gap:14px;padding:8px 0;margin-bottom:8px;overflow-x:auto;scrollbar-width:none}
+.kc-ind-chip{background:transparent;border:0;outline:0;font-family:Montserrat,sans-serif;font-size:11px;font-weight:500;color:#686e74;cursor:pointer;padding:2px 0}
+.kc-ind-chip:hover{color:var(--ink)}
+.kc-ind-chip.on{color:var(--lime);font-weight:600}
+.kc-ind-sep{color:rgba(255,255,255,.12);font-size:11px}
+
+/* Lower Section Tabs */
+.kc-low-tabs{display:flex;align-items:center;gap:20px;border-bottom:1px solid rgba(255,255,255,.07);margin-bottom:10px}
+.kc-low-tab{background:transparent;border:0;outline:0;padding:8px 0;font-family:Montserrat,sans-serif;font-size:13px;font-weight:500;color:#767c82;cursor:pointer;position:relative}
+.kc-low-tab:hover{color:var(--ink)}
+.kc-low-tab.on{color:var(--ink);font-weight:700}
+.kc-low-tab.on::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--lime);border-radius:2px}
+
+/* Order Book Pane */
+.kc-pane{display:none}
+.kc-pane.on{display:block}
+.kc-book-row-head{display:grid;grid-template-columns:1fr 1fr;gap:16px;font-size:10.5px;color:#767c82;padding:0 2px 6px;border-bottom:1px solid rgba(255,255,255,.05)}
+.kc-book-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:6px}
+.kc-b-line{display:flex;justify-content:space-between;position:relative;height:21px;align-items:center;font-family:'JetBrains Mono',monospace;font-size:11px;padding:0 4px}
+.kc-b-line .depth{position:absolute;top:0;bottom:0;right:0;pointer-events:none;opacity:.15;border-radius:2px}
+.kc-b-line.bid span:first-child{color:var(--lime);font-weight:600}
+.kc-b-line.bid .depth{background:var(--lime)}
+.kc-b-line.ask span:first-child{color:#FF3B47;font-weight:600}
+.kc-b-line.ask .depth{background:#FF3B47}
+.kc-b-line span:last-child{color:var(--dim)}
+
+/* Fixed Bottom Action Bar */
+.kc-action-dock{position:fixed;left:50%;bottom:58px;transform:translateX(-50%);z-index:74;width:100%;max-width:680px;box-sizing:border-box;background:rgba(8,9,10,.95);backdrop-filter:blur(20px);border-top:1px solid rgba(255,255,255,.08);padding:8px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.kc-dock-tools{display:flex;align-items:center;gap:16px}
+.kc-dock-tool{display:flex;flex-direction:column;align-items:center;gap:2px;text-decoration:none;color:#767c82;font-size:9.5px}
+.kc-dock-tool:hover{color:var(--ink)}
+.kc-dock-tool .ic{width:18px;height:18px}
+.kc-dock-btns{display:flex;align-items:center;gap:10px;flex:1;max-width:320px}
+.kc-btn-buy{flex:1;height:40px;background:var(--lime);color:#0A0D03;border-radius:8px;font-family:Archivo,sans-serif;font-variation-settings:'wdth' 115,'wght' 800;font-size:14px;display:grid;place-items:center;text-decoration:none;text-transform:uppercase;letter-spacing:.02em}
+.kc-btn-sell{flex:1;height:40px;background:#FF3B47;color:#fff;border-radius:8px;font-family:Archivo,sans-serif;font-variation-settings:'wdth' 115,'wght' 800;font-size:14px;display:grid;place-items:center;text-decoration:none;text-transform:uppercase;letter-spacing:.02em}
+"""
+
+asset = [T('<main><div class="kc-asset-wrap">'
+           '<!-- Top Navigation Bar -->'
+           '<div class="kc-asset-topbar">'
+           '  <div class="kc-top-left">'
+           '    <a href="exchange.html" class="kc-icon-btn" title="Back">'
+           '      <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>'
+           '    </a>'
+           '    <button type="button" class="kc-icon-btn" title="Menu">'
+           '      <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="15" y2="12"/><line x1="3" y1="18" x2="18" y2="18"/></svg>'
+           '    </button>'
+           '    <div class="kc-asset-title-box">'
+           '      <div class="kc-asset-pair-head"><span id="aTitlePair">SOL/USDT</span></div>'
+           '      <div class="kc-asset-sub-head" id="aTitleSub">Solana</div>'
+           '    </div>'
+           '  </div>'
+           '  <div class="kc-top-right">'
+           '    <button type="button" class="kc-tool-ai" title="AI Market Insight">✨ Ai</button>'
+           '    <button type="button" class="kc-icon-btn" id="aAlertBtn" title="Alert">'
+           '      @@'
+           '    </button>'
+           '    <button type="button" class="kc-icon-btn" id="aFav" title="Favorite">'
+           '      @@'
+           '    </button>'
+           '  </div>'
+           '</div>'
+           '<!-- Primary Tabs -->'
+           '<div class="kc-asset-tabs" id="aMainTabs">'
+           '  <button type="button" class="kc-asset-tab on" data-tab="chart">Chart</button>'
+           '  <button type="button" class="kc-asset-tab" data-tab="feed">Feed</button>'
+           '  <button type="button" class="kc-asset-tab" data-tab="info">Coin Info</button>'
+           '  <button type="button" class="kc-asset-tab" data-tab="recom">Recommendations</button>'
+           '</div>'
+           '<!-- Price & 24h Summary Section -->'
+           '<div class="kc-price-sec">'
+           '  <div>'
+           '    <div class="kc-hero-px" id="aPx">102.64</div>'
+           '    <div class="kc-hero-sub">'
+           '      <span id="aSubUsd">≈$102.61</span>'
+           '      <span class="kc-hero-delta" id="aDelta">+2.99%</span>'
+           '    </div>'
+           '    <div class="kc-pop-badge" id="aPopBadge">🔥 Top 16 by popularity</div>'
+           '  </div>'
+           '  <div class="kc-stats-grid">'
+           '    <div class="kc-stat-row"><span>24h High</span><b id="sHigh">104.82</b></div>'
+           '    <div class="kc-stat-row"><span>24h Low</span><b id="sLow">99.21</b></div>'
+           '    <div class="kc-stat-row"><span>24h Vol (<span id="sVolBase">SOL</span>)</span><b id="sVolS">384.44K</b></div>'
+           '    <div class="kc-stat-row"><span>24h Vol (<span id="sVolQuote">USDT</span>)</span><b id="sVol">39.24M</b></div>'
+           '  </div>'
+           '</div>'
+           '<!-- News Ticker -->'
+           '<div class="kc-news" id="newsTicker">'
+           '  <span>📢</span>'
+           '  <span class="kc-news-txt">Grayscale Launches Digital Asset Model Portfolios with Four Initial Strategies...</span>'
+           '  <button type="button" class="kc-news-close" onclick="document.getElementById(\'newsTicker\').style.display=\'none\'">✕</button>'
+           '</div>'
+           '<!-- Timeframe Bar -->'
+           '<div class="kc-tf-bar">'
+           '  <span class="kc-tf-lbl">Time</span>'
+           '  <div class="kc-tf-pills" id="aTf">'
+           '    <button type="button" class="kc-tf-pill on" data-t="15m">15m</button>'
+           '    <button type="button" class="kc-tf-pill" data-t="1h">1h</button>'
+           '    <button type="button" class="kc-tf-pill" data-t="8h">8h</button>'
+           '    <button type="button" class="kc-tf-pill" data-t="1D">1D</button>'
+           '    <button type="button" class="kc-tf-pill" data-t="1W">More ▾</button>'
+           '  </div>'
+           '  <div class="kc-tf-tools">'
+           '    <button type="button" class="kc-tf-tool" title="Settings">⚙</button>'
+           '    <button type="button" class="kc-tf-tool" title="Full Chart">⛶</button>'
+           '  </div>'
+           '</div>'
+           '<!-- Candlestick Chart Area -->'
+           '<div class="kc-chart-box">'
+           '  <div id="aChart" class="kc-chart-svg"></div>'
+           '  <div class="kc-chart-axis-x" id="aCx">'
+           '    <span>09-14 16:00</span><span>09-14 19:15</span><span>09-14 22:30</span><span>09-15 01:45</span>'
+           '  </div>'
+           '</div>'
+           '<!-- Indicators -->'
+           '<div class="kc-ind-row">'
+           '  <button type="button" class="kc-ind-chip on">MA</button>'
+           '  <button type="button" class="kc-ind-chip">EMA</button>'
+           '  <button type="button" class="kc-ind-chip">BOLL</button>'
+           '  <span class="kc-ind-sep">|</span>'
+           '  <button type="button" class="kc-ind-chip on">VOL</button>'
+           '  <button type="button" class="kc-ind-chip">MACD</button>'
+           '  <button type="button" class="kc-ind-chip">RSI</button>'
+           '  <button type="button" class="kc-ind-chip">KDJ</button>'
+           '</div>'
+           '<!-- Lower Panes -->'
+           '<div class="kc-low-tabs" id="aPanes">'
+           '  <button type="button" class="kc-low-tab on" data-p="book">Order Book</button>'
+           '  <button type="button" class="kc-low-tab" data-p="trades">Trade History</button>'
+           '  <button type="button" class="kc-low-tab" data-p="stats">Data Analysis</button>'
+           '</div>'
+           '<div class="kc-pane on" data-pane="book">'
+           '  <div class="kc-book-row-head"><span>Bid Price (Buy)</span><span style="text-align:right">Ask Price (Sell)</span></div>'
+           '  <div class="kc-book-grid">'
+           '    <div id="aBids"></div>'
+           '    <div id="aAsks"></div>'
+           '  </div>'
+           '</div>'
+           '<div class="kc-pane" data-pane="trades">'
+           '  <div class="tr-row" style="color:var(--faint);font-size:9.5px;padding-bottom:6px;border-bottom:1px solid rgba(255,255,255,.05)">'
+           '    <span>Price</span><span style="text-align:center">Amount</span><span style="text-align:right">Time</span>'
+           '  </div>'
+           '  <div id="aTrades"></div>'
+           '</div>'
+           '<div class="kc-pane" data-pane="stats">'
+           '  <div class="statgrid">'
+           '    <div class="mini"><div class="k">Market Cap</div><div class="v" id="sCap">—</div></div>'
+           '    <div class="mini"><div class="k">Held by Fans</div><div class="v lime" id="sHeld">—</div></div>'
+           '    <div class="mini"><div class="k">Fixed Supply</div><div class="v">10.00M</div></div>'
+           '    <div class="mini"><div class="k">52w High</div><div class="v" id="sYH">—</div></div>'
+           '    <div class="mini"><div class="k">52w Low</div><div class="v" id="sYL">—</div></div>'
+           '    <div class="mini"><div class="k">Popularity</div><div class="v">#16</div></div>'
+           '  </div>'
+           '</div>'
+           '</div>'
+           '<!-- Fixed Bottom Trading Bar -->'
+           '<div class="kc-action-dock">'
+           '  <div class="kc-dock-tools">'
+           '    <a href="trade.html" class="kc-dock-tool">'
+           '      <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/></svg>'
+           '      <span>Futures</span>'
+           '    </a>'
+           '    <a href="trade.html" class="kc-dock-tool">'
+           '      <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>'
+           '      <span>Grid</span>'
+           '    </a>'
+           '    <a href="trade.html" class="kc-dock-tool">'
+           '      <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/></svg>'
+           '      <span>Margin</span>'
+           '    </a>'
+           '    <a href="exchange.html" class="kc-dock-tool">'
+           '      <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>'
+           '      <span>Compare</span>'
+           '    </a>'
+           '  </div>'
+           '  <div class="kc-dock-btns">'
+           '    <a href="#" id="aBuy" class="kc-btn-buy">Buy</a>'
+           '    <a href="#" id="aSell" class="kc-btn-sell">Sell</a>'
+           '  </div>'
+           '</div>'
+           '</main>',
+           ic("bell", "ic"),
+           ic("star", "ic"))]
 
 ASSET_JS = PICK_JS + r"""
-document.title = A.t + ' — Fantrade';
-var el = function(id){ return document.getElementById(id); };
-el('aCoin').className = 'coin' + (A.c ? ' am' : '');
-el('aCoin').innerHTML = '<svg class="ic" aria-hidden="true"><use href="#i-' + (A.c ? 'whistle' : 'boot')
-  + '"/></svg>';
-el('aName').textContent = A.n;
-el('aSym').textContent = A.t;
-el('aRole').textContent = A.c ? 'Coach equity' : 'Player share';
-el('aPx').textContent = A.p.toFixed(2);
-el('aPx').style.color = A.d >= 0 ? 'var(--lime)' : 'var(--red)';
-el('aDelta').className = 'bal-delta' + (A.d >= 0 ? '' : ' down');
-el('aDelta').querySelector('span').textContent = (A.d >= 0 ? '+' : '') + A.d.toFixed(2) + '% today';
-el('aGbp').textContent = '≈ £' + (A.p / 12.4).toFixed(2);
-['aBuy','aSell'].forEach(function(i, n){
-  el(i).href = 'trade.html?a=' + encodeURIComponent(A.t) + '&side=' + (n ? 'sell' : 'buy');
-});
+function el(id){ return document.getElementById(id); }
 
-el('sHigh').textContent = (A.p * 1.021).toFixed(2);
-el('sLow').textContent = (A.p * 0.968).toFixed(2);
-el('sVolS').textContent = fmt(384440);
-el('sVol').textContent = A.cap;
-el('sCap').textContent = A.cap;
-el('sHeld').textContent = A.h.toFixed(1) + '%';
-el('sYH').textContent = (A.p * 1.34).toFixed(2);
-el('sYL').textContent = (A.p * 0.58).toFixed(2);
-el('sHolders').textContent = fmt(Math.round(A.h * 1840));
-el('aFp').textContent = A.c ? 'Team outcomes' : fmt(A.p * 18) + ' FP';
-el('aPerk').textContent = A.c ? '+5.0% tactical synergy' : '+9% key pass weighting';
+var quote = A.q || (A.t.indexOf('$') === 0 ? 'FTR' : 'USDT');
+var symClean = A.t.replace('$', '');
 
-// ── candles ──
-var TF = { '15m': [46, 0.010, 7], '1h': [46, 0.018, 23], '8h': [46, 0.030, 51],
-           '1D': [46, 0.046, 89], '1W': [46, 0.072, 131] };
-var LABELS = { '15m': ['16:00','19:15','22:30','01:45'], '1h': ['09-12','09-13','09-14','09-15'],
-               '8h': ['Aug 28','Sep 03','Sep 09','Sep 15'], '1D': ['Jun','Jul','Aug','Sep'],
-               '1W': ['Q4 25','Q1 26','Q2 26','Q3 26'] };
+el('aTitlePair').textContent = symClean + '/' + quote;
+el('aTitleSub').textContent = A.n;
+el('sVolBase').textContent = symClean;
+el('sVolQuote').textContent = quote;
+
+var pxText = (A.p > 999 ? A.p.toLocaleString('en-US', {minimumFractionDigits: 1, maximumFractionDigits: 2}) : A.p.toFixed(A.p < 1 ? 4 : 2));
+el('aPx').textContent = pxText;
+el('aSubUsd').textContent = '≈$' + (A.p * 0.9997).toFixed(A.p < 1 ? 4 : 2);
+var up = A.d >= 0;
+el('aDelta').textContent = (up ? '+' : '') + A.d.toFixed(2) + '%';
+el('aDelta').className = 'kc-hero-delta' + (up ? '' : ' down');
+
+el('sHigh').textContent = (A.h || (A.p * 1.025)).toFixed(A.p < 1 ? 4 : 2);
+el('sLow').textContent = (A.low || (A.p * 0.97)).toFixed(A.p < 1 ? 4 : 2);
+el('sVolS').textContent = A.vol || '384.44K';
+el('sVol').textContent = A.cap || '39.24M';
+
+var capEl = el('sCap');
+if(capEl) capEl.textContent = A.cap || '39.24M';
+var heldEl = el('sHeld');
+if(heldEl) heldEl.textContent = (A.p * 38400).toLocaleString('en-US', {maximumFractionDigits: 0});
+var yhEl = el('sYH');
+if(yhEl) yhEl.textContent = (A.p * 1.4).toFixed(2);
+var ylEl = el('sYL');
+if(ylEl) ylEl.textContent = (A.p * 0.65).toFixed(2);
+
+el('aBuy').href = 'trade.html?a=' + encodeURIComponent(A.t) + '&side=buy';
+el('aSell').href = 'trade.html?a=' + encodeURIComponent(A.t) + '&side=sell';
+
+// Timeframe setup
+var TF = {
+  '15m': [32, 0.003, 14],
+  '1h':  [36, 0.006, 28],
+  '8h':  [40, 0.012, 42],
+  '1D':  [45, 0.024, 60],
+  '1W':  [48, 0.048, 90]
+};
+var LABELS = {
+  '15m': ['09-14 16:00', '09-14 19:15', '09-14 22:30', '09-15 01:45'],
+  '1h':  ['09-12 12:00', '09-13 00:00', '09-13 12:00', '09-14 00:00'],
+  '8h':  ['09-08', '09-10', '09-12', '09-14'],
+  '1D':  ['Aug 20', 'Aug 28', 'Sep 05', 'Sep 14'],
+  '1W':  ['May 2026', 'Jun 2026', 'Jul 2026', 'Aug 2026']
+};
+
+function drawKucoinCandles(host, data){
+  if(!host || !data || !data.length) return;
+  var w = 680, h = 260, padR = 64, plot = h - 36;
+  var hi = Math.max.apply(null, data.map(function(d){ return d.h; }));
+  var lo = Math.min.apply(null, data.map(function(d){ return d.l; }));
+  var rng = (hi - lo) || 1;
+  hi += rng * 0.05; lo -= rng * 0.05; rng = hi - lo;
+  var cw = (w - padR) / data.length, bw = Math.max(2, cw * 0.62);
+  function y(v){ return plot - ((v - lo) / rng) * plot + 8; }
+
+  var parts = [], grid = [];
+  for(var g = 0; g <= 3; g++){
+    var gv = lo + (rng / 3) * g, gy = y(gv);
+    grid.push('<line x1="0" y1="' + gy.toFixed(1) + '" x2="' + (w - padR) + '" y2="' + gy.toFixed(1) + '" stroke="rgba(255,255,255,.05)" stroke-width="1"/>');
+    grid.push('<text x="' + (w - padR + 6) + '" y="' + (gy + 3).toFixed(1) + '" fill="#5A605B" font-size="9.5" font-family="JetBrains Mono, monospace">' + gv.toFixed(gv < 1 ? 4 : 2) + '</text>');
+  }
+
+  var maxCandle = data[0], minCandle = data[0];
+  data.forEach(function(d, i){
+    if(d.h > maxCandle.h){ maxCandle = d; maxCandle._i = i; }
+    if(d.l < minCandle.l){ minCandle = d; minCandle._i = i; }
+
+    var x = i * cw + cw / 2, up = d.c >= d.o;
+    var col = up ? '#C4F82A' : '#FF3B47';
+    var top = y(Math.max(d.o, d.c)), bot = y(Math.min(d.o, d.c));
+    parts.push('<line x1="' + x.toFixed(1) + '" y1="' + y(d.h).toFixed(1) + '" x2="' + x.toFixed(1) + '" y2="' + y(d.l).toFixed(1) + '" stroke="' + col + '" stroke-width="1.2"/>');
+    parts.push('<rect x="' + (x - bw / 2).toFixed(1) + '" y="' + top.toFixed(1) + '" width="' + bw.toFixed(1) + '" height="' + Math.max(1.5, bot - top).toFixed(1) + '" fill="' + col + '" rx="0.5"/>');
+  });
+
+  // High marker callout (104.82 ---)
+  var hx = (maxCandle._i || 0) * cw + cw / 2, hy = y(maxCandle.h);
+  parts.push('<line x1="' + Math.max(0, hx - 24) + '" y1="' + hy.toFixed(1) + '" x2="' + (hx + 24) + '" y2="' + hy.toFixed(1) + '" stroke="#8B918A" stroke-dasharray="2 2" stroke-width="1"/>');
+  parts.push('<text x="' + (hx - 4) + '" y="' + (hy - 4).toFixed(1) + '" fill="#8B918A" font-size="9" text-anchor="end" font-family="JetBrains Mono, monospace">' + maxCandle.h.toFixed(maxCandle.h < 1 ? 4 : 2) + '</text>');
+
+  // Low marker callout (101.21 ---)
+  var lx = (minCandle._i || 0) * cw + cw / 2, ly = y(minCandle.l);
+  parts.push('<line x1="' + Math.max(0, lx - 24) + '" y1="' + ly.toFixed(1) + '" x2="' + (lx + 24) + '" y2="' + ly.toFixed(1) + '" stroke="#8B918A" stroke-dasharray="2 2" stroke-width="1"/>');
+  parts.push('<text x="' + (lx + 4) + '" y="' + (ly + 11).toFixed(1) + '" fill="#8B918A" font-size="9" font-family="JetBrains Mono, monospace">' + minCandle.l.toFixed(minCandle.l < 1 ? 4 : 2) + '</text>');
+
+  // Current price line & right badge
+  var last = data[data.length - 1];
+  var cy = y(last.c);
+  parts.push('<line x1="0" y1="' + cy.toFixed(1) + '" x2="' + (w - padR) + '" y2="' + cy.toFixed(1) + '" stroke="#8B918A" stroke-dasharray="2 2" stroke-width="1" opacity=".7"/>');
+  parts.push('<rect x="' + (w - padR) + '" y="' + (cy - 12).toFixed(1) + '" width="62" height="24" rx="4" fill="#14171A" stroke="#32383e" stroke-width="1"/>');
+  parts.push('<text x="' + (w - padR + 31) + '" y="' + (cy - 1).toFixed(1) + '" fill="#F4F6F1" font-size="9" font-weight="600" text-anchor="middle" font-family="JetBrains Mono, monospace">' + last.c.toFixed(last.c < 1 ? 4 : 2) + '</text>');
+  parts.push('<text x="' + (w - padR + 31) + '" y="' + (cy + 9).toFixed(1) + '" fill="#767c82" font-size="7.5" text-anchor="middle" font-family="JetBrains Mono, monospace">06:37</text>');
+
+  host.innerHTML = '<svg viewBox="0 0 ' + w + ' ' + h + '" preserveAspectRatio="none">' + grid.join('') + parts.join('') + '</svg>';
+}
+
 function tf(t){
-  var cfg = TF[t], data = candleData(cfg[0], A.p * 0.94, cfg[1], cfg[2]);
-  // land the series on the live price so the header and the chart agree
+  var cfg = TF[t] || TF['15m'];
+  var data = candleData(cfg[0], A.p * 0.96, cfg[1], cfg[2]);
   var drift = A.p / data[data.length - 1].c;
   data.forEach(function(d){ d.o *= drift; d.h *= drift; d.l *= drift; d.c *= drift; });
-  var last = drawCandles(el('aChart'), data);
-  el('aCx').innerHTML = LABELS[t].map(function(l){ return '<span>' + l + '</span>'; }).join('');
-  el('aOhlc').innerHTML = ['O', 'H', 'L', 'C'].map(function(k, i){
-    var v = [last.o, last.h, last.l, last.c][i];
-    return '<span>' + k + '<b style="color:' + (last.c >= last.o ? 'var(--lime)' : 'var(--red)') + '">'
-      + v.toFixed(2) + '</b></span>';
-  }).join('') + '<span>Vol<b>' + fmt(384440) + '</b></span>';
+  drawKucoinCandles(el('aChart'), data);
+  el('aCx').innerHTML = (LABELS[t] || LABELS['15m']).map(function(l){ return '<span>' + l + '</span>'; }).join('');
 }
+
 document.querySelectorAll('#aTf button').forEach(function(b){
   b.addEventListener('click', function(){
-    document.querySelectorAll('#aTf button').forEach(function(x){ x.setAttribute('aria-pressed','false'); });
-    b.setAttribute('aria-pressed','true'); tf(b.dataset.t);
+    document.querySelectorAll('#aTf button').forEach(function(x){ x.classList.remove('on'); });
+    b.classList.add('on');
+    tf(b.dataset.t);
   });
 });
-tf('1h');
+tf('15m');
 
-// ── panes ──
+// Main view tabs
+document.querySelectorAll('#aMainTabs button').forEach(function(b){
+  b.addEventListener('click', function(){
+    document.querySelectorAll('#aMainTabs button').forEach(function(x){ x.classList.remove('on'); });
+    b.classList.add('on');
+  });
+});
+
+// Lower panes
 document.querySelectorAll('#aPanes button').forEach(function(b){
   b.addEventListener('click', function(){
-    document.querySelectorAll('#aPanes button').forEach(function(x){ x.setAttribute('aria-pressed','false'); });
-    b.setAttribute('aria-pressed','true');
+    document.querySelectorAll('#aPanes button').forEach(function(x){ x.classList.remove('on'); });
+    b.classList.add('on');
     document.querySelectorAll('[data-pane]').forEach(function(p){
       p.classList.toggle('on', p.dataset.pane === b.dataset.p);
     });
   });
 });
 
-book2('aAsks', 'ask', 7);
-book2('aBids', 'bid', 7);
-el('aLast').textContent = A.p.toFixed(2);
-el('aLast').style.color = A.d >= 0 ? 'var(--lime)' : 'var(--red)';
-el('aLastSub').textContent = '≈ £' + (A.p / 12.4).toFixed(2) + ' · last traded';
-(function(){
-  var bidPct = Math.round(48 + A.d);
-  bidPct = Math.max(12, Math.min(88, bidPct));
-  el('dBid').style.width = bidPct + '%';
-  el('dAsk').style.width = (100 - bidPct) + '%';
-  el('dBidK').textContent = 'B ' + bidPct + '%';
-  el('dAskK').textContent = (100 - bidPct) + '% S';
-})();
+// Render Order book depth
+function renderKucoinBook(){
+  var px = A.p;
+  var bids = [], asks = [];
+  for(var i = 0; i < 6; i++){
+    var bPx = px * (1 - (i + 1) * 0.0018);
+    var bAmt = Math.round(1400 + Math.abs(Math.sin(i * 2.3)) * 8200);
+    var bW = Math.min(95, 20 + i * 14);
+    bids.push('<div class="kc-b-line bid">'
+      + '<span>' + bPx.toFixed(bPx < 1 ? 4 : 2) + '</span>'
+      + '<span>' + bAmt.toLocaleString('en-US') + '</span>'
+      + '<div class="depth" style="width:' + bW + '%"></div></div>');
 
+    var aPx = px * (1 + (i + 1) * 0.0018);
+    var aAmt = Math.round(1200 + Math.abs(Math.cos(i * 1.9)) * 7500);
+    var aW = Math.min(95, 25 + i * 12);
+    asks.push('<div class="kc-b-line ask">'
+      + '<span>' + aPx.toFixed(aPx < 1 ? 4 : 2) + '</span>'
+      + '<span>' + aAmt.toLocaleString('en-US') + '</span>'
+      + '<div class="depth" style="width:' + aW + '%"></div></div>');
+  }
+  el('aBids').innerHTML = bids.join('');
+  el('aAsks').innerHTML = asks.join('');
+}
+renderKucoinBook();
+
+// Trade history
 (function(){
   var out = [];
-  for(var i = 0; i < 12; i++){
+  for(var i = 0; i < 10; i++){
     var up = Math.sin(i * 1.9) > 0;
-    var p = A.p * (1 + (Math.sin(i * 3.1) * 0.004));
-    out.push('<div class="tr-row"><span style="color:' + (up ? 'var(--lime)' : 'var(--red)') + '">'
-      + p.toFixed(2) + '</span><span style="text-align:center;color:var(--dim)">'
-      + fmt(900 + Math.abs(Math.cos(i * 2.2)) * 7400) + '</span>'
-      + '<span style="text-align:right;color:var(--faint)">' + (i * 3 + 1) + 'm ago</span></div>');
+    var p = A.p * (1 + (Math.sin(i * 3.1) * 0.003));
+    out.push('<div class="tr-row" style="display:flex;justify-content:space-between;padding:5px 0;font-family:JetBrains Mono,monospace;font-size:11px">'
+      + '<span style="color:' + (up ? 'var(--lime)' : '#FF3B47') + '">' + p.toFixed(p < 1 ? 4 : 2) + '</span>'
+      + '<span style="color:var(--dim)">' + fmt(900 + Math.abs(Math.cos(i * 2.2)) * 7400) + '</span>'
+      + '<span style="color:var(--faint)">' + (i * 2 + 1) + 'm ago</span></div>');
   }
   el('aTrades').innerHTML = out.join('');
 })();
 
-function renderPos(){
-  var h = held(), box = el('aPos');
-  if(!h){
-    box.innerHTML = '<div class="empty-state">'
-      + '<svg class="ic-xl" aria-hidden="true"><use href="#i-supply"/></svg>'
-      + 'You do not hold ' + A.t + ' yet. Buy some to field it in your club.</div>';
-    return;
-  }
-  var val = h.shares * h.p, cost = h.shares * h.avg, pnl = val - cost;
-  box.innerHTML = '<div class="bal-big" style="font-size:24px">' + fmt(val) + '<small> $FTR</small></div>'
-    + '<div class="bal-delta' + (pnl >= 0 ? '' : ' down') + '" style="margin-bottom:12px">'
-    + '<span>' + (pnl >= 0 ? '+' : '-') + fmt(Math.abs(pnl)) + ' unrealised</span></div>'
-    + '<div class="b-row"><span>Shares held</span><b>' + h.shares.toLocaleString('en-US') + '</b></div>'
-    + '<div class="b-row"><span>Average cost</span><b>' + h.avg.toFixed(2) + '</b></div>'
-    + '<div class="b-row"><span>Share of supply</span><b>' + (h.shares / 10000000 * 100).toFixed(2) + '%</b></div>'
-    + '<div class="b-row total"><span>In your club</span><b>'
-    + (h.inClub && h.inClub !== 'SUB' ? h.inClub : 'Unassigned') + '</b></div>';
-}
-renderPos();
-window.addEventListener('fantrade:statechange', renderPos);
-
+// Favorite button
 var fav = el('aFav');
-fav.setAttribute('aria-pressed', FT.isFav(A.t) ? 'true' : 'false');
-fav.style.color = FT.isFav(A.t) ? 'var(--lime)' : '';
-fav.addEventListener('click', function(){
-  var on = FT.toggleFav(A.t);
-  fav.setAttribute('aria-pressed', on ? 'true' : 'false');
-  fav.style.color = on ? 'var(--lime)' : '';
-  showToast(on ? A.t + ' added to favourites.' : A.t + ' removed from favourites.',
-    on ? 'success' : 'info');
-});
+if(fav){
+  fav.style.color = FT.isFav(A.t) ? 'var(--lime)' : '#767c82';
+  fav.addEventListener('click', function(){
+    var on = FT.toggleFav(A.t);
+    fav.style.color = on ? 'var(--lime)' : '#767c82';
+  });
+}
 """
 
-page("asset.html", "Market — Fantrade", "".join(asset), ASSET_JS)
+page("asset.html", "Market — Fantrade", "".join(asset), ASSET_JS, ASSET_CSS)
 
 # ══════════════════════════════════════════════════════════════════
 # TRADE — the terminal: bid, buy, sell, swap

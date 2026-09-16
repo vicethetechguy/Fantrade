@@ -2016,132 +2016,291 @@ print("built settings.html + 7 section pages")
 # ACCOUNT — the hub behind the fifth tab
 # ══════════════════════════════════════════════════════════════════
 AC_CSS = """
-.hub-sec{margin-bottom:12px}
-.hub-sec .k-label{margin-bottom:12px}
+/* KuCoin Mobile Profile Page Design (Screenshot 3 Match) */
+.kc-profile-wrap{max-width:560px;margin:0 auto;padding:8px 16px 110px}
+.kc-p-topbar{display:flex;align-items:center;justify-content:space-between;padding:6px 0 16px}
+.kc-p-back{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);display:grid;place-items:center;color:var(--ink);cursor:pointer;text-decoration:none;transition:background .2s}
+.kc-p-back:hover{background:rgba(255,255,255,.09)}
+.kc-p-actions{display:flex;align-items:center;gap:10px}
+.kc-p-action-btn{width:36px;height:36px;border-radius:50%;background:transparent;border:0;color:var(--ink);display:grid;place-items:center;cursor:pointer;transition:background .2s;text-decoration:none}
+.kc-p-action-btn:hover{background:rgba(255,255,255,.06)}
+
+/* Hero Avatar & Identity */
+.kc-p-hero{display:flex;flex-direction:column;align-items:center;text-align:center;padding:6px 0 20px}
+.kc-p-avatar-box{position:relative;width:86px;height:86px;margin-bottom:12px}
+.kc-p-avatar-img{width:100%;height:100%;border-radius:50%;object-fit:cover;border:2px solid rgba(196,248,42,.35);box-shadow:0 0 24px rgba(196,248,42,.12)}
+.kc-p-name-row{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:5px}
+.kc-p-username{font-family:Archivo,sans-serif;font-variation-settings:'wdth' 120,'wght' 800;font-size:22px;letter-spacing:-.01em;color:var(--ink)}
+.kc-p-edit-btn{background:transparent;border:0;color:#767c82;cursor:pointer;display:grid;place-items:center;padding:2px;transition:color .15s}
+.kc-p-edit-btn:hover{color:var(--lime)}
+.kc-p-uid-row{display:flex;align-items:center;justify-content:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:12px;color:#767c82;margin-bottom:14px}
+.kc-p-copy-btn{background:transparent;border:0;color:inherit;cursor:pointer;display:grid;place-items:center;padding:2px;transition:color .15s}
+.kc-p-copy-btn:hover{color:var(--lime)}
+
+/* Status Pills */
+.kc-p-pills{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap}
+.kc-p-pill{display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:999px;padding:4px 12px;font-size:11.5px;color:#8E9AA8;text-decoration:none;transition:border-color .2s,background .2s}
+.kc-p-pill:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.16)}
+.kc-p-pill.safeguard{color:var(--lime);border-color:rgba(196,248,42,.25);background:rgba(196,248,42,.06)}
+.kc-p-pill .chev{font-size:11px;opacity:.7;margin-left:2px}
+
+/* Referral Banner Card */
+.kc-ref-card{display:flex;align-items:center;justify-content:space-between;gap:16px;background:linear-gradient(135deg,rgba(255,255,255,.04) 0%,rgba(255,255,255,.02) 100%);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:16px 20px;margin:18px 0 24px;text-decoration:none;transition:border-color .2s,transform .2s}
+.kc-ref-card:hover{border-color:rgba(196,248,42,.3);transform:translateY(-1px)}
+.kc-ref-left{flex:1}
+.kc-ref-title{font-family:Archivo,sans-serif;font-variation-settings:'wdth' 115,'wght' 700;font-size:16px;color:var(--ink);margin-bottom:4px}
+.kc-ref-sub{font-size:12px;color:#767c82}
+.kc-ref-icon-box{width:56px;height:56px;flex-shrink:0;border-radius:14px;overflow:hidden;background:rgba(255,255,255,.05);display:grid;place-items:center}
+.kc-ref-icon-box img{width:100%;height:100%;object-fit:cover}
+
+/* Grouped Lists */
+.kc-group{margin-bottom:22px}
+.kc-group-title{font-size:11.5px;font-weight:600;color:#767c82;text-transform:none;letter-spacing:.02em;margin:0 0 8px 4px}
+.kc-group-box{background:rgba(10,12,14,.6);border:1px solid rgba(255,255,255,.06);border-radius:14px;overflow:hidden}
+.kc-item-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border-bottom:1px solid rgba(255,255,255,.04);text-decoration:none;color:var(--ink);transition:background .15s}
+.kc-item-row:last-child{border-bottom:0}
+.kc-item-row:hover{background:rgba(255,255,255,.025)}
+.kc-item-left{display:flex;align-items:center;gap:14px;flex:1;min-width:0}
+.kc-item-ico{width:22px;height:22px;display:grid;place-items:center;color:#8E9AA8;flex-shrink:0}
+.kc-item-text-wrap{min-width:0}
+.kc-item-title{font-size:14px;font-weight:500;color:var(--ink)}
+.kc-item-desc{font-size:11px;color:#767c82;margin-top:2px}
+.kc-item-right{display:flex;align-items:center;gap:8px;font-size:12px;color:#767c82;flex-shrink:0}
+.kc-badge-k1{display:inline-flex;align-items:center;gap:4px;color:#8E9AA8;font-size:11.5px}
+.kc-badge-k1 .k1-tag{background:rgba(196,248,42,.15);color:var(--lime);font-size:9.5px;font-weight:700;padding:1px 5px;border-radius:4px}
+.kc-chevron{color:#555c63}
+
+/* Toggle Switch */
+.kc-switch{position:relative;width:40px;height:22px;background:rgba(255,255,255,.14);border-radius:999px;border:0;cursor:pointer;transition:background .2s;padding:2px}
+.kc-switch.on{background:var(--lime)}
+.kc-switch i{display:block;width:18px;height:18px;background:#fff;border-radius:50%;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.3)}
+.kc-switch.on i{transform:translateX(18px);background:#000}
+
+/* Toast */
+.kc-toast{position:fixed;top:24px;left:50%;transform:translateX(-50%) translateY(-20px);background:rgba(18,20,23,.95);border:1px solid var(--lime);color:var(--ink);padding:9px 18px;border-radius:999px;font-size:12px;font-family:Montserrat,sans-serif;font-weight:600;display:flex;align-items:center;gap:8px;box-shadow:0 8px 30px rgba(0,0,0,.6);opacity:0;pointer-events:none;transition:all .25s ease;z-index:999}
+.kc-toast.show{opacity:1;transform:translateX(-50%) translateY(0);pointer-events:auto}
 """
 
-HUB_MONEY = [
-    ("ftr.html", "wallet", "$FTR wallet",
-     "Balance, send, receive, swap and buy. Your receive QR lives here.", "balance", " $FTR"),
-    ("portfolio.html", "receipt", "Portfolio &amp; ledger",
-     "Every share you hold, unrealised P&amp;L and the full settlement audit trail.", "net", " $FTR net"),
-]
-HUB_CLUB = [
-    ("clubs.html", "crest", "Dream Club",
-     "Your eleven, the bench, the coach and the club builder.", "club", ""),
-    ("leaderboard.html", "rank", "League table",
-     "Where the club sits against 1,420 syndicates this cycle.", "rank", " worldwide"),
-]
-HUB_ACCT = [
-    ("notifications.html", "pulse", "Notifications",
-     "Settlements, order fills, teamsheet risk and account events.", "", ""),
-    ("settings.html", "scales", "Settings",
-     "Profile, club identity, security, payouts and responsible play.", "", ""),
-]
+ac = [T('<main><div class="kc-profile-wrap">'
+        '<!-- Top Navigation Bar -->'
+        '<div class="kc-p-topbar">'
+        '  <a href="exchange.html" class="kc-p-back" title="Back">'
+        '    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>'
+        '  </a>'
+        '  <div class="kc-p-actions">'
+        '    <a href="notifications.html" class="kc-p-action-btn" title="Support">'
+        '      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>'
+        '    </a>'
+        '    <a href="receive.html" class="kc-p-action-btn" title="Scan">'
+        '      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 8V5a1 1 0 0 1 1-1h3M4 16v3a1 1 0 0 0 1 1h3M16 4h3a1 1 0 0 1 1 1v3M16 20h3a1 1 0 0 0 1-1v-3"/></svg>'
+        '    </a>'
+        '    <a href="settings-profile.html" class="kc-p-action-btn" title="Add / Switch Profile">'
+        '      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>'
+        '    </a>'
+        '  </div>'
+        '</div>'
 
+        '<!-- Hero Avatar & Identity -->'
+        '<div class="kc-p-hero">'
+        '  <div class="kc-p-avatar-box">'
+        '    <img src="assets/astronaut_avatar.jpg" alt="Avatar" class="kc-p-avatar-img">'
+        '  </div>'
+        '  <div class="kc-p-name-row">'
+        '    <span class="kc-p-username" id="kcUsername">Viceonchain</span>'
+        '    <button type="button" class="kc-p-edit-btn" id="kcEditNameBtn" title="Edit username">'
+        '      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>'
+        '    </button>'
+        '  </div>'
+        '  <div class="kc-p-uid-row">'
+        '    <span>UID: <span id="kcUid">242423082</span></span>'
+        '    <button type="button" class="kc-p-copy-btn" id="kcCopyUidBtn" title="Copy UID">'
+        '      <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>'
+        '    </button>'
+        '  </div>'
+        '  <div class="kc-p-pills">'
+        '    <a href="settings.html" class="kc-p-pill">'
+        '      <span style="font-size:10.5px;border-radius:50%;width:14px;height:14px;display:inline-grid;place-items:center;border:1px solid currentColor">V</span>'
+        '      <span>VIP 0</span>'
+        '      <span class="chev">›</span>'
+        '    </a>'
+        '    <a href="settings-security.html" class="kc-p-pill safeguard">'
+        '      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>'
+        '      <span>Safeguard</span>'
+        '      <span class="chev">›</span>'
+        '    </a>'
+        '    <a href="settings-profile.html" class="kc-p-pill">'
+        '      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>'
+        '      <span>Verified</span>'
+        '      <span class="chev">›</span>'
+        '    </a>'
+        '  </div>'
+        '</div>'
 
-ac = [T('<main><section class="app-head"><div class="wrap">'
-        '<h1 data-reveal>Account</h1>'
-        '</div></section>')]
+        '<!-- Referral Program Banner Card -->'
+        '<a href="settings.html" class="kc-ref-card">'
+        '  <div class="kc-ref-left">'
+        '    <div class="kc-ref-title">Referral Program</div>'
+        '    <div class="kc-ref-sub">Refer friends to earn a 35% commission</div>'
+        '  </div>'
+        '  <div class="kc-ref-icon-box">'
+        '    <img src="assets/referral_icon.jpg" alt="Referral">'
+        '  </div>'
+        '</a>'
 
-ac.append('<section style="padding:10px 0 130px"><div class="wrap"><div class="bento">')
+        '<!-- Section: Account -->'
+        '<div class="kc-group">'
+        '  <div class="kc-group-title">Account</div>'
+        '  <div class="kc-group-box">'
+        '    <a href="ftr.html" class="kc-item-row">'
+        '      <div class="kc-item-left">'
+        '        <div class="kc-item-ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 9H4a2 2 0 0 1-2-2V5h4M18 9h2a2 2 0 0 0 2-2V5h-4M6 5h12v6a6 6 0 0 1-12 0V5z"/><line x1="12" y1="17" x2="12" y2="21"/><line x1="8" y1="21" x2="16" y2="21"/></svg></div>'
+        '        <div class="kc-item-text-wrap"><div class="kc-item-title">KCS Loyalty Level</div></div>'
+        '      </div>'
+        '      <div class="kc-item-right">'
+        '        <span class="kc-badge-k1"><span class="k1-tag">K1</span> To be Unlocked</span>'
+        '        <svg class="kc-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>'
+        '      </div>'
+        '    </a>'
+        '    <a href="settings.html" class="kc-item-row">'
+        '      <div class="kc-item-left">'
+        '        <div class="kc-item-ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg></div>'
+        '        <div class="kc-item-text-wrap"><div class="kc-item-title">Fees &amp; VIP</div></div>'
+        '      </div>'
+        '      <div class="kc-item-right">'
+        '        <span>VIP 0</span>'
+        '        <svg class="kc-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>'
+        '      </div>'
+        '    </a>'
+        '    <div class="kc-item-row">'
+        '      <div class="kc-item-left">'
+        '        <div class="kc-item-ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M12 6v12M2 12a2 2 0 0 0 2-2V8M22 12a2 2 0 0 1-2-2V8"/></svg></div>'
+        '        <div class="kc-item-text-wrap">'
+        '          <div class="kc-item-title">Pay Fees with KCS</div>'
+        '          <div class="kc-item-desc">20% off on trading fees</div>'
+        '        </div>'
+        '      </div>'
+        '      <div class="kc-item-right">'
+        '        <button type="button" class="kc-switch" id="kcFeeSwitch" aria-label="Toggle pay fees with KCS"><i></i></button>'
+        '      </div>'
+        '    </div>'
+        '    <a href="portfolio.html" class="kc-item-row">'
+        '      <div class="kc-item-left">'
+        '        <div class="kc-item-ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>'
+        '        <div class="kc-item-text-wrap"><div class="kc-item-title">History</div></div>'
+        '      </div>'
+        '      <div class="kc-item-right">'
+        '        <svg class="kc-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>'
+        '      </div>'
+        '    </a>'
+        '  </div>'
+        '</div>'
 
-# identity
-ac.append(T('<div class="bezel c12" data-reveal><div class="core pad">'
-            '<div class="idcard">'
-            '<span class="avatar"><span data-bind="initials">AM</span></span>'
-            '<div style="min-width:0">'
-            '<div style="font-family:Archivo;font-variation-settings:\'wdth\' 125,\'wght\' 900;'
-            'text-transform:uppercase;font-size:26px;line-height:1" data-bind="name">Alex Morgan</div>'
-            '<div class="sub-line" style="font-family:\'JetBrains Mono\',monospace;color:var(--lime);'
-            'font-size:12px;margin-top:7px"><span data-bind="handle">@alex_trader</span></div>'
-            '<div class="sub-line" style="letter-spacing:.14em;text-transform:uppercase;margin-top:7px">'
-            'Apex division · manager since Sep 2026</div></div>'
-            '<div style="margin-left:auto;display:flex;gap:10px;flex-wrap:wrap">@@@@</div>'
-            '</div>'
-            '<div class="statbar" style="margin-top:26px">'
-            '<div>@@ Available <b data-bind="balance">128,450</b> $FTR</div>'
-            '<div>@@ Net worth <b data-bind="net">370,300</b></div>'
-            '<div>@@ Club <b data-bind="club">Zero FC</b></div>'
-            '<div>@@ Rank <b data-bind="rank">#124</b></div>'
-            '</div></div></div>',
-            btn("Edit profile", "btn-glass", "settings-profile.html"),
-            btn("Open wallet", href="ftr.html"),
-            ic("coin", "ic"), ic("chart", "ic"), ic("crest", "ic"), ic("rank", "ic")))
+        '<!-- Section: Security & System -->'
+        '<div class="kc-group">'
+        '  <div class="kc-group-title">Security &amp; System</div>'
+        '  <div class="kc-group-box">'
+        '    <a href="settings-security.html" class="kc-item-row">'
+        '      <div class="kc-item-left">'
+        '        <div class="kc-item-ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg></div>'
+        '        <div class="kc-item-text-wrap"><div class="kc-item-title">Security Settings</div></div>'
+        '      </div>'
+        '      <div class="kc-item-right">'
+        '        <span>Change password</span>'
+        '        <svg class="kc-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>'
+        '      </div>'
+        '    </a>'
+        '    <a href="settings.html" class="kc-item-row">'
+        '      <div class="kc-item-left">'
+        '        <div class="kc-item-ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div>'
+        '        <div class="kc-item-text-wrap"><div class="kc-item-title">Settings</div></div>'
+        '      </div>'
+        '      <div class="kc-item-right">'
+        '        <svg class="kc-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>'
+        '      </div>'
+        '    </a>'
+        '  </div>'
+        '</div>'
 
-ac.append(T('<div class="c12 hub-sec" data-reveal><div class="k-label">Money</div>@@</div>', hub(HUB_MONEY)))
-ac.append(T('<div class="c12 hub-sec" data-reveal><div class="k-label">Club</div>@@</div>', hub(HUB_CLUB)))
-ac.append(T('<div class="c12 hub-sec" data-reveal><div class="k-label">Account</div>@@</div>', hub(HUB_ACCT)))
+        '<!-- Section: Rewards -->'
+        '<div class="kc-group">'
+        '  <div class="kc-group-title">Rewards</div>'
+        '  <div class="kc-group-box">'
+        '    <a href="fanplay.html" class="kc-item-row">'
+        '      <div class="kc-item-left">'
+        '        <div class="kc-item-ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg></div>'
+        '        <div class="kc-item-text-wrap"><div class="kc-item-title">Rewards Hub</div></div>'
+        '      </div>'
+        '      <div class="kc-item-right">'
+        '        <svg class="kc-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>'
+        '      </div>'
+        '    </a>'
+        '  </div>'
+        '</div>'
 
-# quick controls
-ac.append(T('<div class="bezel c7" data-reveal><div class="core pad">'
-            '<div class="k-label">Quick controls</div>'
-            '<div class="sw-row"><div><div class="t">Round settlement alerts</div>'
-            '<div class="d">Results, points and payouts the moment a window closes.</div></div>'
-            '<button class="tgl" type="button" data-pref="settleAlerts"><i></i></button></div>'
-            '<div class="sw-row"><div><div class="t">Club &amp; teamsheet risk</div>'
-            '<div class="d">Injuries and late fitness tests before a lock.</div></div>'
-            '<button class="tgl" type="button" data-pref="clubAlerts"><i></i></button></div>'
-            '<div class="sw-row"><div><div class="t">Automatic substitutions</div>'
-            '<div class="d">Field the best eligible bench asset when a starter does not play.</div></div>'
-            '<button class="tgl" type="button" data-pref="autoSub"><i></i></button></div>'
-            '<div class="b-row" style="margin-top:18px"><span>Weekly stake cap</span>'
-            '<b id="acCap">5,000 $FTR</b></div>'
-            '<div class="b-row"><span>Two-factor authentication</span><b id="acTfa">Off</b></div>'
-            '<div style="display:flex;gap:10px;margin-top:20px;flex-wrap:wrap">@@@@</div>'
-            '</div></div>',
-            btn("All settings", "btn-glass", "settings.html",
-                extra='style="flex:1;justify-content:space-between"'),
-            btn("Responsible play", "btn-glass", "settings-play.html",
-                extra='style="flex:1;justify-content:space-between"')))
+        '<!-- Feedback Toast -->'
+        '<div id="kcToast" class="kc-toast">'
+        '  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--lime)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>'
+        '  <span id="kcToastText">UID copied to clipboard</span>'
+        '</div>'
 
-# activity + session
-ac.append(T('<div class="bezel c5" data-reveal><div class="core pad">'
-            '<div style="display:flex;align-items:center;gap:12px">'
-            '<div class="k-label" style="margin:0">Latest activity</div>'
-            '<a href="notifications.html" style="margin-left:auto;font-size:11px;color:var(--lime)">'
-            'See all (<span data-unread>3</span>)</a></div>'
-            '<div id="acFeed" style="margin-top:14px"></div>'
-            '<div class="k-label" style="margin-top:26px">Session</div>'
-            '<div class="rowlink">@@ Signed in as<b data-bind="email">you@example.com</b></div>'
-            '<div class="rowlink">@@ This device<b>Chrome · London</b></div>'
-            '<div style="margin-top:20px">@@</div>'
-            '</div></div>',
-            ic("user", "ic"), ic("shield", "ic"),
-            btn("Sign out", "btn-glass", tag="button",
-                extra='data-signout style="width:100%;justify-content:space-between"')))
-
-ac.append('</div></div></section></main>')
+        '</div></main>')]
 
 AC_JS = r"""
 (function(){
-  var s = FT.getState();
-  document.querySelectorAll('[data-bind="initials"]').forEach(function(el){ el.textContent = FT.initials(); });
-  var cap = document.getElementById('acCap');
-  if(cap) cap.textContent = s.prefs.stakeCap.toLocaleString('en-US') + ' $FTR';
-  var tfa = document.getElementById('acTfa');
-  if(tfa){
-    tfa.textContent = s.prefs.twoFactor ? 'On' : 'Off';
-    tfa.style.color = s.prefs.twoFactor ? 'var(--lime)' : 'var(--amber)';
+  function showToast(txt){
+    var t = document.getElementById('kcToast');
+    var s = document.getElementById('kcToastText');
+    if(!t) return;
+    if(s) s.textContent = txt;
+    t.classList.add('show');
+    clearTimeout(t._timer);
+    t._timer = setTimeout(function(){ t.classList.remove('show'); }, 2200);
+  }
+
+  // Copy UID
+  var copyBtn = document.getElementById('kcCopyUidBtn');
+  if(copyBtn){
+    copyBtn.addEventListener('click', function(){
+      var uid = document.getElementById('kcUid').textContent.trim();
+      navigator.clipboard.writeText(uid).then(function(){
+        showToast('UID ' + uid + ' copied to clipboard');
+      }).catch(function(){
+        showToast('UID: ' + uid);
+      });
+    });
+  }
+
+  // Edit username
+  var editBtn = document.getElementById('kcEditNameBtn');
+  var nameEl = document.getElementById('kcUsername');
+  var storedName = localStorage.getItem('ft_username') || 'Viceonchain';
+  if(nameEl) nameEl.textContent = storedName;
+
+  if(editBtn && nameEl){
+    editBtn.addEventListener('click', function(){
+      var next = prompt('Enter display name:', nameEl.textContent);
+      if(next && next.trim()){
+        nameEl.textContent = next.trim();
+        localStorage.setItem('ft_username', next.trim());
+        showToast('Username updated to ' + next.trim());
+      }
+    });
+  }
+
+  // Toggle switch for fee discount
+  var sw = document.getElementById('kcFeeSwitch');
+  if(sw){
+    var isOn = localStorage.getItem('ft_fee_discount') !== 'false';
+    if(isOn) sw.classList.add('on');
+    else sw.classList.remove('on');
+
+    sw.addEventListener('click', function(){
+      var now = sw.classList.toggle('on');
+      localStorage.setItem('ft_fee_discount', now ? 'true' : 'false');
+      showToast(now ? '20% fee discount enabled' : 'Fee discount disabled');
+    });
   }
 })();
-
-function renderAcFeed(){
-  var s = FT.getState(), box = document.getElementById('acFeed');
-  if(!box) return;
-  var list = s.notifications.slice(0, 3);
-  box.innerHTML = list.map(function(n){
-    return '<div class="rowlink" style="align-items:flex-start;gap:12px">'
-      + '<span class="ibox sm' + (n.kind === 'club' ? ' am' : '') + '" style="margin-top:2px">'
-      + '<svg class="ic-sm" aria-hidden="true"><use href="#i-' + n.icon + '"/></svg></span>'
-      + '<span style="min-width:0;flex:1"><span style="display:block;font-size:12.5px;color:var(--ink)">'
-      + n.title + '</span><span class="sub-line">' + n.time + '</span></span>'
-      + (n.amt ? '<b style="color:' + (n.tone === 'up' ? 'var(--lime)' : 'var(--red)') + '">'
-        + n.amt.replace(' $FTR', '') + '</b>' : '') + '</div>';
-  }).join('');
-}
-renderAcFeed();
-window.addEventListener('fantrade:statechange', renderAcFeed);
 """
 
 page("account.html", "Account — Fantrade", "".join(ac), AC_JS, AC_CSS)

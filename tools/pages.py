@@ -276,210 +276,245 @@ page("index.html", "Home — Fantrade", "".join(land), PITCH_JS, LAND_CSS)
 # 2. EXCHANGE
 # ══════════════════════════════════════════════════════════
 EX_CSS = """
-.ci{display:flex;align-items:center;gap:26px;flex-wrap:wrap}
-.ci-l{min-width:0}
-.ci-r{flex:1;min-width:200px;display:flex;justify-content:flex-end}
-.ci-r svg{width:100%;max-width:300px;height:auto}
-.board .mkhead,.board .mkrow{padding-left:0;padding-right:0}
-.board .mkhead{margin-top:18px}
-.board .mkrow{border-radius:0}
-.board .mkrow:hover{background:rgba(255,255,255,.035)}
-.ticket .line:last-of-type{border-bottom:0}
-.movers{display:flex;flex-direction:column;gap:2px}
-.mv{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.05)}
-.mv:last-child{border-bottom:0}
-.mv .r{margin-left:auto;text-align:right}
-.mv .r .p{font-family:'JetBrains Mono',monospace;font-size:13px}
-.mv .r .d{font-family:'JetBrains Mono',monospace;font-size:11px}
-.ringwrap{display:flex;align-items:center;gap:20px;margin:6px 0 18px}
-.ring{width:96px;height:96px;flex:none}
-.chartbox{padding:24px 26px 10px}
-.legend{display:flex;gap:18px;flex-wrap:wrap;padding:0 26px 22px;font-size:11.5px;color:var(--faint)}
-.legend span{display:flex;align-items:center;gap:8px}
-.legend i{width:16px;height:2px;border-radius:2px;display:block}
+/* KuCoin-style Markets / Exchange Page */
+.kc-ex-wrap{max-width:680px;margin:0 auto;padding:12px 16px 84px}
+.kc-top-bar{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.kc-search-box{flex:1;display:flex;align-items:center;gap:10px;height:42px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:999px;padding:0 14px;box-sizing:border-box}
+.kc-search-box .ic{color:#767c82;width:18px;height:18px;flex:none}
+.kc-search-input{flex:1;background:transparent;border:0;outline:0;color:var(--ink);font-family:Montserrat,sans-serif;font-size:13.5px}
+.kc-search-input::placeholder{color:#686e74}
+.kc-search-actions{display:flex;align-items:center;gap:10px;flex:none}
+.kc-action-btn{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);display:grid;place-items:center;color:var(--ink);cursor:pointer;position:relative;text-decoration:none}
+.kc-action-btn:hover{background:rgba(255,255,255,.08)}
+.kc-action-btn .dot{position:absolute;top:6px;right:6px;width:7px;height:7px;border-radius:50%;background:#FF3B47}
+
+/* Category Tabs */
+.kc-cat-tabs{display:flex;align-items:center;gap:22px;border-bottom:1px solid rgba(255,255,255,.07);overflow-x:auto;scrollbar-width:none;margin-bottom:12px}
+.kc-cat-tabs::-webkit-scrollbar{display:none}
+.kc-cat-tab{background:transparent;border:0;outline:0;padding:8px 0 10px;font-family:Montserrat,sans-serif;font-size:15px;font-weight:500;color:#767c82;cursor:pointer;white-space:nowrap;position:relative;transition:color .2s}
+.kc-cat-tab:hover{color:var(--ink)}
+.kc-cat-tab.on{color:var(--ink);font-weight:700}
+.kc-cat-tab.on::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2.5px;background:var(--lime);border-radius:2px}
+
+/* Sub-filter Bar */
+.kc-sub-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+.kc-sub-tabs{display:flex;align-items:center;gap:18px;overflow-x:auto;scrollbar-width:none}
+.kc-sub-tabs::-webkit-scrollbar{display:none}
+.kc-sub-tab{background:transparent;border:0;outline:0;font-family:Montserrat,sans-serif;font-size:13px;font-weight:500;color:#767c82;cursor:pointer;white-space:nowrap;padding:4px 0;transition:color .2s}
+.kc-sub-tab:hover{color:var(--ink)}
+.kc-sub-tab.on{color:var(--ink);font-weight:700}
+.kc-edit-btn{background:transparent;border:0;color:#767c82;cursor:pointer;padding:4px;display:grid;place-items:center;transition:color .2s}
+.kc-edit-btn:hover{color:var(--ink)}
+
+/* Announcement Banner */
+.kc-banner{display:flex;align-items:center;justify-content:space-between;gap:14px;background:rgba(196,248,42,.06);border:1px solid rgba(196,248,42,.22);border-radius:10px;padding:10px 14px;margin-bottom:14px}
+.kc-banner-text{font-size:12px;line-height:1.45;color:var(--lime);flex:1}
+.kc-banner-actions{display:flex;align-items:center;gap:10px;flex:none}
+.kc-banner-set{background:transparent;border:1px solid var(--lime);color:var(--lime);border-radius:999px;padding:4px 14px;font-size:11.5px;font-weight:600;cursor:pointer;font-family:Montserrat,sans-serif}
+.kc-banner-close{background:transparent;border:0;color:var(--lime);font-size:16px;cursor:pointer;padding:0 4px;line-height:1}
+
+/* Table Header */
+.kc-th{display:grid;grid-template-columns:1fr 110px 92px;align-items:center;padding:8px 0;font-size:11px;color:#767c82;border-bottom:1px solid rgba(255,255,255,.05);margin-bottom:4px}
+.kc-th span{display:inline-flex;align-items:center;gap:3px;cursor:pointer;user-select:none}
+.kc-th span:hover{color:var(--ink)}
+
+/* Market Rows */
+.kc-row{display:grid;grid-template-columns:1fr 110px 92px;align-items:center;padding:13px 0;border-bottom:1px solid rgba(255,255,255,.04);text-decoration:none;color:inherit;transition:background .2s ease}
+.kc-row:hover{background:rgba(255,255,255,.025)}
+.kc-row-left{display:flex;align-items:center;gap:12px;min-width:0}
+.kc-avatar{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);display:grid;place-items:center;flex:none;color:var(--lime);font-family:Archivo,sans-serif;font-size:11px;font-weight:800}
+.kc-avatar.coach{color:var(--amber);border-color:rgba(255,106,31,.25);background:rgba(255,106,31,.08)}
+.kc-pair-title{display:flex;align-items:center;gap:5px;font-family:Archivo,sans-serif;font-variation-settings:'wdth' 115,'wght' 800;font-size:14.5px;line-height:1.1;color:var(--ink)}
+.kc-pair-quote{font-size:11.5px;color:#767c82;font-weight:600}
+.kc-tag{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:600;color:#767c82;background:rgba(255,255,255,.08);border-radius:4px;padding:1px 4px;margin-left:2px}
+.kc-pair-sub{font-size:11.5px;color:#767c82;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kc-row-mid{text-align:right;padding-right:12px}
+.kc-price-main{font-family:'JetBrains Mono',monospace;font-size:14.5px;font-weight:600;color:var(--ink);letter-spacing:-.01em}
+.kc-price-sub{font-family:'JetBrains Mono',monospace;font-size:11px;color:#767c82;margin-top:2px}
+.kc-row-right{display:flex;justify-content:flex-end}
+.kc-pill{display:inline-flex;align-items:center;justify-content:center;min-width:76px;height:32px;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:#0A0D03;background:var(--lime);box-sizing:border-box;padding:0 6px}
+.kc-pill.down{background:#FF3B47;color:#fff}
 """
 
-ex = [T('<main><section class="app-head" style="padding-bottom:18px"><div class="wrap">'
-        '<h1 data-reveal>Exchange</h1>'
-        '<div class="searchbox" style="margin-top:16px;max-width:none" data-reveal>@@'
-        '<input id="q" type="search" placeholder="Search a player, coach or ticker"></div>'
-        '</div></section>', ic("search", "ic"))]
-
-# What the squad is worth, right above the book you would rebuild it from.
-ex.append(T('<section style="padding-top:0"><div class="wrap">'
-            '<div class="bezel flat" data-reveal><div class="core pad ci">'
-            '<div class="ci-l"><div class="k-label">@@ Team index</div>'
-            '<div class="value-big"><span id="teamVal">—</span> <small>$FTR</small></div>'
-            '<div class="delta" id="teamDelta">—</div></div>'
-            '<div class="ci-r" id="teamSpark"></div>'
-            '</div></div></div></section>', ic("crest", "ic-sm")))
-
-# The book itself is not a card. It runs straight down the page.
-ex.append('<section style="padding-top:22px;padding-bottom:120px"><div class="wrap">'
-          '<div class="board" data-reveal>'
-          '<div class="utabs" id="exSort">'
-          '<button type="button" aria-pressed="true" data-s="all">All</button>'
-          '<button type="button" aria-pressed="false" data-s="hot">Hot</button>'
-          '<button type="button" aria-pressed="false" data-s="new">New</button>'
-          '<button type="button" aria-pressed="false" data-s="gainers">Gainers</button>'
-          '<button type="button" aria-pressed="false" data-s="losers">Losers</button>'
-          '<button type="button" aria-pressed="false" data-s="volume">Volume</button>'
-          '</div>'
-          '<div class="utabs sm" id="exKind" style="border-bottom:0;margin-top:14px">'
-          '<button type="button" aria-pressed="true" data-f="all">All</button>'
-          '<button type="button" aria-pressed="false" data-f="holdings">Holdings</button>'
-          '<button type="button" aria-pressed="false" data-f="player">Players</button>'
-          '<button type="button" aria-pressed="false" data-f="coach">Coaches</button>'
-          '</div>'
-          '<div class="mkhead"><span>Asset / Volume</span>'
-          '<span style="text-align:right">Price $FTR</span>'
-          '<span style="text-align:center">24h</span></div>'
-          '<div id="mkt"></div>'
-          '<div style="padding:14px 0 0;font-size:10.5px;color:var(--faint)" id="mktCount">—</div>'
-          '</div></div></section>')
-ex.append('</main>')
+ex = [T('<main><div class="kc-ex-wrap">'
+        '<!-- Top Search & Actions -->'
+        '<div class="kc-top-bar">'
+        '  <div class="kc-search-box">'
+        '    @@'
+        '    <input id="q" type="search" class="kc-search-input" placeholder="LSK" autocomplete="off">'
+        '  </div>'
+        '  <div class="kc-search-actions">'
+        '    <button type="button" class="kc-action-btn" id="btnTrend" title="Trends">'
+        '      <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>'
+        '    </button>'
+        '    <a href="notifications.html" class="kc-action-btn" title="Alerts">'
+        '      @@'
+        '      <span class="dot"></span>'
+        '    </a>'
+        '  </div>'
+        '</div>'
+        '<!-- Primary Category Tabs -->'
+        '<div class="kc-cat-tabs" id="kcCatTabs">'
+        '  <button type="button" class="kc-cat-tab" data-cat="fav">Favorites</button>'
+        '  <button type="button" class="kc-cat-tab on" data-cat="markets">Markets</button>'
+        '  <button type="button" class="kc-cat-tab" data-cat="alpha">Alpha 🔥</button>'
+        '  <button type="button" class="kc-cat-tab" data-cat="potential">Potential Trades</button>'
+        '</div>'
+        '<!-- Sub-filter Row -->'
+        '<div class="kc-sub-bar">'
+        '  <div class="kc-sub-tabs" id="kcSubTabs">'
+        '    <button type="button" class="kc-sub-tab on" data-sub="all">All</button>'
+        '    <button type="button" class="kc-sub-tab" data-sub="holdings">Holdings</button>'
+        '    <button type="button" class="kc-sub-tab" data-sub="spot">Spot</button>'
+        '    <button type="button" class="kc-sub-tab" data-sub="futures">Futures</button>'
+        '    <button type="button" class="kc-sub-tab" data-sub="alpha">Alpha</button>'
+        '  </div>'
+        '  <button type="button" class="kc-edit-btn" id="btnEdit" title="Customize list">'
+        '    <svg class="ic-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>'
+        '  </button>'
+        '</div>'
+        '<!-- Floating Widget Banner -->'
+        '<div class="kc-banner" id="annBanner">'
+        '  <div class="kc-banner-text">Stay on top of the markets! Add a floating window or widget for real-time tracking.</div>'
+        '  <div class="kc-banner-actions">'
+        '    <button type="button" class="kc-banner-set" onclick="alert(\'Floating market widget pinned to home screen.\')">Set</button>'
+        '    <button type="button" class="kc-banner-close" onclick="document.getElementById(\'annBanner\').style.display=\'none\'">✕</button>'
+        '  </div>'
+        '</div>'
+        '<!-- Table Headers -->'
+        '<div class="kc-th">'
+        '  <span data-sort="pair">Pair ⇅ / Amount ⇅</span>'
+        '  <span data-sort="price" style="justify-content:flex-end">Price ⇅</span>'
+        '  <span data-sort="change" style="justify-content:flex-end">24h Change ⇅</span>'
+        '</div>'
+        '<!-- Market List -->'
+        '<div id="mktList"></div>'
+        '<div style="padding:14px 0 0;font-size:11px;color:#767c82;text-align:center" id="mktCount">—</div>'
+        '</div></main>',
+        ic("search", "ic"),
+        ic("bell", "ic"))]
 
 EX_JS = r"""
-var kind = 'all', sort = 'all', q = '';
+var cat = 'markets', sub = 'all', sortCol = '', sortAsc = false, q = '';
+var favs = JSON.parse(localStorage.getItem('ft_favorites') || '["SOL","BTC","ETH","$Saka"]');
+
 function fmt(n){ return n.toLocaleString('en-US'); }
 
-function view(){
+function getFilteredList(){
   var s = FT.getState();
-  var list = ASSETS.map(function(a, i){ return [a, i]; }).filter(function(x){
-    var a = x[0];
-    if(kind === 'player' && a.c) return false;
-    if(kind === 'coach' && !a.c) return false;
-    if(kind === 'holdings' && !s.holdings[a.t]) return false;
+  var list = ASSETS.filter(function(a){
+    // Search filter
     if(q && (a.t + ' ' + a.n).toLowerCase().indexOf(q) < 0) return false;
+
+    // Category filter
+    if(cat === 'fav' && favs.indexOf(a.t) < 0) return false;
+    if(cat === 'alpha' && (a.d < 2.0 && !a.c)) return false;
+    if(cat === 'potential' && a.d >= 0) return false;
+
+    // Sub-tab filter
+    if(sub === 'holdings' && !s.holdings[a.t]) return false;
+    if(sub === 'spot' && (a.tag === 'Perp' || a.c)) return false;
+    if(sub === 'futures' && a.tag !== 'Perp') return false;
+    if(sub === 'alpha' && !a.c && a.d < 3.0) return false;
+
     return true;
   });
-  if(sort === 'gainers') list.sort(function(a, b){ return b[0].d - a[0].d; });
-  else if(sort === 'losers') list.sort(function(a, b){ return a[0].d - b[0].d; });
-  else if(sort === 'volume' || sort === 'hot') list.sort(function(a, b){ return b[0].p - a[0].p; });
-  else if(sort === 'new') list.reverse();
+
+  if(sortCol === 'pair'){
+    list.sort(function(a, b){ return sortAsc ? a.t.localeCompare(b.t) : b.t.localeCompare(a.t); });
+  } else if(sortCol === 'price'){
+    list.sort(function(a, b){ return sortAsc ? a.p - b.p : b.p - a.p; });
+  } else if(sortCol === 'change'){
+    list.sort(function(a, b){ return sortAsc ? a.d - b.d : b.d - a.d; });
+  }
+
   return list;
 }
 
-function rows(){
-  var s = FT.getState(), list = view();
-  var host = document.getElementById('mkt');
-  host.innerHTML = list.map(function(x){
-    var a = x[0], to = 'asset.html?a=' + encodeURIComponent(a.t);
-    var h = s.holdings[a.t];
-    return "<a class='mkrow mrow' href='" + to + "' data-i='" + x[1] + "' data-trade='" + a.t + "'>"
-      + "<div class='pair'><span class='coin" + (a.c ? " am" : "") + "'>"
-      + "<svg class='ic'><use href='#i-" + (a.c ? 'whistle' : 'boot') + "'/></svg></span>"
-      + "<div style='min-width:0'><div class='sym'>" + a.t.replace('$', '')
-      + "<em>/$FTR</em><span class='lev'>" + (a.c ? 'COACH' : 'SHARE') + "</span></div>"
-      + "<div class='meta'>" + a.n + " · " + a.cap + (h ? " · you hold " + fmt(h.shares) : "")
-      + "</div></div></div>"
-      + "<div class='px'><span data-px>" + a.p.toFixed(2)
-      + "</span><em>\u2248 \u00a3" + (a.p / 12.4).toFixed(2) + "</em></div>"
-      + "<div><span class='pct" + (a.d >= 0 ? '' : ' down') + "' data-dx>"
-      + (a.d >= 0 ? '+' : '') + a.d.toFixed(2) + "%</span></div></a>";
-  }).join('') || "<div class='empty-state'><svg class='ic-xl' aria-hidden='true'><use href='#i-search'/></svg>"
-    + "No assets match that search. Try a surname or a ticker like $Saka.</div>";
-  document.getElementById('mktCount').textContent =
-    list.length + ' of ' + ASSETS.length + ' assets';
+function renderMarketRows(){
+  var list = getFilteredList();
+  var host = document.getElementById('mktList');
+  if(!list.length){
+    host.innerHTML = '<div style="padding:48px 0;text-align:center;color:#767c82;font-size:13px">'
+      + 'No assets match your search or filter.</div>';
+    document.getElementById('mktCount').textContent = '0 assets';
+    return;
+  }
 
-  host.querySelectorAll('[data-trade]').forEach(function(el){
-    el.addEventListener('click', function(e){
-      e.preventDefault();
-      openTradeModal(el.dataset.trade);
-    });
-  });
+  host.innerHTML = list.map(function(a){
+    var to = 'asset.html?a=' + encodeURIComponent(a.t);
+    var quote = a.q || (a.t.indexOf('$') === 0 ? 'FTR' : 'USDT');
+    var sym = a.t.replace('$', '');
+    var up = a.d >= 0;
+    var subPrice = (a.p * 0.9997).toFixed(a.p < 1 ? 5 : (a.p < 10 ? 4 : 2));
+    var avatarLetter = sym.substring(0, 2).toUpperCase();
+
+    return "<a class='kc-row' href='" + to + "'>"
+      + "<div class='kc-row-left'>"
+      + "  <div class='kc-avatar" + (a.c ? " coach" : "") + "'>" + avatarLetter + "</div>"
+      + "  <div style='min-width:0'>"
+      + "    <div class='kc-pair-title'>"
+      + "      <span>" + sym + "</span>"
+      + "      <span class='kc-pair-quote'>/" + quote + "</span>"
+      + "      <span class='kc-tag'>" + (a.tag || (a.c ? 'COACH' : '10x')) + "</span>"
+      + "    </div>"
+      + "    <div class='kc-pair-sub'>" + a.n + " | " + (a.cap || a.vol || '39.24M') + "</div>"
+      + "  </div>"
+      + "</div>"
+      + "<div class='kc-row-mid'>"
+      + "  <div class='kc-price-main'>" + (a.p > 999 ? a.p.toLocaleString('en-US', {minimumFractionDigits: 1, maximumFractionDigits: 2}) : a.p.toFixed(a.p < 1 ? 4 : 2)) + "</div>"
+      + "  <div class='kc-price-sub'>$" + subPrice + "</div>"
+      + "</div>"
+      + "<div class='kc-row-right'>"
+      + "  <div class='kc-pill" + (up ? "" : " down") + "'>" + (up ? "+" : "") + a.d.toFixed(2) + "%</div>"
+      + "</div>"
+      + "</a>";
+  }).join('');
+
+  document.getElementById('mktCount').textContent = list.length + ' of ' + ASSETS.length + ' assets';
 }
 
-function openTradeModal(sym){
-  var a = ASSETS.filter(function(x){ return x.t === sym; })[0] || ASSETS[0];
-  var html = '<h3 class="ft-modal-title">Trade ' + a.n + ' (' + a.t + ')</h3>'
-    + '<p class="ft-modal-desc">Market price: <span style="color:var(--lime)">' + a.p.toFixed(2) + ' $FTR</span></p>'
-    + '<div style="margin:16px 0"><label class="ux-label" for="qty">Quantity to Buy</label>'
-    + '<input type="number" id="qty" class="ux-select" style="width:100%" value="1" min="1"></div>'
-    + '<div id="tradeSummary" style="font-size:12px;color:var(--dim);margin:10px 0">Estimated Total: <b id="tradeTotal" style="color:var(--ink)">' + Math.round(a.p * 1.004) + ' $FTR</b> (incl. 0.4% fee)</div>'
-    + '<div style="display:flex;gap:10px;margin-top:16px">'
-    + '<button type="button" class="btn btn-lime" id="reviewOrderBtn" style="flex:1;justify-content:center">Review Order</button>'
-    + '<button type="button" class="btn btn-lime" id="confirmTradeBtn" style="display:none;flex:1;justify-content:center">Confirm Trade</button>'
-    + '</div>'
-    + '<div id="tradeNext" style="display:none;margin-top:14px;padding:12px;background:rgba(196,248,42,0.08);border-radius:8px;font-size:12px;color:var(--lime);text-align:center">'
-    + 'Trade confirmed! <a href="exchange.html" style="color:inherit;font-weight:bold;margin-left:6px">Trade another →</a></div>';
-
-  openModal(html);
-
-  var qi = document.getElementById('qty');
-  if(qi) qi.addEventListener('input', function(){
-    var qv = Math.max(1, parseInt(qi.value || '1', 10));
-    var tot = Math.round(qv * a.p * 1.004);
-    var el = document.getElementById('tradeTotal');
-    if(el) el.textContent = tot.toLocaleString('en-US') + ' $FTR';
-  });
-
-  var rev = document.getElementById('reviewOrderBtn');
-  var conf = document.getElementById('confirmTradeBtn');
-  var next = document.getElementById('tradeNext');
-
-  if(rev) rev.addEventListener('click', function(e){
-    e.preventDefault();
-    rev.style.display = 'none';
-    if(conf) conf.style.display = 'flex';
-  });
-
-  if(conf) conf.addEventListener('click', function(e){
-    e.preventDefault();
-    var qv = Math.max(1, parseInt(qi.value || '1', 10));
-    try {
-      FT.executeTrade('buy', a.t, a.n, qv, a.p, a.c);
-      conf.style.display = 'none';
-      if(next) next.style.display = 'block';
-    } catch(err){
-      alert(err.message);
-    }
-  });
-}
-
-document.querySelectorAll('#exKind button').forEach(function(b){
+// Category Tabs
+document.querySelectorAll('#kcCatTabs button').forEach(function(b){
   b.addEventListener('click', function(){
-    document.querySelectorAll('#exKind button').forEach(function(x){ x.setAttribute('aria-pressed','false'); });
-    b.setAttribute('aria-pressed','true'); kind = b.dataset.f; rows();
+    document.querySelectorAll('#kcCatTabs button').forEach(function(x){ x.classList.remove('on'); });
+    b.classList.add('on');
+    cat = b.dataset.cat;
+    renderMarketRows();
   });
 });
-document.querySelectorAll('#exSort button').forEach(function(b){
+
+// Sub-filter Tabs
+document.querySelectorAll('#kcSubTabs button').forEach(function(b){
   b.addEventListener('click', function(){
-    document.querySelectorAll('#exSort button').forEach(function(x){ x.setAttribute('aria-pressed','false'); });
-    b.setAttribute('aria-pressed','true'); sort = b.dataset.s; rows();
+    document.querySelectorAll('#kcSubTabs button').forEach(function(x){ x.classList.remove('on'); });
+    b.classList.add('on');
+    sub = b.dataset.sub;
+    renderMarketRows();
   });
 });
+
+// Search input
 var qi = document.getElementById('q');
-if(qi) qi.addEventListener('input', function(){ q = qi.value.trim().toLowerCase(); rows(); });
-
-rows();
-
-// ── team index: every share you hold, players and coach together ──
-function teamIndex(){
-  var s = FT.getState(), total = 0, players = 0, coaches = 0, weighted = 0;
-  Object.keys(s.holdings).forEach(function(k){
-    var h = s.holdings[k], v = h.shares * h.p;
-    var a = ASSETS.filter(function(x){ return x.t === k; })[0];
-    var isCoach = h.c || (a && a.c);
-    total += v;
-    if(isCoach) coaches++; else players++;
-    weighted += v * (a ? a.d : 0);
+if(qi){
+  qi.addEventListener('input', function(){
+    q = qi.value.trim().toLowerCase();
+    renderMarketRows();
   });
-  var pct = total ? weighted / total : 0;
-  var up = pct >= 0;
-  document.getElementById('teamVal').textContent = Math.round(total).toLocaleString('en-US');
-  var d = document.getElementById('teamDelta');
-  d.textContent = (up ? '\u25b2 ' : '\u25bc ') + (up ? '+' : '') + pct.toFixed(2) + '% today · '
-    + players + (players === 1 ? ' player' : ' players') + ' + '
-    + coaches + (coaches === 1 ? ' coach' : ' coaches');
-  d.style.color = up ? 'var(--lime)' : 'var(--red)';
-  var sp = document.getElementById('teamSpark');
-  if(sp) sp.innerHTML = spark(up, 300, 54);
 }
-teamIndex();
-window.addEventListener('fantrade:statechange', teamIndex);
-liveTicks('.mkrow');
-window.addEventListener('fantrade:statechange', rows);
+
+// Sorting headers
+document.querySelectorAll('.kc-th span').forEach(function(el){
+  el.addEventListener('click', function(){
+    var col = el.dataset.sort;
+    if(sortCol === col) sortAsc = !sortAsc;
+    else { sortCol = col; sortAsc = false; }
+    renderMarketRows();
+  });
+});
+
+renderMarketRows();
+window.addEventListener('fantrade:statechange', renderMarketRows);
 """
 
 page("exchange.html", "Exchange — Fantrade", "".join(ex), EX_JS, EX_CSS, app=True)
