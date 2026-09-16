@@ -11,7 +11,7 @@
     "db:seed": "tsx prisma/seed.ts",
     "dev:api": "tsx watch src/api/server.ts",
     "dev": "tsx src/scripts/dev.ts",
-    "build": "tsc",
+    "build": "tsc && tsx src/scripts/build.ts",
     "test": "vitest run --fileParallelism=false",
     "test:watch": "vitest",
     "reconcile": "tsx src/scripts/reconcile.ts"
