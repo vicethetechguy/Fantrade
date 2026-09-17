@@ -356,18 +356,20 @@ ex = [T('<main><div class="kc-ex-wrap">'
         '<!-- Primary Category Tabs -->'
         '<div class="kc-cat-tabs" id="kcCatTabs">'
         '  <button type="button" class="kc-cat-tab" data-cat="fav">Favorites</button>'
-        '  <button type="button" class="kc-cat-tab on" data-cat="markets">Markets</button>'
-        '  <button type="button" class="kc-cat-tab" data-cat="alpha">Alpha 🔥</button>'
-        '  <button type="button" class="kc-cat-tab" data-cat="potential">Potential Trades</button>'
+        '  <button type="button" class="kc-cat-tab on" data-cat="markets">All Shares</button>'
+        '  <button type="button" class="kc-cat-tab" data-cat="alpha">Top Alpha 🔥</button>'
+        '  <button type="button" class="kc-cat-tab" data-cat="fwd">Forwards</button>'
+        '  <button type="button" class="kc-cat-tab" data-cat="mid">Midfielders</button>'
+        '  <button type="button" class="kc-cat-tab" data-cat="coaches">Coaches</button>'
         '</div>'
         '<!-- Sub-filter Row -->'
         '<div class="kc-sub-bar">'
         '  <div class="kc-sub-tabs" id="kcSubTabs">'
         '    <button type="button" class="kc-sub-tab on" data-sub="all">All</button>'
         '    <button type="button" class="kc-sub-tab" data-sub="holdings">Holdings</button>'
-        '    <button type="button" class="kc-sub-tab" data-sub="spot">Spot</button>'
-        '    <button type="button" class="kc-sub-tab" data-sub="futures">Futures</button>'
-        '    <button type="button" class="kc-sub-tab" data-sub="alpha">Alpha</button>'
+        '    <button type="button" class="kc-sub-tab" data-sub="epl">Premier League</button>'
+        '    <button type="button" class="kc-sub-tab" data-sub="laliga">La Liga</button>'
+        '    <button type="button" class="kc-sub-tab" data-sub="gainers">Top Gainers</button>'
         '  </div>'
         '  <button type="button" class="kc-edit-btn" id="btnEdit" title="Customize list">'
         '    <svg class="ic-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>'
@@ -375,16 +377,15 @@ ex = [T('<main><div class="kc-ex-wrap">'
         '</div>'
         '<!-- Floating Widget Banner -->'
         '<div class="kc-banner" id="annBanner">'
-        '  <div class="kc-banner-text">Stay on top of the markets! Add a floating window or widget for real-time tracking.</div>'
+        '  <div class="kc-banner-text">Matchday 05 Player Shares Live: Buy &amp; hold player shares to unlock your Dream Club.</div>'
         '  <div class="kc-banner-actions">'
-        '    <button type="button" class="kc-banner-set" onclick="alert(\'Floating market widget pinned to home screen.\')">Set</button>'
         '    <button type="button" class="kc-banner-close" onclick="document.getElementById(\'annBanner\').style.display=\'none\'">✕</button>'
         '  </div>'
         '</div>'
         '<!-- Table Headers -->'
         '<div class="kc-th">'
-        '  <span data-sort="pair">Pair ⇅ / Amount ⇅</span>'
-        '  <span data-sort="price" style="justify-content:flex-end">Price ⇅</span>'
+        '  <span data-sort="pair">Player Share ⇅ / Volume ⇅</span>'
+        '  <span data-sort="price" style="justify-content:flex-end">Price ($FTR) ⇅</span>'
         '  <span data-sort="change" style="justify-content:flex-end">24h Change ⇅</span>'
         '</div>'
         '<!-- Market List -->'
@@ -396,7 +397,7 @@ ex = [T('<main><div class="kc-ex-wrap">'
 
 EX_JS = r"""
 var cat = 'markets', sub = 'all', sortCol = '', sortAsc = false, q = '';
-var favs = JSON.parse(localStorage.getItem('ft_favorites') || '["SOL","BTC","ETH","$Saka"]');
+var favs = JSON.parse(localStorage.getItem('ft_favorites') || '["$Saka","$Haaland","$Mbappe","$Yamal"]');
 
 function fmt(n){ return n.toLocaleString('en-US'); }
 
@@ -408,14 +409,16 @@ function getFilteredList(){
 
     // Category filter
     if(cat === 'fav' && favs.indexOf(a.t) < 0) return false;
-    if(cat === 'alpha' && (a.d < 2.0 && !a.c)) return false;
-    if(cat === 'potential' && a.d >= 0) return false;
+    if(cat === 'alpha' && (a.d < 3.0 && !a.c)) return false;
+    if(cat === 'fwd' && a.pos !== 'FWD') return false;
+    if(cat === 'mid' && a.pos !== 'MID') return false;
+    if(cat === 'coaches' && !a.c) return false;
 
     // Sub-tab filter
     if(sub === 'holdings' && !s.holdings[a.t]) return false;
-    if(sub === 'spot' && (a.tag === 'Perp' || a.c)) return false;
-    if(sub === 'futures' && a.tag !== 'Perp') return false;
-    if(sub === 'alpha' && !a.c && a.d < 3.0) return false;
+    if(sub === 'epl' && (a.club || '').indexOf('Arsenal') < 0 && (a.club || '').indexOf('Manchester') < 0 && (a.club || '').indexOf('Chelsea') < 0) return false;
+    if(sub === 'laliga' && (a.club || '').indexOf('Madrid') < 0 && (a.club || '').indexOf('Barcelona') < 0) return false;
+    if(sub === 'gainers' && a.d <= 2.0) return false;
 
     return true;
   });
@@ -436,17 +439,17 @@ function renderMarketRows(){
   var host = document.getElementById('mktList');
   if(!list.length){
     host.innerHTML = '<div style="padding:48px 0;text-align:center;color:#767c82;font-size:13px">'
-      + 'No assets match your search or filter.</div>';
-    document.getElementById('mktCount').textContent = '0 assets';
+      + 'No player shares match your search or filter.</div>';
+    document.getElementById('mktCount').textContent = '0 shares';
     return;
   }
 
   host.innerHTML = list.map(function(a){
     var to = 'asset.html?a=' + encodeURIComponent(a.t);
-    var quote = a.q || (a.t.indexOf('$') === 0 ? 'FTR' : 'USDT');
+    var quote = a.q || 'FTR';
     var sym = a.t.replace('$', '');
     var up = a.d >= 0;
-    var subPrice = (a.p * 0.9997).toFixed(a.p < 1 ? 5 : (a.p < 10 ? 4 : 2));
+    var subPrice = a.club ? a.club : (a.p * 0.9997).toFixed(2) + ' FTR';
     var avatarLetter = sym.substring(0, 2).toUpperCase();
 
     return "<a class='kc-row' href='" + to + "'>"
@@ -1414,7 +1417,7 @@ el('futGoBtn').addEventListener('click', function(){
   showToast((futSide === 'buy' ? 'Long' : 'Short') + ' order for ' + qty.toLocaleString('en-US') + ' $SAKA placed at 10x leverage.', 'success');
 });
 """
-page("fanplay.html", "Futures — Fantrade", "".join(fp), FP_JS, FP_CSS, app=True)
+page("fanplay.html", "FanPlay — Fantrade", "".join(fp), FP_JS, FP_CSS, app=True)
 
 
 # ══════════════════════════════════════════════════════════
@@ -1452,7 +1455,7 @@ lb = ['<main><div class="kc-home-wrap" style="padding-top:12px;padding-bottom:84
 
 # Topbar
 lb.append(T('<div class="kc-topbar" style="display:flex;align-items:center;justify-content:space-between;padding:8px 0 16px">'
-            '<a class="kc-icon-btn" href="fanplay.html" aria-label="Back to Futures" style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;color:#8E9AA8;text-decoration:none">@@</a>'
+            '<a class="kc-icon-btn" href="fanplay.html" aria-label="Back to FanPlay" style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;color:#8E9AA8;text-decoration:none">@@</a>'
             '<div style="font-family:Archivo,sans-serif;font-variation-settings:\'wdth\' 120,\'wght\' 800;font-size:17px;text-transform:uppercase">Matchday Live Board</div>'
             '<button class="bell" type="button" id="calBtn" aria-label="Calendar" style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;color:#8E9AA8;cursor:pointer">@@</button>'
             '</div>',

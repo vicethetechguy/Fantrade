@@ -593,70 +593,110 @@ print("built onboarding.html")
 # DASHBOARD — the signed-in home
 # ══════════════════════════════════════════════════════════════════
 DASH_CSS = """
-/* KuCoin-style Mobile Crypto Home Layout */
-.kc-home-wrap{max-width:680px;margin:0 auto;padding:8px 16px 110px}
-.kc-home-topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:6px 0 14px}
-.kc-home-avatar{width:36px;height:36px;border-radius:50%;overflow:hidden;border:1.5px solid var(--lime);flex-shrink:0;display:block}
-.kc-home-avatar img{width:100%;height:100%;object-fit:cover}
-.kc-home-search{flex:1;height:36px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:999px;padding:0 14px;display:flex;align-items:center;gap:8px;color:#767c82;font-size:12px;text-decoration:none;transition:background .2s}
-.kc-home-search:hover{background:rgba(255,255,255,.08);color:var(--ink)}
-.kc-home-top-actions{display:flex;align-items:center;gap:6px}
-.kc-home-top-btn{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;color:var(--ink);position:relative;text-decoration:none;transition:background .2s}
-.kc-home-top-btn:hover{background:rgba(255,255,255,.06)}
-.kc-home-badge{position:absolute;top:2px;right:2px;background:#FF3B47;color:#fff;font-size:9px;font-weight:700;border-radius:999px;padding:0 4px;line-height:14px;height:14px}
+/* Dashboard / Home Page Styles */
+.kc-home-wrap{max-width:680px;margin:0 auto;padding:12px 16px 88px}
 
-/* Total Balance Hero Card */
-.kc-home-bal-card{background:linear-gradient(135deg,rgba(196,248,42,.08) 0%,rgba(10,12,14,.9) 50%,rgba(255,255,255,.02) 100%);border:1px solid rgba(196,248,42,.2);border-radius:18px;padding:18px 20px;margin-bottom:16px;box-shadow:0 12px 30px rgba(0,0,0,.4)}
+/* Search bar */
+.kc-home-searchbar-wrap{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.kc-home-search-box{flex:1;display:flex;align-items:center;gap:10px;height:44px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);border-radius:999px;padding:0 16px;transition:border-color .2s,background .2s}
+.kc-home-search-box:focus-within{border-color:var(--lime);background:rgba(255,255,255,.08)}
+.kc-home-search-box svg{color:#767c82;flex-shrink:0}
+.kc-home-search-box input{flex:1;background:transparent;border:0;outline:0;color:var(--ink);font-family:Montserrat,sans-serif;font-size:13px}
+.kc-home-search-box input::placeholder{color:#767c82}
+.kc-home-scan-btn{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);display:grid;place-items:center;color:var(--ink);flex-shrink:0;text-decoration:none;transition:background .2s,border-color .2s}
+.kc-home-scan-btn:hover{background:rgba(255,255,255,.1);border-color:var(--lime);color:var(--lime)}
+
+/* Hero Portfolio Card */
+.kc-home-bal-card{background:linear-gradient(135deg,rgba(196,248,42,.09) 0%,rgba(10,12,14,.92) 55%,rgba(255,255,255,.02) 100%);border:1px solid rgba(196,248,42,.22);border-radius:20px;padding:20px 22px;margin-bottom:16px;box-shadow:0 14px 34px rgba(0,0,0,.45)}
 .kc-bal-header{display:flex;align-items:center;gap:8px;font-size:12px;color:#8E9AA8}
-.kc-eye-btn{background:transparent;border:0;color:inherit;cursor:pointer;display:grid;place-items:center;padding:2px}
-.kc-eye-btn:hover{color:var(--ink)}
-.kc-bal-delta-tag{margin-left:auto;background:rgba(196,248,42,.15);color:var(--lime);font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:999px;font-family:'JetBrains Mono',monospace}
-.kc-bal-val{font-family:'JetBrains Mono',monospace;font-size:32px;font-weight:700;letter-spacing:-.02em;color:var(--ink);margin:8px 0 2px}
-.kc-bal-val small{font-size:15px;color:var(--lime);font-weight:600}
+.kc-eye-btn{background:transparent;border:0;color:inherit;cursor:pointer;display:grid;place-items:center;padding:2px;transition:color .2s}
+.kc-eye-btn:hover{color:var(--lime)}
+.kc-bal-delta-tag{margin-left:auto;background:rgba(196,248,42,.15);color:var(--lime);font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:999px;font-family:'JetBrains Mono',monospace}
+.kc-bal-val{font-family:'JetBrains Mono',monospace;font-size:34px;font-weight:700;letter-spacing:-.02em;color:var(--ink);margin:8px 0 2px}
+.kc-bal-val small{font-size:16px;color:var(--lime);font-weight:600}
 .kc-bal-sub{font-size:12px;color:#767c82;font-family:'JetBrains Mono',monospace}
 
-/* Quick Action Circle Buttons */
+/* Quick Action Circles */
 .kc-bal-actions{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:18px;padding-top:16px;border-top:1px solid rgba(255,255,255,.06)}
-.kc-act-circle{display:flex;flex-direction:column;align-items:center;gap:6px;text-decoration:none;color:var(--ink)}
-.kc-act-circle:hover .kc-act-ico{background:rgba(196,248,42,.2);border-color:var(--lime);color:var(--lime);transform:translateY(-2px)}
+.kc-act-circle{display:flex;flex-direction:column;align-items:center;gap:6px;text-decoration:none;color:var(--ink);transition:transform .2s}
+.kc-act-circle:hover{transform:translateY(-2px)}
+.kc-act-circle:hover .kc-act-ico{background:rgba(196,248,42,.2);border-color:var(--lime);color:var(--lime)}
 .kc-act-ico{width:46px;height:46px;border-radius:50%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);display:grid;place-items:center;color:var(--ink);transition:all .2s}
 .kc-act-circle span{font-size:11.5px;font-weight:500;color:#8E9AA8}
 
-/* News Ticker */
-.kc-news{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:8px 12px;margin-bottom:18px;font-size:11.5px;color:#8B918A}
+/* Gameweek Ticker */
+.kc-news{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:10px 14px;margin-bottom:18px;font-size:12px;color:#8B918A}
+.kc-live-dot{width:7px;height:7px;border-radius:50%;background:var(--lime);box-shadow:0 0 8px var(--lime);flex-shrink:0;animation:kcPulse 2s infinite}
+@keyframes kcPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(1.3)}}
 .kc-news-txt{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .kc-news-txt b{font-family:'JetBrains Mono',monospace;color:var(--lime)}
-.kc-news-close{background:transparent;border:0;color:#767c82;cursor:pointer}
+.kc-news-close{background:transparent;border:0;color:#767c82;cursor:pointer;font-size:14px}
+
+/* Hot Trending Cards Strip */
+.kc-hot-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px}
+.kc-hot-card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:12px 14px;text-decoration:none;color:inherit;transition:border-color .2s,transform .2s}
+.kc-hot-card:hover{border-color:rgba(196,248,42,.3);transform:translateY(-2px)}
+.kc-hot-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+.kc-hot-ticker{font-family:Archivo,sans-serif;font-variation-settings:'wdth' 120,'wght' 800;font-size:13px;color:var(--ink)}
+.kc-hot-badge{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;padding:1px 5px;border-radius:4px}
+.kc-hot-badge.up{background:rgba(196,248,42,.15);color:var(--lime)}
+.kc-hot-badge.down{background:rgba(255,94,94,.15);color:#FF5E5E}
+.kc-hot-name{font-size:10.5px;color:#767c82;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:6px}
+.kc-hot-price{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:var(--ink)}
+.kc-hot-price small{font-size:10px;color:var(--lime);font-weight:500}
+
+/* Category Tabs */
+.kc-cat-tabs{display:flex;align-items:center;gap:18px;border-bottom:1px solid rgba(255,255,255,.07);overflow-x:auto;scrollbar-width:none;margin-bottom:12px}
+.kc-cat-tabs::-webkit-scrollbar{display:none}
+.kc-cat-tab{background:transparent;border:0;outline:0;padding:8px 0 10px;font-family:Montserrat,sans-serif;font-size:14px;font-weight:500;color:#767c82;cursor:pointer;white-space:nowrap;position:relative;transition:color .2s}
+.kc-cat-tab:hover{color:var(--ink)}
+.kc-cat-tab.on{color:var(--ink);font-weight:700}
+.kc-cat-tab.on::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2.5px;background:var(--lime);border-radius:2px}
 
 /* Market Watchlist Rows */
 .kc-home-rows{display:flex;flex-direction:column;gap:4px}
+.kc-row{display:grid;grid-template-columns:1fr 110px 92px;align-items:center;padding:12px 10px;border-radius:12px;border-bottom:1px solid rgba(255,255,255,.04);text-decoration:none;color:inherit;transition:background .2s ease}
+.kc-row:hover{background:rgba(255,255,255,.03)}
+.kc-row-left{display:flex;align-items:center;gap:12px;min-width:0}
+.kc-avatar{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);display:grid;place-items:center;flex:none;color:var(--lime);font-family:Archivo,sans-serif;font-size:11px;font-weight:800}
+.kc-avatar.coach{color:var(--amber);border-color:rgba(255,106,31,.25);background:rgba(255,106,31,.08)}
+.kc-pair-title{display:flex;align-items:center;gap:5px;font-family:Archivo,sans-serif;font-variation-settings:'wdth' 115,'wght' 800;font-size:14px;line-height:1.1;color:var(--ink)}
+.kc-pair-quote{font-size:11.5px;color:#767c82;font-weight:600}
+.kc-tag{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:600;color:#767c82;background:rgba(255,255,255,.08);border-radius:4px;padding:1px 4px;margin-left:2px}
+.kc-tag.coach-tag{color:var(--amber);background:rgba(255,106,31,.12)}
+.kc-pair-sub{font-size:11.5px;color:#767c82;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kc-row-mid{text-align:right;padding-right:12px}
+.kc-price-main{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;color:var(--ink);letter-spacing:-.01em}
+.kc-price-sub{font-family:'JetBrains Mono',monospace;font-size:11px;color:#767c82;margin-top:2px}
+.kc-row-right{display:flex;justify-content:flex-end}
+.kc-pill{display:inline-flex;align-items:center;justify-content:center;min-width:76px;height:32px;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#0A0D03;background:var(--lime);box-sizing:border-box;padding:0 6px}
+.kc-pill.down{background:#FF5E5E;color:#fff}
+
+/* Dream club card */
+.kc-ref-card{display:flex;align-items:center;justify-content:space-between;gap:16px;background:linear-gradient(135deg,rgba(255,255,255,.04) 0%,rgba(255,255,255,.02) 100%);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:16px 20px;text-decoration:none;transition:border-color .2s,transform .2s}
+.kc-ref-card:hover{border-color:rgba(196,248,42,.3);transform:translateY(-1px)}
+.kc-ref-left{flex:1}
+.kc-ref-title{font-family:Archivo,sans-serif;font-variation-settings:'wdth' 115,'wght' 700;font-size:15px;color:var(--ink);margin-bottom:4px}
+.kc-ref-sub{font-size:12px;color:#767c82}
+.kc-ref-icon-box{width:52px;height:52px;flex-shrink:0;border-radius:14px;overflow:hidden;background:rgba(255,255,255,.05);display:grid;place-items:center}
 """
 
 da = [T('<main><div class="kc-home-wrap">'
-        '<!-- Top Bar -->'
-        '<div class="kc-home-topbar">'
-        '  <a href="account.html" class="kc-home-avatar" title="Account">'
-        '    <img src="assets/astronaut_avatar.jpg" alt="Avatar">'
-        '  </a>'
-        '  <a href="exchange.html" class="kc-home-search">'
-        '    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>'
-        '    <span>Search coin, player, contract...</span>'
-        '  </a>'
-        '  <div class="kc-home-top-actions">'
-        '    <a href="receive.html" class="kc-home-top-btn" title="QR Scanner">'
-        '      <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 8V5a1 1 0 0 1 1-1h3M4 16v3a1 1 0 0 0 1 1h3M16 4h3a1 1 0 0 1 1 1v3M16 20h3a1 1 0 0 0 1-1v-3"/></svg>'
-        '    </a>'
-        '    <a href="notifications.html" class="kc-home-top-btn" title="Notifications">'
-        '      <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>'
-        '      <span class="kc-home-badge">3</span>'
-        '    </a>'
+        '<!-- Search & Discovery Bar -->'
+        '<div class="kc-home-searchbar-wrap">'
+        '  <div class="kc-home-search-box">'
+        '    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>'
+        '    <input type="text" id="homeSearchInput" placeholder="Search football player shares, clubs, coaches..." autocomplete="off">'
         '  </div>'
+        '  <a href="receive.html" class="kc-home-scan-btn" title="QR Scanner">'
+        '    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 8V5a1 1 0 0 1 1-1h3M4 16v3a1 1 0 0 0 1 1h3M16 4h3a1 1 0 0 1 1 1v3M16 20h3a1 1 0 0 0 1-1v-3"/></svg>'
+        '  </a>'
         '</div>'
 
-        '<!-- Total Assets Hero Card -->'
+        '<!-- Total Equity Hero Card -->'
         '<div class="kc-home-bal-card">'
         '  <div class="kc-bal-header">'
-        '    <span>Total Assets (FTR)</span>'
+        '    <span>Total Portfolio Equity ($FTR)</span>'
         '    <button type="button" class="kc-eye-btn" id="balEyeBtn" aria-label="Toggle balance visibility">'
         '      <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>'
         '    </button>'
@@ -667,7 +707,7 @@ da = [T('<main><div class="kc-home-wrap">'
         '  </div>'
         '  <div class="kc-bal-sub" id="homeBalSub">≈ $37,030.00 USD</div>'
         '  <div class="kc-bal-actions">'
-        '    <a href="ftr.html" class="kc-act-circle">'
+        '    <a href="buy.html" class="kc-act-circle">'
         '      <div class="kc-act-ico"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg></div>'
         '      <span>Deposit</span>'
         '    </a>'
@@ -675,31 +715,64 @@ da = [T('<main><div class="kc-home-wrap">'
         '      <div class="kc-act-ico"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></div>'
         '      <span>Transfer</span>'
         '    </a>'
-        '    <a href="trade.html" class="kc-act-circle">'
-        '      <div class="kc-act-ico"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="m16 3 4 4-4 4"/><path d="M20 7H4"/><path d="m8 21-4-4 4-4"/><path d="M4 17h16"/></svg></div>'
-        '      <span>Trade</span>'
-        '    </a>'
         '    <a href="fanplay.html" class="kc-act-circle">'
-        '      <div class="kc-act-ico"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>'
-        '      <span>Futures</span>'
+        '      <div class="kc-act-ico"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="4.93" y1="4.93" x2="9.17" y2="9.17"/><line x1="14.83" y1="14.83" x2="19.07" y2="19.07"/><line x1="14.83" y1="9.17" x2="19.07" y2="4.93"/><line x1="4.93" y1="19.07" x2="9.17" y2="14.83"/></svg></div>'
+        '      <span>FanPlay</span>'
+        '    </a>'
+        '    <a href="clubs.html" class="kc-act-circle">'
+        '      <div class="kc-act-ico"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div>'
+        '      <span>Clubs</span>'
         '    </a>'
         '  </div>'
         '</div>'
 
-        '<!-- News Ticker -->'
+        '<!-- Gameweek Live Pulse Ticker -->'
         '<div class="kc-news">'
-        '  <svg class="ic-sm" viewBox="0 0 24 24" fill="none" stroke="var(--lime)" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>'
-        '  <div class="kc-news-txt">Gameweek 28 locks in <b id="cdH">03</b>h <b id="cdM">14</b>m <b id="cdS">22</b>s · Arsenal vs Chelsea Sat 17:30</div>'
+        '  <span class="kc-live-dot"></span>'
+        '  <div class="kc-news-txt">Gameweek 28 locks in <b id="cdH">03</b>h <b id="cdM">14</b>m <b id="cdS">22</b>s · Arsenal vs Chelsea Sat 17:30 · <b>1.25M $FTR</b> pool</div>'
         '  <button type="button" class="kc-news-close" onclick="this.parentElement.style.display=\'none\'">✕</button>'
         '</div>'
 
-        '<!-- Market Watchlist Section -->'
+        '<!-- Trending Spotlight Strip -->'
+        '<div class="kc-hot-strip">'
+        '  <a href="asset.html?a=%24Saka" class="kc-hot-card">'
+        '    <div class="kc-hot-top">'
+        '      <span class="kc-hot-ticker">$Saka</span>'
+        '      <span class="kc-hot-badge up">+6.4%</span>'
+        '    </div>'
+        '    <div class="kc-hot-name">Bukayo Saka · Arsenal</div>'
+        '    <div class="kc-hot-price">48.20 <small>FTR</small></div>'
+        '  </a>'
+        '  <a href="asset.html?a=%24Haaland" class="kc-hot-card">'
+        '    <div class="kc-hot-top">'
+        '      <span class="kc-hot-ticker">$Haaland</span>'
+        '      <span class="kc-hot-badge down">-1.8%</span>'
+        '    </div>'
+        '    <div class="kc-hot-name">Erling Haaland · Man City</div>'
+        '    <div class="kc-hot-price">71.40 <small>FTR</small></div>'
+        '  </a>'
+        '  <a href="asset.html?a=%24Palmer" class="kc-hot-card">'
+        '    <div class="kc-hot-top">'
+        '      <span class="kc-hot-ticker">$Palmer</span>'
+        '      <span class="kc-hot-badge up">+8.2%</span>'
+        '    </div>'
+        '    <div class="kc-hot-name">Cole Palmer · Chelsea</div>'
+        '    <div class="kc-hot-price">52.80 <small>FTR</small></div>'
+        '  </a>'
+        '</div>'
+
+        '<!-- Player Shares Watchlist Section -->'
         '<div class="kc-group">'
+        '  <div style="display:flex;align-items:center;justify-content:space-between;margin:0 0 10px 4px">'
+        '    <div style="font-family:Archivo,sans-serif;font-variation-settings:\'wdth\' 115,\'wght\' 800;font-size:14px;color:var(--ink);letter-spacing:-.01em">PLAYER SHARES WATCHLIST</div>'
+        '    <a href="exchange.html" style="font-size:11.5px;color:var(--lime);font-weight:600;display:flex;align-items:center;gap:3px">All 18 shares ›</a>'
+        '  </div>'
         '  <div class="kc-cat-tabs" id="homeTabs" style="margin-bottom:10px">'
         '    <button type="button" class="kc-cat-tab on" data-f="hot">Hot 🔥</button>'
-        '    <button type="button" class="kc-cat-tab" data-f="gainers">Gainers</button>'
-        '    <button type="button" class="kc-cat-tab" data-f="crypto">Crypto</button>'
-        '    <button type="button" class="kc-cat-tab" data-f="players">Players</button>'
+        '    <button type="button" class="kc-cat-tab" data-f="gainers">Top Gainers</button>'
+        '    <button type="button" class="kc-cat-tab" data-f="forwards">Forwards</button>'
+        '    <button type="button" class="kc-cat-tab" data-f="midfielders">Midfielders</button>'
+        '    <button type="button" class="kc-cat-tab" data-f="coaches">Coaches</button>'
         '  </div>'
         '  <div id="homeMarketRows" class="kc-home-rows"></div>'
         '</div>'
@@ -758,24 +831,49 @@ DASH_JS = r"""
   updateBalVis();
   window.addEventListener('fantrade:statechange', updateBalVis);
 
-  // Render market rows matching exchange style
+  // Render market rows matching exchange style strictly with football player & coach shares
   var homeFilter = 'hot';
+  var searchKeyword = '';
+
+  var searchEl = document.getElementById('homeSearchInput');
+  if(searchEl){
+    searchEl.addEventListener('input', function(){
+      searchKeyword = searchEl.value.trim().toLowerCase();
+      renderHomeRows();
+    });
+  }
+
   function renderHomeRows(){
     var box = document.getElementById('homeMarketRows');
     if(!box) return;
     var list = ASSETS.slice();
-    if(homeFilter === 'hot') list = list.filter(function(a){ return ['SOL','BTC','ETH','$Saka','$Haaland'].indexOf(a.t) >= 0; });
-    else if(homeFilter === 'gainers') list = list.slice().sort(function(a,b){ return b.d - a.d; }).slice(0, 6);
-    else if(homeFilter === 'crypto') list = list.filter(function(a){ return ['SOL','SUI','XRP','DOGE','BTC','ETH'].indexOf(a.t) >= 0; });
-    else if(homeFilter === 'players') list = list.filter(function(a){ return a.t.startsWith('$'); }).slice(0, 6);
+    if(searchKeyword){
+      list = list.filter(function(a){
+        return a.t.toLowerCase().indexOf(searchKeyword) >= 0 ||
+               a.n.toLowerCase().indexOf(searchKeyword) >= 0 ||
+               (a.club && a.club.toLowerCase().indexOf(searchKeyword) >= 0);
+      });
+    } else {
+      if(homeFilter === 'hot') list = list.filter(function(a){ return ['$Saka','$Haaland','$Mbappe','$Yamal','$Palmer','$Arteta'].indexOf(a.t) >= 0; });
+      else if(homeFilter === 'gainers') list = list.slice().sort(function(a,b){ return b.d - a.d; }).slice(0, 7);
+      else if(homeFilter === 'forwards') list = list.filter(function(a){ return a.pos === 'FWD'; });
+      else if(homeFilter === 'midfielders') list = list.filter(function(a){ return a.pos === 'MID'; });
+      else if(homeFilter === 'coaches') list = list.filter(function(a){ return a.c || a.pos === 'MGR'; });
+    }
+
+    if(!list.length){
+      box.innerHTML = '<div style="text-align:center;padding:32px 16px;color:#767c82;font-size:12px">No player shares match your search.</div>';
+      return;
+    }
 
     box.innerHTML = list.map(function(a){
       var up = a.d >= 0;
       var to = 'asset.html?a=' + encodeURIComponent(a.t);
-      var isCrypto = ['SOL','SUI','XRP','DOGE','BTC','ETH'].indexOf(a.t) >= 0;
-      var sym = isCrypto ? a.t : a.t.replace('$', '');
-      var quote = isCrypto ? 'USDT' : 'FTR';
+      var sym = a.t.replace('$', '');
+      var quote = a.q || 'FTR';
       var avatarLetter = sym.substring(0, 2).toUpperCase();
+      var posTag = a.pos || (a.c ? 'MGR' : 'FWD');
+      var clubName = a.club || (a.c ? 'Premier League Manager' : 'Premier League');
       return "<a class='kc-row' href='" + to + "'>"
         + "<div class='kc-row-left'>"
         + "  <div class='kc-avatar" + (a.c ? " coach" : "") + "'>" + avatarLetter + "</div>"
@@ -783,14 +881,14 @@ DASH_JS = r"""
         + "    <div class='kc-pair-title'>"
         + "      <span>" + sym + "</span>"
         + "      <span class='kc-pair-quote'>/" + quote + "</span>"
-        + "      <span class='kc-tag'>" + (a.tag || (a.c ? 'COACH' : '10x')) + "</span>"
+        + "      <span class='kc-tag" + (a.c ? " coach-tag" : "") + "'>" + posTag + "</span>"
         + "    </div>"
-        + "    <div class='kc-pair-sub'>" + a.n + " | " + (a.cap || a.vol || '39.24M') + "</div>"
+        + "    <div class='kc-pair-sub'>" + a.n + " · " + clubName + "</div>"
         + "  </div>"
         + "</div>"
         + "<div class='kc-row-mid'>"
-        + "  <div class='kc-price-main'>" + (a.p > 999 ? a.p.toLocaleString('en-US', {minimumFractionDigits: 1, maximumFractionDigits: 2}) : a.p.toFixed(a.p < 1 ? 4 : 2)) + "</div>"
-        + "  <div class='kc-price-sub'>$" + (a.p * 0.999).toFixed(a.p < 1 ? 4 : 2) + "</div>"
+        + "  <div class='kc-price-main'>" + (a.p > 999 ? a.p.toLocaleString('en-US', {minimumFractionDigits: 1, maximumFractionDigits: 2}) : a.p.toFixed(2)) + " <span style='font-size:10px;color:#767c82'>FTR</span></div>"
+        + "  <div class='kc-price-sub'>≈ $" + (a.p * 0.1).toFixed(2) + " USD</div>"
         + "</div>"
         + "<div class='kc-row-right'>"
         + "  <div class='kc-pill" + (up ? "" : " down") + "'>" + (up ? "+" : "") + a.d.toFixed(2) + "%</div>"
@@ -811,7 +909,7 @@ DASH_JS = r"""
 })();
 """
 
-page("dashboard.html", "Home — Fantrade", "".join(da), DASH_JS, DASH_CSS + EX_CSS if 'EX_CSS' in globals() else DASH_CSS)
+page("dashboard.html", "Home — Fantrade", "".join(da), DASH_JS, DASH_CSS)
 print("built dashboard.html")
 
 # ══════════════════════════════════════════════════════════════════
@@ -1189,13 +1287,13 @@ LB_CSS = """
 
 # rank, club, manager, holders, value, delta%, core XI, coach + shape, boost, FP, yield, division
 BOARD = [
-    (1, "Apex Titans FC", "@CryptoKlopp", 48, 612400, 7.2, ["Mbappé 98", "Haaland 97", "Vinícius 95"],
+    (1, "Apex Titans FC", "@TacticalKlopp", 48, 612400, 7.2, ["Mbappé 98", "Haaland 97", "Vinícius 95"],
      "$Pep · 4-3-3 Tiki-taka", 18.5, 14890, 34200, "apex", "#C4F82A"),
-    (2, "Galactico Syndicate", "@SatoshiZidane", 32, 540100, 5.6, ["Bellingham 96", "Kane 95", "Rodri 94"],
+    (2, "Galactico Syndicate", "@ZidaneTactics", 32, 540100, 5.6, ["Bellingham 96", "Kane 95", "Rodri 94"],
      "$DonCarlo · 4-3-1-2 Fluid", 17.0, 13920, 29800, "apex", "#F4F6F1"),
-    (3, "Arsenal Web3 FC", "@GoonerDAO", 112, 495200, 6.9, ["Saka 95", "Ødegaard 94", "Saliba 93"],
+    (3, "Arsenal Elite FC", "@GoonerBoss", 112, 495200, 6.9, ["Saka 95", "Ødegaard 94", "Saliba 93"],
      "$Arteta · 4-3-3 Inverted", 16.5, 13450, 27100, "apex", "#FF5E8A"),
-    (4, "Bavarian Meta XI", "@KaiserWeb3", 19, 462800, 2.5, ["Musiala 94", "Sané 91", "Kimmich 93"],
+    (4, "Bavarian Meta XI", "@KaiserTactics", 19, 462800, 2.5, ["Musiala 94", "Sané 91", "Kimmich 93"],
      "$Alonso · 3-4-2-1 Dominance", 14.0, 12890, 23500, "apex", "#4DA6FF"),
     (5, "Lombardia Capital", "@MilanoWhale", 61, 420500, -0.9, ["Lautaro 93", "Barella 92", "Bastoni 91"],
      "$Inzaghi · 3-5-2 Direct", 13.5, 12110, 21200, "apex", "#FF6A1F"),
@@ -1927,37 +2025,20 @@ def hub(rows):
     return '<div class="hub">%s</div>' % "".join(out)
 
 
-SET_PAGES = [("profile", "settings-profile.html", "Manager profile", "user"),
-             ("club", "settings-club.html", "Club identity", "crest"),
-             ("security", "settings-security.html", "Security", "shield"),
-             ("alerts", "settings-alerts.html", "Notifications", "pulse"),
-             ("wallet", "settings-wallet.html", "Wallet & payouts", "wallet"),
-             ("play", "settings-play.html", "Responsible play", "scales"),
-             ("data", "settings-data.html", "Data & account", "receipt")]
-
-# Once a section owns a page, the card's own title block is saying it twice.
-_SECTITLE = re.compile(r'<div class="sec-title">.*?</div></div>', re.S)
-
-
-def _blurb(frag):
-    m = re.search(r'<div class="sec-title">.*?<p>(.*?)</p>', frag, re.S)
-    return m.group(1) if m else ""
-
-
 AC_CSS = """
 /* KuCoin Mobile Profile Page Design (Screenshot 3 Match) */
 .kc-profile-wrap{max-width:560px;margin:0 auto;padding:8px 16px 110px}
 .kc-p-topbar{display:flex;align-items:center;justify-content:space-between;padding:6px 0 16px}
-.kc-p-back{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);display:grid;place-items:center;color:var(--ink);cursor:pointer;text-decoration:none;transition:background .2s}
+.kc-p-back{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);display:grid;place-items:center;color:var(--ink);cursor:pointer;text-decoration:none;transition:background .2s}
 .kc-p-back:hover{background:rgba(255,255,255,.09)}
 .kc-p-actions{display:flex;align-items:center;gap:10px}
-.kc-p-action-btn{width:36px;height:36px;border-radius:50%;background:transparent;border:0;color:var(--ink);display:grid;place-items:center;cursor:pointer;transition:background .2s;text-decoration:none}
+.kc-p-action-btn{width:38px;height:38px;border-radius:50%;background:transparent;border:0;color:var(--ink);display:grid;place-items:center;cursor:pointer;transition:background .2s;text-decoration:none}
 .kc-p-action-btn:hover{background:rgba(255,255,255,.06)}
 
 /* Hero Avatar & Identity */
 .kc-p-hero{display:flex;flex-direction:column;align-items:center;text-align:center;padding:6px 0 20px}
-.kc-p-avatar-box{position:relative;width:86px;height:86px;margin-bottom:12px}
-.kc-p-avatar-img{width:100%;height:100%;border-radius:50%;object-fit:cover;border:2px solid rgba(196,248,42,.35);box-shadow:0 0 24px rgba(196,248,42,.12)}
+.kc-p-avatar-box{position:relative;width:88px;height:88px;margin-bottom:12px}
+.kc-p-avatar-img{width:100%;height:100%;border-radius:50%;object-fit:cover;border:2.5px solid var(--lime);box-shadow:0 0 24px rgba(196,248,42,.2)}
 .kc-p-name-row{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:5px}
 .kc-p-username{font-family:Archivo,sans-serif;font-variation-settings:'wdth' 120,'wght' 800;font-size:22px;letter-spacing:-.01em;color:var(--ink)}
 .kc-p-edit-btn{background:transparent;border:0;color:#767c82;cursor:pointer;display:grid;place-items:center;padding:2px;transition:color .15s}
@@ -1968,13 +2049,13 @@ AC_CSS = """
 
 /* Status Pills */
 .kc-p-pills{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap}
-.kc-p-pill{display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:999px;padding:4px 12px;font-size:11.5px;color:#8E9AA8;text-decoration:none;transition:border-color .2s,background .2s}
-.kc-p-pill:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.16)}
+.kc-p-pill{display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:999px;padding:5px 13px;font-size:11.5px;color:#8E9AA8;text-decoration:none;cursor:pointer;transition:border-color .2s,background .2s}
+.kc-p-pill:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.16);color:var(--ink)}
 .kc-p-pill.safeguard{color:var(--lime);border-color:rgba(196,248,42,.25);background:rgba(196,248,42,.06)}
 .kc-p-pill .chev{font-size:11px;opacity:.7;margin-left:2px}
 
 /* Referral Banner Card */
-.kc-ref-card{display:flex;align-items:center;justify-content:space-between;gap:16px;background:linear-gradient(135deg,rgba(255,255,255,.04) 0%,rgba(255,255,255,.02) 100%);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:16px 20px;margin:18px 0 24px;text-decoration:none;transition:border-color .2s,transform .2s}
+.kc-ref-card{display:flex;align-items:center;justify-content:space-between;gap:16px;background:linear-gradient(135deg,rgba(255,255,255,.04) 0%,rgba(255,255,255,.02) 100%);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:16px 20px;margin:18px 0 24px;text-decoration:none;cursor:pointer;transition:border-color .2s,transform .2s}
 .kc-ref-card:hover{border-color:rgba(196,248,42,.3);transform:translateY(-1px)}
 .kc-ref-left{flex:1}
 .kc-ref-title{font-family:Archivo,sans-serif;font-variation-settings:'wdth' 115,'wght' 700;font-size:16px;color:var(--ink);margin-bottom:4px}
@@ -1986,10 +2067,10 @@ AC_CSS = """
 .kc-group{margin-bottom:22px}
 .kc-group-title{font-size:11.5px;font-weight:600;color:#767c82;text-transform:none;letter-spacing:.02em;margin:0 0 8px 4px}
 .kc-group-box{background:rgba(10,12,14,.6);border:1px solid rgba(255,255,255,.06);border-radius:14px;overflow:hidden}
-.kc-item-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border-bottom:1px solid rgba(255,255,255,.04);text-decoration:none;color:var(--ink);transition:background .15s}
+.kc-item-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border-bottom:1px solid rgba(255,255,255,.04);text-decoration:none;color:var(--ink);cursor:pointer;transition:background .15s;background:transparent;border-left:0;border-right:0;border-top:0;width:100%;box-sizing:border-box;font-family:inherit}
 .kc-item-row:last-child{border-bottom:0}
 .kc-item-row:hover{background:rgba(255,255,255,.025)}
-.kc-item-left{display:flex;align-items:center;gap:14px;flex:1;min-width:0}
+.kc-item-left{display:flex;align-items:center;gap:14px;flex:1;min-width:0;text-align:left}
 .kc-item-ico{width:22px;height:22px;display:grid;place-items:center;color:#8E9AA8;flex-shrink:0}
 .kc-item-text-wrap{min-width:0}
 .kc-item-title{font-size:14px;font-weight:500;color:var(--ink)}
@@ -2006,126 +2087,27 @@ AC_CSS = """
 .kc-switch.on i{transform:translateX(18px);background:#000}
 
 /* Toast */
-.kc-toast{position:fixed;top:24px;left:50%;transform:translateX(-50%) translateY(-20px);background:rgba(18,20,23,.95);border:1px solid var(--lime);color:var(--ink);padding:9px 18px;border-radius:999px;font-size:12px;font-family:Montserrat,sans-serif;font-weight:600;display:flex;align-items:center;gap:8px;box-shadow:0 8px 30px rgba(0,0,0,.6);opacity:0;pointer-events:none;transition:all .25s ease;z-index:999}
-.kc-toast.show{opacity:1;transform:translateX(-50%) translateY(0);pointer-events:auto}
-
-for _key, _fname, _label, _icon in SET_PAGES:
-    _frag = SECTIONS[_key]
-    _body = ('<main><div class="kc-profile-wrap">'
-             '<div class="kc-p-topbar">'
-             '  <a href="settings.html" class="kc-p-back" title="Back to Settings">'
-             '    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>'
-             '  </a>'
-             '  <div style="font-family:Archivo,sans-serif;font-variation-settings:\'wdth\' 120,\'wght\' 800;font-size:18px;color:var(--ink)">%s</div>'
-             '  <div style="width:36px"></div>'
-             '</div>'
-             '<div>%s</div></div></main>'
-             % (_label, _SECTITLE.sub("", _frag)))
-    page(_fname, _label + " — Fantrade", _body, ST_JS, ST_CSS + OB_CSS + AC_CSS)
-
-sx = ['<main><div class="kc-profile-wrap">'
-      '<div class="kc-p-topbar">'
-      '  <a href="account.html" class="kc-p-back" title="Back to Account">'
-      '    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>'
-      '  </a>'
-      '  <div style="font-family:Archivo,sans-serif;font-variation-settings:\'wdth\' 120,\'wght\' 800;font-size:18px;color:var(--ink)">Settings</div>'
-      '  <div style="width:36px"></div>'
-      '</div>']
-sx.append('<div class="bento">')
-sx.append(T('<div class="c12 hub-sec" data-reveal>@@</div>',
-            hub([(_fname, _icon, _label, _blurb(SECTIONS[_key]), "", "")
-                 for _key, _fname, _label, _icon in SET_PAGES])))
-sx.append(T('<div class="c12" data-reveal style="margin-top:8px">@@</div>',
-            btn("Sign out", "btn-glass", tag="button",
-                extra='data-signout style="justify-content:space-between;min-width:220px"')))
-sx.append('</div></div></main>')
-page("settings.html", "Settings — Fantrade", "".join(sx), "", ST_CSS + OB_CSS + AC_CSS)
-print("built settings.html + 7 section pages")
-
-# ══════════════════════════════════════════════════════════════════
-# ACCOUNT — the hub behind the fifth tab
-# ══════════════════════════════════════════════════════════════════
-/* KuCoin Mobile Profile Page Design (Screenshot 3 Match) */
-.kc-profile-wrap{max-width:560px;margin:0 auto;padding:8px 16px 110px}
-.kc-p-topbar{display:flex;align-items:center;justify-content:space-between;padding:6px 0 16px}
-.kc-p-back{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);display:grid;place-items:center;color:var(--ink);cursor:pointer;text-decoration:none;transition:background .2s}
-.kc-p-back:hover{background:rgba(255,255,255,.09)}
-.kc-p-actions{display:flex;align-items:center;gap:10px}
-.kc-p-action-btn{width:36px;height:36px;border-radius:50%;background:transparent;border:0;color:var(--ink);display:grid;place-items:center;cursor:pointer;transition:background .2s;text-decoration:none}
-.kc-p-action-btn:hover{background:rgba(255,255,255,.06)}
-
-/* Hero Avatar & Identity */
-.kc-p-hero{display:flex;flex-direction:column;align-items:center;text-align:center;padding:6px 0 20px}
-.kc-p-avatar-box{position:relative;width:86px;height:86px;margin-bottom:12px}
-.kc-p-avatar-img{width:100%;height:100%;border-radius:50%;object-fit:cover;border:2px solid rgba(196,248,42,.35);box-shadow:0 0 24px rgba(196,248,42,.12)}
-.kc-p-name-row{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:5px}
-.kc-p-username{font-family:Archivo,sans-serif;font-variation-settings:'wdth' 120,'wght' 800;font-size:22px;letter-spacing:-.01em;color:var(--ink)}
-.kc-p-edit-btn{background:transparent;border:0;color:#767c82;cursor:pointer;display:grid;place-items:center;padding:2px;transition:color .15s}
-.kc-p-edit-btn:hover{color:var(--lime)}
-.kc-p-uid-row{display:flex;align-items:center;justify-content:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:12px;color:#767c82;margin-bottom:14px}
-.kc-p-copy-btn{background:transparent;border:0;color:inherit;cursor:pointer;display:grid;place-items:center;padding:2px;transition:color .15s}
-.kc-p-copy-btn:hover{color:var(--lime)}
-
-/* Status Pills */
-.kc-p-pills{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap}
-.kc-p-pill{display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:999px;padding:4px 12px;font-size:11.5px;color:#8E9AA8;text-decoration:none;transition:border-color .2s,background .2s}
-.kc-p-pill:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.16)}
-.kc-p-pill.safeguard{color:var(--lime);border-color:rgba(196,248,42,.25);background:rgba(196,248,42,.06)}
-.kc-p-pill .chev{font-size:11px;opacity:.7;margin-left:2px}
-
-/* Referral Banner Card */
-.kc-ref-card{display:flex;align-items:center;justify-content:space-between;gap:16px;background:linear-gradient(135deg,rgba(255,255,255,.04) 0%,rgba(255,255,255,.02) 100%);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:16px 20px;margin:18px 0 24px;text-decoration:none;transition:border-color .2s,transform .2s}
-.kc-ref-card:hover{border-color:rgba(196,248,42,.3);transform:translateY(-1px)}
-.kc-ref-left{flex:1}
-.kc-ref-title{font-family:Archivo,sans-serif;font-variation-settings:'wdth' 115,'wght' 700;font-size:16px;color:var(--ink);margin-bottom:4px}
-.kc-ref-sub{font-size:12px;color:#767c82}
-.kc-ref-icon-box{width:56px;height:56px;flex-shrink:0;border-radius:14px;overflow:hidden;background:rgba(255,255,255,.05);display:grid;place-items:center}
-.kc-ref-icon-box img{width:100%;height:100%;object-fit:cover}
-
-/* Grouped Lists */
-.kc-group{margin-bottom:22px}
-.kc-group-title{font-size:11.5px;font-weight:600;color:#767c82;text-transform:none;letter-spacing:.02em;margin:0 0 8px 4px}
-.kc-group-box{background:rgba(10,12,14,.6);border:1px solid rgba(255,255,255,.06);border-radius:14px;overflow:hidden}
-.kc-item-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border-bottom:1px solid rgba(255,255,255,.04);text-decoration:none;color:var(--ink);transition:background .15s}
-.kc-item-row:last-child{border-bottom:0}
-.kc-item-row:hover{background:rgba(255,255,255,.025)}
-.kc-item-left{display:flex;align-items:center;gap:14px;flex:1;min-width:0}
-.kc-item-ico{width:22px;height:22px;display:grid;place-items:center;color:#8E9AA8;flex-shrink:0}
-.kc-item-text-wrap{min-width:0}
-.kc-item-title{font-size:14px;font-weight:500;color:var(--ink)}
-.kc-item-desc{font-size:11px;color:#767c82;margin-top:2px}
-.kc-item-right{display:flex;align-items:center;gap:8px;font-size:12px;color:#767c82;flex-shrink:0}
-.kc-badge-k1{display:inline-flex;align-items:center;gap:4px;color:#8E9AA8;font-size:11.5px}
-.kc-badge-k1 .k1-tag{background:rgba(196,248,42,.15);color:var(--lime);font-size:9.5px;font-weight:700;padding:1px 5px;border-radius:4px}
-.kc-chevron{color:#555c63}
-
-/* Toggle Switch */
-.kc-switch{position:relative;width:40px;height:22px;background:rgba(255,255,255,.14);border-radius:999px;border:0;cursor:pointer;transition:background .2s;padding:2px}
-.kc-switch.on{background:var(--lime)}
-.kc-switch i{display:block;width:18px;height:18px;background:#fff;border-radius:50%;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.3)}
-.kc-switch.on i{transform:translateX(18px);background:#000}
-
-/* Toast */
-.kc-toast{position:fixed;top:24px;left:50%;transform:translateX(-50%) translateY(-20px);background:rgba(18,20,23,.95);border:1px solid var(--lime);color:var(--ink);padding:9px 18px;border-radius:999px;font-size:12px;font-family:Montserrat,sans-serif;font-weight:600;display:flex;align-items:center;gap:8px;box-shadow:0 8px 30px rgba(0,0,0,.6);opacity:0;pointer-events:none;transition:all .25s ease;z-index:999}
+.kc-toast{position:fixed;top:28px;left:50%;transform:translateX(-50%) translateY(-20px);background:rgba(18,20,23,.95);border:1px solid var(--lime);color:var(--ink);padding:10px 20px;border-radius:999px;font-size:12px;font-family:Montserrat,sans-serif;font-weight:600;display:flex;align-items:center;gap:8px;box-shadow:0 8px 30px rgba(0,0,0,.6);opacity:0;pointer-events:none;transition:all .25s ease;z-index:999}
 .kc-toast.show{opacity:1;transform:translateX(-50%) translateY(0);pointer-events:auto}
 """
 
 ac = [T('<main><div class="kc-profile-wrap">'
         '<!-- Top Navigation Bar -->'
         '<div class="kc-p-topbar">'
-        '  <a href="exchange.html" class="kc-p-back" title="Back">'
+        '  <a href="dashboard.html" class="kc-p-back" id="kcBackBtn" title="Back" onclick="if(window.history.length>1){window.history.back();return false;}">'
         '    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>'
         '  </a>'
+        '  <div style="font-family:Archivo,sans-serif;font-variation-settings:\'wdth\' 120,\'wght\' 800;font-size:17px;color:var(--ink);letter-spacing:.02em">PROFILE</div>'
         '  <div class="kc-p-actions">'
-        '    <a href="notifications.html" class="kc-p-action-btn" title="Support">'
+        '    <a href="notifications.html" class="kc-p-action-btn" title="Support &amp; Notifications">'
         '      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>'
         '    </a>'
         '    <a href="receive.html" class="kc-p-action-btn" title="Scan">'
         '      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 8V5a1 1 0 0 1 1-1h3M4 16v3a1 1 0 0 0 1 1h3M16 4h3a1 1 0 0 1 1 1v3M16 20h3a1 1 0 0 0 1-1v-3"/></svg>'
         '    </a>'
-        '    <a href="settings-profile.html" class="kc-p-action-btn" title="Add / Switch Profile">'
+        '    <button type="button" class="kc-p-action-btn" id="kcSwitchProfileBtn" title="Add / Switch Profile">'
         '      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>'
-        '    </a>'
+        '    </button>'
         '  </div>'
         '</div>'
 
@@ -2147,26 +2129,26 @@ ac = [T('<main><div class="kc-profile-wrap">'
         '    </button>'
         '  </div>'
         '  <div class="kc-p-pills">'
-        '    <a href="settings.html" class="kc-p-pill">'
+        '    <button type="button" class="kc-p-pill" id="kcVipPill">'
         '      <span style="font-size:10.5px;border-radius:50%;width:14px;height:14px;display:inline-grid;place-items:center;border:1px solid currentColor">V</span>'
         '      <span>VIP 0</span>'
         '      <span class="chev">›</span>'
-        '    </a>'
-        '    <a href="settings-security.html" class="kc-p-pill safeguard">'
+        '    </button>'
+        '    <button type="button" class="kc-p-pill safeguard" id="kcSafeguardPill">'
         '      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>'
         '      <span>Safeguard</span>'
         '      <span class="chev">›</span>'
-        '    </a>'
-        '    <a href="settings-profile.html" class="kc-p-pill">'
+        '    </button>'
+        '    <button type="button" class="kc-p-pill" id="kcVerifiedPill">'
         '      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>'
         '      <span>Verified</span>'
         '      <span class="chev">›</span>'
-        '    </a>'
+        '    </button>'
         '  </div>'
         '</div>'
 
         '<!-- Referral Program Banner Card -->'
-        '<a href="settings.html" class="kc-ref-card">'
+        '<div class="kc-ref-card" id="kcReferralCard" role="button" tabindex="0">'
         '  <div class="kc-ref-left">'
         '    <div class="kc-ref-title">Referral Program</div>'
         '    <div class="kc-ref-sub">Refer friends to earn a 35% commission</div>'
@@ -2174,23 +2156,23 @@ ac = [T('<main><div class="kc-profile-wrap">'
         '  <div class="kc-ref-icon-box">'
         '    <img src="assets/referral_icon.jpg" alt="Referral">'
         '  </div>'
-        '</a>'
+        '</div>'
 
         '<!-- Section: Account -->'
         '<div class="kc-group">'
         '  <div class="kc-group-title">Account</div>'
         '  <div class="kc-group-box">'
-        '    <a href="ftr.html" class="kc-item-row">'
+        '    <div class="kc-item-row" id="kcLoyaltyRow" role="button" tabindex="0">'
         '      <div class="kc-item-left">'
         '        <div class="kc-item-ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 9H4a2 2 0 0 1-2-2V5h4M18 9h2a2 2 0 0 0 2-2V5h-4M6 5h12v6a6 6 0 0 1-12 0V5z"/><line x1="12" y1="17" x2="12" y2="21"/><line x1="8" y1="21" x2="16" y2="21"/></svg></div>'
-        '        <div class="kc-item-text-wrap"><div class="kc-item-title">KCS Loyalty Level</div></div>'
+        '        <div class="kc-item-text-wrap"><div class="kc-item-title">$FTR Loyalty Level</div></div>'
         '      </div>'
         '      <div class="kc-item-right">'
-        '        <span class="kc-badge-k1"><span class="k1-tag">K1</span> To be Unlocked</span>'
+        '        <span class="kc-badge-k1"><span class="k1-tag">F1</span> To be Unlocked</span>'
         '        <svg class="kc-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>'
         '      </div>'
-        '    </a>'
-        '    <a href="settings.html" class="kc-item-row">'
+        '    </div>'
+        '    <div class="kc-item-row" id="kcFeesVipRow" role="button" tabindex="0">'
         '      <div class="kc-item-left">'
         '        <div class="kc-item-ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg></div>'
         '        <div class="kc-item-text-wrap"><div class="kc-item-title">Fees &amp; VIP</div></div>'
@@ -2199,23 +2181,23 @@ ac = [T('<main><div class="kc-profile-wrap">'
         '        <span>VIP 0</span>'
         '        <svg class="kc-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>'
         '      </div>'
-        '    </a>'
+        '    </div>'
         '    <div class="kc-item-row">'
         '      <div class="kc-item-left">'
         '        <div class="kc-item-ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M12 6v12M2 12a2 2 0 0 0 2-2V8M22 12a2 2 0 0 1-2-2V8"/></svg></div>'
         '        <div class="kc-item-text-wrap">'
-        '          <div class="kc-item-title">Pay Fees with KCS</div>'
+        '          <div class="kc-item-title">Pay Fees with $FTR</div>'
         '          <div class="kc-item-desc">20% off on trading fees</div>'
         '        </div>'
         '      </div>'
         '      <div class="kc-item-right">'
-        '        <button type="button" class="kc-switch" id="kcFeeSwitch" aria-label="Toggle pay fees with KCS"><i></i></button>'
+        '        <button type="button" class="kc-switch on" id="kcFeeSwitch" aria-label="Toggle pay fees with $FTR"><i></i></button>'
         '      </div>'
         '    </div>'
         '    <a href="portfolio.html" class="kc-item-row">'
         '      <div class="kc-item-left">'
         '        <div class="kc-item-ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>'
-        '        <div class="kc-item-text-wrap"><div class="kc-item-title">History</div></div>'
+        '        <div class="kc-item-text-wrap"><div class="kc-item-title">Trade History &amp; Ledger</div></div>'
         '      </div>'
         '      <div class="kc-item-right">'
         '        <svg class="kc-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>'
@@ -2228,7 +2210,7 @@ ac = [T('<main><div class="kc-profile-wrap">'
         '<div class="kc-group">'
         '  <div class="kc-group-title">Security &amp; System</div>'
         '  <div class="kc-group-box">'
-        '    <a href="settings-security.html" class="kc-item-row">'
+        '    <div class="kc-item-row" id="kcSecurityRow" role="button" tabindex="0">'
         '      <div class="kc-item-left">'
         '        <div class="kc-item-ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg></div>'
         '        <div class="kc-item-text-wrap"><div class="kc-item-title">Security Settings</div></div>'
@@ -2237,16 +2219,17 @@ ac = [T('<main><div class="kc-profile-wrap">'
         '        <span>Change password</span>'
         '        <svg class="kc-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>'
         '      </div>'
-        '    </a>'
-        '    <a href="settings.html" class="kc-item-row">'
+        '    </div>'
+        '    <div class="kc-item-row" id="kcPreferencesRow" role="button" tabindex="0">'
         '      <div class="kc-item-left">'
         '        <div class="kc-item-ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div>'
-        '        <div class="kc-item-text-wrap"><div class="kc-item-title">Settings</div></div>'
+        '        <div class="kc-item-text-wrap"><div class="kc-item-title">Preferences</div></div>'
         '      </div>'
         '      <div class="kc-item-right">'
+        '        <span>USD · English</span>'
         '        <svg class="kc-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>'
         '      </div>'
-        '    </a>'
+        '    </div>'
         '  </div>'
         '</div>'
 
@@ -2257,13 +2240,20 @@ ac = [T('<main><div class="kc-profile-wrap">'
         '    <a href="fanplay.html" class="kc-item-row">'
         '      <div class="kc-item-left">'
         '        <div class="kc-item-ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg></div>'
-        '        <div class="kc-item-text-wrap"><div class="kc-item-title">Rewards Hub</div></div>'
+        '        <div class="kc-item-text-wrap"><div class="kc-item-title">Rewards Hub &amp; Matchday Pool</div></div>'
         '      </div>'
         '      <div class="kc-item-right">'
         '        <svg class="kc-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>'
         '      </div>'
         '    </a>'
         '  </div>'
+        '</div>'
+
+        '<!-- Sign Out Row -->'
+        '<div style="margin-top:20px;text-align:center">'
+        '  <button type="button" class="btn btn-glass" id="kcSignOutBtn" style="width:100%;justify-content:center;padding:12px;border-radius:12px;font-size:13px;color:#FF5E5E;border-color:rgba(255,94,94,.2)">'
+        '    Sign Out'
+        '  </button>'
         '</div>'
 
         '<!-- Feedback Toast -->'
@@ -2329,8 +2319,136 @@ AC_JS = r"""
       showToast(now ? '20% fee discount enabled' : 'Fee discount disabled');
     });
   }
+
+  // Interactive Modals for VIP, Safeguard, Verified, Referral, Loyalty, Security, Preferences
+  function modal(title, bodyHtml){
+    openModal('<h3 class="ft-modal-title">' + title + '</h3>'
+      + '<div style="margin-top:12px;font-size:13px;color:var(--dim);line-height:1.6">' + bodyHtml + '</div>'
+      + '<button class="btn btn-lime" onclick="closeModal()" type="button" style="width:100%;justify-content:center;margin-top:20px">Done</button>');
+  }
+
+  function on(id, fn){
+    var el = document.getElementById(id);
+    if(el) el.addEventListener('click', fn);
+  }
+
+  on('kcVipPill', function(){
+    modal('VIP 0 Tier Benefits',
+      '<div class="ft-modal-card">'
+      + '<div class="m-row"><span>Maker Fee</span><b>0.100%</b></div>'
+      + '<div class="m-row"><span>Taker Fee</span><b>0.100%</b></div>'
+      + '<div class="m-row"><span>Fee with $FTR (20% off)</span><b style="color:var(--lime)">0.080%</b></div>'
+      + '<div class="m-row total"><span>30-Day Share Volume</span><b>0 / 100,000 $FTR</b></div>'
+      + '</div><p style="font-size:11.5px;color:#767c82;margin-top:10px">Reach 100,000 $FTR 30-day trading volume to unlock VIP 1 fee tier (0.07% / 0.09%).</p>');
+  });
+
+  on('kcFeesVipRow', function(){
+    var p = document.getElementById('kcVipPill');
+    if(p) p.click();
+  });
+
+  on('kcSafeguardPill', function(){
+    modal('Account Safeguard',
+      '<div class="ft-modal-card">'
+      + '<div class="m-row"><span>Login 2FA</span><b style="color:var(--lime)">Enabled (App Authenticator)</b></div>'
+      + '<div class="m-row"><span>Anti-Phishing Code</span><b style="color:var(--lime)">Active</b></div>'
+      + '<div class="m-row"><span>Device Whitelist</span><b style="color:var(--lime)">Chrome Windows (London)</b></div>'
+      + '<div class="m-row total"><span>Withdrawal Delay</span><b>0 seconds (Instant)</b></div>'
+      + '</div>');
+  });
+
+  on('kcVerifiedPill', function(){
+    modal('Identity Verification',
+      '<div class="ft-modal-card">'
+      + '<div class="m-row"><span>Status</span><b style="color:var(--lime)">Tier 2 Verified (Complete)</b></div>'
+      + '<div class="m-row"><span>Daily Payout Limit</span><b>1,000,000 $FTR</b></div>'
+      + '<div class="m-row"><span>FanPlay Entry Cap</span><b>Unlimited</b></div>'
+      + '<div class="m-row total"><span>Jurisdiction</span><b>United Kingdom</b></div>'
+      + '</div>');
+  });
+
+  on('kcReferralCard', function(){
+    modal('Referral Program',
+      '<p>Invite friends to trade player shares and play Matchdays on Fantrade. You earn <b>35% of all trading fees</b> they generate.</p>'
+      + '<div class="tf" style="margin-top:14px"><label>Your Referral Link</label><div class="inp">'
+      + '<input type="text" id="refLinkInput" value="https://fantrade.app/ref/vice2424" readonly>'
+      + '</div></div>'
+      + '<button class="btn btn-glass" id="copyRefLinkBtn" type="button" style="width:100%;justify-content:center;margin-top:6px">Copy Link</button>'
+      + '<div class="ft-modal-card" style="margin-top:14px">'
+      + '<div class="m-row"><span>Friends Invited</span><b>12 managers</b></div>'
+      + '<div class="m-row total"><span>Total Commission Earned</span><b style="color:var(--lime)">14,820 $FTR</b></div>'
+      + '</div>');
+    var cb = document.getElementById('copyRefLinkBtn');
+    if(cb){
+      cb.addEventListener('click', function(){
+        navigator.clipboard.writeText('https://fantrade.app/ref/vice2424').then(function(){
+          showToast('Referral link copied to clipboard!');
+        });
+      });
+    }
+  });
+
+  on('kcLoyaltyRow', function(){
+    modal('$FTR Loyalty Level',
+      '<div class="ft-modal-card">'
+      + '<div class="m-row"><span>Current Status</span><b>F1 Member</b></div>'
+      + '<div class="m-row"><span>$FTR Balance Staked</span><b style="color:var(--lime)">128,450 $FTR</b></div>'
+      + '<div class="m-row"><span>Matchday Dividend Boost</span><b>+5.0%</b></div>'
+      + '<div class="m-row total"><span>Next Tier (F2)</span><b>250,000 $FTR (+10% Boost)</b></div>'
+      + '</div>');
+  });
+
+  on('kcSecurityRow', function(){
+    modal('Security Settings',
+      '<div class="ft-modal-card">'
+      + '<div class="m-row"><span>Password</span><b>Last changed 14 days ago</b></div>'
+      + '<div class="m-row"><span>Two-Factor Auth</span><b style="color:var(--lime)">Active</b></div>'
+      + '<div class="m-row"><span>Active Sessions</span><b>1 device online</b></div>'
+      + '<div class="m-row total"><span>Biometric Passkey</span><b style="color:var(--lime)">Supported</b></div>'
+      + '</div>');
+  });
+
+  on('kcPreferencesRow', function(){
+    modal('App Preferences',
+      '<div class="ft-modal-card">'
+      + '<div class="m-row"><span>Display Currency</span><b>USD ($) / $FTR</b></div>'
+      + '<div class="m-row"><span>App Language</span><b>English (UK)</b></div>'
+      + '<div class="m-row"><span>Theme</span><b style="color:var(--lime)">Dark Void (Default)</b></div>'
+      + '<div class="m-row total"><span>Haptic Feedback</span><b style="color:var(--lime)">On</b></div>'
+      + '</div>');
+  });
+
+  on('kcSwitchProfileBtn', function(){
+    modal('Switch Profile',
+      '<div class="ft-modal-card">'
+      + '<div class="m-row" style="background:rgba(196,248,42,.08)"><span>Viceonchain (Active)</span><b style="color:var(--lime)">Primary Manager</b></div>'
+      + '<div class="m-row"><span>NorthBank_Scout</span><b>Secondary Scout</b></div>'
+      + '</div>'
+      + '<p style="font-size:11.5px;color:#767c82;margin-top:10px">You can manage multiple football identities or club divisions under one wallet.</p>');
+  });
+
+  on('kcSignOutBtn', function(){
+    showToast('Signed out of session. Redirecting to sign in...');
+    setTimeout(function(){ window.location.href = 'signin.html'; }, 900);
+  });
 })();
 """
 
-page("account.html", "Account — Fantrade", "".join(ac), AC_JS, AC_CSS)
+page("account.html", "Profile — Fantrade", "".join(ac), AC_JS, AC_CSS)
 print("built account.html")
+
+# Write clean instant redirects for obsolete settings pages and wallet.html
+REDIRECT_TO_ACCOUNT = """<!DOCTYPE html><html><head><meta charset="utf-8"><meta http-equiv="refresh" content="0; url=account.html"><title>Redirecting to Profile...</title><script>window.location.replace('account.html');</script></head><body style="background:#050505;color:#F4F6F1;font-family:sans-serif;display:grid;place-items:center;height:100vh;margin:0"><div style="text-align:center"><p style="color:#8E9AA8">Redirecting to your Profile...</p><a href="account.html" style="color:#C4F82A;font-weight:600">Click here if not redirected</a></div></body></html>"""
+
+for _fname in ["settings.html", "settings-profile.html", "settings-club.html",
+               "settings-security.html", "settings-alerts.html", "settings-wallet.html",
+               "settings-play.html", "settings-data.html"]:
+    with open(os.path.join(OUT, _fname), "w", encoding="utf-8") as f:
+        f.write(REDIRECT_TO_ACCOUNT)
+print("built instant redirects for 8 obsolete settings pages -> account.html")
+
+REDIRECT_TO_WALLET = """<!DOCTYPE html><html><head><meta charset="utf-8"><meta http-equiv="refresh" content="0; url=ftr.html"><title>Redirecting to Wallet...</title><script>window.location.replace('ftr.html');</script></head><body style="background:#050505;color:#F4F6F1;font-family:sans-serif;display:grid;place-items:center;height:100vh;margin:0"><div style="text-align:center"><p style="color:#8E9AA8">Redirecting to your Wallet...</p><a href="ftr.html" style="color:#C4F82A;font-weight:600">Click here if not redirected</a></div></body></html>"""
+
+with open(os.path.join(OUT, "wallet.html"), "w", encoding="utf-8") as f:
+    f.write(REDIRECT_TO_WALLET)
+print("built wallet.html redirect -> ftr.html")

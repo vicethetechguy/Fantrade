@@ -95,7 +95,7 @@ f = ['<main><div class="kc-assets-wrap">']
 # Sleek Mobile Topbar
 f.append(T('<div class="kc-topbar">'
            '<a class="kc-icon-btn" href="dashboard.html" aria-label="Back to Home">@@</a>'
-           '<div class="kc-top-title">Assets Overview</div>'
+           '<div class="kc-top-title">Wallet &amp; Assets</div>'
            '<a class="kc-icon-btn" href="activity.html" aria-label="Transaction Ledger" title="Transaction Ledger">@@</a>'
            '</div>',
            ic("arrow", "ic"), ic("receipt", "ic")))
@@ -218,7 +218,8 @@ function syncWallet(){
 syncWallet();
 window.addEventListener('fantrade:statechange', syncWallet);
 """
-page("ftr.html", "$FTR Assets — Fantrade", "".join(f), FTR_JS, FTR_CSS, app=True)
+page("ftr.html", "Wallet & Assets — Fantrade", "".join(f), FTR_JS, FTR_CSS, app=True)
+page("wallet.html", "Wallet & Assets — Fantrade", "".join(f), FTR_JS, FTR_CSS, app=True)
 
 
 

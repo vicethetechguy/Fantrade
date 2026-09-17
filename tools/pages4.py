@@ -158,7 +158,7 @@ ASSET_CSS = """
 .kc-b-line span:last-child{color:var(--dim)}
 
 /* Fixed Bottom Action Bar */
-.kc-action-dock{position:fixed;left:50%;bottom:58px;transform:translateX(-50%);z-index:74;width:100%;max-width:680px;box-sizing:border-box;background:rgba(8,9,10,.95);backdrop-filter:blur(20px);border-top:1px solid rgba(255,255,255,.08);padding:8px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.kc-action-dock{position:fixed;left:0;right:0;bottom:0;z-index:999;width:100%;box-sizing:border-box;background:rgba(8,9,10,.98);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-top:1px solid rgba(255,255,255,.08);padding:8px max(16px, calc(50% - 324px)) max(10px, env(safe-area-inset-bottom));display:flex;align-items:center;justify-content:space-between;gap:12px;box-shadow:0 -4px 24px rgba(0,0,0,.7)}
 .kc-dock-tools{display:flex;align-items:center;gap:16px}
 .kc-dock-tool{display:flex;flex-direction:column;align-items:center;gap:2px;text-decoration:none;color:#767c82;font-size:9.5px}
 .kc-dock-tool:hover{color:var(--ink)}
@@ -172,15 +172,15 @@ asset = [T('<main><div class="kc-asset-wrap">'
            '<!-- Top Navigation Bar -->'
            '<div class="kc-asset-topbar">'
            '  <div class="kc-top-left">'
-           '    <a href="exchange.html" class="kc-icon-btn" title="Back">'
+           '    <a href="exchange.html" class="kc-icon-btn" title="Back to Markets">'
            '      <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>'
            '    </a>'
            '    <button type="button" class="kc-icon-btn" title="Menu">'
            '      <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="15" y2="12"/><line x1="3" y1="18" x2="18" y2="18"/></svg>'
            '    </button>'
            '    <div class="kc-asset-title-box">'
-           '      <div class="kc-asset-pair-head"><span id="aTitlePair">SOL/USDT</span></div>'
-           '      <div class="kc-asset-sub-head" id="aTitleSub">Solana</div>'
+           '      <div class="kc-asset-pair-head"><span id="aTitlePair">$Saka/FTR</span></div>'
+           '      <div class="kc-asset-sub-head" id="aTitleSub">Bukayo Saka</div>'
            '    </div>'
            '  </div>'
            '  <div class="kc-top-right">'
@@ -197,30 +197,30 @@ asset = [T('<main><div class="kc-asset-wrap">'
            '<div class="kc-asset-tabs" id="aMainTabs">'
            '  <button type="button" class="kc-asset-tab on" data-tab="chart">Chart</button>'
            '  <button type="button" class="kc-asset-tab" data-tab="feed">Feed</button>'
-           '  <button type="button" class="kc-asset-tab" data-tab="info">Coin Info</button>'
+           '  <button type="button" class="kc-asset-tab" data-tab="info">Share Info</button>'
            '  <button type="button" class="kc-asset-tab" data-tab="recom">Recommendations</button>'
            '</div>'
            '<!-- Price & 24h Summary Section -->'
            '<div class="kc-price-sec">'
            '  <div>'
-           '    <div class="kc-hero-px" id="aPx">102.64</div>'
+           '    <div class="kc-hero-px" id="aPx">48.20</div>'
            '    <div class="kc-hero-sub">'
-           '      <span id="aSubUsd">≈$102.61</span>'
-           '      <span class="kc-hero-delta" id="aDelta">+2.99%</span>'
+           '      <span id="aSubUsd">≈48.20 $FTR</span>'
+           '      <span class="kc-hero-delta" id="aDelta">+6.40%</span>'
            '    </div>'
-           '    <div class="kc-pop-badge" id="aPopBadge">🔥 Top 16 by popularity</div>'
+           '    <div class="kc-pop-badge" id="aPopBadge">🔥 Top Player by volume</div>'
            '  </div>'
            '  <div class="kc-stats-grid">'
-           '    <div class="kc-stat-row"><span>24h High</span><b id="sHigh">104.82</b></div>'
-           '    <div class="kc-stat-row"><span>24h Low</span><b id="sLow">99.21</b></div>'
-           '    <div class="kc-stat-row"><span>24h Vol (<span id="sVolBase">SOL</span>)</span><b id="sVolS">384.44K</b></div>'
-           '    <div class="kc-stat-row"><span>24h Vol (<span id="sVolQuote">USDT</span>)</span><b id="sVol">39.24M</b></div>'
+           '    <div class="kc-stat-row"><span>24h High</span><b id="sHigh">51.20</b></div>'
+           '    <div class="kc-stat-row"><span>24h Low</span><b id="sLow">46.80</b></div>'
+           '    <div class="kc-stat-row"><span>24h Vol (<span id="sVolBase">Saka</span>)</span><b id="sVolS">12.40M</b></div>'
+           '    <div class="kc-stat-row"><span>24h Vol (<span id="sVolQuote">FTR</span>)</span><b id="sVol">482.00M</b></div>'
            '  </div>'
            '</div>'
            '<!-- News Ticker -->'
            '<div class="kc-news" id="newsTicker">'
            '  <span>📢</span>'
-           '  <span class="kc-news-txt">Grayscale Launches Digital Asset Model Portfolios with Four Initial Strategies...</span>'
+           '  <span class="kc-news-txt">Matchday 05 Lineups Confirmed: $Saka &amp; $Haaland start · $Yamal share volume surges +14%</span>'
            '  <button type="button" class="kc-news-close" onclick="document.getElementById(\'newsTicker\').style.display=\'none\'">✕</button>'
            '</div>'
            '<!-- Timeframe Bar -->'
@@ -261,6 +261,7 @@ asset = [T('<main><div class="kc-asset-wrap">'
            '  <button type="button" class="kc-low-tab on" data-p="book">Order Book</button>'
            '  <button type="button" class="kc-low-tab" data-p="trades">Trade History</button>'
            '  <button type="button" class="kc-low-tab" data-p="stats">Data Analysis</button>'
+           '  <button type="button" class="kc-low-tab" data-p="info">Share Info</button>'
            '</div>'
            '<div class="kc-pane on" data-pane="book">'
            '  <div class="kc-book-row-head"><span>Bid Price (Buy)</span><span style="text-align:right">Ask Price (Sell)</span></div>'
@@ -282,7 +283,19 @@ asset = [T('<main><div class="kc-asset-wrap">'
            '    <div class="mini"><div class="k">Fixed Supply</div><div class="v">10.00M</div></div>'
            '    <div class="mini"><div class="k">52w High</div><div class="v" id="sYH">—</div></div>'
            '    <div class="mini"><div class="k">52w Low</div><div class="v" id="sYL">—</div></div>'
-           '    <div class="mini"><div class="k">Popularity</div><div class="v">#16</div></div>'
+           '    <div class="mini"><div class="k">Squad Role</div><div class="v" id="sRole">—</div></div>'
+           '  </div>'
+           '</div>'
+           '<div class="kc-pane" data-pane="info">'
+           '  <div class="statgrid">'
+           '    <div class="mini"><div class="k">Player Asset</div><div class="v" id="siName">Bukayo Saka</div></div>'
+           '    <div class="mini"><div class="k">Share Ticker</div><div class="v lime" id="siTicker">$SAKA</div></div>'
+           '    <div class="mini"><div class="k">Total Share Supply</div><div class="v">10,000,000 fixed</div></div>'
+           '    <div class="mini"><div class="k">Circulation</div><div class="v" id="siCirc">Held by Fans</div></div>'
+           '    <div class="mini"><div class="k">Club &amp; League</div><div class="v" id="siClub">Arsenal · Premier League</div></div>'
+           '    <div class="mini"><div class="k">Squad Role</div><div class="v" id="siPos">Forward (RW)</div></div>'
+           '    <div class="mini" style="grid-column:1/-1"><div class="k">Matchday FanPlay Utility</div><div class="v lime" style="font-size:12px;font-weight:500;line-height:1.45">Eligible for matchweek fantasy lineup staking. Earns Fans Point boosts and settles round dividend rewards in $FTR based on verified Opta match stats.</div></div>'
+           '    <div class="mini" style="grid-column:1/-1"><div class="k">Ownership Rule</div><div class="v" style="font-size:12px;font-weight:400;color:var(--dim);line-height:1.45">Real ownership economy: players cannot be borrowed or drafted without shares held in your wallet. Fixed supply guarantees no dilution.</div></div>'
            '  </div>'
            '</div>'
            '</div>'
@@ -318,7 +331,7 @@ asset = [T('<main><div class="kc-asset-wrap">'
 ASSET_JS = PICK_JS + r"""
 function el(id){ return document.getElementById(id); }
 
-var quote = A.q || (A.t.indexOf('$') === 0 ? 'FTR' : 'USDT');
+var quote = A.q || 'FTR';
 var symClean = A.t.replace('$', '');
 
 el('aTitlePair').textContent = symClean + '/' + quote;
@@ -328,24 +341,31 @@ el('sVolQuote').textContent = quote;
 
 var pxText = (A.p > 999 ? A.p.toLocaleString('en-US', {minimumFractionDigits: 1, maximumFractionDigits: 2}) : A.p.toFixed(A.p < 1 ? 4 : 2));
 el('aPx').textContent = pxText;
-el('aSubUsd').textContent = '≈$' + (A.p * 0.9997).toFixed(A.p < 1 ? 4 : 2);
+el('aSubUsd').textContent = '≈' + pxText + ' ' + quote;
 var up = A.d >= 0;
 el('aDelta').textContent = (up ? '+' : '') + A.d.toFixed(2) + '%';
 el('aDelta').className = 'kc-hero-delta' + (up ? '' : ' down');
 
 el('sHigh').textContent = (A.h || (A.p * 1.025)).toFixed(A.p < 1 ? 4 : 2);
 el('sLow').textContent = (A.low || (A.p * 0.97)).toFixed(A.p < 1 ? 4 : 2);
-el('sVolS').textContent = A.vol || '384.44K';
-el('sVol').textContent = A.cap || '39.24M';
+el('sVolS').textContent = A.vol || '12.40M';
+el('sVol').textContent = A.cap || '482.00M';
 
 var capEl = el('sCap');
-if(capEl) capEl.textContent = A.cap || '39.24M';
+if(capEl) capEl.textContent = A.cap || '482.0M';
 var heldEl = el('sHeld');
-if(heldEl) heldEl.textContent = (A.p * 38400).toLocaleString('en-US', {maximumFractionDigits: 0});
+if(heldEl) heldEl.textContent = (A.p * 38400).toLocaleString('en-US', {maximumFractionDigits: 0}) + ' FTR';
 var yhEl = el('sYH');
 if(yhEl) yhEl.textContent = (A.p * 1.4).toFixed(2);
 var ylEl = el('sYL');
 if(ylEl) ylEl.textContent = (A.p * 0.65).toFixed(2);
+var roleEl = el('sRole');
+if(roleEl) roleEl.textContent = A.pos || (A.c ? 'Coach' : 'Forward');
+
+if(el('siName')) el('siName').textContent = A.n;
+if(el('siTicker')) el('siTicker').textContent = A.t;
+if(el('siClub')) el('siClub').textContent = (A.club || 'Premier League') + ' · Verified Share';
+if(el('siPos')) el('siPos').textContent = A.c ? 'Head Coach / Manager' : (A.pos || 'Forward');
 
 el('aBuy').href = 'trade.html?a=' + encodeURIComponent(A.t) + '&side=buy';
 el('aSell').href = 'trade.html?a=' + encodeURIComponent(A.t) + '&side=sell';
@@ -439,6 +459,16 @@ document.querySelectorAll('#aMainTabs button').forEach(function(b){
   b.addEventListener('click', function(){
     document.querySelectorAll('#aMainTabs button').forEach(function(x){ x.classList.remove('on'); });
     b.classList.add('on');
+    if(b.dataset.tab === 'info'){
+      var infoBtn = document.querySelector('#aPanes button[data-p="info"]');
+      if(infoBtn) infoBtn.click();
+      var infoPane = document.querySelector('[data-pane="info"]');
+      if(infoPane) infoPane.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    } else if(b.dataset.tab === 'chart'){
+      var bookBtn = document.querySelector('#aPanes button[data-p="book"]');
+      if(bookBtn) bookBtn.click();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   });
 });
 
@@ -510,7 +540,7 @@ page("asset.html", "Market — Fantrade", "".join(asset), ASSET_JS, ASSET_CSS)
 # TRADE — the terminal: bid, buy, sell, swap
 # ══════════════════════════════════════════════════════════════════
 TRADE_CSS = """
-/* KuCoin-style Mobile Crypto Trading Terminal */
+/* KuCoin-style Mobile Player Share Trading Terminal */
 .kc-trade-wrap{max-width:680px;margin:0 auto;padding:8px 16px 110px}
 .kc-trade-topbar{display:flex;align-items:center;justify-content:space-between;padding:6px 0 14px;border-bottom:1px solid rgba(255,255,255,.06);margin-bottom:12px}
 .kc-trade-top-left{display:flex;align-items:center;gap:10px}
