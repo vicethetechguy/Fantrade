@@ -562,7 +562,7 @@ CL_CSS = """
  .lb>*:nth-child(n+4){display:none}}
 """
 
-cl = ['<main><div class="kc-home-wrap" style="padding-top:12px;padding-bottom:84px">']
+cl = ['<main><div class="kc-home-wrap" style="padding-top:0;padding-bottom:84px">']
 cl.append(T('<div class="kc-topbar">'
             '<a class="kc-icon-btn" href="dashboard.html" aria-label="Back to Home">@@</a>'
             '<div class="kc-top-title" id="clName">Zero FC</div>'
@@ -882,7 +882,7 @@ page("clubs.html", "Dream Clubs — Fantrade", "".join(cl), CL_JS, CL_CSS, app=T
 # CLUB BUILDER
 # ══════════════════════════════════════════════════════════
 # builder
-bd = ['<main><div class="kc-home-wrap" style="padding-top:12px;padding-bottom:84px">']
+bd = ['<main><div class="kc-home-wrap" style="padding-top:0;padding-bottom:84px">']
 bd.append(T('<div class="kc-topbar">'
             '<a class="kc-icon-btn" href="clubs.html" aria-label="Back to Clubs">@@</a>'
             '<div class="kc-top-title">Club Builder</div>'
@@ -1447,11 +1447,11 @@ MATCHDAY = [
 ]
 
 LB_CSS = FP_CSS + """
-.kc-home-wrap{max-width:680px;margin:0 auto;padding:12px 16px 84px}
+.kc-home-wrap{max-width:680px;margin:0 auto;padding:0 16px 84px}
 .bezel.flat .datestrip{margin-bottom:4px}
 """
 
-lb = ['<main><div class="kc-home-wrap" style="padding-top:12px;padding-bottom:84px">']
+lb = ['<main><div class="kc-home-wrap" style="padding-top:0;padding-bottom:84px">']
 
 # Topbar
 lb.append(T('<div class="kc-topbar" style="display:flex;align-items:center;justify-content:space-between;padding:8px 0 16px">'

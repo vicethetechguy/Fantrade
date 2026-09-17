@@ -594,7 +594,7 @@ print("built onboarding.html")
 # ══════════════════════════════════════════════════════════════════
 DASH_CSS = """
 /* Dashboard / Home Page Styles */
-.kc-home-wrap{max-width:680px;margin:0 auto;padding:12px 16px 88px}
+.kc-home-wrap{max-width:680px;margin:0 auto;padding:4px 16px 88px}
 
 /* Search bar */
 .kc-home-searchbar-wrap{display:flex;align-items:center;gap:10px;margin-bottom:16px}
@@ -632,9 +632,10 @@ DASH_CSS = """
 .kc-news-txt b{font-family:'JetBrains Mono',monospace;color:var(--lime)}
 .kc-news-close{background:transparent;border:0;color:#767c82;cursor:pointer;font-size:14px}
 
-/* Hot Trending Cards Strip */
-.kc-hot-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px}
-.kc-hot-card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:12px 14px;text-decoration:none;color:inherit;transition:border-color .2s,transform .2s}
+/* Hot Trending Cards Strip - Horizontal Swipe & Scroll */
+.kc-hot-strip{display:flex;align-items:stretch;gap:10px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding:2px 2px 8px;margin-bottom:20px}
+.kc-hot-strip::-webkit-scrollbar{display:none}
+.kc-hot-card{flex:0 0 142px;width:142px;min-width:142px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:12px 14px;text-decoration:none;color:inherit;transition:border-color .2s,transform .2s;box-sizing:border-box}
 .kc-hot-card:hover{border-color:rgba(196,248,42,.3);transform:translateY(-2px)}
 .kc-hot-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
 .kc-hot-ticker{font-family:Archivo,sans-serif;font-variation-settings:'wdth' 120,'wght' 800;font-size:13px;color:var(--ink)}
@@ -733,7 +734,7 @@ da = [T('<main><div class="kc-home-wrap">'
         '  <button type="button" class="kc-news-close" onclick="this.parentElement.style.display=\'none\'">✕</button>'
         '</div>'
 
-        '<!-- Trending Spotlight Strip -->'
+        '<!-- Trending Spotlight Strip (Horizontal Scroll: 8 cards) -->'
         '<div class="kc-hot-strip">'
         '  <a href="asset.html?a=%24Saka" class="kc-hot-card">'
         '    <div class="kc-hot-top">'
@@ -758,6 +759,46 @@ da = [T('<main><div class="kc-home-wrap">'
         '    </div>'
         '    <div class="kc-hot-name">Cole Palmer · Chelsea</div>'
         '    <div class="kc-hot-price">52.80 <small>FTR</small></div>'
+        '  </a>'
+        '  <a href="asset.html?a=%24Mbappe" class="kc-hot-card">'
+        '    <div class="kc-hot-top">'
+        '      <span class="kc-hot-ticker">$Mbappe</span>'
+        '      <span class="kc-hot-badge up">+4.8%</span>'
+        '    </div>'
+        '    <div class="kc-hot-name">Kylian Mbappé · Real Madrid</div>'
+        '    <div class="kc-hot-price">78.50 <small>FTR</small></div>'
+        '  </a>'
+        '  <a href="asset.html?a=%24Yamal" class="kc-hot-card">'
+        '    <div class="kc-hot-top">'
+        '      <span class="kc-hot-ticker">$Yamal</span>'
+        '      <span class="kc-hot-badge up">+9.4%</span>'
+        '    </div>'
+        '    <div class="kc-hot-name">Lamine Yamal · Barcelona</div>'
+        '    <div class="kc-hot-price">66.20 <small>FTR</small></div>'
+        '  </a>'
+        '  <a href="asset.html?a=%24Bellingham" class="kc-hot-card">'
+        '    <div class="kc-hot-top">'
+        '      <span class="kc-hot-ticker">$Bellingham</span>'
+        '      <span class="kc-hot-badge up">+3.3%</span>'
+        '    </div>'
+        '    <div class="kc-hot-name">Jude Bellingham · Real Madrid</div>'
+        '    <div class="kc-hot-price">58.90 <small>FTR</small></div>'
+        '  </a>'
+        '  <a href="asset.html?a=%24Vinicius" class="kc-hot-card">'
+        '    <div class="kc-hot-top">'
+        '      <span class="kc-hot-ticker">$Vinicius</span>'
+        '      <span class="kc-hot-badge up">+0.7%</span>'
+        '    </div>'
+        '    <div class="kc-hot-name">Vinícius Jr · Real Madrid</div>'
+        '    <div class="kc-hot-price">63.10 <small>FTR</small></div>'
+        '  </a>'
+        '  <a href="asset.html?a=%24Musiala" class="kc-hot-card">'
+        '    <div class="kc-hot-top">'
+        '      <span class="kc-hot-ticker">$Musiala</span>'
+        '      <span class="kc-hot-badge up">+5.1%</span>'
+        '    </div>'
+        '    <div class="kc-hot-name">Jamal Musiala · Bayern</div>'
+        '    <div class="kc-hot-price">46.70 <small>FTR</small></div>'
         '  </a>'
         '</div>'
 

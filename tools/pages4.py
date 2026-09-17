@@ -1061,7 +1061,7 @@ def idx_chart(vals, w=620, h=180):
             '</svg>' % (w, h, h, " ".join(pa), w, h, " ".join(pb), " ".join(pa)))
 
 
-dv = ['<main><div class="kc-home-wrap" style="padding-top:12px;padding-bottom:84px">']
+dv = ['<main><div class="kc-home-wrap" style="padding-top:0;padding-bottom:84px">']
 
 # Top Bar
 dv.append(T('<div class="kc-topbar" style="display:flex;align-items:center;justify-content:space-between;padding:8px 0 16px">'
