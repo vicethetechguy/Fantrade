@@ -22,10 +22,9 @@ def btn(label, cls="btn-lime", href="#", tag="a", extra=""):
 
 
 def page(fname, title, body, js="", css="", app=True, chrome=True):
-    """chrome=False renders the stripped auth shell (minimal nav, no footer)."""
+    """chrome=False renders the stripped auth shell (minimal nav)."""
     shell = nav(fname, app) if chrome else nav_min()
-    tail = footer() if chrome else ""
-    html = (head(title, css, "app" if (app and chrome) else "") + atmosphere() + shell + body + tail +
+    html = (head(title, css, "app" if (app and chrome) else "") + atmosphere() + shell + body +
             "<script src=\"public/fantrade-api.js\"></script><script>(function(){" + JS_SHELL + js + "})();</script></body></html>")
     with open(os.path.join(OUT, fname), "w", encoding="utf-8") as f:
         f.write(html)
@@ -1067,7 +1066,7 @@ pf.append(T('<div class="bezel c3" data-reveal><div class="core pad">'
                 extra='style="width:100%;justify-content:space-between"')))
 
 # holdings
-pf.append(T('<div class="bezel c12" data-reveal><div class="core">'
+pf.append(T('<div class="bezel c12" data-reveal><div class="core mobile-flat">'
             '<div style="padding:30px 24px 18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">'
             '<div><div style="font-family:Archivo;font-variation-settings:\'wdth\' 120,\'wght\' 800;'
             'text-transform:uppercase;font-size:19px">Share holdings &amp; equities</div>'
@@ -1084,7 +1083,7 @@ pf.append(T('<div class="bezel c12" data-reveal><div class="core">'
             '</div></div>'))
 
 # ledger
-pf.append(T('<div class="bezel c7" data-reveal><div class="core">'
+pf.append(T('<div class="bezel c7" data-reveal><div class="core mobile-flat">'
             '<div style="padding:30px 24px 18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">'
             '<div><div style="font-family:Archivo;font-variation-settings:\'wdth\' 120,\'wght\' 800;'
             'text-transform:uppercase;font-size:19px">Settlement ledger</div>'
@@ -1570,7 +1569,7 @@ nt = [T('<main><div class="kc-home-wrap">'
         '</div>'
         '<div class="bento">')]
 
-nt.append(T('<div class="bezel c8" data-reveal><div class="core">'
+nt.append(T('<div class="bezel c8" data-reveal><div class="core mobile-flat">'
             '<div style="padding:26px 24px 16px"><div class="markets" id="ntFilter">'
             '<button class="mkt" type="button" aria-pressed="true" data-k="all">Everything</button>'
             '<button class="mkt" type="button" aria-pressed="false" data-k="settle">Settlements</button>'

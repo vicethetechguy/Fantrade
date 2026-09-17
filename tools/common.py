@@ -1452,6 +1452,7 @@ DENSE_CSS = r"""
    rows, tight padding. The marketing pages keep the editorial
    scale, so every rule here is scoped to body.app.
    ═══════════════════════════════════════════════════════════════ */
+.kc-home-wrap{width:100%;max-width:680px;margin:0 auto;padding:4px 16px 88px;box-sizing:border-box}
 body.app{font-size:12.5px;line-height:1.55}
 body.app .wrap{max-width:1180px;padding:0 20px}
 body.app section{padding:26px 0}
@@ -1625,6 +1626,12 @@ body.app .taskbar ~ footer{padding-bottom:104px}
   body.app .app-head,body.app .phead{padding:10px 0 12px}
   body.app .pad{padding:12px 10px}
   body.app section{padding:10px 0}
+  /* Large list surfaces sit on the page grid instead of adding a second
+     mobile card gutter. This keeps filters, headings and rows aligned. */
+  body.app .mobile-flat{border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important}
+  body.app .mobile-flat>[style*="padding"]{padding-left:0!important;padding-right:0!important}
+  body.app .mobile-flat .fd,body.app .mobile-flat .daysep,
+  body.app .mobile-flat .dh,body.app .mobile-flat .dr{padding-left:0!important;padding-right:0!important}
 }
 """
 
