@@ -30,12 +30,19 @@ def page(fname, title, body, js="", css="", app=True):
 
 
 WAL_CSS = """
-.wtop{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
-.wtop .nm{font-family:Archivo;font-variation-settings:'wdth' 125,'wght' 900;text-transform:uppercase;
-  font-size:clamp(24px,3vw,36px);line-height:1}
-.wtop .bal{margin-left:auto;text-align:right}
-.wtop .bal .k{font-weight:600;font-size:9px;letter-spacing:.16em;color:var(--faint);text-transform:uppercase}
-.wtop .bal .v{font-family:'JetBrains Mono',monospace;font-size:19px;margin-top:6px;white-space:nowrap}
+.kc-wallet-wrap{max-width:680px;margin:0 auto;padding:12px 16px 84px}
+.kc-topbar{display:flex;align-items:center;justify-content:space-between;padding:8px 0 18px}
+.kc-top-title{font-family:Archivo,sans-serif;font-variation-settings:'wdth' 120,'wght' 800;font-size:17px;letter-spacing:-.01em;text-transform:uppercase}
+.kc-icon-btn{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;color:#8E9AA8;cursor:pointer;transition:all .2s ease;text-decoration:none}
+.kc-icon-btn:hover{color:#fff;background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.15)}
+.kc-icon-btn .ic{width:18px;height:18px}
+.kc-bal-badge{display:flex;align-items:center;gap:7px;padding:6px 12px;border-radius:999px;background:rgba(196,248,42,.08);border:1px solid rgba(196,248,42,.25);color:#C4F82A;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;text-decoration:none;transition:all .2s}
+.kc-bal-badge:hover{background:rgba(196,248,42,.15)}
+.kc-bal-dot{width:6px;height:6px;border-radius:50%;background:#C4F82A;box-shadow:0 0 8px #C4F82A}
+
+.kc-stack{display:flex;flex-direction:column;gap:16px}
+.kc-stack .bezel{border-radius:20px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.07);overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.4)}
+.kc-stack .core{border-radius:19px}
 .maxbtn{border:1px solid rgba(196,248,42,.3);background:rgba(196,248,42,.09);color:var(--lime);
   border-radius:999px;padding:5px 12px;font-weight:600;font-size:9px;letter-spacing:.12em;
   text-transform:uppercase;cursor:pointer;flex:none;transition:all .5s var(--ease)}
@@ -45,23 +52,20 @@ WAL_CSS = """
 .dist .kr{display:flex;align-items:center;gap:11px;font-size:13px;color:var(--dim)}
 .dist .kr i{width:10px;height:10px;border-radius:3px;display:block;flex:none}
 .dist .kr b{margin-left:auto;font-family:'JetBrains Mono',monospace;color:var(--ink);font-weight:400}
-@media (max-width:640px){.wtop .bal{margin-left:0;text-align:left;width:100%}}
 """
 
 
 def shell(fname, title, label, icon, body_inner, js, tone=""):
-    """Every wallet destination opens the same way: a way back, a name, and the
-    live balance — then the one thing the screen is for."""
-    head_html = T('<main><section class="app-head" style="padding:92px 0 12px"><div class="wrap">'
-                  '<div class="wtop" data-reveal>'
-                  '<a class="crumb" href="ftr.html" aria-label="Back to wallet">@@Wallet</a></div>'
-                  '<div class="wtop" style="margin-top:16px" data-reveal>'
-                  '<span class="coin @@">@@</span><div class="nm">@@</div>'
-                  '<div class="bal"><div class="k">Available</div>'
-                  '<div class="v"><span id="wBal">128,450</span> $FTR</div></div>'
-                  '</div></div></section>'
-                  '<section style="padding:0 0 120px"><div class="wrap"><div class="bento">',
-                  ic("arrow", "ic"), tone or "lime", ic(icon, "ic"), label)
+    """Mobile crypto container: header bar with back navigation, title, live balance, and stacked cards."""
+    head_html = T('<main><div class="kc-wallet-wrap">'
+                  '<div class="kc-topbar">'
+                  '<a class="kc-icon-btn" href="ftr.html" aria-label="Back to Assets">@@</a>'
+                  '<div class="kc-top-title">@@</div>'
+                  '<a class="kc-bal-badge" href="ftr.html" title="Available balance">'
+                  '<span class="kc-bal-dot"></span><span id="wBal">128,450</span> $FTR</a>'
+                  '</div>'
+                  '<div class="kc-stack">',
+                  ic("arrow", "ic"), label)
     sync = r"""
 function el(id){ return document.getElementById(id); }
 function num(v){ return parseInt(String(v).replace(/[^0-9]/g, ''), 10) || 0; }
@@ -70,8 +74,9 @@ function syncBal(){ el('wBal').textContent = FT.getState().wallet.balance.toLoca
 syncBal();
 window.addEventListener('fantrade:statechange', syncBal);
 """
-    return page(fname, title, head_html + body_inner + '</div></div></section></main>',
+    return page(fname, title, head_html + body_inner + '</div></div></main>',
                 sync + js, WAL_CSS)
+
 
 
 # ══════════════════════════════════════════════════════════════════

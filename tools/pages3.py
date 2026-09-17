@@ -593,205 +593,133 @@ print("built onboarding.html")
 # DASHBOARD — the signed-in home
 # ══════════════════════════════════════════════════════════════════
 DASH_CSS = """
-.fx{display:grid;grid-template-columns:1fr auto;gap:16px;align-items:center;padding:16px 24px;
-  border-bottom:1px solid rgba(255,255,255,.05);transition:background .6s var(--ease)}
-.fx:last-child{border-bottom:0}
-.fx:hover{background:rgba(255,255,255,.022)}
-.fx .tie{font-size:14px;font-weight:500}
-.fx .gr{font-size:11px;color:var(--faint);margin-top:6px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-.fx .gr em{font-style:normal;font-family:'JetBrains Mono',monospace;color:var(--dim)}
-.fx .fpv{text-align:right;font-family:'JetBrains Mono',monospace;font-size:15px;color:var(--lime);
-  font-weight:300;white-space:nowrap}
-.fx .fpv em{font-style:normal;font-family:Montserrat,sans-serif;font-weight:600;font-size:8.5px;
-  letter-spacing:.16em;color:var(--faint);text-transform:uppercase;white-space:nowrap}
-.mv{border-bottom:1px solid rgba(255,255,255,.045)}
-.mv:last-child{border-bottom:0}
-.mv:hover{background:transparent}
-.crest-lg{width:52px;height:57px;flex:none;clip-path:polygon(0 0,100% 0,100% 66%,50% 100%,0 66%);
-  display:grid;place-items:center;font-family:Archivo;font-variation-settings:'wdth' 100,'wght' 900;
-  font-size:15px;color:#0A0D03;filter:drop-shadow(0 8px 18px rgba(196,248,42,.3))}
-@media (max-width:768px){
-  .fx{grid-template-columns:1fr;gap:8px;padding:14px}
-  .fx .fpv{text-align:left}
-  .mv{padding-left:0!important;padding-right:0!important}
-}
+/* KuCoin-style Mobile Crypto Home Layout */
+.kc-home-wrap{max-width:680px;margin:0 auto;padding:8px 16px 110px}
+.kc-home-topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:6px 0 14px}
+.kc-home-avatar{width:36px;height:36px;border-radius:50%;overflow:hidden;border:1.5px solid var(--lime);flex-shrink:0;display:block}
+.kc-home-avatar img{width:100%;height:100%;object-fit:cover}
+.kc-home-search{flex:1;height:36px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:999px;padding:0 14px;display:flex;align-items:center;gap:8px;color:#767c82;font-size:12px;text-decoration:none;transition:background .2s}
+.kc-home-search:hover{background:rgba(255,255,255,.08);color:var(--ink)}
+.kc-home-top-actions{display:flex;align-items:center;gap:6px}
+.kc-home-top-btn{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;color:var(--ink);position:relative;text-decoration:none;transition:background .2s}
+.kc-home-top-btn:hover{background:rgba(255,255,255,.06)}
+.kc-home-badge{position:absolute;top:2px;right:2px;background:#FF3B47;color:#fff;font-size:9px;font-weight:700;border-radius:999px;padding:0 4px;line-height:14px;height:14px}
+
+/* Total Balance Hero Card */
+.kc-home-bal-card{background:linear-gradient(135deg,rgba(196,248,42,.08) 0%,rgba(10,12,14,.9) 50%,rgba(255,255,255,.02) 100%);border:1px solid rgba(196,248,42,.2);border-radius:18px;padding:18px 20px;margin-bottom:16px;box-shadow:0 12px 30px rgba(0,0,0,.4)}
+.kc-bal-header{display:flex;align-items:center;gap:8px;font-size:12px;color:#8E9AA8}
+.kc-eye-btn{background:transparent;border:0;color:inherit;cursor:pointer;display:grid;place-items:center;padding:2px}
+.kc-eye-btn:hover{color:var(--ink)}
+.kc-bal-delta-tag{margin-left:auto;background:rgba(196,248,42,.15);color:var(--lime);font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:999px;font-family:'JetBrains Mono',monospace}
+.kc-bal-val{font-family:'JetBrains Mono',monospace;font-size:32px;font-weight:700;letter-spacing:-.02em;color:var(--ink);margin:8px 0 2px}
+.kc-bal-val small{font-size:15px;color:var(--lime);font-weight:600}
+.kc-bal-sub{font-size:12px;color:#767c82;font-family:'JetBrains Mono',monospace}
+
+/* Quick Action Circle Buttons */
+.kc-bal-actions{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:18px;padding-top:16px;border-top:1px solid rgba(255,255,255,.06)}
+.kc-act-circle{display:flex;flex-direction:column;align-items:center;gap:6px;text-decoration:none;color:var(--ink)}
+.kc-act-circle:hover .kc-act-ico{background:rgba(196,248,42,.2);border-color:var(--lime);color:var(--lime);transform:translateY(-2px)}
+.kc-act-ico{width:46px;height:46px;border-radius:50%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);display:grid;place-items:center;color:var(--ink);transition:all .2s}
+.kc-act-circle span{font-size:11.5px;font-weight:500;color:#8E9AA8}
+
+/* News Ticker */
+.kc-news{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:8px 12px;margin-bottom:18px;font-size:11.5px;color:#8B918A}
+.kc-news-txt{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kc-news-txt b{font-family:'JetBrains Mono',monospace;color:var(--lime)}
+.kc-news-close{background:transparent;border:0;color:#767c82;cursor:pointer}
+
+/* Market Watchlist Rows */
+.kc-home-rows{display:flex;flex-direction:column;gap:4px}
 """
 
-FIXTURES = [("ARS·CHE", "Arsenal vs Chelsea", "Emirates Stadium · Sat 17:30",
-             [("$Saka", "RW"), ("$Saliba", "CB")], "140–210"),
-            ("MCI·NEW", "Man City vs Newcastle", "Etihad Stadium · Sat 20:00",
-             [("$Haaland", "ST")], "95–165"),
-            ("MUN·EVE", "Man United vs Everton", "Old Trafford · Sun 14:00",
-             [("$Bruno", "CAM · captain 1.5x")], "180–240"),
-            ("RMA·ATM", "Real Madrid vs Atlético", "Santiago Bernabéu · Sun 21:00",
-             [("$Vinicius", "LW")], "110–180")]
+da = [T('<main><div class="kc-home-wrap">'
+        '<!-- Top Bar -->'
+        '<div class="kc-home-topbar">'
+        '  <a href="account.html" class="kc-home-avatar" title="Account">'
+        '    <img src="assets/astronaut_avatar.jpg" alt="Avatar">'
+        '  </a>'
+        '  <a href="exchange.html" class="kc-home-search">'
+        '    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>'
+        '    <span>Search coin, player, contract...</span>'
+        '  </a>'
+        '  <div class="kc-home-top-actions">'
+        '    <a href="receive.html" class="kc-home-top-btn" title="QR Scanner">'
+        '      <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 8V5a1 1 0 0 1 1-1h3M4 16v3a1 1 0 0 0 1 1h3M16 4h3a1 1 0 0 1 1 1v3M16 20h3a1 1 0 0 0 1-1v-3"/></svg>'
+        '    </a>'
+        '    <a href="notifications.html" class="kc-home-top-btn" title="Notifications">'
+        '      <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>'
+        '      <span class="kc-home-badge">3</span>'
+        '    </a>'
+        '  </div>'
+        '</div>'
 
-# (symbol, name, price, 24h %, index into the shared ASSETS ticker array in JS_SHELL)
-MOVERS = [("$Jackson", "Nicolas Jackson", 14.85, 11.2, 8), ("$Saka", "Bukayo Saka", 48.20, 6.4, 0),
-          ("$Musiala", "Jamal Musiala", 46.70, 5.1, 5), ("$Arteta", "Mikel Arteta", 22.05, 4.9, 9),
-          ("$Haaland", "Erling Haaland", 71.40, -1.8, 1), ("$Pedri", "Pedri González", 41.15, -0.9, 6)]
+        '<!-- Total Assets Hero Card -->'
+        '<div class="kc-home-bal-card">'
+        '  <div class="kc-bal-header">'
+        '    <span>Total Assets (FTR)</span>'
+        '    <button type="button" class="kc-eye-btn" id="balEyeBtn" aria-label="Toggle balance visibility">'
+        '      <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>'
+        '    </button>'
+        '    <span class="kc-bal-delta-tag" id="dashDelta">+18.4% +6,200</span>'
+        '  </div>'
+        '  <div class="kc-bal-val">'
+        '    <span id="homeBalVal" data-bind="net">370,300</span> <small>$FTR</small>'
+        '  </div>'
+        '  <div class="kc-bal-sub" id="homeBalSub">≈ $37,030.00 USD</div>'
+        '  <div class="kc-bal-actions">'
+        '    <a href="ftr.html" class="kc-act-circle">'
+        '      <div class="kc-act-ico"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg></div>'
+        '      <span>Deposit</span>'
+        '    </a>'
+        '    <a href="send.html" class="kc-act-circle">'
+        '      <div class="kc-act-ico"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></div>'
+        '      <span>Transfer</span>'
+        '    </a>'
+        '    <a href="trade.html" class="kc-act-circle">'
+        '      <div class="kc-act-ico"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="m16 3 4 4-4 4"/><path d="M20 7H4"/><path d="m8 21-4-4 4-4"/><path d="M4 17h16"/></svg></div>'
+        '      <span>Trade</span>'
+        '    </a>'
+        '    <a href="fanplay.html" class="kc-act-circle">'
+        '      <div class="kc-act-ico"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>'
+        '      <span>Futures</span>'
+        '    </a>'
+        '  </div>'
+        '</div>'
 
-da = [T('<main><section class="app-head"><div class="wrap"><div class="head-row">'
-        '<div><h1 data-reveal>Evening, <span data-bind="first">Alex</span></h1></div>'
-        '<div class="acts" data-reveal>@@@@</div></div>'
-        '</div></section>',
-        btn("Enter matchday", href="fanplay.html"),
-        btn("Buy shares", "btn-glass", "exchange.html"))]
+        '<!-- News Ticker -->'
+        '<div class="kc-news">'
+        '  <svg class="ic-sm" viewBox="0 0 24 24" fill="none" stroke="var(--lime)" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>'
+        '  <div class="kc-news-txt">Gameweek 28 locks in <b id="cdH">03</b>h <b id="cdM">14</b>m <b id="cdS">22</b>s · Arsenal vs Chelsea Sat 17:30</div>'
+        '  <button type="button" class="kc-news-close" onclick="this.parentElement.style.display=\'none\'">✕</button>'
+        '</div>'
 
-da.append('<section style="padding:10px 0 120px"><div class="wrap"><div class="bento">')
+        '<!-- Market Watchlist Section -->'
+        '<div class="kc-group">'
+        '  <div class="kc-cat-tabs" id="homeTabs" style="margin-bottom:10px">'
+        '    <button type="button" class="kc-cat-tab on" data-f="hot">Hot 🔥</button>'
+        '    <button type="button" class="kc-cat-tab" data-f="gainers">Gainers</button>'
+        '    <button type="button" class="kc-cat-tab" data-f="crypto">Crypto</button>'
+        '    <button type="button" class="kc-cat-tab" data-f="players">Players</button>'
+        '  </div>'
+        '  <div id="homeMarketRows" class="kc-home-rows"></div>'
+        '</div>'
 
-# net worth
-da.append(T('<div class="bezel c5" data-reveal><div class="core pad">'
-            '<div class="k-label">Net worth</div>'
-            '<div class="bal-big"><span data-bind="net">370,300</span><small> $FTR</small></div>'
-            '<div class="bal-delta" id="dashDelta">@@<span>18.4% over 30 days</span>'
-            '<em>+6,200 settled this week</em></div>'
-            '<div class="bal-chart" id="dashChart"></div>'
-            '<div class="range" id="dashRange" style="margin-bottom:22px">'
-            '<button type="button" aria-pressed="false" data-r="1W">1W</button>'
-            '<button type="button" aria-pressed="true" data-r="1M">1M</button>'
-            '<button type="button" aria-pressed="false" data-r="3M">3M</button>'
-            '<button type="button" aria-pressed="false" data-r="All">All</button></div>'
-            '<div class="alloc" id="dashAlloc"><i style="width:66%;background:linear-gradient(90deg,#8fbe00,#C4F82A)"></i>'
-            '<i style="width:25%;background:#4DA6FF"></i>'
-            '<i style="width:9%;background:rgba(255,255,255,.34)"></i></div>'
-            '<div class="b-row"><span>@@ Held in shares (mark to market)</span><b data-bind="assets">245,800</b></div>'
-            '<div class="b-row"><span>@@ Liquid $FTR</span><b data-bind="balance">128,450</b></div>'
-            '<div class="b-row"><span>@@ Locked in entries</span><b data-bind="locked">5,000</b></div>'
-            '<div class="b-row total"><span>Season payouts received</span><b data-bind="earned">19,640</b></div>'
-            '<div style="display:flex;gap:10px;margin-top:22px;flex-wrap:wrap">@@@@</div>'
-            '</div></div>',
-            ic("arrow", "ic"),
-            '<i style="display:inline-block;width:8px;height:8px;border-radius:3px;background:#C4F82A;margin-right:9px"></i>',
-            '<i style="display:inline-block;width:8px;height:8px;border-radius:3px;background:#4DA6FF;margin-right:9px"></i>',
-            '<i style="display:inline-block;width:8px;height:8px;border-radius:3px;background:rgba(255,255,255,.34);margin-right:9px"></i>',
-            btn("Portfolio & ledger", href="portfolio.html", extra='style="flex:1;justify-content:space-between"'),
-            btn("Open wallet", "btn-glass", "ftr.html", extra='style="flex:1;justify-content:space-between"')))
+        '<!-- Dream Club Card -->'
+        '<a href="clubs.html" class="kc-ref-card" style="margin-top:18px">'
+        '  <div class="kc-ref-left">'
+        '    <div class="kc-ref-title">Dream Club: Zero FC · #124</div>'
+        '    <div class="kc-ref-sub">Gameweek 28: 11 of 11 starters owned · +15.0% boost</div>'
+        '  </div>'
+        '  <div class="kc-ref-icon-box">'
+        '    <div style="font-family:Archivo;font-weight:900;color:var(--lime);font-size:18px">ZF</div>'
+        '  </div>'
+        '</a>'
 
-# club card
-da.append(T('<div class="bezel c4" data-reveal><div class="core pad">'
-            '<div class="k-label">Your Dream Club</div>'
-            '<div style="display:flex;align-items:center;gap:16px;margin-bottom:6px">'
-            '<div class="crest-lg" id="dashCrest" style="background:linear-gradient(160deg,#C4F82A,#83b300)">ZF</div>'
-            '<div><div style="font-family:Archivo;font-variation-settings:\'wdth\' 125,\'wght\' 900;'
-            'text-transform:uppercase;font-size:23px;line-height:1" data-bind="club">Zero FC</div>'
-            '<div class="sub-line" style="letter-spacing:.14em;text-transform:uppercase">'
-            '<span data-bind="formation">4-3-3</span> · Apex division</div></div></div>'
-            '<div class="mini-grid" style="margin-top:22px">'
-            '<div class="mini"><div class="k">Global rank</div><div class="v lime" data-bind="rank">#124</div></div>'
-            '<div class="mini"><div class="k">Season FP</div><div class="v" data-bind="fp">8,420</div></div>'
-            '<div class="mini"><div class="k">Club valuation</div><div class="v" data-bind="clubvalue">245,800</div></div>'
-            '<div class="mini"><div class="k">Multiplier</div><div class="v amber" data-bind="boost">15.0%</div></div>'
-            '</div>'
-            '<div class="rowlink" style="margin-top:22px">@@ 11 of 11 starters owned<b>Verified</b></div>'
-            '<div class="rowlink">@@ 6 of 6 bench slots filled<b>Verified</b></div>'
-            '<div class="rowlink">@@ Coach matches your shape<b style="color:var(--amber)">+5.0%</b></div>'
-            '<div style="margin-top:22px">@@</div>'
-            '</div></div>',
-            ic("check", "ic"), ic("subs", "ic"), ic("whistle", "ic"),
-            btn("Open club", "btn-glass", "clubs.html", extra='style="width:100%;justify-content:space-between"')))
-
-# countdown
-da.append(T('<div class="bezel c3" data-reveal><div class="core pad">'
-            '<div class="k-label">Gameweek 28 locks in</div>'
-            '<div class="clock" id="lockClock">'
-            '<div class="u"><b id="cdH">03</b><span>Hrs</span></div>'
-            '<div class="u"><b id="cdM">14</b><span>Min</span></div>'
-            '<div class="u"><b id="cdS">22</b><span>Sec</span></div></div>'
-            '<div class="k-label" style="margin-top:26px">Last round</div>'
-            '<div class="b-row"><span>Matchday 27 finish</span><b>18th / 1,420</b></div>'
-            '<div class="b-row"><span>Points scored</span><b>812 FP</b></div>'
-            '<div class="b-row total"><span>Returned</span><b style="color:var(--lime)">+6,200 $FTR</b></div>'
-            '<div style="margin-top:22px">@@</div>'
-            '</div></div>',
-            btn("Enter FanPlay", href="fanplay.html", extra='style="width:100%;justify-content:space-between"')))
-
-# matchday board
-da.append(T('<div class="bezel c7" data-reveal><div class="core">'
-            '<div style="padding:30px 24px 20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">'
-            '<span class="ibox">@@</span><div><div style="font-family:Archivo;'
-            'font-variation-settings:\'wdth\' 120,\'wght\' 800;text-transform:uppercase;font-size:17px">'
-            'Matchday board</div><div class="sub-line">Gameweek 28</div></div></div>',
-            ic("calendar", "ic-lg")))
-for code, tie, meta, assets, fp in FIXTURES:
-    chips = "".join('<em>%s</em><span style="color:var(--faint)">%s</span>' % (s, r) for s, r in assets)
-    da.append(T('<div class="fx">'
-                '<div><div class="tie">@@</div><div class="gr">@@</div>'
-                '<div class="gr" style="margin-top:4px;color:var(--faint)">@@</div></div>'
-                '<div class="fpv">@@ <em>Expected FP</em></div></div>',
-                tie, chips, meta, fp))
-da.append('<div style="padding:20px 24px 28px">'
-          '<span style="font-size:11.5px;color:var(--faint);font-weight:300;white-space:nowrap">'
-          'Projected club total 450–780 FP</span></div>'
-          '</div></div>')
-
-# movers
-da.append(T('<div class="bezel c5" data-reveal><div class="core pad">'
-            '<div style="display:flex;align-items:center;gap:12px;margin-bottom:18px">'
-            '<div class="k-label" style="margin:0">Today\'s movers</div>'
-            '<a href="exchange.html" style="margin-left:auto;font-size:11px;color:var(--lime)">Open exchange</a></div>'))
-for sym, nm, px, d, idx in MOVERS:
-    coach = sym == "$Arteta"
-    da.append(T('<div class="arow mv" data-i="@@" style="padding-left:0;padding-right:0">'
-                '<div class="who"><span class="coin@@">@@</span>'
-                '<div style="min-width:0"><div class="nm">@@</div><div class="qt">@@</div></div></div>'
-                '<div data-spark="@@"></div>'
-                '<div><div class="val" data-px>@@</div>'
-                '<div class="chg @@" data-dx>@@</div></div></div>',
-                idx, " am" if coach else "", ic("whistle" if coach else "boot", "ic"),
-                sym, nm, "1" if d >= 0 else "0", "%.2f" % px,
-                "up" if d >= 0 else "down", ("+" if d >= 0 else "") + "%.1f%%" % d))
-da.append(T('<div style="margin-top:20px">@@</div></div></div>',
-            btn("All 420 markets", "btn-glass", "exchange.html",
-                extra='style="width:100%;justify-content:space-between"')))
-
-da.append('</div></div></section></main>')
+        '</div></main>')]
 
 DASH_JS = r"""
-// greeting by local hour
 (function(){
-  var h = new Date().getHours();
-  var word = h < 12 ? 'Morning' : (h < 18 ? 'Afternoon' : 'Evening');
-  var head = document.querySelector('.app-head h1');
-  if(head) head.innerHTML = word + ', <span data-bind="first">Manager</span>';
-  FT.syncUI();
-})();
-
-// club crest takes the saved club colour
-(function(){
-  var s = FT.getState(), c = document.getElementById('dashCrest');
-  if(!c) return;
-  c.style.background = 'linear-gradient(160deg,' + s.club.colors[0] + ',' + (s.club.colors[1] || s.club.colors[0]) + ')';
-  c.style.color = s.club.colorName === 'Chalk' ? '#0A0D03' : '#0A0D03';
-  c.textContent = s.club.name.split(/\s+/).map(function(w){ return w.charAt(0).toUpperCase(); }).join('').slice(0, 3);
-})();
-
-// sparklines on the movers list
-document.querySelectorAll('[data-spark]').forEach(function(d){
-  d.innerHTML = spark(d.dataset.spark === '1', 88, 26);
-});
-liveTicks('.mv');
-
-// net-worth chart, same component as the wallet
-var DSERIES = { '1W': series(28, 0.4, 3.0, 19), '1M': series(36, 1.1, 4.8, 53),
-                '3M': series(44, 1.7, 6.4, 83), 'All': series(52, 2.4, 8.6, 127) };
-var DDELTA = { '1W': '4.2% this week', '1M': '18.4% over 30 days',
-               '3M': '41.7% this quarter', 'All': '212.5% all time' };
-function dpaint(r){
-  drawArea(document.getElementById('dashChart'), DSERIES[r], true);
-  document.querySelector('#dashDelta span').textContent = DDELTA[r];
-}
-document.querySelectorAll('#dashRange button').forEach(function(b){
-  b.addEventListener('click', function(){
-    document.querySelectorAll('#dashRange button').forEach(function(x){ x.setAttribute('aria-pressed','false'); });
-    b.setAttribute('aria-pressed', 'true');
-    dpaint(b.dataset.r);
-  });
-});
-dpaint('1M');
-
-// countdown to the gameweek lock
-(function(){
+  // Countdown to Gameweek 28 lock
   var end = Date.now() + (3 * 3600 + 14 * 60 + 22) * 1000;
   function pad(n){ return (n < 10 ? '0' : '') + n; }
   function tick(){
@@ -802,70 +730,88 @@ dpaint('1M');
     document.getElementById('cdS').textContent = pad(t % 60);
   }
   tick(); setInterval(tick, 1000);
-})();
 
-// allocation bar reflects the real split
-function renderAlloc(){
-  var s = FT.getState(), bar = document.getElementById('dashAlloc');
-  if(!bar) return;
-  var held = FT.holdingsValue(), liq = s.wallet.balance, lock = s.wallet.locked;
-  var tot = held + liq + lock || 1, b = bar.querySelectorAll('i');
-  b[0].style.width = (held / tot * 100).toFixed(1) + '%';
-  b[1].style.width = (liq / tot * 100).toFixed(1) + '%';
-  b[2].style.width = (lock / tot * 100).toFixed(1) + '%';
-}
-renderAlloc();
-window.addEventListener('fantrade:statechange', renderAlloc);
-
-// ledger + entries render from state
-var TONE = { BUY:'lime', SELL:'red', STAKE:'amber', PAYOUT:'lime', CONVERT:'', DEPOSIT:'lime' };
-var TICON = { BUY:'candle', SELL:'candle', STAKE:'bolt', PAYOUT:'trophy', CONVERT:'swap', DEPOSIT:'coin' };
-function renderLedger(){
-  var s = FT.getState(), box = document.getElementById('dashLedger');
-  if(!box) return;
-  var rows = s.transactions.slice(0, 6).map(function(t){
-    var sign = (t.type === 'BUY' || t.type === 'STAKE') ? '-' : '+';
-    return '<div class="dr" style="grid-template-columns:120px 1fr 130px">'
-      + '<div><span class="tag ' + (TONE[t.type] || '') + '"><svg class="ic" aria-hidden="true"><use href="#i-'
-      + (TICON[t.type] || 'receipt') + '"/></svg>' + t.type + '</span></div>'
-      + '<div><div style="font-size:13px">' + t.asset + '</div><div class="sub-line">' + t.time + '</div></div>'
-      + '<div class="pl ' + (sign === '+' ? 'up' : 'down') + '" style="text-align:right">' + sign
-      + Math.round(t.total).toLocaleString('en-US') + '</div></div>';
-  }).join('');
-  box.innerHTML = '<div class="dh" style="grid-template-columns:120px 1fr 130px"><span>Event</span>'
-    + '<span>Detail</span><span style="text-align:right">$FTR</span></div>' + rows;
-}
-function renderEntries(){
-  var s = FT.getState(), box = document.getElementById('dashEntries');
-  if(!box) return;
-  if(!s.fanplay.activeEntries.length){
-    box.innerHTML = '<div class="empty-state" style="padding:32px 0">'
-      + '<svg class="ic-xl" aria-hidden="true"><use href="#i-bolt"/></svg>'
-      + 'No live entries. Stake the club before the lock to score this window.</div>';
-    return;
+  // Toggle balance visibility
+  var eye = document.getElementById('balEyeBtn');
+  var bVal = document.getElementById('homeBalVal');
+  var bSub = document.getElementById('homeBalSub');
+  var hidden = localStorage.getItem('ft_hide_bal') === 'true';
+  function updateBalVis(){
+    if(!bVal) return;
+    if(hidden){
+      bVal.textContent = '******';
+      if(bSub) bSub.textContent = '≈ $*** USD';
+    } else {
+      var s = FT.getState();
+      var net = FT.holdingsValue() + s.wallet.balance + s.wallet.locked;
+      bVal.textContent = net.toLocaleString('en-US');
+      if(bSub) bSub.textContent = '≈ $' + (net * 0.1).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' USD';
+    }
   }
-  box.innerHTML = s.fanplay.activeEntries.map(function(e){
-    return '<div style="border:1px solid var(--hair);background:rgba(255,255,255,.03);border-radius:16px;'
-      + 'padding:16px 18px;margin-bottom:10px;box-shadow:var(--inset)">'
-      + '<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">'
-      + '<span class="tag ' + (e.mode === 'Dream Club' ? 'lime' : '') + '">' + e.mode + '</span>'
-      + '<span class="tag amber">' + e.tier + ' · ' + e.mult.toFixed(1) + 'x</span>'
-      + '<span style="margin-left:auto;font-family:\'JetBrains Mono\',monospace;font-size:13px">'
-      + e.stake.toLocaleString('en-US') + ' $FTR</span></div>'
-      + '<div class="b-row" style="border:0;padding:10px 0 0"><span>' + e.target + '</span><b>'
-      + e.projectedFP + ' FP projected</b></div>'
-      + '<div class="sub-line">' + e.status + '</div></div>';
-  }).join('');
-}
-function renderCap(){
-  var c = document.getElementById('dashCap');
-  if(c) c.textContent = FT.getState().prefs.stakeCap.toLocaleString('en-US') + ' $FTR';
-}
-renderLedger(); renderEntries(); renderCap();
-window.addEventListener('fantrade:statechange', function(){ renderLedger(); renderEntries(); renderCap(); });
+  if(eye){
+    eye.addEventListener('click', function(){
+      hidden = !hidden;
+      localStorage.setItem('ft_hide_bal', hidden ? 'true' : 'false');
+      updateBalVis();
+    });
+  }
+  updateBalVis();
+  window.addEventListener('fantrade:statechange', updateBalVis);
+
+  // Render market rows matching exchange style
+  var homeFilter = 'hot';
+  function renderHomeRows(){
+    var box = document.getElementById('homeMarketRows');
+    if(!box) return;
+    var list = ASSETS.slice();
+    if(homeFilter === 'hot') list = list.filter(function(a){ return ['SOL','BTC','ETH','$Saka','$Haaland'].indexOf(a.t) >= 0; });
+    else if(homeFilter === 'gainers') list = list.slice().sort(function(a,b){ return b.d - a.d; }).slice(0, 6);
+    else if(homeFilter === 'crypto') list = list.filter(function(a){ return ['SOL','SUI','XRP','DOGE','BTC','ETH'].indexOf(a.t) >= 0; });
+    else if(homeFilter === 'players') list = list.filter(function(a){ return a.t.startsWith('$'); }).slice(0, 6);
+
+    box.innerHTML = list.map(function(a){
+      var up = a.d >= 0;
+      var to = 'asset.html?a=' + encodeURIComponent(a.t);
+      var isCrypto = ['SOL','SUI','XRP','DOGE','BTC','ETH'].indexOf(a.t) >= 0;
+      var sym = isCrypto ? a.t : a.t.replace('$', '');
+      var quote = isCrypto ? 'USDT' : 'FTR';
+      var avatarLetter = sym.substring(0, 2).toUpperCase();
+      return "<a class='kc-row' href='" + to + "'>"
+        + "<div class='kc-row-left'>"
+        + "  <div class='kc-avatar" + (a.c ? " coach" : "") + "'>" + avatarLetter + "</div>"
+        + "  <div style='min-width:0'>"
+        + "    <div class='kc-pair-title'>"
+        + "      <span>" + sym + "</span>"
+        + "      <span class='kc-pair-quote'>/" + quote + "</span>"
+        + "      <span class='kc-tag'>" + (a.tag || (a.c ? 'COACH' : '10x')) + "</span>"
+        + "    </div>"
+        + "    <div class='kc-pair-sub'>" + a.n + " | " + (a.cap || a.vol || '39.24M') + "</div>"
+        + "  </div>"
+        + "</div>"
+        + "<div class='kc-row-mid'>"
+        + "  <div class='kc-price-main'>" + (a.p > 999 ? a.p.toLocaleString('en-US', {minimumFractionDigits: 1, maximumFractionDigits: 2}) : a.p.toFixed(a.p < 1 ? 4 : 2)) + "</div>"
+        + "  <div class='kc-price-sub'>$" + (a.p * 0.999).toFixed(a.p < 1 ? 4 : 2) + "</div>"
+        + "</div>"
+        + "<div class='kc-row-right'>"
+        + "  <div class='kc-pill" + (up ? "" : " down") + "'>" + (up ? "+" : "") + a.d.toFixed(2) + "%</div>"
+        + "</div>"
+        + "</a>";
+    }).join('');
+  }
+
+  document.querySelectorAll('#homeTabs button').forEach(function(b){
+    b.addEventListener('click', function(){
+      document.querySelectorAll('#homeTabs button').forEach(function(x){ x.classList.remove('on'); });
+      b.classList.add('on');
+      homeFilter = b.dataset.f;
+      renderHomeRows();
+    });
+  });
+  renderHomeRows();
+})();
 """
 
-page("dashboard.html", "Home — Fantrade", "".join(da), DASH_JS, DASH_CSS)
+page("dashboard.html", "Home — Fantrade", "".join(da), DASH_JS, DASH_CSS + EX_CSS if 'EX_CSS' in globals() else DASH_CSS)
 print("built dashboard.html")
 
 # ══════════════════════════════════════════════════════════════════
@@ -901,14 +847,17 @@ PF_CSS = """
 }
 """
 
-pf = [T('<main><section class="app-head"><div class="wrap"><div class="head-row">'
-        '<div><h1 data-reveal>Portfolio</h1></div>'
-        '<div class="acts" data-reveal>@@@@</div></div>'
-        '</div></section>',
-        btn("Export CSV", "btn-glass", tag="button", extra='id="pfExport"'),
-        btn("Rebalance squad", href="clubs.html"))]
-
-pf.append('<section style="padding:10px 0 120px"><div class="wrap"><div class="bento">')
+pf = [T('<main><div class="kc-home-wrap">'
+        '<div class="kc-p-topbar">'
+        '  <a href="account.html" class="kc-p-back" title="Back to Account">'
+        '    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>'
+        '  </a>'
+        '  <div style="font-family:Archivo,sans-serif;font-variation-settings:\'wdth\' 120,\'wght\' 800;font-size:18px;color:var(--ink)">Portfolio &amp; Ledger</div>'
+        '  <button type="button" class="kc-p-action-btn" id="pfExport" title="Export CSV">'
+        '    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>'
+        '  </button>'
+        '</div>'
+        '<div class="bento">')]
 
 # value + chart
 pf.append(T('<div class="bezel c5" data-reveal><div class="core pad">'
@@ -1032,7 +981,7 @@ pf.append(T('<div class="bezel c5" data-reveal><div class="core pad">'
                 extra='id="pfClaim" style="width:100%;justify-content:space-between"'),
             ic("scales", "ic"), ic("receipt", "ic")))
 
-pf.append('</div></div></section></main>')
+pf.append('</div></div></main>')
 
 PF_JS = r"""
 var ROLE = { RW:'Right winger', CAM:'Attacking mid', ST:'Striker', CB:'Centre back', COACH:'Head coach',
@@ -1289,14 +1238,17 @@ def idx_chart(vals, w=620, h=170):
             '</svg>' % (w, h, h, " ".join(pa), w, h, " ".join(pb), " ".join(pa)))
 
 
-lb = [T('<main><section class="app-head"><div class="wrap"><div class="head-row">'
-        '<div><h1 data-reveal>Standings</h1></div>'
-        '<div class="acts" data-reveal>@@@@</div></div>'
-        '</div></section>',
-        btn("Rebalance your XI", href="clubs.html"),
-        btn("Enter this round", "btn-glass", "fanplay.html"))]
-
-lb.append('<section style="padding:10px 0 120px"><div class="wrap"><div class="bento">')
+lb = [T('<main><div class="kc-home-wrap">'
+        '<div class="kc-p-topbar">'
+        '  <a href="dashboard.html" class="kc-p-back" title="Back to Home">'
+        '    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>'
+        '  </a>'
+        '  <div style="font-family:Archivo,sans-serif;font-variation-settings:\'wdth\' 120,\'wght\' 800;font-size:18px;color:var(--ink)">League Standings</div>'
+        '  <a href="divisions.html" class="kc-p-action-btn" title="Divisions">'
+        '    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>'
+        '  </a>'
+        '</div>'
+        '<div class="bento">')]
 
 # your rank, as a strip
 lb.append(T('<div class="bezel flat c12" data-reveal><div class="core pad-sm">'
@@ -1342,7 +1294,7 @@ lb.append(T('<div class="bezel flat c12 flat-sep" data-reveal><div class="core">
             '<div id="lbRows"></div></div>'
             '</div></div>', ic("search", "ic")))
 
-lb.append('</div></div></section></main>')
+lb.append('</div></div></main>')
 
 LB_ROWS = ",".join(
     "{r:%d,c:%s,m:%s,h:%d,v:%d,d:%s,xi:%s,co:%s,b:%s,fp:%d,y:%d,dv:%s,cl:%s,you:%s}" % (
@@ -1465,13 +1417,17 @@ NT_CSS = """
 .quiet .tf{flex:1;margin:0}
 """
 
-nt = [T('<main><section class="app-head"><div class="wrap"><div class="head-row">'
-        '<div><h1 data-reveal>Activity</h1></div>'
-        '<div class="acts" data-reveal>@@@@</div></div></div></section>',
-        btn("Mark all read", "btn-glass", tag="button", extra='id="ntRead"'),
-        btn("Notification settings", href="settings-alerts.html"))]
-
-nt.append('<section style="padding:10px 0 120px"><div class="wrap"><div class="bento">')
+nt = [T('<main><div class="kc-home-wrap">'
+        '<div class="kc-p-topbar">'
+        '  <a href="dashboard.html" class="kc-p-back" title="Back to Home">'
+        '    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>'
+        '  </a>'
+        '  <div style="font-family:Archivo,sans-serif;font-variation-settings:\'wdth\' 120,\'wght\' 800;font-size:18px;color:var(--ink)">Notifications</div>'
+        '  <button type="button" class="kc-p-action-btn" id="ntRead" title="Mark all read">'
+        '    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>'
+        '  </button>'
+        '</div>'
+        '<div class="bento">')]
 
 nt.append(T('<div class="bezel c8" data-reveal><div class="core">'
             '<div style="padding:26px 24px 16px"><div class="markets" id="ntFilter">'
@@ -1517,7 +1473,7 @@ nt.append(T('<div class="bezel c4" data-reveal><div class="core pad">'
             btn("All settings", "btn-glass", "settings.html",
                 extra='style="width:100%;justify-content:space-between"')))
 
-nt.append('</div></div></section></main>')
+nt.append('</div></div></main>')
 
 NT_JS = r"""
 var kind = 'all';
@@ -1988,34 +1944,107 @@ def _blurb(frag):
     return m.group(1) if m else ""
 
 
+AC_CSS = """
+/* KuCoin Mobile Profile Page Design (Screenshot 3 Match) */
+.kc-profile-wrap{max-width:560px;margin:0 auto;padding:8px 16px 110px}
+.kc-p-topbar{display:flex;align-items:center;justify-content:space-between;padding:6px 0 16px}
+.kc-p-back{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);display:grid;place-items:center;color:var(--ink);cursor:pointer;text-decoration:none;transition:background .2s}
+.kc-p-back:hover{background:rgba(255,255,255,.09)}
+.kc-p-actions{display:flex;align-items:center;gap:10px}
+.kc-p-action-btn{width:36px;height:36px;border-radius:50%;background:transparent;border:0;color:var(--ink);display:grid;place-items:center;cursor:pointer;transition:background .2s;text-decoration:none}
+.kc-p-action-btn:hover{background:rgba(255,255,255,.06)}
+
+/* Hero Avatar & Identity */
+.kc-p-hero{display:flex;flex-direction:column;align-items:center;text-align:center;padding:6px 0 20px}
+.kc-p-avatar-box{position:relative;width:86px;height:86px;margin-bottom:12px}
+.kc-p-avatar-img{width:100%;height:100%;border-radius:50%;object-fit:cover;border:2px solid rgba(196,248,42,.35);box-shadow:0 0 24px rgba(196,248,42,.12)}
+.kc-p-name-row{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:5px}
+.kc-p-username{font-family:Archivo,sans-serif;font-variation-settings:'wdth' 120,'wght' 800;font-size:22px;letter-spacing:-.01em;color:var(--ink)}
+.kc-p-edit-btn{background:transparent;border:0;color:#767c82;cursor:pointer;display:grid;place-items:center;padding:2px;transition:color .15s}
+.kc-p-edit-btn:hover{color:var(--lime)}
+.kc-p-uid-row{display:flex;align-items:center;justify-content:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:12px;color:#767c82;margin-bottom:14px}
+.kc-p-copy-btn{background:transparent;border:0;color:inherit;cursor:pointer;display:grid;place-items:center;padding:2px;transition:color .15s}
+.kc-p-copy-btn:hover{color:var(--lime)}
+
+/* Status Pills */
+.kc-p-pills{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap}
+.kc-p-pill{display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:999px;padding:4px 12px;font-size:11.5px;color:#8E9AA8;text-decoration:none;transition:border-color .2s,background .2s}
+.kc-p-pill:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.16)}
+.kc-p-pill.safeguard{color:var(--lime);border-color:rgba(196,248,42,.25);background:rgba(196,248,42,.06)}
+.kc-p-pill .chev{font-size:11px;opacity:.7;margin-left:2px}
+
+/* Referral Banner Card */
+.kc-ref-card{display:flex;align-items:center;justify-content:space-between;gap:16px;background:linear-gradient(135deg,rgba(255,255,255,.04) 0%,rgba(255,255,255,.02) 100%);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:16px 20px;margin:18px 0 24px;text-decoration:none;transition:border-color .2s,transform .2s}
+.kc-ref-card:hover{border-color:rgba(196,248,42,.3);transform:translateY(-1px)}
+.kc-ref-left{flex:1}
+.kc-ref-title{font-family:Archivo,sans-serif;font-variation-settings:'wdth' 115,'wght' 700;font-size:16px;color:var(--ink);margin-bottom:4px}
+.kc-ref-sub{font-size:12px;color:#767c82}
+.kc-ref-icon-box{width:56px;height:56px;flex-shrink:0;border-radius:14px;overflow:hidden;background:rgba(255,255,255,.05);display:grid;place-items:center}
+.kc-ref-icon-box img{width:100%;height:100%;object-fit:cover}
+
+/* Grouped Lists */
+.kc-group{margin-bottom:22px}
+.kc-group-title{font-size:11.5px;font-weight:600;color:#767c82;text-transform:none;letter-spacing:.02em;margin:0 0 8px 4px}
+.kc-group-box{background:rgba(10,12,14,.6);border:1px solid rgba(255,255,255,.06);border-radius:14px;overflow:hidden}
+.kc-item-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border-bottom:1px solid rgba(255,255,255,.04);text-decoration:none;color:var(--ink);transition:background .15s}
+.kc-item-row:last-child{border-bottom:0}
+.kc-item-row:hover{background:rgba(255,255,255,.025)}
+.kc-item-left{display:flex;align-items:center;gap:14px;flex:1;min-width:0}
+.kc-item-ico{width:22px;height:22px;display:grid;place-items:center;color:#8E9AA8;flex-shrink:0}
+.kc-item-text-wrap{min-width:0}
+.kc-item-title{font-size:14px;font-weight:500;color:var(--ink)}
+.kc-item-desc{font-size:11px;color:#767c82;margin-top:2px}
+.kc-item-right{display:flex;align-items:center;gap:8px;font-size:12px;color:#767c82;flex-shrink:0}
+.kc-badge-k1{display:inline-flex;align-items:center;gap:4px;color:#8E9AA8;font-size:11.5px}
+.kc-badge-k1 .k1-tag{background:rgba(196,248,42,.15);color:var(--lime);font-size:9.5px;font-weight:700;padding:1px 5px;border-radius:4px}
+.kc-chevron{color:#555c63}
+
+/* Toggle Switch */
+.kc-switch{position:relative;width:40px;height:22px;background:rgba(255,255,255,.14);border-radius:999px;border:0;cursor:pointer;transition:background .2s;padding:2px}
+.kc-switch.on{background:var(--lime)}
+.kc-switch i{display:block;width:18px;height:18px;background:#fff;border-radius:50%;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.3)}
+.kc-switch.on i{transform:translateX(18px);background:#000}
+
+/* Toast */
+.kc-toast{position:fixed;top:24px;left:50%;transform:translateX(-50%) translateY(-20px);background:rgba(18,20,23,.95);border:1px solid var(--lime);color:var(--ink);padding:9px 18px;border-radius:999px;font-size:12px;font-family:Montserrat,sans-serif;font-weight:600;display:flex;align-items:center;gap:8px;box-shadow:0 8px 30px rgba(0,0,0,.6);opacity:0;pointer-events:none;transition:all .25s ease;z-index:999}
+.kc-toast.show{opacity:1;transform:translateX(-50%) translateY(0);pointer-events:auto}
+
 for _key, _fname, _label, _icon in SET_PAGES:
     _frag = SECTIONS[_key]
-    _body = ('<main><section class="app-head" style="padding:92px 0 12px"><div class="wrap">'
-             '<a class="crumb" href="settings.html" aria-label="Back to settings">%s Settings</a>'
-             '<h1 data-reveal style="margin-top:14px">%s</h1>'
-             '</div></section>'
-             '<section style="padding:0 0 120px"><div class="wrap">%s</div></section></main>'
-             % (ic("arrow", "ic"), _label, _SECTITLE.sub("", _frag)))
-    page(_fname, _label + " — Fantrade", _body, ST_JS, ST_CSS + OB_CSS)
+    _body = ('<main><div class="kc-profile-wrap">'
+             '<div class="kc-p-topbar">'
+             '  <a href="settings.html" class="kc-p-back" title="Back to Settings">'
+             '    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>'
+             '  </a>'
+             '  <div style="font-family:Archivo,sans-serif;font-variation-settings:\'wdth\' 120,\'wght\' 800;font-size:18px;color:var(--ink)">%s</div>'
+             '  <div style="width:36px"></div>'
+             '</div>'
+             '<div>%s</div></div></main>'
+             % (_label, _SECTITLE.sub("", _frag)))
+    page(_fname, _label + " — Fantrade", _body, ST_JS, ST_CSS + OB_CSS + AC_CSS)
 
-sx = ['<main><section class="app-head"><div class="wrap">'
-      '<h1 data-reveal>Settings</h1>'
-      '</div></section>']
-sx.append('<section style="padding:10px 0 130px"><div class="wrap"><div class="bento">')
+sx = ['<main><div class="kc-profile-wrap">'
+      '<div class="kc-p-topbar">'
+      '  <a href="account.html" class="kc-p-back" title="Back to Account">'
+      '    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>'
+      '  </a>'
+      '  <div style="font-family:Archivo,sans-serif;font-variation-settings:\'wdth\' 120,\'wght\' 800;font-size:18px;color:var(--ink)">Settings</div>'
+      '  <div style="width:36px"></div>'
+      '</div>']
+sx.append('<div class="bento">')
 sx.append(T('<div class="c12 hub-sec" data-reveal>@@</div>',
             hub([(_fname, _icon, _label, _blurb(SECTIONS[_key]), "", "")
                  for _key, _fname, _label, _icon in SET_PAGES])))
 sx.append(T('<div class="c12" data-reveal style="margin-top:8px">@@</div>',
             btn("Sign out", "btn-glass", tag="button",
                 extra='data-signout style="justify-content:space-between;min-width:220px"')))
-sx.append('</div></div></section></main>')
-page("settings.html", "Settings — Fantrade", "".join(sx), "", ST_CSS + OB_CSS)
+sx.append('</div></div></main>')
+page("settings.html", "Settings — Fantrade", "".join(sx), "", ST_CSS + OB_CSS + AC_CSS)
 print("built settings.html + 7 section pages")
 
 # ══════════════════════════════════════════════════════════════════
 # ACCOUNT — the hub behind the fifth tab
 # ══════════════════════════════════════════════════════════════════
-AC_CSS = """
 /* KuCoin Mobile Profile Page Design (Screenshot 3 Match) */
 .kc-profile-wrap{max-width:560px;margin:0 auto;padding:8px 16px 110px}
 .kc-p-topbar{display:flex;align-items:center;justify-content:space-between;padding:6px 0 16px}

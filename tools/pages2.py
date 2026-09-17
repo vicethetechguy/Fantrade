@@ -28,93 +28,198 @@ def page(fname, title, body, js="", css="", app=False):
 # ══════════════════════════════════════════════════════════
 # $FTR WALLET
 # ══════════════════════════════════════════════════════════
+# $FTR ASSETS OVERVIEW (KUCOIN / MOBILE CRYPTO STYLE)
+# ══════════════════════════════════════════════════════════
 FTR_CSS = """
-.wcard{max-width:none}
+.kc-assets-wrap{max-width:680px;margin:0 auto;padding:12px 16px 84px}
+.kc-topbar{display:flex;align-items:center;justify-content:space-between;padding:8px 0 16px}
+.kc-top-title{font-family:Archivo,sans-serif;font-variation-settings:'wdth' 120,'wght' 800;font-size:17px;letter-spacing:-.01em;text-transform:uppercase}
+.kc-icon-btn{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;color:#8E9AA8;cursor:pointer;transition:all .2s ease;text-decoration:none}
+.kc-icon-btn:hover{color:#fff;background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.15)}
+.kc-icon-btn .ic{width:18px;height:18px}
+
+.kc-assets-card{background:linear-gradient(135deg,#0E1114 0%,#08090A 100%);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:22px;box-shadow:0 12px 32px rgba(0,0,0,.6);margin-bottom:18px;position:relative;overflow:hidden}
+.kc-assets-card::before{content:"";position:absolute;top:-60px;right:-60px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(196,248,42,.12),transparent 70%);pointer-events:none}
+.kc-card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.kc-card-lbl{font-size:11px;font-weight:600;letter-spacing:.12em;color:#8E9AA8;text-transform:uppercase;display:flex;align-items:center;gap:6px}
+.kc-eye-btn{background:transparent;border:0;color:#8E9AA8;cursor:pointer;padding:2px;display:flex;align-items:center;transition:color .2s}
+.kc-eye-btn:hover{color:#fff}
+.kc-card-bal{font-family:'JetBrains Mono',monospace;font-size:32px;font-weight:700;letter-spacing:-.02em;color:#FFFFFF;margin:4px 0 6px;line-height:1.1;display:flex;align-items:baseline;gap:6px}
+.kc-card-bal small{font-size:16px;color:#C4F82A;font-weight:500}
+.kc-card-sub{display:flex;align-items:center;gap:10px;font-size:12.5px;color:#8E9AA8}
+.kc-pnl-pill{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;padding:2px 8px;border-radius:6px;background:rgba(196,248,42,.12);color:#C4F82A;border:1px solid rgba(196,248,42,.25)}
+
+.kc-actions-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:20px;padding-top:16px;border-top:1px solid rgba(255,255,255,.06)}
+.kc-act-btn{display:flex;flex-direction:column;align-items:center;gap:8px;text-decoration:none;color:#C3C9BE;cursor:pointer;transition:transform .2s ease}
+.kc-act-btn:hover{transform:translateY(-2px);color:#fff}
+.kc-act-icon{width:44px;height:44px;border-radius:14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);display:flex;align-items:center;justify-content:center;color:#C4F82A;transition:all .2s ease}
+.kc-act-btn:hover .kc-act-icon{background:rgba(196,248,42,.15);border-color:rgba(196,248,42,.4)}
+.kc-act-lbl{font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase}
+
+.kc-alloc-card{background:#0A0B0C;border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:16px;margin-bottom:18px}
+.kc-alloc-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;font-size:11.5px;font-weight:600;letter-spacing:.08em;color:#8E9AA8;text-transform:uppercase}
+.kc-alloc-bar{height:6px;border-radius:99px;background:rgba(255,255,255,.06);overflow:hidden;display:flex;margin-bottom:12px}
+.kc-alloc-bar-seg{height:100%;transition:width .4s ease}
+.kc-alloc-legend{display:flex;justify-content:space-between;gap:8px;font-size:11px;color:#8E9AA8;flex-wrap:wrap}
+.kc-leg-item{display:flex;align-items:center;gap:6px}
+.kc-leg-dot{width:8px;height:8px;border-radius:50%}
+.kc-leg-item b{color:#fff;font-family:'JetBrains Mono',monospace;font-weight:500}
+
+.kc-tabs{display:flex;gap:12px;border-bottom:1px solid rgba(255,255,255,.07);margin-bottom:12px;padding-bottom:2px}
+.kc-tab-btn{background:transparent;border:0;color:#8E9AA8;font-family:Montserrat,sans-serif;font-size:13px;font-weight:600;padding:8px 4px;cursor:pointer;position:relative;transition:color .2s}
+.kc-tab-btn.on{color:#fff}
+.kc-tab-btn.on::after{content:"";position:absolute;left:0;right:0;bottom:-3px;height:2px;background:#C4F82A;border-radius:2px}
+
+.kc-holdings-list{display:flex;flex-direction:column;gap:4px}
+.kc-asset-row{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04);text-decoration:none;transition:all .2s ease}
+.kc-asset-row:hover{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.09)}
+.kc-asset-left{display:flex;align-items:center;gap:12px}
+.kc-asset-icon{width:38px;height:38px;border-radius:12px;background:rgba(196,248,42,.1);border:1px solid rgba(196,248,42,.25);display:flex;align-items:center;justify-content:center;color:#C4F82A}
+.kc-asset-icon.coach{background:rgba(255,106,31,.1);border-color:rgba(255,106,31,.25);color:var(--amber)}
+.kc-asset-name{font-weight:700;font-size:13.5px;color:#fff}
+.kc-asset-sub{font-size:11px;color:#8E9AA8;margin-top:2px}
+.kc-asset-right{text-align:right}
+.kc-asset-val{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;color:#fff}
+.kc-asset-chg{font-family:'JetBrains Mono',monospace;font-size:11px;margin-top:2px}
+.kc-asset-chg.up{color:#C4F82A}
+.kc-asset-chg.down{color:#FF5E5E}
 """
 
-# label, icon, coin tone, sparkline direction
 WALLET_ASSETS = [("$Saka", "Bukayo Saka", "boot", "", 6.4, 0),
                  ("$Haaland", "Erling Haaland", "boot", "", -1.8, 1),
                  ("$Bruno", "Bruno Fernandes", "boot", "", 4.2, 2),
                  ("$Arteta", "Mikel Arteta", "whistle", "am", 14.2, 9)]
 
-# The wallet is a card and a list of what you own. Send, receive, swap, buy
-# and the ledger are destinations, not panels stacked underneath it.
-f = ['<main><section style="padding:118px 0 70px"><div class="wrap"><div class="bento">']
+f = ['<main><div class="kc-assets-wrap">']
 
-f.append(T('<div class="c5" data-reveal><div class="wcard">'
-           '<span class="tag-id">FTR-012</span>'
-           '<div class="k">Total balance</div>'
-           '<div class="amt" id="walBal">128,450<small> $FTR</small></div>'
-           '<div class="sub" id="walDelta">@@<span>2.35% today</span>'
-           '<span style="color:rgba(10,13,3,.5)">·</span><span id="walGbp">≈ £10,358</span></div>'
-           '<div class="wacts">'
-           '<a href="send.html">@@<span>Send</span></a>'
-           '<a href="receive.html">@@<span>Receive</span></a>'
-           '<a href="swap.html">@@<span>Swap</span></a>'
-           '<a href="buy.html">@@<span>Buy</span></a>'
-           '</div></div></div>',
-           ic("arrow", "ic"), ic("send", "ic"), ic("receive", "ic"),
-           ic("swap", "ic"), ic("coin", "ic")))
+# Sleek Mobile Topbar
+f.append(T('<div class="kc-topbar">'
+           '<a class="kc-icon-btn" href="dashboard.html" aria-label="Back to Home">@@</a>'
+           '<div class="kc-top-title">Assets Overview</div>'
+           '<a class="kc-icon-btn" href="activity.html" aria-label="Transaction Ledger" title="Transaction Ledger">@@</a>'
+           '</div>',
+           ic("arrow", "ic"), ic("receipt", "ic")))
 
-f.append(T('<div class="bezel c7" data-reveal><div class="core">'
-           '<div style="padding:24px 24px 12px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">'
-           '<div><div style="font-family:Archivo;font-variation-settings:\'wdth\' 120,\'wght\' 800;'
-           'text-transform:uppercase;font-size:19px">My assets</div>'
-           '<div class="sub-line" id="walCount">Loading…</div></div>'
-           '<a class="seeall" href="activity.html">Activity @@</a></div>'
-           '<div id="walAssets"></div></div></div>', ic("arrow", "ic-sm")))
+# Total Assets Card
+f.append(T('<div class="kc-assets-card">'
+           '<div class="kc-card-top">'
+           '<div class="kc-card-lbl">Total Equity Value ($FTR)'
+           '<button type="button" class="kc-eye-btn" id="walEyeBtn" title="Toggle balance visibility">'
+           '<svg class="ic" id="walEyeIcon"><use href="#i-eye"/></svg></button></div>'
+           '<div class="kc-pnl-pill" id="walDelta">+2.35% (+2,940)</div>'
+           '</div>'
+           '<div class="kc-card-bal"><span id="walBal">128,450.00</span><small>$FTR</small></div>'
+           '<div class="kc-card-sub"><span id="walGbp">≈ $10,358.80 USD</span> · <span style="color:#C4F82A">Protected</span></div>'
+           '<div class="kc-actions-grid">'
+           '<a class="kc-act-btn" href="buy.html"><div class="kc-act-icon">@@</div><span class="kc-act-lbl">Deposit</span></a>'
+           '<a class="kc-act-btn" href="send.html"><div class="kc-act-icon">@@</div><span class="kc-act-lbl">Withdraw</span></a>'
+           '<a class="kc-act-btn" href="send.html"><div class="kc-act-icon">@@</div><span class="kc-act-lbl">Transfer</span></a>'
+           '<a class="kc-act-btn" href="swap.html"><div class="kc-act-icon">@@</div><span class="kc-act-lbl">Convert</span></a>'
+           '</div></div>',
+           ic("coin", "ic"), ic("send", "ic"), ic("arrow", "ic"), ic("swap", "ic")))
 
-f.append('</div></div></section></main>')
+# Allocation Progress Bar Card
+f.append('<div class="kc-alloc-card">'
+         '<div class="kc-alloc-head"><span>Portfolio Allocation</span><span id="walPosCount">4 Positions</span></div>'
+         '<div class="kc-alloc-bar">'
+         '<div class="kc-alloc-bar-seg" style="width:62%;background:#C4F82A" title="Liquid FTR"></div>'
+         '<div class="kc-alloc-bar-seg" style="width:28%;background:#4DA3FF" title="Player Shares"></div>'
+         '<div class="kc-alloc-bar-seg" style="width:10%;background:#FF6A1F" title="Locked in Entries"></div>'
+         '</div>'
+         '<div class="kc-alloc-legend">'
+         '<div class="kc-leg-item"><div class="kc-leg-dot" style="background:#C4F82A"></div>Liquid <b id="walLiquidAmt">128,450 FTR</b></div>'
+         '<div class="kc-leg-item"><div class="kc-leg-dot" style="background:#4DA3FF"></div>Shares <b id="walSharesAmt">58,240 FTR</b></div>'
+         '<div class="kc-leg-item"><div class="kc-leg-dot" style="background:#FF6A1F"></div>Locked <b id="walLockedAmt">10,000 FTR</b></div>'
+         '</div></div>')
+
+# Tabs: Holdings / Staking / History
+f.append('<div class="kc-tabs">'
+         '<button class="kc-tab-btn on" type="button" data-tab="holdings">Holdings</button>'
+         '<button class="kc-tab-btn" type="button" data-tab="staking" onclick="window.location.href=\'fanplay.html\'">Staking &amp; Futures</button>'
+         '<button class="kc-tab-btn" type="button" data-tab="history" onclick="window.location.href=\'activity.html\'">Ledger</button>'
+         '</div>')
+
+# Assets List
+f.append('<div class="kc-holdings-list" id="walAssets"></div>')
+
+f.append('</div></main>')
 
 FTR_JS = ("var WASSETS=" + repr([{"t": t, "n": n, "i": i, "c": c, "d": d, "s": s}
                                  for t, n, i, c, d, s in WALLET_ASSETS]).replace("'", '"') + ";") + r"""
 function el(id){ return document.getElementById(id); }
 function money(n){ return Math.round(n).toLocaleString('en-US'); }
 
+var hidden = false;
+var eyeBtn = el('walEyeBtn');
+if(eyeBtn){
+  eyeBtn.addEventListener('click', function(){
+    hidden = !hidden;
+    syncWallet();
+  });
+}
+
 function renderAssets(){
   var s = FT.getState(), box = el('walAssets');
-  var rows = ['<div class="arow"><div class="who"><span class="coin lime">'
-    + '<svg class="ic" aria-hidden="true"><use href="#i-coin"/></svg></span>'
-    + '<div style="min-width:0"><div class="nm">$FTR</div><div class="qt">Liquid balance</div></div></div>'
-    + '<div data-spark="1"></div>'
-    + '<div><div class="val">' + money(s.wallet.balance) + '</div>'
-    + '<div class="chg up">+2.35%</div></div></div>'];
+  if(!box) return;
+  var rows = [];
 
+  // Liquid FTR Row
+  rows.push('<div class="kc-asset-row">'
+    + '<div class="kc-asset-left">'
+    + '<div class="kc-asset-icon"><svg class="ic" aria-hidden="true"><use href="#i-coin"/></svg></div>'
+    + '<div><div class="kc-asset-name">$FTR</div><div class="kc-asset-sub">Fantrade Token · Liquid</div></div>'
+    + '</div>'
+    + '<div class="kc-asset-right">'
+    + '<div class="kc-asset-val">' + (hidden ? '••••••' : money(s.wallet.balance) + ' FTR') + '</div>'
+    + '<div class="kc-asset-chg up">+2.35% (24h)</div>'
+    + '</div></div>');
+
+  // Player Holdings
+  var totalSharesVal = 0;
   Object.keys(s.holdings).forEach(function(k){
     var h = s.holdings[k];
+    var val = h.shares * (h.p || h.avg || 10);
+    totalSharesVal += val;
     var meta = WASSETS.filter(function(a){ return a.t === k; })[0]
-      || { i: h.c ? 'whistle' : 'boot', c: h.c ? 'am' : '', d: 0, s: 0 };
+      || { i: h.c ? 'whistle' : 'boot', c: h.c ? 'coach' : '', d: 0, s: 0 };
     var up = meta.d >= 0;
-    rows.push('<a class="arow" href="asset.html?a=' + encodeURIComponent(k) + '">'
-      + '<div class="who"><span class="coin ' + (meta.c || '') + '">'
-      + '<svg class="ic" aria-hidden="true"><use href="#i-' + meta.i + '"/></svg></span>'
-      + '<div style="min-width:0"><div class="nm">' + h.n + '</div>'
-      + '<div class="qt">' + h.shares.toLocaleString('en-US') + ' ' + k + '</div></div></div>'
-      + '<div data-spark="' + (up ? 1 : 0) + '"></div>'
-      + '<div><div class="val">' + money(h.shares * h.p) + '</div>'
-      + '<div class="chg ' + (up ? 'up' : 'down') + '">'
-      + (up ? '+' : '') + meta.d.toFixed(2) + '%</div></div></a>');
+
+    rows.push('<a class="kc-asset-row" href="asset.html?a=' + encodeURIComponent(k) + '">'
+      + '<div class="kc-asset-left">'
+      + '<div class="kc-asset-icon ' + (meta.c || '') + '"><svg class="ic" aria-hidden="true"><use href="#i-' + meta.i + '"/></svg></div>'
+      + '<div><div class="kc-asset-name">' + k + ' <span style="font-weight:400;color:#8E9AA8;font-size:12px">' + h.n + '</span></div>'
+      + '<div class="kc-asset-sub">' + (hidden ? '••••' : h.shares.toLocaleString('en-US') + ' shares') + '</div></div>'
+      + '</div>'
+      + '<div class="kc-asset-right">'
+      + '<div class="kc-asset-val">' + (hidden ? '••••••' : money(val) + ' FTR') + '</div>'
+      + '<div class="kc-asset-chg ' + (up ? 'up' : 'down') + '">' + (up ? '+' : '') + meta.d.toFixed(2) + '%</div>'
+      + '</div></a>');
   });
 
   box.innerHTML = rows.join('');
-  el('walCount').textContent = Object.keys(s.holdings).length + ' positions · '
-    + money(FT.holdingsValue()) + ' $FTR at market';
-  box.querySelectorAll('[data-spark]').forEach(function(d){
-    d.innerHTML = spark(d.dataset.spark === '1', 88, 26);
-  });
+  if(el('walPosCount')) el('walPosCount').textContent = (Object.keys(s.holdings).length + 1) + ' Assets';
+  if(el('walSharesAmt')) el('walSharesAmt').textContent = (hidden ? '••••' : money(totalSharesVal) + ' FTR');
+  if(el('walLockedAmt')) el('walLockedAmt').textContent = (hidden ? '••••' : money(s.wallet.locked || 0) + ' FTR');
+  if(el('walLiquidAmt')) el('walLiquidAmt').textContent = (hidden ? '••••' : money(s.wallet.balance) + ' FTR');
 }
 
 function syncWallet(){
   var s = FT.getState();
-  el('walBal').innerHTML = s.wallet.balance.toLocaleString('en-US') + '<small> $FTR</small>';
-  el('walGbp').textContent = '≈ £' + Math.round(s.wallet.balance / 12.4).toLocaleString('en-US');
+  var bal = s.wallet.balance || 0;
+  if(el('walBal')){
+    el('walBal').textContent = hidden ? '••••••' : bal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+  if(el('walGbp')){
+    el('walGbp').textContent = hidden ? '≈ $•••••• USD' : '≈ $' + (bal * 0.0806).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' USD';
+  }
   renderAssets();
 }
+
 syncWallet();
 window.addEventListener('fantrade:statechange', syncWallet);
 """
-page("ftr.html", "$FTR — Fantrade", "".join(f), FTR_JS, FTR_CSS, app=True)
+page("ftr.html", "$FTR Assets — Fantrade", "".join(f), FTR_JS, FTR_CSS, app=True)
+
 
 
 # ══════════════════════════════════════════════════════════

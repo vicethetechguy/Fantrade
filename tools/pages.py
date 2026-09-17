@@ -524,6 +524,12 @@ page("exchange.html", "Exchange — Fantrade", "".join(ex), EX_JS, EX_CSS, app=T
 # 3. DREAM CLUBS
 # ══════════════════════════════════════════════════════════
 CL_CSS = """
+.kc-home-wrap{max-width:680px;margin:0 auto;padding:12px 16px 84px}
+.kc-topbar{display:flex;align-items:center;justify-content:space-between;padding:8px 0 16px}
+.kc-top-title{font-family:Archivo,sans-serif;font-variation-settings:'wdth' 120,'wght' 800;font-size:17px;letter-spacing:-.01em;text-transform:uppercase}
+.kc-icon-btn{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;color:#8E9AA8;cursor:pointer;transition:all .2s ease;text-decoration:none}
+.kc-icon-btn:hover{color:#fff;background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.15)}
+.kc-icon-btn .ic{width:18px;height:18px}
 .stepper{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:24px}
 .stepper button{border:1px solid var(--hair);background:rgba(255,255,255,.03);color:var(--dim);border-radius:999px;
   padding:9px 16px;font-weight:600;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;
@@ -553,23 +559,24 @@ CL_CSS = """
  .lb>*:nth-child(n+4){display:none}}
 """
 
-cl = []
-cl.append(T('<header class="phead"><div class="wrap">'
-            '<a class="crumb" href="dashboard.html" aria-label="Back to home">@@Home</a>'
-            '<h1 data-reveal style="margin-top:14px" id="clName">Zero FC</h1>'
-            '<div class="clubrail" id="clubRail" data-reveal></div>'
-            '</div></header>', ic("arrow", "ic")))
+cl = ['<main><div class="kc-home-wrap" style="padding-top:12px;padding-bottom:84px">']
+cl.append(T('<div class="kc-topbar">'
+            '<a class="kc-icon-btn" href="dashboard.html" aria-label="Back to Home">@@</a>'
+            '<div class="kc-top-title" id="clName">Zero FC</div>'
+            '<a class="kc-icon-btn" href="club-builder.html?new=1" title="New Club" style="background:rgba(196,248,42,.1);border-color:rgba(196,248,42,.3);color:#C4F82A;font-weight:700;font-size:18px">+</a>'
+            '</div>', ic("arrow", "ic")))
+cl.append('<div class="clubrail" id="clubRail" style="margin-bottom:16px" data-reveal></div>')
 
 ROUNDS = [("MD 27", "812", "18th", "w", "+6,200"), ("MD 26", "704", "41st", "w", "+4,100"),
           ("MD 25", "689", "63rd", "w", "+3,250"), ("MD 24", "512", "308th", "l", "-2,500"),
           ("MD 23", "548", "214th", "l", "-2,500")]
 
-cl.append(T('<main><section style="padding-top:30px"><div class="wrap"><div class="bento">'
-          '<div class="bezel c7" data-reveal><div class="core">'
-          '<div style="padding:20px 22px 0"><div class="tabstrip" id="clTabs" role="tablist">'
+cl.append(T('<div style="display:flex;flex-direction:column;gap:16px">'
+          '<div class="bezel" style="border-radius:20px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.07);overflow:hidden" data-reveal><div class="core">'
+          '<div style="padding:16px 18px 0"><div class="tabstrip" id="clTabs" role="tablist">'
           '<button type="button" role="tab" aria-pressed="true" data-p="lineups">Line-ups</button>'
-          '<button type="button" role="tab" aria-pressed="false" data-p="position">League position</button>'
-          '<button type="button" role="tab" aria-pressed="false" data-p="form">Form &amp; results</button>'
+          '<button type="button" role="tab" aria-pressed="false" data-p="position">Position</button>'
+          '<button type="button" role="tab" aria-pressed="false" data-p="form">Form</button>'
           '</div></div>'
           '<div class="pane on" data-pane="lineups"><div class="pitch" id="pitchMount"></div></div>'
 
@@ -627,8 +634,8 @@ cl.append(T('<main><section style="padding-top:30px"><div class="wrap"><div clas
           '</div></div></div>'
 
           '</div></div>'
-          '<div class="c5" style="display:flex;flex-direction:column;gap:16px">'
-          '<div class="bezel" data-reveal><div class="core pad"><div class="k-label">Club value</div>'
+          '<div style="display:flex;flex-direction:column;gap:16px">'
+          '<div class="bezel" style="border-radius:20px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.07);overflow:hidden" data-reveal><div class="core pad"><div class="k-label">Club value</div>'
           '<div class="value-big"><span id="clValue">245,800</span> <small>$FTR</small></div>'
           '<div class="delta" id="clMeta">Apex division · +15.0% boost</div>'
           '<div style="margin-top:22px;border-top:1px solid var(--hair);padding-top:6px">'
@@ -642,11 +649,11 @@ cl.append(T('<main><section style="padding-top:30px"><div class="wrap"><div clas
           '<div class="mini"><div class="k">Season FP</div><div class="v" id="clFp">8,420</div></div>'
           '<div class="mini"><div class="k">Win rate</div><div class="v">62%</div></div>'
           '<div class="mini"><div class="k">$FTR earned</div><div class="v amber">19,640</div></div></div>'
-          '<div class="bezel" data-reveal style="flex:1"><div class="core pad-sm">'
+          '<div class="bezel" style="border-radius:20px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.07);overflow:hidden" data-reveal><div class="core pad-sm">'
           '<div class="k-label">Club value · last 8 rounds</div><div id="valChart"></div></div></div>'
-          '</div></div>', btn("Enter this club in FanPlay", "btn-lime btn-sm", "fanplay.html")))
+          '</div>', btn("Enter this club in FanPlay", "btn-lime btn-sm", "fanplay.html")))
 
-cl.append(T('<div class="bezel c12" data-reveal><div class="core pad">'
+cl.append(T('<div class="bezel" style="border-radius:20px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.07);overflow:hidden" data-reveal><div class="core pad">'
           '<div style="display:flex;align-items:center;gap:20px;flex-wrap:wrap">'
           '<span class="ibox">@@</span>'
           '<div style="min-width:0"><div style="font-family:Archivo;'
@@ -658,7 +665,8 @@ cl.append(T('<div class="bezel c12" data-reveal><div class="core pad">'
           ic("formation", "ic-lg"),
           btn("Edit this club", "btn-glass", "club-builder.html"),
           btn("New club", href="club-builder.html?new=1")))
-cl.append('</div></section></main>')
+
+cl.append('</div></div></main>')
 
 
 CL_JS = PITCH_JS + r"""
@@ -871,13 +879,14 @@ page("clubs.html", "Dream Clubs — Fantrade", "".join(cl), CL_JS, CL_CSS, app=T
 # CLUB BUILDER
 # ══════════════════════════════════════════════════════════
 # builder
-bd = [T('<main><section class="app-head" style="padding-bottom:24px"><div class="wrap">'
-        '<div data-reveal>@@</div>'
-        '<h1 data-reveal style="margin-top:20px">Club builder</h1>'
-        '</div></section>',
-        crumb("clubs.html", "Back to the club"))]
-bd.append('<section style="padding:6px 0 130px"><div class="wrap">')
-bd.append(T('<div class="bento"><div class="bezel c5" data-reveal><div class="core pad">'
+bd = ['<main><div class="kc-home-wrap" style="padding-top:12px;padding-bottom:84px">']
+bd.append(T('<div class="kc-topbar">'
+            '<a class="kc-icon-btn" href="clubs.html" aria-label="Back to Clubs">@@</a>'
+            '<div class="kc-top-title">Club Builder</div>'
+            '<div style="width:36px"></div>'
+            '</div>', ic("arrow", "ic")))
+bd.append('<div style="display:flex;flex-direction:column;gap:16px">')
+bd.append(T('<div class="bezel" style="border-radius:20px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.07);overflow:hidden" data-reveal><div class="core pad">'
           '<div class="stepper" id="stepper">'
           '<button aria-current="step">@@ 1 Name</button><button>@@ 2 Identity</button>'
           '<button>@@ 3 Coach</button><button>@@ 4 Shape</button><button>@@ 5 XI</button>'
@@ -899,9 +908,8 @@ bd.append(T('<div class="bento"><div class="bezel c5" data-reveal><div class="co
           '@@</div></div>', ic("crest", "ic"), ic("swatch", "ic"), ic("whistle", "ic"), ic("formation", "ic"),
                               ic("pitch", "ic"), ic("subs", "ic"), ic("check", "ic"), ic("shield", "ic"),
                               btn("Save club", tag="button", extra='id="saveClubBtn" style="margin-top:20px;width:100%;justify-content:space-between"')))
-bd.append('<div class="bezel c7" data-reveal><div class="core pitch" id="builderPitch"></div></div></div></div></section>')
-
-bd.append('</main>')
+bd.append('<div class="bezel" style="border-radius:20px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.07);overflow:hidden" data-reveal><div class="core pitch" id="builderPitch"></div></div>')
+bd.append('</div></div></main>')
 
 page("club-builder.html", "Club builder — Fantrade", "".join(bd), CL_JS, CL_CSS, app=True)
 
@@ -912,179 +920,214 @@ page("club-builder.html", "Club builder — Fantrade", "".join(bd), CL_JS, CL_CS
 # 4. FANPLAY
 # ══════════════════════════════════════════════════════════
 FP_CSS = """
-/* head */
-.fp-head{display:flex;align-items:flex-start;gap:18px}
-.fp-head .bell{margin-left:auto;margin-top:6px}
-.fp-round{display:flex;align-items:center;gap:9px;margin-top:12px;font-weight:600;font-size:10px;
-  letter-spacing:.16em;text-transform:uppercase;color:var(--faint)}
+.kc-home-wrap{max-width:680px;margin:0 auto;padding:12px 16px 84px}
+.kc-fut-topbar{display:flex;align-items:center;justify-content:space-between;padding:8px 0 12px}
+.kc-pair-btn{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);padding:6px 12px;border-radius:999px;cursor:pointer}
+.kc-pair-btn:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.14)}
+.kc-pair-sym{font-weight:700;font-size:14.5px;color:#fff}
+.kc-tag-perp{font-size:10px;padding:2px 6px;border-radius:4px;background:rgba(255,255,255,.08);color:#8E9AA8;font-weight:600}
+.kc-tag-lev{font-size:10px;padding:2px 6px;border-radius:4px;background:rgba(196,248,42,.15);color:#C4F82A;font-weight:700}
+.kc-delta-badge{font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:600;padding:3px 8px;border-radius:6px;background:rgba(196,248,42,.12);color:#C4F82A}
 
-/* two columns: the decisions, and the answer */
-.fp-grid{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:46px;align-items:start}
-.fp-side{position:sticky;top:96px}
-.fp-card{border:1px solid var(--hair);border-radius:24px;padding:26px 24px;
-  background:rgba(255,255,255,.028);box-shadow:var(--inset)}
+.kc-fut-stats{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-radius:12px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.06);font-size:11px;color:#8E9AA8;margin-bottom:14px;overflow-x:auto;gap:12px}
+.kc-stat-item{display:flex;flex-direction:column;gap:2px;white-space:nowrap}
+.kc-stat-item b{color:#fff;font-family:'JetBrains Mono',monospace;font-weight:500}
 
-/* one numbered step per decision */
-.fstep{padding:30px 0;border-top:1px solid var(--hair)}
-.fstep:first-child{padding-top:0;border-top:0}
-.fstep-h{display:flex;align-items:center;gap:13px;margin-bottom:20px;font-family:Archivo;
-  font-variation-settings:'wdth' 120,'wght' 800;text-transform:uppercase;font-size:14px}
-.fstep-h .n{width:24px;height:24px;border-radius:999px;display:grid;place-items:center;flex:none;
-  background:rgba(196,248,42,.12);border:1px solid rgba(196,248,42,.3);color:var(--lime);
-  font-family:'JetBrains Mono',monospace;font-size:11px}
+.kc-fut-desk{display:grid;grid-template-columns:1fr 1.2fr;gap:12px;margin-bottom:16px}
+@media (max-width:540px){.kc-fut-desk{grid-template-columns:1fr}}
 
-/* mode */
-.seg2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px}
-.seg2 button{display:flex;flex-direction:column;align-items:flex-start;gap:4px;padding:16px 18px;cursor:pointer;
-  border:1px solid var(--hair);border-radius:18px;background:rgba(255,255,255,.03);color:var(--dim);
-  box-shadow:var(--inset);font-family:Montserrat,sans-serif;text-align:left;
-  transition:all .5s var(--ease)}
-.seg2 button .ic{width:19px;height:19px;margin-bottom:5px;color:var(--faint)}
-.seg2 button .l{font-family:Archivo;font-variation-settings:'wdth' 120,'wght' 800;text-transform:uppercase;
-  font-size:14px;color:var(--ink)}
-.seg2 button .s{font-size:11px;color:var(--faint)}
-.seg2 button:hover{border-color:var(--hair-2)}
-.seg2 button[aria-selected="true"]{background:var(--lime);border-color:var(--lime);box-shadow:var(--inset),
-  0 16px 40px -16px rgba(196,248,42,.7)}
-.seg2 button[aria-selected="true"] .l,.seg2 button[aria-selected="true"] .ic{color:#0A0D03}
-.seg2 button[aria-selected="true"] .s{color:rgba(10,13,3,.66)}
-/* the old .tab rules hide their label on a phone — these buttons need theirs */
-.seg2 button.tab{flex:none;padding:16px 18px;min-height:0;border-radius:18px;gap:4px;justify-content:flex-start}
-.seg2 button.tab .l,.seg2 button.tab .s{display:block}
-.seg2 button.tab[aria-selected="true"]{color:#0A0D03}
+.kc-book-col{display:flex;flex-direction:column;gap:3px;font-family:'JetBrains Mono',monospace;font-size:11px}
+.kc-book-row{display:flex;justify-content:space-between;padding:3px 6px;border-radius:4px;position:relative;overflow:hidden}
+.kc-book-row::after{content:"";position:absolute;top:0;bottom:0;right:0;pointer-events:none;border-radius:4px}
+.kc-book-row.ask::after{background:rgba(255,94,94,.12);width:var(--w,40%)}
+.kc-book-row.ask span:first-child{color:#FF5E5E}
+.kc-book-row.bid::after{background:rgba(196,248,42,.12);width:var(--w,40%)}
+.kc-book-row.bid span:first-child{color:#C4F82A}
+.kc-last-px{display:flex;align-items:baseline;gap:6px;padding:8px 6px;margin:4px 0;border-top:1px solid rgba(255,255,255,.06);border-bottom:1px solid rgba(255,255,255,.06)}
+.kc-last-px b{font-size:17px;color:#C4F82A;font-weight:700}
+.kc-last-px span{font-size:10px;color:#8E9AA8}
 
-.fp-sel{display:flex;align-items:center;gap:16px;border:1px solid var(--hair);border-radius:20px;
-  padding:16px 18px;background:rgba(255,255,255,.03);box-shadow:var(--inset)}
-.fp-sel .nm{font-family:Archivo;font-variation-settings:'wdth' 120,'wght' 800;text-transform:uppercase;font-size:17px}
-.fp-sel .sub{font-weight:600;font-size:9.5px;color:var(--faint);margin:5px 0 0;letter-spacing:.14em;
-  text-transform:uppercase}
-.fp-sel .right{margin-left:auto;text-align:right;font-weight:600;font-size:9px;color:var(--faint);
-  letter-spacing:.14em;text-transform:uppercase;white-space:nowrap}
-.fp-sel .right .up{display:block;margin-top:5px}
+.kc-trade-col{display:flex;flex-direction:column;gap:10px}
+.kc-side-tgl{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:4px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07)}
+.kc-side-btn{border:0;background:transparent;padding:8px 0;border-radius:8px;font-family:Archivo,sans-serif;font-weight:700;font-size:11.5px;text-transform:uppercase;cursor:pointer;color:#8E9AA8;transition:all .2s}
+.kc-side-btn.buy.on{background:#C4F82A;color:#0A0D03}
+.kc-side-btn.sell.on{background:#FF5E5E;color:#fff}
 
-/* tiers as cards, so the multiplier and the variance are visible at once */
-.tierrail{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
-.tiercard{display:flex;flex-direction:column;align-items:flex-start;gap:9px;padding:15px 16px;cursor:pointer;
-  border:1px solid var(--hair);border-radius:16px;background:rgba(255,255,255,.03);box-shadow:var(--inset);
-  font-family:Montserrat,sans-serif;text-align:left;transition:all .5s var(--ease)}
-.tiercard .t{font-weight:600;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink)}
-.tiercard .x{font-family:'JetBrains Mono',monospace;font-size:19px;font-weight:300;color:var(--lime);line-height:1}
-.tiercard .risk{width:100%;height:3px;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden}
-.tiercard .risk i{display:block;height:100%;border-radius:99px;
-  background:linear-gradient(90deg,#C4F82A,#FF6A1F)}
-.tiercard:hover{border-color:var(--hair-2)}
-.tiercard[aria-pressed="true"]{border-color:var(--lime);background:rgba(196,248,42,.09)}
-.tiercard[aria-pressed="true"] .x{color:var(--lime)}
-.mkt-note{margin-top:16px;font-size:13px;font-weight:300;color:var(--dim);min-height:22px}
+.kc-input-box{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-radius:10px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);font-size:12px}
+.kc-input-box label{font-size:9.5px;color:#8E9AA8;font-weight:600;text-transform:uppercase}
+.kc-input-box input{border:0;background:transparent;color:#fff;text-align:right;font-family:'JetBrains Mono',monospace;font-size:13.5px;outline:none;width:60%}
 
-.capbar{height:4px;border-radius:99px;background:rgba(255,255,255,.07);overflow:hidden;margin-top:14px}
-.capbar i{display:block;height:100%;border-radius:99px;background:var(--lime)}
+.kc-pct-chips{display:flex;gap:4px}
+.kc-pct-chip{flex:1;padding:5px 0;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);color:#8E9AA8;border-radius:6px;font-size:9.5px;font-family:'JetBrains Mono',monospace;cursor:pointer;text-align:center;transition:all .2s}
+.kc-pct-chip:hover{background:rgba(255,255,255,.08);color:#fff}
 
-.fp-boardlink{display:flex;align-items:center;gap:12px;margin-top:18px;padding:14px 16px;border-radius:16px;
-  border:1px solid var(--hair);background:rgba(255,255,255,.03);transition:all .5s var(--ease)}
-.fp-boardlink:hover{border-color:var(--hair-2);background:rgba(255,255,255,.055)}
-.fp-boardlink .ic{color:var(--live);width:17px;height:17px}
-.fp-boardlink span{font-weight:600;font-size:11px;letter-spacing:.1em;text-transform:uppercase;
-  white-space:nowrap}
-.fp-boardlink em{font-style:normal;font-size:10.5px;color:var(--faint);margin-left:auto;white-space:nowrap}
-.fp-boardlink .ic-sm{color:var(--faint);margin-left:4px}
+.kc-fut-cta{width:100%;padding:12px 0;border-radius:12px;border:0;font-family:Archivo,sans-serif;font-variation-settings:'wdth' 115,'wght' 800;font-size:13px;letter-spacing:.04em;text-transform:uppercase;cursor:pointer;background:#C4F82A;color:#0A0D03;transition:all .2s}
+.kc-fut-cta.sell{background:#FF5E5E;color:#fff}
 
-@media (max-width:1080px){
-  .fp-grid{grid-template-columns:1fr;gap:0}
-  .fp-side{position:static;margin-top:30px;padding-top:30px;border-top:1px solid var(--hair)}
-}
-@media (max-width:560px){
-  .tierrail{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .seg2{grid-template-columns:1fr}
-  .fp-boardlink em{display:none}
-}
-.calc .cr{display:flex;justify-content:space-between;padding:13px 0;border-bottom:1px solid rgba(255,255,255,.055);font-size:12.5px;color:var(--dim)}
-.calc .cr b{color:var(--ink);font-weight:400;font-family:'JetBrains Mono',monospace}
-.calc .cr.boost b{color:var(--amber)}
-.tier{height:100%}
-.tier .top{display:flex;align-items:center;gap:14px;margin-bottom:16px}
-.tier h4{font-size:19px}
-.tier .x{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:20px;color:var(--lime)}
-.tier p{font-size:13px;font-weight:300;color:var(--dim);margin:0 0 16px}
-.risk{height:4px;border-radius:99px;background:rgba(255,255,255,.07);overflow:hidden}
-.risk i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#C4F82A,#FF6A1F)}
-.risk-k{display:flex;justify-content:space-between;font-weight:600;font-size:9px;letter-spacing:.14em;color:var(--faint);margin-top:10px;text-transform:uppercase}
-.fx{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:14px;align-items:center;padding:16px 24px;border-bottom:1px solid rgba(255,255,255,.05)}
-.fx.h{font-weight:600;font-size:9.5px;letter-spacing:.16em;color:var(--faint);text-transform:uppercase;border-bottom:1px solid var(--hair)}
-.fx .team{display:flex;align-items:center;gap:11px;font-size:13px}
-.fx .st{font-weight:600;font-size:9px;letter-spacing:.12em;padding:5px 11px;border-radius:999px;text-transform:uppercase;display:inline-block}
-.st.live{background:rgba(196,248,42,.12);color:var(--lime);border:1px solid rgba(196,248,42,.3)}
-.st.ft{background:rgba(255,255,255,.05);color:var(--dim);border:1px solid var(--hair)}
-.st.soon{background:rgba(255,106,31,.1);color:var(--amber);border:1px solid rgba(255,106,31,.26)}
-.rule{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:14px;padding:14px 24px;border-bottom:1px solid rgba(255,255,255,.05);font-size:13px}
-.rule.h{font-weight:600;font-size:9.5px;letter-spacing:.16em;color:var(--faint);text-transform:uppercase;border-bottom:1px solid var(--hair)}
-.rule .num{color:var(--ink)}
-.countdown{display:flex;gap:10px;margin-top:18px}
-.cd{flex:1;text-align:center;border:1px solid var(--hair);border-radius:14px;padding:14px 6px;background:rgba(255,255,255,.03);box-shadow:var(--inset)}
-.cd b{display:block;font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:300}
-.cd span{font-weight:600;font-size:8.5px;letter-spacing:.16em;color:var(--faint);text-transform:uppercase}
-@media (max-width:1024px){.fp-body{grid-template-columns:1fr}.fp-left{border-right:0;border-bottom:1px solid var(--hair)}}
-@media (max-width:768px){
-  .fp-body{display:flex!important;flex-direction:column!important;width:100%!important;max-width:100%!important;min-width:0!important;box-sizing:border-box!important}
-  .fp-left,.fp-right{width:100%!important;max-width:100%!important;min-width:0!important;padding:22px 16px!important;box-sizing:border-box!important}
-  .fp-left{border-right:0!important;border-bottom:1px solid var(--hair)!important}
-  .fx,.rule{grid-template-columns:1.4fr 1fr!important;padding:12px 14px!important;width:100%!important;box-sizing:border-box!important}
-  .fx>*:nth-child(n+3),.rule>*:nth-child(n+3){display:none!important}
-}
+.kc-fut-tabs{display:flex;gap:16px;border-bottom:1px solid rgba(255,255,255,.08);padding-bottom:4px;margin:20px 0 14px}
+.kc-fut-tab{background:transparent;border:0;color:#8E9AA8;font-family:Montserrat,sans-serif;font-size:13px;font-weight:600;cursor:pointer;padding:6px 0;position:relative}
+.kc-fut-tab.on{color:#fff}
+.kc-fut-tab.on::after{content:"";position:absolute;left:0;right:0;bottom:-5px;height:2px;background:#C4F82A;border-radius:2px}
+
+.kc-pos-card{padding:16px;border-radius:16px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);margin-bottom:12px}
+.kc-pos-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px}
+.kc-pos-name{font-weight:700;font-size:14px;color:#fff;display:flex;align-items:center;gap:6px}
+.kc-pos-pnl{text-align:right;font-family:'JetBrains Mono',monospace}
+.kc-pos-pnl .v{font-size:14.5px;font-weight:700;color:#C4F82A}
+.kc-pos-pnl .p{font-size:11px;color:#C4F82A}
+.kc-pos-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;font-size:11px;color:#8E9AA8;margin-top:10px}
+.kc-pos-grid b{display:block;color:#fff;font-family:'JetBrains Mono',monospace;margin-top:2px}
+
+.tierrail{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.tiercard{display:flex;flex-direction:column;gap:6px;padding:12px 14px;border-radius:12px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);color:#8E9AA8;cursor:pointer;text-align:left}
+.tiercard[aria-pressed="true"]{border-color:#C4F82A;background:rgba(196,248,42,.08);color:#fff}
+.tiercard .t{font-weight:700;font-size:11px;text-transform:uppercase}
+.tiercard .x{font-family:'JetBrains Mono',monospace;font-size:16px;color:#C4F82A}
+.tiercard .risk{height:3px;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden;margin-top:4px}
+.tiercard .risk i{display:block;height:100%;border-radius:99px;background:#C4F82A}
+
+.countdown{display:flex;gap:8px;margin-top:14px}
+.cd{flex:1;text-align:center;border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:10px 4px;background:rgba(255,255,255,.03)}
+.cd b{display:block;font-family:'JetBrains Mono',monospace;font-size:18px;color:#fff}
+.cd span{font-size:8px;letter-spacing:.12em;color:#8E9AA8;text-transform:uppercase}
+
+.calc .cr{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:12px;color:#8E9AA8}
+.calc .cr b{color:#fff;font-family:'JetBrains Mono',monospace}
+.calc .out{padding:14px;border-radius:12px;background:rgba(196,248,42,.06);border:1px solid rgba(196,248,42,.2);margin-top:12px;text-align:center}
+.calc .out .v{font-family:'JetBrains Mono',monospace;font-size:26px;color:#C4F82A;font-weight:700}
 """
 
-fp = []
-fp.append(T('<header class="phead"><div class="wrap"><div class="fp-head" data-reveal>'
-            '<div><h1>FanPlay</h1>'
-            '<div class="fp-round"><span class="dot-live"></span>'
-            '<span>Matchday 07 · closes Fri 18:30</span></div></div>'
-            '<button class="bell" type="button" id="fpBell" aria-label="Matchday alerts" '
-            'aria-haspopup="dialog">@@<span class="dot" id="fpBellDot" hidden></span></button>'
-            '</div><span hidden id="fpActiveCount">2 active</span></div></header>',
-            ic("bell", "ic")))
+fp = ['<main><div class="kc-home-wrap">']
 
-fp.append('<main><section style="padding:26px 0 120px"><div class="wrap"><div class="fp-grid">')
-
-# ── the three decisions, in the order you make them ──
-fp.append(T('<div class="fp-flow" id="pane" role="tabpanel" aria-labelledby="tab-club">'
-            '<div class="fstep" data-reveal>'
-            '<div class="fstep-h"><span class="n">1</span>What you are playing</div>'
-            '<div class="seg2" role="tablist" aria-label="FanPlay mode">'
-            '<button class="tab" role="tab" id="tab-solo" aria-controls="pane" aria-selected="false" '
-            'data-mode="solo">@@<span class="l">Individual</span><span class="s">One player</span></button>'
-            '<button class="tab" role="tab" id="tab-club" aria-controls="pane" aria-selected="true" '
-            'data-mode="club">@@<span class="l">Dream Club</span>'
-            '<span class="s" id="clubModeNote">Whole club</span>'
-            '</button></div>'
-            '<div class="clubrail" id="fpClubs" style="margin-top:0;margin-bottom:16px"></div>'
-            '<div class="fp-sel"><span class="badge" id="selBadge">@@</span>'
-            '<div style="min-width:0"><div class="nm" id="selName">Zero FC</div>'
-            '<p class="sub" id="selSub">4-3-3 · Coach $Arteta · XI + 4 bench</p></div>'
-            '<div class="right">Ownership<span class="up">Verified</span></div></div>'
-            '<div class="line"><span>Fixtures tracked</span><b id="fixtures">9 matches · 4 leagues</b></div>'
-            '<div class="line"><span>Entries live this round</span><b id="fpLive">—</b></div>'
+# Topbar
+fp.append(T('<div class="kc-fut-topbar">'
+            '<div class="kc-pair-btn">'
+            '<span class="kc-pair-sym">$SAKA/FTR</span>'
+            '<span class="kc-tag-perp">Perp</span>'
+            '<span class="kc-tag-lev">10x</span>'
+            '</div>'
+            '<div class="kc-delta-badge">+6.40%</div>'
+            '<div style="display:flex;align-items:center;gap:8px">'
+            '<a class="kc-icon-btn" href="asset.html?a=%24Saka" title="Candlestick Chart" style="width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;color:#8E9AA8;text-decoration:none">@@</a>'
+            '<button class="bell" type="button" id="fpBell" aria-label="Matchday alerts" style="width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;color:#8E9AA8;cursor:pointer">@@<span class="dot" id="fpBellDot" hidden></span></button>'
+            '</div>'
+            '<span hidden id="fpActiveCount">2 active</span>'
             '</div>',
-            ic("boot", "ic"), ic("crest", "ic"), ic("crest", "ic")))
+            ic("candle", "ic"), ic("bell", "ic")))
 
-fp.append('<div class="fstep" data-reveal>'
-          '<div class="fstep-h"><span class="n">2</span>Market</div>'
+# Sub Stats Bar
+fp.append('<div class="kc-fut-stats">'
+          '<div class="kc-stat-item"><span>Mark</span><b>14.80</b></div>'
+          '<div class="kc-stat-item"><span>Index</span><b>14.78</b></div>'
+          '<div class="kc-stat-item"><span>24h High</span><b>15.20</b></div>'
+          '<div class="kc-stat-item"><span>24h Low</span><b>13.90</b></div>'
+          '<div class="kc-stat-item"><span>Funding / Countdown</span><b style="color:#C4F82A">0.0100% 03:42:15</b></div>'
+          '</div>')
+
+# Futures Desk (Order Book + Ticket)
+fp.append('<div class="kc-fut-desk">'
+          '<div class="kc-book-col">'
+          '<div class="kc-book-row ask" style="--w:78%"><span>14.95</span><span style="color:#8E9AA8">4,200</span></div>'
+          '<div class="kc-book-row ask" style="--w:62%"><span>14.90</span><span style="color:#8E9AA8">6,800</span></div>'
+          '<div class="kc-book-row ask" style="--w:45%"><span>14.85</span><span style="color:#8E9AA8">12,500</span></div>'
+          '<div class="kc-last-px"><b>14.80</b><span>≈ $1.19</span></div>'
+          '<div class="kc-book-row bid" style="--w:55%"><span>14.75</span><span style="color:#8E9AA8">8,900</span></div>'
+          '<div class="kc-book-row bid" style="--w:70%"><span>14.70</span><span style="color:#8E9AA8">14,200</span></div>'
+          '<div class="kc-book-row bid" style="--w:85%"><span>14.65</span><span style="color:#8E9AA8">19,500</span></div>'
+          '</div>'
+          '<div class="kc-trade-col">'
+          '<div class="kc-side-tgl" id="futSideTgl">'
+          '<button class="kc-side-btn buy on" type="button" data-side="buy">Open Long</button>'
+          '<button class="kc-side-btn sell" type="button" data-side="sell">Open Short</button>'
+          '</div>'
+          '<div class="kc-input-box"><label>Price</label><input id="futPx" value="14.80" inputmode="decimal"></div>'
+          '<div class="kc-input-box"><label>Qty</label><input id="futQty" value="1,000" inputmode="numeric"></div>'
+          '<div class="kc-pct-chips">'
+          '<button class="kc-pct-chip" type="button" data-fpct="25">25%</button>'
+          '<button class="kc-pct-chip" type="button" data-fpct="50">50%</button>'
+          '<button class="kc-pct-chip" type="button" data-fpct="75">75%</button>'
+          '<button class="kc-pct-chip" type="button" data-fpct="100">100%</button>'
+          '</div>'
+          '<div style="display:flex;justify-content:space-between;font-size:11px;color:#8E9AA8;margin-top:2px">'
+          '<span>Cost: <b style="color:#fff" id="futCost">1,480 FTR</b></span>'
+          '<span>Max: <b style="color:#C4F82A">86,790</b></span>'
+          '</div>'
+          '<button class="kc-fut-cta" id="futGoBtn" type="button">Open Long (Buy)</button>'
+          '</div></div>')
+
+# Lower Tabs: Positions / Orders / Matchday Fantasy
+fp.append('<div class="kc-fut-tabs" id="futTabs">'
+          '<button class="kc-fut-tab on" type="button" data-sec="pos">Positions (1)</button>'
+          '<button class="kc-fut-tab" type="button" data-sec="orders">Open Orders (0)</button>'
+          '<button class="kc-fut-tab" type="button" data-sec="fantasy">Matchday 07 Fantasy</button>'
+          '</div>')
+
+# Section: Positions
+fp.append('<div id="secPos">'
+          '<div class="kc-pos-card">'
+          '<div class="kc-pos-head">'
+          '<div><div class="kc-pos-name">$SAKA Perp <span class="kc-tag-lev">10x Long</span></div>'
+          '<div style="font-size:11px;color:#8E9AA8;margin-top:3px">Isolated · Size: 10,000 shares</div></div>'
+          '<div class="kc-pos-pnl"><div class="v">+1,420.00 FTR</div><div class="p">+28.40% ROE</div></div>'
+          '</div>'
+          '<div class="kc-pos-grid">'
+          '<div><span>Entry Price</span><b>13.90</b></div>'
+          '<div><span>Mark Price</span><b>14.80</b></div>'
+          '<div><span>Liq. Price</span><b style="color:#FF5E5E">7.40</b></div>'
+          '<div><span>Margin</span><b>5,000 FTR</b></div>'
+          '<div><span>TP / SL</span><b>-- / --</b></div>'
+          '<div style="display:flex;align-items:flex-end">'
+          '<button type="button" onclick="showToast(\'Position closed at market price.\', \'success\')" style="padding:4px 10px;border-radius:6px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);color:#fff;font-size:11px;cursor:pointer">Close</button>'
+          '</div></div></div></div>')
+
+# Section: Orders
+fp.append('<div id="secOrders" style="display:none">'
+          '<div style="padding:28px;text-align:center;color:#8E9AA8;font-size:13px">No open limit orders right now.</div>'
+          '</div>')
+
+# Section: Matchday 07 Fantasy (FanPlay)
+fp.append('<div id="secFantasy" style="display:none">'
+          '<div style="display:flex;flex-direction:column;gap:16px">'
+          '<div class="bezel" style="border-radius:20px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.07);overflow:hidden;padding:18px" data-reveal>'
+          '<div class="fstep-h"><span class="n">1</span>Choose Play Mode</div>'
+          '<div class="seg2" role="tablist" style="margin-bottom:14px">'
+          '<button class="tab" role="tab" id="tab-solo" aria-selected="false" data-mode="solo" style="border-radius:12px;padding:12px">'
+          '<span class="l" style="font-weight:700">Individual</span><span class="s" style="font-size:11px;color:#8E9AA8">One player</span></button>'
+          '<button class="tab" role="tab" id="tab-club" aria-selected="true" data-mode="club" style="border-radius:12px;padding:12px">'
+          '<span class="l" style="font-weight:700">Dream Club</span><span class="s" id="clubModeNote" style="font-size:11px;color:#8E9AA8">Whole club</span></button>'
+          '</div>'
+          '<div class="clubrail" id="fpClubs" style="margin-bottom:14px"></div>'
+          '<div class="fp-sel" style="margin-bottom:12px"><span class="badge" id="selBadge"></span>'
+          '<div style="min-width:0"><div class="nm" id="selName">Zero FC</div>'
+          '<p class="sub" id="selSub">4-3-3 · Coach $Arteta</p></div>'
+          '<div class="right">Ownership<span class="up" style="color:#C4F82A">Verified</span></div></div>'
+          '<div class="line"><span>Fixtures tracked</span><b id="fixtures">9 matches · 4 leagues</b></div>'
+          '<div class="line"><span>Entries live this round</span><b id="fpLive">—</b></div>'
+          '</div>')
+
+# Tiers Card
+fp.append('<div class="bezel" style="border-radius:20px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.07);overflow:hidden;padding:18px" data-reveal>'
+          '<div class="fstep-h"><span class="n">2</span>Select Market Tier</div>'
           '<div class="tierrail" id="markets">')
+
 TIERS = [("Simple", 1, "Goals, assists and clean sheets.", 18),
          ("PRO", 1.4, "Adds key passes, duels won and expected goals.", 32),
          ("Elite", 2, "Full performance data, position-weighted.", 50),
          ("Killer", 3, "Elite scoring plus cards, misses and errors against you.", 68),
          ("Viynx Move", 4.5, "Scoring swings with live in-match movement.", 84),
          ("Viynx Max", 7, "Every event counts, at maximum weight.", 100)]
+
 for name, m, note, risk in TIERS:
     fp.append(T('<button class="mkt tiercard"@@ data-m="@@" data-note="@@">'
                 '<span class="t">@@</span><span class="x">×@@</span>'
                 '<span class="risk"><i style="width:@@%"></i></span></button>',
                 ' aria-pressed="true"' if name == "Elite" else ' aria-pressed="false"',
                 m, note, name, ("%g" % m), risk))
-fp.append('</div><p class="mkt-note" id="mktNote">Full performance data, position-weighted.</p></div>')
+fp.append('</div><p class="mkt-note" id="mktNote" style="margin-top:10px;font-size:12px;color:#8E9AA8">Full performance data, position-weighted.</p></div>')
 
-fp.append(T('<div class="fstep" data-reveal>'
-            '<div class="fstep-h"><span class="n">3</span>Stake</div>'
+# Stake & Output
+fp.append(T('<div class="bezel" style="border-radius:20px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.07);overflow:hidden;padding:18px" data-reveal>'
+            '<div class="fstep-h"><span class="n">3</span>Stake &amp; Activate</div>'
             '<div class="field"><label>Amount</label>'
             '<input id="fpStake" value="2,500" inputmode="numeric"></div>'
             '<div class="quick"><button type="button" data-st="1000">1,000</button>'
@@ -1093,34 +1136,24 @@ fp.append(T('<div class="fstep" data-reveal>'
             '<button type="button" class="maxbtn" id="fpMax">Max</button></div>'
             '<div class="line"><span>Available</span><b><span data-bind="balance">128,450</span> $FTR</b></div>'
             '<div class="line"><span>Weekly cap remaining</span><b id="fpCapLeft">—</b></div>'
-            '<div class="capbar"><i id="fpCapBar" style="width:50%"></i></div>'
-            '</div></div>'))
-
-# ── the running answer, pinned beside the form ──
-fp.append(T('<aside class="fp-side" data-reveal>'
-            '<div class="fp-card">'
-            '<div class="k-label">Round closes in</div>'
-            '<div class="countdown"><div class="cd"><b id="fpH">04</b><span>Hours</span></div>'
-            '<div class="cd"><b id="fpM">12</b><span>Mins</span></div>'
-            '<div class="cd"><b id="fpS">38</b><span>Secs</span></div></div>'
-            '<div class="calc" style="margin-top:24px">'
+            '<div class="capbar" style="margin:10px 0"><i id="fpCapBar" style="width:50%"></i></div>'
+            '<div class="calc" style="margin-top:14px">'
             '<div class="cr"><span id="baseLabel">Club base points</span><b id="basePts">100 FP</b></div>'
             '<div class="cr"><span>Market multiplier</span><b id="multPts">×2.0</b></div>'
-            '<div class="cr boost" id="boostRow"><span>Club boost</span><b>+15%</b></div>'
-            '<div class="cr" id="capRow"><span>Captain $Bruno ×1.5</span><b>in base</b></div>'
-            '<div class="out"><div class="k">Projected Fans Point</div>'
+            '<div class="cr boost" id="boostRow"><span>Club boost</span><b style="color:var(--amber)">+15%</b></div>'
+            '<div class="out"><div style="font-size:10px;text-transform:uppercase;color:#8E9AA8;letter-spacing:.12em">Projected Fans Point</div>'
             '<div class="v" id="fpOut">230</div>'
-            '<div class="n" id="fpNote">Club mode · Elite</div></div></div>'
+            '<div style="font-size:11px;color:#8E9AA8" id="fpNote">Club mode · Elite</div></div>'
+            '</div>'
             '@@'
-            '<a class="fp-boardlink" href="liveboard.html">@@<span>Live board</span>'
-            '<em id="fpBoardNote">9 fixtures · 4 with your assets</em>@@</a>'
-            '</div></aside>',
+            '<a class="fp-boardlink" href="liveboard.html" style="margin-top:14px;display:flex;align-items:center;gap:8px;text-decoration:none;font-size:12px;color:#C4F82A">@@<span>Live Matchday Board</span><span style="margin-left:auto;color:#8E9AA8">9 fixtures @@</span></a>'
+            '</div></div></div>',
             btn("Activate entry", tag="button",
-                extra='id="activateEntryBtn" style="margin-top:20px;width:100%;justify-content:space-between"'),
+                extra='id="activateEntryBtn" style="margin-top:16px;width:100%;justify-content:space-between"'),
             ic("pulse", "ic"), ic("arrow", "ic-sm")))
 
-fp.append('</div></div></section>')
-fp.append('</main>')
+fp.append('</div></main>')
+
 
 FP_JS = r"""
 var mode='club', mult=2, mktName='ELITE';
@@ -1329,8 +1362,59 @@ function paintBell(){
 }
 paintBell();
 window.addEventListener('fantrade:statechange', paintBell);
+
+// Futures bottom tabs
+document.querySelectorAll('#futTabs button').forEach(function(b){
+  b.addEventListener('click', function(){
+    document.querySelectorAll('#futTabs button').forEach(function(x){ x.classList.remove('on'); });
+    b.classList.add('on');
+    var sec = b.dataset.sec;
+    el('secPos').style.display = sec === 'pos' ? '' : 'none';
+    el('secOrders').style.display = sec === 'orders' ? '' : 'none';
+    el('secFantasy').style.display = sec === 'fantasy' ? '' : 'none';
+  });
+});
+
+// Futures side toggle
+var futSide = 'buy';
+document.querySelectorAll('#futSideTgl button').forEach(function(b){
+  b.addEventListener('click', function(){
+    document.querySelectorAll('#futSideTgl button').forEach(function(x){ x.classList.remove('on'); });
+    b.classList.add('on');
+    futSide = b.dataset.side;
+    var btn = el('futGoBtn');
+    if(futSide === 'buy'){
+      btn.textContent = 'Open Long (Buy)';
+      btn.className = 'kc-fut-cta';
+    } else {
+      btn.textContent = 'Open Short (Sell)';
+      btn.className = 'kc-fut-cta sell';
+    }
+  });
+});
+
+// Futures percentage chips
+document.querySelectorAll('[data-fpct]').forEach(function(b){
+  b.addEventListener('click', function(){
+    var pct = parseInt(b.dataset.fpct, 10);
+    var px = parseFloat(el('futPx').value) || 14.80;
+    var s = FT.getState();
+    var available = s.wallet.balance || 128450;
+    var marginToUse = (available * (pct / 100)) * 0.1;
+    var qty = Math.floor((marginToUse * 10) / px);
+    el('futQty').value = qty.toLocaleString('en-US');
+    el('futCost').textContent = Math.round(qty * px * 0.1).toLocaleString('en-US') + ' FTR';
+  });
+});
+
+// Futures order submit
+el('futGoBtn').addEventListener('click', function(){
+  var qty = parseInt(String(el('futQty').value).replace(/[^0-9]/g, ''), 10) || 0;
+  if(qty <= 0){ showToast('Enter a valid order quantity.', 'error'); return; }
+  showToast((futSide === 'buy' ? 'Long' : 'Short') + ' order for ' + qty.toLocaleString('en-US') + ' $SAKA placed at 10x leverage.', 'success');
+});
 """
-page("fanplay.html", "FanPlay — Fantrade", "".join(fp), FP_JS, FP_CSS, app=True)
+page("fanplay.html", "Futures — Fantrade", "".join(fp), FP_JS, FP_CSS, app=True)
 
 
 # ══════════════════════════════════════════════════════════
@@ -1360,19 +1444,25 @@ MATCHDAY = [
 ]
 
 LB_CSS = FP_CSS + """
+.kc-home-wrap{max-width:680px;margin:0 auto;padding:12px 16px 84px}
 .bezel.flat .datestrip{margin-bottom:4px}
 """
 
-lb = [T('<main><section class="app-head" style="padding:92px 0 12px"><div class="wrap">'
-        '<a class="crumb" href="fanplay.html" aria-label="Back to FanPlay">@@FanPlay</a>'
-        '<h1 data-reveal style="margin-top:14px">Live board</h1>'
-        '</div></section>', ic("arrow", "ic"))]
-lb.append('<section id="board" style="padding:0 0 120px"><div class="wrap">'
-          '<div class="bento"><div class="bezel flat c8" data-reveal><div class="core">')
+lb = ['<main><div class="kc-home-wrap" style="padding-top:12px;padding-bottom:84px">']
 
-# date strip
-lb.append(T('<div style="padding:0 0 18px">'
-            '<div class="datestrip">'
+# Topbar
+lb.append(T('<div class="kc-topbar" style="display:flex;align-items:center;justify-content:space-between;padding:8px 0 16px">'
+            '<a class="kc-icon-btn" href="fanplay.html" aria-label="Back to Futures" style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;color:#8E9AA8;text-decoration:none">@@</a>'
+            '<div style="font-family:Archivo,sans-serif;font-variation-settings:\'wdth\' 120,\'wght\' 800;font-size:17px;text-transform:uppercase">Matchday Live Board</div>'
+            '<button class="bell" type="button" id="calBtn" aria-label="Calendar" style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;color:#8E9AA8;cursor:pointer">@@</button>'
+            '</div>',
+            ic("arrow", "ic"), ic("calendar", "ic")))
+
+lb.append('<div style="display:flex;flex-direction:column;gap:16px">')
+
+# date strip card
+lb.append(T('<div class="bezel" style="border-radius:20px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.07);overflow:hidden;padding:14px" data-reveal>'
+            '<div class="datestrip" style="margin-bottom:0">'
             '<button class="livetgl" type="button" id="liveOnly" aria-pressed="false">'
             '<span class="dot-live"></span>Live only</button>'
             '<div class="dateline">'
@@ -1382,14 +1472,12 @@ lb.append(T('<div style="padding:0 0 18px">'
             '<button type="button" aria-pressed="true"><small>Today</small><b>29 Sep</b></button>'
             '<button type="button" aria-pressed="false"><small>Tue</small><b>30 Sep</b></button>'
             '<span class="nudge">@@</span></div>'
-            '<button class="bell" type="button" id="calBtn" aria-label="Open the full calendar" '
-            'style="border-radius:14px">@@</button>'
             '</div></div></div>',
-            "‹", "›", ic("calendar", "ic")))
+            "‹", "›"))
 
 # featured match
-lb.append(T('<div style="padding:0">'
-            '<div class="feat islive" id="featCard">'
+lb.append(T('<div class="bezel" style="border-radius:20px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.07);overflow:hidden" data-reveal>'
+            '<div class="feat islive" id="featCard" style="border:0">'
             '<div class="feat-top"><button type="button" id="featHide">Hide</button>'
             '<div class="mid"><b>Emirates Stadium</b><span>Matchweek 7</span></div>'
             '<a href="#board" style="color:var(--faint)">Match</a></div>'
@@ -1403,15 +1491,16 @@ lb.append(T('<div style="padding:0">'
             ic("stadium", "ic")))
 
 # competition groups
-lb.append('<div id="boardList">')
+lb.append('<div class="bezel" style="border-radius:20px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.07);overflow:hidden" data-reveal><div class="core pad">'
+          '<div id="boardList">')
 for code, comp, sub, fixtures in MATCHDAY:
-    lb.append(T('<div class="comp">@@<div><b>@@</b><span>@@</span></div>'
-                '<a class="more" href="#board">All fixtures @@</a></div>',
+    lb.append(T('<div class="comp" style="padding:14px 10px 8px">@@<div><b>@@</b><span>@@</span></div>'
+                '<a class="more" href="#board">All @@</a></div>',
                 flag(code), comp, sub, ic("arrow", "ic-sm")))
     for fid, home, hsh, hc, hs, away, ash, ac, a_s, st, clock, mine in fixtures:
         hw = hs.isdigit() and a_s.isdigit() and int(hs) > int(a_s)
         aw = hs.isdigit() and a_s.isdigit() and int(a_s) > int(hs)
-        lb.append(T('<div class="fixt@@" data-fid="@@" data-live="@@">'
+        lb.append(T('<div class="fixt@@" data-fid="@@" data-live="@@" style="margin:0 0 8px">'
                     '<div class="stat">@@</div>'
                     '<div class="teams">'
                     '<div class="tm@@"><span class="tcrest sm" style="background:@@">@@</span>'
@@ -1428,20 +1517,18 @@ for code, comp, sub, fixtures in MATCHDAY:
                     fid, ic("star", "ic")))
 lb.append('</div>')
 
-lb.append('<div style="padding:16px 0 26px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">'
+lb.append('<div style="padding:12px 0 6px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">'
           '<span style="font-size:11.5px;color:var(--faint);font-weight:300" id="boardNote">'
           '9 fixtures · 4 with your assets</span></div>')
-
 lb.append('</div></div>')
 
-# side column — countdown + running total
-lb.append('<div class="c4" style="display:flex;flex-direction:column;gap:30px">'
-          '<div class="bezel flat" data-reveal><div class="core"><div class="k-label">Round closes in</div>'
+# side cards — countdown + running total
+lb.append('<div class="bezel" style="border-radius:20px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.07);overflow:hidden" data-reveal><div class="core pad"><div class="k-label">Round closes in</div>'
           '<div class="countdown"><div class="cd"><b id="cdH">04</b><span>Hours</span></div>'
           '<div class="cd"><b id="cdM">12</b><span>Mins</span></div>'
           '<div class="cd"><b id="cdS">38</b><span>Secs</span></div></div>'
           '</div></div>'
-          '<div class="bezel flat" data-reveal style="flex:1"><div class="core"><div class="k-label">Running total</div>'
+          '<div class="bezel" style="border-radius:20px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.07);overflow:hidden" data-reveal><div class="core pad"><div class="k-label">Running total</div>'
           '<div class="value-big" id="runFP">175 <small>FP</small></div>'
           '<div class="delta">Club mode · Elite · +15%</div>'
           '<div style="margin-top:20px"><div class="b-row"><span>Starters scoring</span><b>7 of 11</b></div>'
@@ -1451,9 +1538,10 @@ lb.append('<div class="c4" style="display:flex;flex-direction:column;gap:30px">'
           '<div class="k-label" style="margin-top:26px">Club form</div>'
           '<div class="form5" style="margin-bottom:12px">'
           '<i class="l">L</i><i class="l">L</i><i class="w">W</i><i class="w">W</i><i class="w">W</i></div>'
-          '</div></div></div></div></div></section>')
+          '</div></div>')
 
-lb.append('</div></div></div></div></div></section></main>')
+lb.append('</div></div></main>')
+
 
 LIVE_JS = r"""
 var left=4*3600+12*60+38;

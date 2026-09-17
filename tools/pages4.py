@@ -510,124 +510,112 @@ page("asset.html", "Market — Fantrade", "".join(asset), ASSET_JS, ASSET_CSS)
 # TRADE — the terminal: bid, buy, sell, swap
 # ══════════════════════════════════════════════════════════════════
 TRADE_CSS = """
+/* KuCoin-style Mobile Crypto Trading Terminal */
+.kc-trade-wrap{max-width:680px;margin:0 auto;padding:8px 16px 110px}
+.kc-trade-topbar{display:flex;align-items:center;justify-content:space-between;padding:6px 0 14px;border-bottom:1px solid rgba(255,255,255,.06);margin-bottom:12px}
+.kc-trade-top-left{display:flex;align-items:center;gap:10px}
+.kc-trade-pair-title{font-family:Archivo,sans-serif;font-variation-settings:'wdth' 120,'wght' 800;font-size:18px;display:flex;align-items:center;gap:6px;color:var(--ink)}
+.kc-trade-pair-title .kc-quote{font-size:13px;color:#767c82;font-weight:600}
+.kc-trade-tag{background:rgba(255,255,255,.08);color:#8E9AA8;font-size:10px;font-weight:700;padding:2px 6px;border-radius:4px}
+.kc-trade-delta{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:var(--lime);margin-left:4px}
+.kc-trade-delta.down{color:#FF3B47}
+.kc-trade-top-right{display:flex;align-items:center;gap:8px}
+
 @media (max-width:640px){
-  /* drop the "placed" column so side, size, price and the action stay on one row */
   #tLedger .dh,#tLedger .dr{grid-template-columns:52px 1fr 1fr 76px!important;gap:8px;padding:12px 0}
   #tLedger .dh>*:nth-child(4),#tLedger .dr>*:nth-child(4){display:none}
   #tLedger .dh>*:nth-child(5),#tLedger .dr>*:nth-child(5){text-align:right}
   #tLedger .dh{font-size:8px;letter-spacing:.12em}
 }
 #tLedger .dh,#tLedger .dr{padding-left:0;padding-right:0}
-/* The terminal reads like a spot exchange: the book and the ticket side by
-   side at every width, then the ledger under them. */
 .tgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.16fr);gap:16px;align-items:start}
-@media (min-width:1100px){.tgrid{grid-template-columns:minmax(0,360px) minmax(0,1fr);gap:34px}}
-@media (max-width:420px){.tgrid{gap:10px}}
-
-.pairhead{display:flex;align-items:center;gap:13px;flex-wrap:wrap}
-.pairhead .coin{width:38px;height:38px}
-.pairhead .coin .ic{width:18px;height:18px}
-.pairhead .pr{font-family:Archivo;font-variation-settings:'wdth' 120,'wght' 800;text-transform:uppercase;
-  font-size:clamp(17px,2.4vw,22px);line-height:1;white-space:nowrap}
-.pairhead .pr em{font-style:normal;color:var(--faint)}
-.pairhead .dlt{font-family:'JetBrains Mono',monospace;font-size:13px}
-.pairhead .chip{margin-left:auto;display:flex;align-items:center;gap:8px;flex:none}
-.pairhead .chip a{display:grid;place-items:center;width:34px;height:34px;border-radius:11px;
-  border:1px solid var(--hair);background:rgba(255,255,255,.04);color:var(--dim);box-shadow:var(--inset);
-  transition:all .5s var(--ease)}
-.pairhead .chip a:hover{color:var(--lime);border-color:rgba(196,248,42,.4)}
-.pairhead .chip .ic{width:16px;height:16px}
+@media (max-width:480px){.tgrid{grid-template-columns:1fr 1.15fr;gap:10px}}
 
 /* order book footer: tick size + depth split */
-.bkfoot{display:flex;align-items:center;gap:8px;margin-top:12px}
-.ticksel{display:flex;align-items:center;gap:8px;flex:1;min-width:0;border:1px solid var(--hair);
-  border-radius:10px;background:rgba(255,255,255,.03);box-shadow:var(--inset);padding:6px 10px}
+.bkfoot{display:flex;align-items:center;gap:8px;margin-top:10px}
+.ticksel{display:flex;align-items:center;gap:8px;flex:1;min-width:0;border:1px solid rgba(255,255,255,.08);
+  border-radius:8px;background:rgba(255,255,255,.03);box-shadow:var(--inset);padding:5px 8px}
 .ticksel select{flex:1;min-width:0;border:0;background:transparent;color:var(--ink);outline:none;
-  cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px}
+  cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11px}
 .ticksel select option{background:#0A0B0C}
 .ticksel .chev{flex:none}
-.bkbtn{display:grid;place-items:center;width:36px;height:34px;flex:none;border-radius:10px;
-  border:1px solid var(--hair);background:rgba(255,255,255,.04);color:var(--dim);box-shadow:var(--inset);
-  transition:all .5s var(--ease)}
+.bkbtn{display:grid;place-items:center;width:32px;height:32px;flex:none;border-radius:8px;
+  border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.04);color:#767c82;transition:all .2s}
 .bkbtn:hover{color:var(--lime);border-color:rgba(196,248,42,.4)}
-.bkbtn .ic{width:15px;height:15px}
-/* the ladder tints stay behind the numbers, not in front of them */
+.bkbtn .ic{width:14px;height:14px}
 .book2 .b2row i{opacity:.72}
 .book2 .last span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 @media (max-width:420px){
   .book2 .bh{font-size:8px}
-  .b2row{padding:4px 5px;font-size:10.5px}
-  .book2 .last b{font-size:14px}
-  .book2 .last span{font-size:9.5px}
+  .b2row{padding:3px 4px;font-size:10px}
+  .book2 .last b{font-size:13px}
+  .book2 .last span{font-size:9px}
   .bkfoot{gap:6px}
-  .ticksel{padding:6px 8px}
-  .ticksel select{font-size:10.5px}
+  .ticksel{padding:5px 6px}
+  .ticksel select{font-size:10px}
 }
 
-/* buy / sell / swap */
-.sideseg{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:4px;border-radius:14px;
-  background:rgba(255,255,255,.035);border:1px solid var(--hair);box-shadow:var(--inset);margin-bottom:12px}
-.sideseg button{border:0;background:transparent;color:var(--faint);border-radius:11px;padding:11px 0;
-  cursor:pointer;font-family:Montserrat,sans-serif;font-weight:600;font-size:11px;letter-spacing:.12em;
-  text-transform:uppercase;transition:all .45s var(--ease)}
+/* buy / sell / swap pills */
+.sideseg{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:3px;border-radius:10px;
+  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);margin-bottom:12px}
+.sideseg button{border:0;background:transparent;color:#767c82;border-radius:8px;padding:9px 0;
+  cursor:pointer;font-family:Montserrat,sans-serif;font-weight:700;font-size:11.5px;letter-spacing:.04em;
+  text-transform:uppercase;transition:all .2s}
 .sideseg button:hover{color:var(--ink)}
-.sideseg button[aria-pressed="true"]{background:rgba(196,248,42,.14);color:var(--lime);
-  box-shadow:inset 0 0 0 1px rgba(196,248,42,.34)}
-.sideseg button[data-m="sell"][aria-pressed="true"]{background:rgba(255,94,94,.14);color:var(--red);
-  box-shadow:inset 0 0 0 1px rgba(255,94,94,.34)}
-.sideseg button[data-m="swap"][aria-pressed="true"]{background:rgba(255,255,255,.09);color:var(--ink);
-  box-shadow:inset 0 0 0 1px var(--hair-2)}
+.sideseg button[aria-pressed="true"]{background:var(--lime);color:#0A0D03;font-weight:800}
+.sideseg button[data-m="sell"][aria-pressed="true"]{background:#FF3B47;color:#fff}
+.sideseg button[data-m="swap"][aria-pressed="true"]{background:rgba(255,255,255,.12);color:var(--ink)}
 
-/* a field carries its label above the value, steppers on the right */
-.tfield{display:flex;align-items:center;gap:10px;border:1px solid var(--hair);border-radius:12px;
-  background:rgba(255,255,255,.03);box-shadow:var(--inset);padding:9px 4px 9px 13px;margin-bottom:8px}
+/* Fields */
+.tfield{display:flex;align-items:center;gap:8px;border:1px solid rgba(255,255,255,.08);border-radius:10px;
+  background:rgba(255,255,255,.03);padding:8px 4px 8px 12px;margin-bottom:8px}
 .tfield .bd{flex:1;min-width:0}
-.tfield .lbl{display:block;font-weight:600;font-size:8.5px;letter-spacing:.14em;text-transform:uppercase;
-  color:var(--faint);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tfield .lbl{display:block;font-weight:600;font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;
+  color:#767c82;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tfield input{display:block;width:100%;border:0;background:transparent;color:var(--ink);outline:none;
-  font-family:'JetBrains Mono',monospace;font-size:15px;padding:4px 0 0}
-.tfield input::placeholder{color:var(--faint)}
-.tfield input:read-only{color:var(--dim)}
+  font-family:'JetBrains Mono',monospace;font-size:14px;padding:3px 0 0}
+.tfield input::placeholder{color:#5A605B}
+.tfield input:read-only{color:#8B918A}
 .tfield .pm{flex:none;display:flex;align-items:stretch;align-self:stretch}
-.tfield .pm button{width:34px;border:0;background:transparent;color:var(--dim);cursor:pointer;
-  font-size:17px;line-height:1;transition:color .4s var(--ease)}
-.tfield .pm button:first-child{border-right:1px solid var(--hair)}
+.tfield .pm button{width:30px;border:0;background:transparent;color:#767c82;cursor:pointer;
+  font-size:16px;line-height:1;transition:color .2s}
+.tfield .pm button:first-child{border-right:1px solid rgba(255,255,255,.08)}
 .tfield .pm button:hover{color:var(--lime)}
 .tfield[hidden]{display:none}
 
-.tline{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:7px 0;font-size:11.5px;
-  color:var(--faint)}
-.tline b{font-family:'JetBrains Mono',monospace;font-weight:400;color:var(--ink);font-size:12px}
-.tline .dash{border-bottom:1px dashed var(--hair-2);padding-bottom:1px}
-.bigbtn{display:block;width:100%;border:0;border-radius:14px;padding:16px 0;margin-top:14px;cursor:pointer;
-  font-family:Montserrat,sans-serif;font-weight:600;font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;
-  background:var(--lime);color:#0A0D03;box-shadow:var(--inset),0 16px 38px -16px rgba(196,248,42,.75);
-  transition:filter .4s var(--ease)}
-.bigbtn:hover{filter:brightness(1.06)}
-.bigbtn.sell{background:var(--red);color:#fff;box-shadow:var(--inset),0 16px 38px -16px rgba(255,94,94,.7)}
-.bigbtn.neutral{background:rgba(255,255,255,.08);color:var(--ink);border:1px solid var(--hair-2);
-  box-shadow:var(--inset)}
-
-@media (max-width:420px){
-  .tfield .lbl .unit{display:none}
-  .tfield{padding:8px 2px 8px 10px}
-  .tfield input{font-size:13.5px}
-  .tfield .pm button{width:28px;font-size:15px}
-  .sideseg button{font-size:9.5px;letter-spacing:.08em;padding:10px 0}
-}
+.tline{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:6px 0;font-size:11.5px;color:#767c82}
+.tline b{font-family:'JetBrains Mono',monospace;font-weight:500;color:var(--ink);font-size:12px}
+.bigbtn{display:block;width:100%;border:0;border-radius:10px;padding:14px 0;margin-top:12px;cursor:pointer;
+  font-family:Archivo,sans-serif;font-variation-settings:'wdth' 115,'wght' 800;font-size:13.5px;letter-spacing:.04em;text-transform:uppercase;
+  background:var(--lime);color:#0A0D03;transition:filter .2s}
+.bigbtn:hover{filter:brightness(1.08)}
+.bigbtn.sell{background:#FF3B47;color:#fff}
+.bigbtn.neutral{background:rgba(255,255,255,.08);color:var(--ink);border:1px solid rgba(255,255,255,.14)}
 """
 
-trade = [T('<main><section class="app-head" style="padding:92px 0 14px"><div class="wrap">'
-           '<a class="crumb" href="asset.html" id="tBack" aria-label="Market page">@@Market</a>'
-           '<div class="pairhead" data-reveal style="margin-top:13px">'
-           '<span class="coin" id="tCoin">@@</span>'
-           '<div class="pr"><span id="tSym">$Saka</span><em>/$FTR</em></div>'
-           '<div class="dlt" id="tDelta">+6.40%</div>'
-           '<span class="chip"><a href="asset.html" id="tChart" aria-label="Open the chart">@@</a></span>'
-           '</div></div></section>',
-           ic("arrow", "ic"), ic("boot", "ic"), ic("market", "ic"))]
-
-trade.append('<section style="padding:0 0 120px"><div class="wrap"><div class="tgrid">')
+trade = [T('<main><div class="kc-trade-wrap">'
+           '<!-- Top Navigation Bar -->'
+           '<div class="kc-trade-topbar">'
+           '  <div class="kc-trade-top-left">'
+           '    <a href="exchange.html" class="kc-p-back" title="Back to Markets">'
+           '      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>'
+           '    </a>'
+           '    <div class="kc-trade-pair-title">'
+           '      <span id="tSym">$Saka</span><span class="kc-quote">/FTR</span>'
+           '      <span class="kc-trade-tag">10x</span>'
+           '      <span class="kc-trade-delta" id="tDelta">+6.40%</span>'
+           '    </div>'
+           '  </div>'
+           '  <div class="kc-trade-top-right">'
+           '    <a href="asset.html" id="tChart" class="kc-icon-btn" title="Candlestick Chart">'
+           '      <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>'
+           '    </a>'
+           '    <button type="button" class="kc-icon-btn" title="Options">'
+           '      <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>'
+           '    </button>'
+           '  </div>'
+           '</div>'
+           '<div class="tgrid">')]
 
 # ── the book ──
 trade.append(T('<div data-reveal>'
@@ -741,20 +729,21 @@ trade.append('<div class="flat-sep" data-reveal>'
              '<span id="tcAssets">(0)</span></button>'
              '</div><div id="tLedger"></div></div>')
 
-trade.append('</div></section></main>')
+trade.append('</div></div></main>')
 
 TRADE_JS = PICK_JS + r"""
 document.title = 'Trade ' + A.t + ' — Fantrade';
 var el = function(id){ return document.getElementById(id); };
 var mode = param('side') === 'sell' ? 'sell' : 'buy', otype = 'limit', view = 'open';
 
-el('tBack').href = 'asset.html?a=' + encodeURIComponent(A.t);
-el('tCoin').className = 'coin' + (A.c ? ' am' : '');
-el('tCoin').innerHTML = '<svg class="ic" aria-hidden="true"><use href="#i-' + (A.c ? 'whistle' : 'boot')
-  + '"/></svg>';
-el('tSym').textContent = A.t;
-el('tQtyUnit').textContent = A.t;
-el('tChart').href = 'asset.html?a=' + encodeURIComponent(A.t);
+if(el('tBack')) el('tBack').href = 'asset.html?a=' + encodeURIComponent(A.t);
+if(el('tCoin')){
+  el('tCoin').className = 'coin' + (A.c ? ' am' : '');
+  el('tCoin').innerHTML = '<svg class="ic" aria-hidden="true"><use href="#i-' + (A.c ? 'whistle' : 'boot') + '"/></svg>';
+}
+if(el('tSym')) el('tSym').textContent = A.t;
+if(el('tQtyUnit')) el('tQtyUnit').textContent = A.t;
+if(el('tChart')) el('tChart').href = 'asset.html?a=' + encodeURIComponent(A.t);
 el('tDelta').textContent = (A.d >= 0 ? '+' : '') + A.d.toFixed(2) + '%';
 el('tDelta').style.color = A.d >= 0 ? 'var(--lime)' : 'var(--red)';
 el('tLimit').value = A.p.toFixed(2);
@@ -1042,15 +1031,20 @@ def idx_chart(vals, w=620, h=180):
             '</svg>' % (w, h, h, " ".join(pa), w, h, " ".join(pb), " ".join(pa)))
 
 
-dv = [T('<main><section class="app-head" style="padding-bottom:26px"><div class="wrap">'
-        '<div data-reveal>@@</div>'
-        '<h1 data-reveal style="margin-top:20px">Divisions</h1>'
-        '</div></section>',
-        crumb("leaderboard.html", "Back to the table"))]
+dv = ['<main><div class="kc-home-wrap" style="padding-top:12px;padding-bottom:84px">']
 
-dv.append('<section style="padding:6px 0 130px"><div class="wrap"><div class="bento">')
+# Top Bar
+dv.append(T('<div class="kc-topbar" style="display:flex;align-items:center;justify-content:space-between;padding:8px 0 16px">'
+            '<a class="kc-icon-btn" href="leaderboard.html" aria-label="Back to Leaderboard" style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;color:#8E9AA8;text-decoration:none">@@</a>'
+            '<div style="font-family:Archivo,sans-serif;font-variation-settings:\'wdth\' 120,\'wght\' 800;font-size:17px;text-transform:uppercase">Divisions &amp; Tiers</div>'
+            '<div style="width:36px"></div>'
+            '</div>',
+            ic("arrow", "ic")))
 
-dv.append(T('<div class="bezel c5" data-reveal><div class="core pad">'
+# Content Stack
+dv.append('<div style="display:flex;flex-direction:column;gap:16px">')
+
+dv.append(T('<div class="bezel" style="border-radius:20px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.07);overflow:hidden" data-reveal><div class="core pad">'
             '<div class="k-label">The three tiers</div>'
             '<div class="div-card"><span class="dot" style="background:#C4F82A"></span>'
             '<div><b>Apex · Tier 1</b><span class="r">Ranks 1–150 worldwide. Your club is here.</span></div>'
@@ -1070,7 +1064,7 @@ dv.append(T('<div class="bezel c5" data-reveal><div class="core pad">'
             btn("Back to the table", "btn-glass", "leaderboard.html",
                 extra='style="width:100%;justify-content:space-between"')))
 
-dv.append(T('<div class="bezel c7" data-reveal><div class="core pad">'
+dv.append(T('<div class="bezel" style="border-radius:20px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.07);overflow:hidden" data-reveal><div class="core pad">'
             '<div class="rowhead"><div class="k-label">Syndicate portfolio index</div>'
             '<span class="tag lime" style="margin-left:auto">▲ 28.4% since GW24</span></div>'
             '<div style="height:180px">@@</div>'
@@ -1086,33 +1080,30 @@ dv.append(T('<div class="bezel c7" data-reveal><div class="core pad">'
             'tactical synergy has been worth over the cycle.</p>'
             '</div></div>', idx_chart(IDX)))
 
-dv.append(T('<div class="bezel c12" data-reveal><div class="core pad">'
+dv.append(T('<div class="bezel" style="border-radius:20px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.07);overflow:hidden" data-reveal><div class="core pad">'
             '<div class="k-label">How the table is built</div>'
-            '<div class="statgrid" style="grid-template-columns:repeat(4,minmax(0,1fr));margin-top:6px">'
+            '<div class="statgrid" style="grid-template-columns:repeat(2,minmax(0,1fr));margin-top:6px;gap:12px">'
             '<div class="mini"><div class="k">01 · Raw performance</div>'
             '<p style="font-size:12.5px;color:var(--dim);font-weight:300;margin:10px 0 0;line-height:1.6">'
-            'Every eligible appearance by an asset you own scores against the published rules — goals, '
-            'assists, clean sheets, duels, defensive actions.</p></div>'
+            'Every appearance scores goals, assists, clean sheets, duels, and defensive actions.</p></div>'
             '<div class="mini"><div class="k">02 · Captain weighting</div>'
             '<p style="font-size:12.5px;color:var(--dim);font-weight:300;margin:10px 0 0;line-height:1.6">'
-            'The armband multiplies one player\'s return by 1.5x. Choosing it is the single biggest weekly '
-            'decision most managers get wrong.</p></div>'
+            'The armband multiplies return by 1.5x on your chosen key asset.</p></div>'
             '<div class="mini"><div class="k">03 · Squad synergy</div>'
             '<p style="font-size:12.5px;color:var(--dim);font-weight:300;margin:10px 0 0;line-height:1.6">'
-            'A full eleven in natural positions, teammate links and a coach whose real shape matches yours '
-            'compound into the club multiplier.</p></div>'
+            'Teammate links and coach shape synergy compound into the club multiplier.</p></div>'
             '<div class="mini"><div class="k">04 · Settlement</div>'
             '<p style="font-size:12.5px;color:var(--dim);font-weight:300;margin:10px 0 0;line-height:1.6">'
-            'Points convert to $FTR at the tier rate you staked at. Top-150 clubs are paid first, on the '
-            'last final whistle of the window.</p></div></div>'
+            'Points convert to $FTR. Top-150 clubs are settled first on final whistle.</p></div></div>'
             '<div style="display:flex;gap:10px;margin-top:22px;flex-wrap:wrap">@@@@</div>'
             '</div></div>',
             btn("Read the scoring rules", "btn-glass", "how-it-works.html#rules"),
             btn("Improve your synergy", href="clubs.html")))
 
-dv.append('</div></div></section></main>')
+dv.append('</div></div></main>')
 
 page("divisions.html", "Divisions — Fantrade", "".join(dv), "", """
+.kc-home-wrap{max-width:680px;margin:0 auto;padding:12px 16px 84px}
 .chart-x{display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:10px;
   color:var(--faint);margin-top:10px}
 .div-card{border:1px solid var(--hair);background:rgba(255,255,255,.03);border-radius:18px;padding:20px;
@@ -1125,6 +1116,7 @@ page("divisions.html", "Divisions — Fantrade", "".join(dv), "", """
 .div-card .pp em{font-style:normal;font-family:'JetBrains Mono',monospace;font-size:15px;color:var(--lime)}
 .div-card .pp span{display:block;font-weight:600;font-size:8.5px;letter-spacing:.14em;color:var(--faint);
   text-transform:uppercase;margin-top:5px}
-""")
+""", app=True)
+
 
 print("built divisions.html")
