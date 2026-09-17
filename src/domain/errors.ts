@@ -75,3 +75,62 @@ export class InvalidOrderInputError extends DomainError {
     super(message, 'INVALID_ORDER_INPUT', 400);
   }
 }
+
+export class InsufficientAvailableSharesError extends DomainError {
+  constructor(symbol: string, available: number, requested: number) {
+    super(
+      `Insufficient available shares of ${symbol} to stake in FanPlay. Owned available: ${available}, requested stake: ${requested}.`,
+      'INSUFFICIENT_AVAILABLE_SHARES',
+      400
+    );
+  }
+}
+
+export class MatchStartedError extends DomainError {
+  constructor(matchId: string) {
+    super(`Cannot activate FanPlay: match ${matchId} has already reached or passed its activation cutoff point.`, 'MATCH_STARTED', 400);
+  }
+}
+
+export class MarketDisabledError extends DomainError {
+  constructor(tier: string) {
+    super(`FanPlay market tier '${tier}' is currently disabled.`, 'MARKET_DISABLED', 403);
+  }
+}
+
+export class OptionConflictError extends DomainError {
+  constructor(message: string) {
+    super(message, 'OPTION_CONFLICT', 400);
+  }
+}
+
+export class InvalidSelectionError extends DomainError {
+  constructor(message: string) {
+    super(message, 'INVALID_SELECTION', 400);
+  }
+}
+
+export class FanPlayNotFoundError extends DomainError {
+  constructor(fanPlayId: string) {
+    super(`FanPlay position ${fanPlayId} not found.`, 'FANPLAY_NOT_FOUND', 404);
+  }
+}
+
+export class AlreadySettledError extends DomainError {
+  constructor(fanPlayId: string) {
+    super(`FanPlay position ${fanPlayId} has already been settled.`, 'ALREADY_SETTLED', 400);
+  }
+}
+
+export class SettlementUnavailableError extends DomainError {
+  constructor(reason: string) {
+    super(`Settlement unavailable: ${reason}`, 'SETTLEMENT_UNAVAILABLE', 400);
+  }
+}
+
+export class DataUnavailableError extends DomainError {
+  constructor(source: string) {
+    super(`Authoritative football data is currently unavailable from ${source}.`, 'DATA_UNAVAILABLE', 503);
+  }
+}
+

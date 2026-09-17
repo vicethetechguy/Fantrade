@@ -81,3 +81,136 @@ export interface SwapResult {
   dustRefund: number;
   timestamp: string;
 }
+
+// ============================================================
+// FANPLAY DOMAIN TYPES (PROMPT 4)
+// ============================================================
+
+export type FanPlayType = 'INDIVIDUAL' | 'TEAM';
+
+export type FanPlayStatus =
+  | 'DRAFT'
+  | 'ACTIVE'
+  | 'LIVE'
+  | 'PENDING_SETTLEMENT'
+  | 'SETTLED'
+  | 'CANCELLED'
+  | 'SUSPENDED'
+  | 'VOID'
+  | 'DISPUTED';
+
+export type MarketTier =
+  | 'SIMPLE'
+  | 'PRO'
+  | 'ELITE'
+  | 'KILLER'
+  | 'VIYNX_MOVE'
+  | 'VIYNX_MAX';
+
+export type PredictionType =
+  | 'BOOLEAN'
+  | 'THRESHOLD'
+  | 'EXACT'
+  | 'RANGE'
+  | 'TEAM_RESULT';
+
+export type OptionDifficulty = 'EASY' | 'MEDIUM' | 'HARD' | 'EXTREME';
+
+export type OptionEvaluationResult = 'PENDING' | 'SUCCESS' | 'FAILURE' | 'VOID';
+
+export type MatchStatus =
+  | 'SCHEDULED'
+  | 'LINEUPS_CONFIRMED'
+  | 'LIVE'
+  | 'HALFTIME'
+  | 'FULL_TIME'
+  | 'POSTPONED'
+  | 'ABANDONED'
+  | 'CANCELLED';
+
+export type FootballEventType =
+  | 'GOAL'
+  | 'ASSIST'
+  | 'YELLOW_CARD'
+  | 'RED_CARD'
+  | 'SHOT'
+  | 'SHOT_ON_TARGET'
+  | 'KEY_PASS'
+  | 'FOUL'
+  | 'OFFSIDE'
+  | 'SUBSTITUTION'
+  | 'MINUTES_PLAYED'
+  | 'TEAM_RESULT'
+  | 'CORNERS'
+  | 'CARDS';
+
+export type PlayerMatchEligibility =
+  | 'CONFIRMED_STARTER'
+  | 'BENCH'
+  | 'INJURED'
+  | 'SUSPENDED'
+  | 'UNKNOWN';
+
+export interface EvaluationRule {
+  metric: string;
+  op: 'gte' | 'lte' | 'eq' | 'gt' | 'lt' | 'between' | 'contains' | 'avoid';
+  value?: number | string | boolean;
+  min?: number;
+  max?: number;
+}
+
+export interface CreateFanPlayInput {
+  userId: string;
+  type?: FanPlayType;
+  assetSymbol?: string;
+  dreamClubId?: string;
+  matchId: string;
+  marketTier: MarketTier;
+  selectedOptionIds: string[];
+  stakedShares: number;
+  idempotencyKey?: string;
+  teamExposure?: number;
+}
+
+export interface FanPlayPreview {
+  assetSymbol?: string;
+  matchName: string;
+  marketTier: MarketTier;
+  stakedShares: number;
+  selectionsCount: number;
+  maxPotentialFP: number;
+  minPotentialFP: number;
+  maxPotentialFTR: number;
+  minPotentialFTR: number;
+  lockedShares: number;
+}
+
+export interface NormalizedFootballEvent {
+  matchId: string;
+  minute: number;
+  timestamp?: Date;
+  eventType: FootballEventType;
+  playerId?: string;
+  playerExternalId?: string;
+  teamId?: string;
+  value?: number;
+  metadata?: Record<string, any>;
+}
+
+export interface NormalizedPlayerStats {
+  assetId: string;
+  matchId: string;
+  eligibility: PlayerMatchEligibility;
+  minutesPlayed: number;
+  goals: number;
+  assists: number;
+  shots: number;
+  shotsOnTarget: number;
+  keyPasses: number;
+  yellowCards: number;
+  redCards: number;
+  foulsCommitted: number;
+  foulsDrawn: number;
+  teamWon?: boolean;
+}
+

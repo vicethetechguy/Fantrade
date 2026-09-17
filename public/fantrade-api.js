@@ -129,6 +129,75 @@
         }),
       });
     },
+
+    // FanPlay Engine Methods (Prompt 4)
+    async getFanPlayMarkets() {
+      return request('/api/fanplay/markets');
+    },
+
+    async getFanPlayMatches() {
+      return request('/api/fanplay/matches');
+    },
+
+    async getFanPlayOptions(assetIdOrParams, matchId, marketTier) {
+      let params;
+      if (typeof assetIdOrParams === 'object' && assetIdOrParams !== null) {
+        params = assetIdOrParams;
+      } else {
+        params = {};
+        if (assetIdOrParams) params.assetId = assetIdOrParams;
+        if (matchId) params.matchId = matchId;
+        if (marketTier) params.marketTier = marketTier;
+      }
+      const q = new URLSearchParams(params).toString();
+      return request(`/api/fanplay/options${q ? '?' + q : ''}`);
+    },
+
+    async getFanPlayEligibleAssets() {
+      return request('/api/fanplay/eligible-assets');
+    },
+
+    async previewFanPlay(payload) {
+      return request('/api/fanplay/preview', {
+        method: 'POST',
+        body: JSON.stringify(payload),
+      });
+    },
+
+    async activateFanPlay(payload) {
+      const idempotencyKey = 'fp-' + Date.now() + '-' + Math.random().toString(36).substring(2, 8);
+      return request('/api/fanplay/activate', {
+        method: 'POST',
+        headers: { 'Idempotency-Key': idempotencyKey },
+        body: JSON.stringify(payload),
+      });
+    },
+
+    async getFanPlays(status) {
+      const q = status ? `?status=${status}` : '';
+      return request(`/api/fanplay${q}`);
+    },
+
+    async getFanPlay(id) {
+      return request(`/api/fanplay/${encodeURIComponent(id)}`);
+    },
+
+    async cancelFanPlay(id) {
+      return request(`/api/fanplay/${encodeURIComponent(id)}/cancel`, {
+        method: 'POST',
+      });
+    },
+
+    async getFanPlayLive(id) {
+      return request(`/api/fanplay/${encodeURIComponent(id)}/live`);
+    },
+
+    async settleFanPlay(id, forceFinal = false) {
+      return request(`/api/fanplay/${encodeURIComponent(id)}/settle`, {
+        method: 'POST',
+        body: JSON.stringify({ forceFinal }),
+      });
+    },
   };
 
   window.FantradeAPI = FantradeAPI;

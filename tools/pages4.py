@@ -99,16 +99,41 @@ ASSET_CSS = """
 
 /* Price & 24h Summary Section */
 .kc-price-sec{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:12px}
-.kc-hero-px{font-family:'JetBrains Mono',monospace;font-size:32px;font-weight:700;line-height:1;letter-spacing:-.02em;color:var(--lime)}
-.kc-hero-sub{display:flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:12.5px;color:#767c82;margin-top:6px}
+.kc-hero-px{font-family:'Montserrat', sans-serif;font-size:32px;font-weight:700;line-height:1;letter-spacing:-.02em;color:var(--lime)}
+.kc-hero-sub{display:flex;align-items:center;gap:8px;font-family:'Montserrat', sans-serif;font-size:12.5px;color:#767c82;margin-top:6px}
 .kc-hero-delta{color:var(--lime);font-weight:600}
 .kc-hero-delta.down{color:#FF3B47}
-.kc-pop-badge{display:inline-flex;align-items:center;gap:5px;background:rgba(255,106,31,.1);border:1px solid rgba(255,106,31,.25);color:var(--amber);font-size:10.5px;font-weight:600;padding:3px 8px;border-radius:999px;margin-top:8px}
+.kc-pop-badge{display:inline-flex;align-items:center;gap:5px;background:rgba(255,106,31,.1);border:1px solid rgba(255,106,31,.25);color:var(--amber);font-size:10.5px;font-weight:600;padding:3px 8px;border-radius:999px;margin-top:8px;white-space:nowrap;flex-shrink:0}
+
+/* Player Share Switcher Drawer */
+.asset-drawer-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:9998;opacity:0;pointer-events:none;transition:opacity .3s ease;-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
+.asset-drawer-backdrop.open{opacity:1;pointer-events:auto}
+.asset-drawer{position:fixed;top:0;left:0;bottom:0;width:min(340px,85vw);background:#0A0B0C;border-right:1px solid rgba(255,255,255,.09);z-index:9999;transform:translateX(-100%);transition:transform .3s cubic-bezier(.16,1,.3,1);display:flex;flex-direction:column;box-shadow:10px 0 30px rgba(0,0,0,.8)}
+.asset-drawer.open{transform:translateX(0)}
+.asset-drawer-head{display:flex;align-items:center;justify-content:space-between;padding:16px;border-bottom:1px solid rgba(255,255,255,.07)}
+.asset-drawer-title{font-family:Archivo,sans-serif;font-variation-settings:'wdth' 120,'wght' 800;font-size:15px;color:#fff;text-transform:uppercase}
+.asset-drawer-close{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);width:32px;height:32px;border-radius:50%;color:#8E9AA8;display:grid;place-items:center;cursor:pointer}
+.asset-drawer-search{padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.05)}
+.asset-drawer-search input{width:100%;height:38px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:0 12px;color:#fff;font-size:13px;outline:none;font-family:Montserrat,sans-serif}
+.asset-drawer-search input:focus{border-color:var(--lime)}
+.asset-drawer-list{flex:1;overflow-y:auto;padding:8px}
+.asset-drawer-item{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-radius:8px;text-decoration:none;transition:background .2s;margin-bottom:4px}
+.asset-drawer-item:hover{background:rgba(255,255,255,.05)}
+.asset-drawer-item.active{background:rgba(196,248,42,.08);border:1px solid rgba(196,248,42,.2)}
+.asset-drawer-item-left{display:flex;align-items:center;gap:10px}
+.asset-drawer-avatar{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.08);display:grid;place-items:center;font-weight:700;font-size:12px;color:var(--lime)}
+.asset-drawer-item-name{font-family:Archivo,sans-serif;font-variation-settings:'wdth' 115,'wght' 700;font-size:13.5px;color:#fff}
+.asset-drawer-item-sub{font-size:11px;color:#767c82}
+.asset-drawer-item-right{text-align:right}
+.asset-drawer-item-price{font-family:Montserrat,sans-serif;font-weight:600;font-size:13px;color:#fff}
+.asset-drawer-item-delta{font-family:Montserrat,sans-serif;font-size:11px;font-weight:600;color:var(--lime)}
+.asset-drawer-item-delta.down{color:#FF3B47}
+
 
 .kc-stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px 18px;min-width:170px;text-align:right}
 .kc-stat-row{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:11px}
 .kc-stat-row span{color:#767c82}
-.kc-stat-row b{font-family:'JetBrains Mono',monospace;font-weight:600;color:var(--ink)}
+.kc-stat-row b{font-family:'Montserrat', sans-serif;font-weight:600;color:var(--ink)}
 
 /* News Ticker */
 .kc-news{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:8px;padding:7px 12px;margin-bottom:12px;font-size:11.5px;color:#8B918A}
@@ -128,7 +153,7 @@ ASSET_CSS = """
 /* Chart Canvas */
 .kc-chart-box{position:relative;background:rgba(10,11,12,.7);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:10px 4px 6px;margin-bottom:8px}
 .kc-chart-svg{width:100%;height:260px;display:block}
-.kc-chart-axis-x{display:flex;justify-content:space-between;padding:4px 10px 0;font-family:'JetBrains Mono',monospace;font-size:9.5px;color:#5A605B}
+.kc-chart-axis-x{display:flex;justify-content:space-between;padding:4px 10px 0;font-family:'Montserrat', sans-serif;font-size:9.5px;color:#5A605B}
 
 /* Technical Indicators Row */
 .kc-ind-row{display:flex;align-items:center;gap:14px;padding:8px 0;margin-bottom:8px;overflow-x:auto;scrollbar-width:none}
@@ -149,7 +174,7 @@ ASSET_CSS = """
 .kc-pane.on{display:block}
 .kc-book-row-head{display:grid;grid-template-columns:1fr 1fr;gap:16px;font-size:10.5px;color:#767c82;padding:0 2px 6px;border-bottom:1px solid rgba(255,255,255,.05)}
 .kc-book-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:6px}
-.kc-b-line{display:flex;justify-content:space-between;position:relative;height:21px;align-items:center;font-family:'JetBrains Mono',monospace;font-size:11px;padding:0 4px}
+.kc-b-line{display:flex;justify-content:space-between;position:relative;height:21px;align-items:center;font-family:'Montserrat', sans-serif;font-size:11px;padding:0 4px}
 .kc-b-line .depth{position:absolute;top:0;bottom:0;right:0;pointer-events:none;opacity:.15;border-radius:2px}
 .kc-b-line.bid span:first-child{color:var(--lime);font-weight:600}
 .kc-b-line.bid .depth{background:var(--lime)}
@@ -169,13 +194,25 @@ ASSET_CSS = """
 """
 
 asset = [T('<main><div class="kc-asset-wrap">'
+           '<!-- Player Share Switcher Drawer -->'
+           '<div class="asset-drawer-backdrop" id="assetDrawerBackdrop" onclick="closeAssetDrawer()"></div>'
+           '<div class="asset-drawer" id="assetDrawer">'
+           '  <div class="asset-drawer-head">'
+           '    <div class="asset-drawer-title">Switch Player Share</div>'
+           '    <button type="button" class="asset-drawer-close" onclick="closeAssetDrawer()">✕</button>'
+           '  </div>'
+           '  <div class="asset-drawer-search">'
+           '    <input type="text" id="assetDrawerInput" placeholder="Search player or coach..." oninput="filterAssetDrawer(this.value)">'
+           '  </div>'
+           '  <div class="asset-drawer-list" id="assetDrawerList"></div>'
+           '</div>'
            '<!-- Top Navigation Bar -->'
            '<div class="kc-asset-topbar">'
            '  <div class="kc-top-left">'
            '    <a href="exchange.html" class="kc-icon-btn" title="Back to Markets">'
            '      <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>'
            '    </a>'
-           '    <button type="button" class="kc-icon-btn" title="Menu">'
+           '    <button type="button" class="kc-icon-btn" id="assetDrawerTrigger" title="Switch Player Share" onclick="openAssetDrawer()">'
            '      <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="15" y2="12"/><line x1="3" y1="18" x2="18" y2="18"/></svg>'
            '    </button>'
            '    <div class="kc-asset-title-box">'
@@ -331,6 +368,58 @@ asset = [T('<main><div class="kc-asset-wrap">'
 ASSET_JS = PICK_JS + r"""
 function el(id){ return document.getElementById(id); }
 
+window.openAssetDrawer = function(){
+  var bd = el('assetDrawerBackdrop');
+  var dr = el('assetDrawer');
+  if(bd && dr){
+    bd.classList.add('open');
+    dr.classList.add('open');
+    renderAssetDrawerList('');
+    var inp = el('assetDrawerInput');
+    if(inp){ inp.value = ''; inp.focus(); }
+  }
+};
+
+window.closeAssetDrawer = function(){
+  var bd = el('assetDrawerBackdrop');
+  var dr = el('assetDrawer');
+  if(bd && dr){
+    bd.classList.remove('open');
+    dr.classList.remove('open');
+  }
+};
+
+function renderAssetDrawerList(q){
+  var list = el('assetDrawerList');
+  if(!list) return;
+  var term = (q || '').toLowerCase();
+  var filtered = ASSETS.filter(function(x){
+    return !term || x.t.toLowerCase().indexOf(term) !== -1 || x.n.toLowerCase().indexOf(term) !== -1;
+  });
+  list.innerHTML = filtered.map(function(item){
+    var isCur = item.t.toLowerCase() === SYM.toLowerCase();
+    var isUp = item.d >= 0;
+    var pxStr = item.p.toFixed(item.p < 1 ? 4 : 2);
+    return '<a href="asset.html?a=' + encodeURIComponent(item.t) + '" class="asset-drawer-item' + (isCur ? ' active' : '') + '">' +
+      '<div class="asset-drawer-item-left">' +
+      '  <div class="asset-drawer-avatar">' + item.t.replace('$', '').substring(0, 2).toUpperCase() + '</div>' +
+      '  <div>' +
+      '    <div class="asset-drawer-item-name">' + item.t + '</div>' +
+      '    <div class="asset-drawer-item-sub">' + item.n + '</div>' +
+      '  </div>' +
+      '</div>' +
+      '<div class="asset-drawer-item-right">' +
+      '  <div class="asset-drawer-item-price">' + pxStr + ' FTR</div>' +
+      '  <div class="asset-drawer-item-delta' + (isUp ? '' : ' down') + '">' + (isUp ? '+' : '') + item.d.toFixed(2) + '%</div>' +
+      '</div>' +
+      '</a>';
+  }).join('');
+}
+
+window.filterAssetDrawer = function(val){
+  renderAssetDrawerList(val);
+};
+
 var quote = A.q || 'FTR';
 var symClean = A.t.replace('$', '');
 
@@ -400,7 +489,7 @@ function drawKucoinCandles(host, data){
   for(var g = 0; g <= 3; g++){
     var gv = lo + (rng / 3) * g, gy = y(gv);
     grid.push('<line x1="0" y1="' + gy.toFixed(1) + '" x2="' + (w - padR) + '" y2="' + gy.toFixed(1) + '" stroke="rgba(255,255,255,.05)" stroke-width="1"/>');
-    grid.push('<text x="' + (w - padR + 6) + '" y="' + (gy + 3).toFixed(1) + '" fill="#5A605B" font-size="9.5" font-family="JetBrains Mono, monospace">' + gv.toFixed(gv < 1 ? 4 : 2) + '</text>');
+    grid.push('<text x="' + (w - padR + 6) + '" y="' + (gy + 3).toFixed(1) + '" fill="#5A605B" font-size="9.5" font-family="Montserrat, sans-serif">' + gv.toFixed(gv < 1 ? 4 : 2) + '</text>');
   }
 
   var maxCandle = data[0], minCandle = data[0];
@@ -418,20 +507,20 @@ function drawKucoinCandles(host, data){
   // High marker callout (104.82 ---)
   var hx = (maxCandle._i || 0) * cw + cw / 2, hy = y(maxCandle.h);
   parts.push('<line x1="' + Math.max(0, hx - 24) + '" y1="' + hy.toFixed(1) + '" x2="' + (hx + 24) + '" y2="' + hy.toFixed(1) + '" stroke="#8B918A" stroke-dasharray="2 2" stroke-width="1"/>');
-  parts.push('<text x="' + (hx - 4) + '" y="' + (hy - 4).toFixed(1) + '" fill="#8B918A" font-size="9" text-anchor="end" font-family="JetBrains Mono, monospace">' + maxCandle.h.toFixed(maxCandle.h < 1 ? 4 : 2) + '</text>');
+  parts.push('<text x="' + (hx - 4) + '" y="' + (hy - 4).toFixed(1) + '" fill="#8B918A" font-size="9" text-anchor="end" font-family="Montserrat, sans-serif">' + maxCandle.h.toFixed(maxCandle.h < 1 ? 4 : 2) + '</text>');
 
   // Low marker callout (101.21 ---)
   var lx = (minCandle._i || 0) * cw + cw / 2, ly = y(minCandle.l);
   parts.push('<line x1="' + Math.max(0, lx - 24) + '" y1="' + ly.toFixed(1) + '" x2="' + (lx + 24) + '" y2="' + ly.toFixed(1) + '" stroke="#8B918A" stroke-dasharray="2 2" stroke-width="1"/>');
-  parts.push('<text x="' + (lx + 4) + '" y="' + (ly + 11).toFixed(1) + '" fill="#8B918A" font-size="9" font-family="JetBrains Mono, monospace">' + minCandle.l.toFixed(minCandle.l < 1 ? 4 : 2) + '</text>');
+  parts.push('<text x="' + (lx + 4) + '" y="' + (ly + 11).toFixed(1) + '" fill="#8B918A" font-size="9" font-family="Montserrat, sans-serif">' + minCandle.l.toFixed(minCandle.l < 1 ? 4 : 2) + '</text>');
 
   // Current price line & right badge
   var last = data[data.length - 1];
   var cy = y(last.c);
   parts.push('<line x1="0" y1="' + cy.toFixed(1) + '" x2="' + (w - padR) + '" y2="' + cy.toFixed(1) + '" stroke="#8B918A" stroke-dasharray="2 2" stroke-width="1" opacity=".7"/>');
   parts.push('<rect x="' + (w - padR) + '" y="' + (cy - 12).toFixed(1) + '" width="62" height="24" rx="4" fill="#14171A" stroke="#32383e" stroke-width="1"/>');
-  parts.push('<text x="' + (w - padR + 31) + '" y="' + (cy - 1).toFixed(1) + '" fill="#F4F6F1" font-size="9" font-weight="600" text-anchor="middle" font-family="JetBrains Mono, monospace">' + last.c.toFixed(last.c < 1 ? 4 : 2) + '</text>');
-  parts.push('<text x="' + (w - padR + 31) + '" y="' + (cy + 9).toFixed(1) + '" fill="#767c82" font-size="7.5" text-anchor="middle" font-family="JetBrains Mono, monospace">06:37</text>');
+  parts.push('<text x="' + (w - padR + 31) + '" y="' + (cy - 1).toFixed(1) + '" fill="#F4F6F1" font-size="9" font-weight="600" text-anchor="middle" font-family="Montserrat, sans-serif">' + last.c.toFixed(last.c < 1 ? 4 : 2) + '</text>');
+  parts.push('<text x="' + (w - padR + 31) + '" y="' + (cy + 9).toFixed(1) + '" fill="#767c82" font-size="7.5" text-anchor="middle" font-family="Montserrat, sans-serif">06:37</text>');
 
   host.innerHTML = '<svg viewBox="0 0 ' + w + ' ' + h + '" preserveAspectRatio="none">' + grid.join('') + parts.join('') + '</svg>';
 }
@@ -515,7 +604,7 @@ renderKucoinBook();
   for(var i = 0; i < 10; i++){
     var up = Math.sin(i * 1.9) > 0;
     var p = A.p * (1 + (Math.sin(i * 3.1) * 0.003));
-    out.push('<div class="tr-row" style="display:flex;justify-content:space-between;padding:5px 0;font-family:JetBrains Mono,monospace;font-size:11px">'
+    out.push('<div class="tr-row" style="display:flex;justify-content:space-between;padding:5px 0;font-family:Montserrat, sans-serif;font-size:11px">'
       + '<span style="color:' + (up ? 'var(--lime)' : '#FF3B47') + '">' + p.toFixed(p < 1 ? 4 : 2) + '</span>'
       + '<span style="color:var(--dim)">' + fmt(900 + Math.abs(Math.cos(i * 2.2)) * 7400) + '</span>'
       + '<span style="color:var(--faint)">' + (i * 2 + 1) + 'm ago</span></div>');
@@ -547,7 +636,7 @@ TRADE_CSS = """
 .kc-trade-pair-title{font-family:Archivo,sans-serif;font-variation-settings:'wdth' 120,'wght' 800;font-size:18px;display:flex;align-items:center;gap:6px;color:var(--ink)}
 .kc-trade-pair-title .kc-quote{font-size:13px;color:#767c82;font-weight:600}
 .kc-trade-tag{background:rgba(255,255,255,.08);color:#8E9AA8;font-size:10px;font-weight:700;padding:2px 6px;border-radius:4px}
-.kc-trade-delta{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:var(--lime);margin-left:4px}
+.kc-trade-delta{font-family:'Montserrat', sans-serif;font-size:12px;font-weight:600;color:var(--lime);margin-left:4px}
 .kc-trade-delta.down{color:#FF3B47}
 .kc-trade-top-right{display:flex;align-items:center;gap:8px}
 
@@ -566,7 +655,7 @@ TRADE_CSS = """
 .ticksel{display:flex;align-items:center;gap:8px;flex:1;min-width:0;border:1px solid rgba(255,255,255,.08);
   border-radius:8px;background:rgba(255,255,255,.03);box-shadow:var(--inset);padding:5px 8px}
 .ticksel select{flex:1;min-width:0;border:0;background:transparent;color:var(--ink);outline:none;
-  cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11px}
+  cursor:pointer;font-family:'Montserrat', sans-serif;font-size:11px}
 .ticksel select option{background:#0A0B0C}
 .ticksel .chev{flex:none}
 .bkbtn{display:grid;place-items:center;width:32px;height:32px;flex:none;border-radius:8px;
@@ -603,7 +692,7 @@ TRADE_CSS = """
 .tfield .lbl{display:block;font-weight:600;font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;
   color:#767c82;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tfield input{display:block;width:100%;border:0;background:transparent;color:var(--ink);outline:none;
-  font-family:'JetBrains Mono',monospace;font-size:14px;padding:3px 0 0}
+  font-family:'Montserrat', sans-serif;font-size:14px;padding:3px 0 0}
 .tfield input::placeholder{color:#5A605B}
 .tfield input:read-only{color:#8B918A}
 .tfield .pm{flex:none;display:flex;align-items:stretch;align-self:stretch}
@@ -614,7 +703,7 @@ TRADE_CSS = """
 .tfield[hidden]{display:none}
 
 .tline{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:6px 0;font-size:11.5px;color:#767c82}
-.tline b{font-family:'JetBrains Mono',monospace;font-weight:500;color:var(--ink);font-size:12px}
+.tline b{font-family:'Montserrat', sans-serif;font-weight:500;color:var(--ink);font-size:12px}
 .bigbtn{display:block;width:100%;border:0;border-radius:10px;padding:14px 0;margin-top:12px;cursor:pointer;
   font-family:Archivo,sans-serif;font-variation-settings:'wdth' 115,'wght' 800;font-size:13.5px;letter-spacing:.04em;text-transform:uppercase;
   background:var(--lime);color:#0A0D03;transition:filter .2s}
@@ -1134,7 +1223,7 @@ dv.append('</div></div></main>')
 
 page("divisions.html", "Divisions — Fantrade", "".join(dv), "", """
 .kc-home-wrap{max-width:680px;margin:0 auto;padding:12px 16px 84px}
-.chart-x{display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:10px;
+.chart-x{display:flex;justify-content:space-between;font-family:'Montserrat', sans-serif;font-size:10px;
   color:var(--faint);margin-top:10px}
 .div-card{border:1px solid var(--hair);background:rgba(255,255,255,.03);border-radius:18px;padding:20px;
   box-shadow:var(--inset);display:flex;gap:16px;align-items:flex-start;margin-bottom:10px}
@@ -1143,7 +1232,7 @@ page("divisions.html", "Divisions — Fantrade", "".join(dv), "", """
   text-transform:uppercase;font-size:14px;margin-bottom:4px}
 .div-card .r{font-size:11.5px;color:var(--faint);font-weight:300}
 .div-card .pp{margin-left:auto;text-align:right;flex:none}
-.div-card .pp em{font-style:normal;font-family:'JetBrains Mono',monospace;font-size:15px;color:var(--lime)}
+.div-card .pp em{font-style:normal;font-family:'Montserrat', sans-serif;font-size:15px;color:var(--lime)}
 .div-card .pp span{display:block;font-weight:600;font-size:8.5px;letter-spacing:.14em;color:var(--faint);
   text-transform:uppercase;margin-top:5px}
 """, app=True)

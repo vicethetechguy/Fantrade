@@ -38,17 +38,18 @@ def page(fname, title, body, js="", css="", app=False):
 # 1. LANDING
 # ══════════════════════════════════════════════════════════
 LAND_CSS = """
-.hero{padding:214px 0 0;text-align:center}
-.hero h1{font-size:clamp(44px,9vw,116px);font-variation-settings:'wdth' 125,'wght' 900;margin-top:30px}
-.hero h1 .lt{font-variation-settings:'wdth' 125,'wght' 200;color:#C3C9BE}
-.hero .lede{margin:30px auto 40px;text-align:center}
+.hero{padding:140px 0 0;text-align:center}
+.hero h1{font-size:clamp(40px,7.5vw,90px);font-variation-settings:'wdth' 125,'wght' 900;margin-top:24px;line-height:1}
+.hero h1 .lt{font-variation-settings:'wdth' 125,'wght' 300;color:#C3C9BE}
+.hero .lede{margin:24px auto 36px;text-align:center;max-width:58ch;font-size:16.5px;color:var(--dim)}
 .hero-cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
-.trust{display:flex;gap:10px;justify-content:center;margin-top:44px;flex-wrap:wrap}
-.trust div{border:1px solid var(--hair);border-radius:999px;padding:10px 20px;background:rgba(255,255,255,.025);
-  font-size:12px;color:var(--dim);box-shadow:var(--inset);display:flex;align-items:center;gap:10px}
-.trust b{font-family:'JetBrains Mono',monospace;font-weight:400;color:var(--ink)}
+.trust{display:flex;gap:12px;justify-content:center;margin-top:40px;flex-wrap:wrap}
+.trust div{border:1px solid var(--hair);border-radius:999px;padding:9px 18px;background:rgba(255,255,255,.025);
+  font-size:12.5px;color:var(--dim);box-shadow:var(--inset);display:flex;align-items:center;gap:9px}
+.trust b{font-family:'Montserrat', sans-serif;font-weight:600;color:var(--ink)}
 .trust .ic{width:14px;height:14px;color:var(--lime)}
-.console{margin-top:84px}
+
+.console{margin-top:60px}
 .console-bar{display:flex;align-items:center;gap:12px;padding:14px 20px;border-bottom:1px solid var(--hair);background:rgba(255,255,255,.02)}
 .console-bar .tag{font-weight:600;font-size:10px;color:var(--faint);letter-spacing:.14em;text-transform:uppercase}
 .console-bar .live{margin-left:auto;display:flex;align-items:center;gap:8px;font-weight:600;font-size:9.5px;color:var(--lime);letter-spacing:.16em}
@@ -65,158 +66,130 @@ LAND_CSS = """
 .panel-h .nm{font-family:Archivo;font-variation-settings:'wdth' 118,'wght' 800;text-transform:uppercase;font-size:16px}
 .panel-h .sub{font-weight:600;font-size:9.5px;color:var(--faint);letter-spacing:.14em;text-transform:uppercase}
 .panel .btn{width:100%;justify-content:space-between;margin-top:20px}
-.band{margin-top:130px;border-top:1px solid var(--hair);border-bottom:1px solid var(--hair);
-  background:rgba(255,255,255,.018);padding:15px 0;overflow:hidden;white-space:nowrap}
+
+.band{margin-top:80px;border-top:1px solid var(--hair);border-bottom:1px solid var(--hair);
+  background:rgba(255,255,255,.018);padding:14px 0;overflow:hidden;white-space:nowrap}
 .band-track{display:inline-flex;gap:44px;animation:slide 46s linear infinite;
-  font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--faint)}
-.band-track b{color:var(--ink);font-weight:400}
+  font-family:'Montserrat', sans-serif;font-size:11.5px;color:var(--faint)}
+.band-track b{color:var(--ink);font-weight:600}
 @keyframes slide{to{transform:translateX(-50%)}}
-.layer-n{font-weight:600;font-size:9.5px;letter-spacing:.2em;color:var(--faint);text-transform:uppercase}
-.layer h3{font-size:34px;margin:18px 0 14px}
-.layer p{color:var(--dim);font-size:14.5px;font-weight:300;margin:0;max-width:44ch}
-.layer ul{list-style:none;padding:0;margin:24px 0 0;font-size:13px;color:var(--dim)}
-.layer li{padding:11px 0;border-top:1px solid rgba(255,255,255,.055);display:flex;gap:12px;align-items:center}
-.layer li .ic{width:15px;height:15px;color:var(--lime);opacity:.85}
-.layer.amber h3{color:var(--amber)}
-.layer.amber li .ic{color:var(--amber)}
-.layer.lime h3{color:var(--lime)}
-.layer .ibox{margin-bottom:22px}
-.step .i{font-weight:600;font-size:9.5px;letter-spacing:.16em;color:var(--lime);text-transform:uppercase}
-.step h4{font-size:20px;margin:14px 0 10px}
-.step p{font-size:12.5px;font-weight:300;color:var(--dim);margin:0;line-height:1.6}
-.step.end .i,.step.end h4{color:var(--amber)}
-.cta-sec{padding:160px 0 140px;text-align:center}
-.cta-sec h2{font-size:clamp(38px,8vw,96px);font-variation-settings:'wdth' 125,'wght' 900}
-.cta-sec .lede{margin:28px auto 40px;text-align:center}
+
+/* Simple 3 Steps */
+.step-card{display:flex;flex-direction:column;gap:12px;padding:32px 28px;background:rgba(255,255,255,.02);border:1px solid var(--hair);border-radius:20px;box-shadow:var(--inset);transition:border-color .3s,transform .3s}
+.step-card:hover{border-color:rgba(196,248,42,.3);transform:translateY(-3px)}
+.step-num{font-family:Archivo,sans-serif;font-variation-settings:'wdth' 120,'wght' 900;font-size:32px;color:var(--lime);line-height:1}
+.step-card h3{font-size:22px;margin:0;color:var(--ink)}
+.step-card p{font-size:14px;color:var(--dim);margin:0;line-height:1.6}
+
+/* Simple 3 Value Props */
+.prop-card{display:flex;gap:20px;align-items:flex-start;padding:28px;background:rgba(255,255,255,.02);border:1px solid var(--hair);border-radius:20px;box-shadow:var(--inset)}
+.prop-icon{width:48px;height:48px;border-radius:14px;background:rgba(196,248,42,.08);border:1px solid rgba(196,248,42,.2);color:var(--lime);display:grid;place-items:center;flex-shrink:0}
+.prop-icon.amber{background:rgba(255,106,31,.08);border-color:rgba(255,106,31,.2);color:var(--amber)}
+.prop-card h3{font-size:20px;margin:0 0 8px}
+.prop-card p{font-size:13.5px;color:var(--dim);margin:0;line-height:1.6}
+
+.cta-sec{padding:120px 0 100px;text-align:center}
+.cta-sec h2{font-size:clamp(36px,7vw,84px);font-variation-settings:'wdth' 125,'wght' 900}
+.cta-sec .lede{margin:24px auto 36px;text-align:center}
 @media (max-width:1024px){.console-body{grid-template-columns:1fr}.book{border-right:0;border-bottom:1px solid var(--hair)}}
-@media (max-width:768px){.hero{padding:128px 0 0}.hero h1{font-size:clamp(34px,10.5vw,56px)}
-  .band{margin-top:88px}.console{margin-top:52px}.hero-cta{flex-direction:column;align-items:stretch}
+@media (max-width:768px){.hero{padding:110px 0 0}.hero h1{font-size:clamp(32px,9vw,52px)}
+  .band{margin-top:60px}.console{margin-top:40px}.hero-cta{flex-direction:column;align-items:stretch}
   .hero-cta .btn{justify-content:space-between}.trust div{width:100%}
   .bhead,.brow{grid-template-columns:1.5fr 1fr .8fr;padding:12px 16px}
   .bhead span:last-child,.brow>div:last-child{display:none}
-  .console-bar .tag{display:none}.cta-sec{padding:104px 0 92px}}
+  .console-bar .tag{display:none}.cta-sec{padding:80px 0 70px}}
 """
-
-
-def layer(n, title, body, items, cls="", icon="wallet"):
-    lis = "".join('<li>%s%s</li>' % (ic("check", "ic"), t) for t in items)
-    return (T('<div class="core pad layer @@"><span class="ibox @@">@@</span>'
-            '<div class="layer-n">@@</div><h3>@@</h3><p>@@</p><ul>@@</ul></div>', cls, "am" if cls == "amber" else "", ic(icon, "ic-lg"), n, title, body, lis))
-
 
 land = []
 land.append('<header class="hero" id="top"><div class="wrap">')
-land.append(T('<span class="pill" data-reveal>@@ A football ownership economy</span>', ic("ball", "ic")))
-land.append('<h1 data-reveal>Own the game.<br><span class="lt">Build your club.</span><br>Play to earn.</h1>')
-land.append('<p class="lede" data-reveal>Buy shares in the players and coaches you believe in. Assemble them into a '
-            'club that is yours. Then put your football knowledge to work every matchday.</p>')
-land.append('<div class="hero-cta" data-reveal>' + btn("Start trading", href="exchange.html") +
-            btn("See a Dream Club", "btn-glass", "clubs.html") + '</div>')
-land.append(T('<div class="trust" data-reveal><div>@@ <b>10,000,000</b> shares per asset</div>'
-            '<div>@@ <b>2,140</b> players &amp; coaches</div><div>@@ Settled in <b>$FTR</b></div></div>', ic("supply", "ic"), ic("user", "ic"), ic("coin", "ic")))
+land.append(T('<span class="pill" data-reveal>@@ The Football Player Stock Market</span>', ic("ball", "ic")))
+land.append('<h1 data-reveal>Trade Football Players<br><span class="lt">Like Stocks.</span></h1>')
+land.append('<p class="lede" data-reveal>Buy shares in world-class footballers. When your players perform on the pitch, your portfolio rises in value. Zero complex crypto jargon — trade anytime with instant liquidity.</p>')
+land.append('<div class="hero-cta" data-reveal>' + btn("Start trading", href="dashboard.html") +
+            btn("Explore Player Market", "btn-glass", "exchange.html") + '</div>')
+land.append(T('<div class="trust" data-reveal><div>@@ <b>10,000,000</b> fixed shares per player</div>'
+            '<div>@@ Real matchday data powered by Opta</div><div>@@ Instant trades in <b>$FTR</b></div></div>', ic("supply", "ic"), ic("user", "ic"), ic("coin", "ic")))
 land.append('</div><div class="wrap"><div class="bezel console" id="exchange" data-reveal><div class="core">')
-land.append(T('<div class="console-bar">@@<span class="tag">Exchange · Matchday 07</span>'
+land.append(T('<div class="console-bar">@@<span class="tag">Live Exchange · Matchday 05</span>'
             '<span class="live"><span class="pulse"></span>Market open</span></div>', ic("candle", "ic")))
 land.append('<div class="console-body"><div class="book">'
-            '<div class="bhead"><span>Asset</span><span>Price $FTR</span><span>24h</span><span>7d</span></div>'
+            '<div class="bhead"><span>Player Share</span><span>Price $FTR</span><span>24h Change</span><span>Trend</span></div>'
             '<div id="book"></div></div>')
 land.append(T('<div class="panel"><div class="panel-h"><span class="badge">@@</span>'
-            '<div><div class="nm">$Saka</div><div class="sub">Bukayo Saka · Winger</div></div></div>'
-            '<div class="line"><span>Total supply</span><b>10,000,000</b></div>'
-            '<div class="line"><span>Held by fans</span><b>3,712,480</b></div>'
+            '<div><div class="nm">$Saka</div><div class="sub">Bukayo Saka · Arsenal Winger</div></div></div>'
+            '<div class="line"><span>Total Shares</span><b>10,000,000</b></div>'
+            '<div class="line"><span>Circulating</span><b>3,712,480</b></div>'
             '<div class="supply"><i style="width:37%"></i></div>'
-            '<div class="k-label" style="margin:8px 0 16px">37.1% of supply in circulation</div>'
-            '<div class="line"><span>Your holding</span><b>10,000 shares</b></div>'
-            '<div class="line"><span>FanPlay eligible</span><b class="up">Yes</b></div>'
-            '<div class="line"><span>In your club</span><b>ZERO FC · RW</b></div>@@</div>', ic("boot", "ic"), btn("Buy shares", href="exchange.html")))
+            '<div class="k-label" style="margin:8px 0 16px">37.1% owned by fans</div>'
+            '<div class="line"><span>Current Price</span><b style="color:var(--lime)">48.20 $FTR</b></div>'
+            '<div class="line"><span>24h Volume</span><b>12.40M FTR</b></div>'
+            '<div class="line"><span>FanPlay Eligible</span><b class="up">Yes</b></div>@@</div>', ic("boot", "ic"), btn("Trade Saka Shares", href="asset.html?a=%24Saka")))
 land.append('</div></div></div></div></header>')
 land.append('<div class="band" aria-hidden="true"><div class="band-track" id="band"></div></div><main>')
 
-# layers
-land.append(T('<section><div class="wrap"><div class="sec-head" data-reveal>'
-            '<span class="pill">@@ Three layers, one economy</span>'
-            '<h2>Every asset you own<br>does three jobs</h2>'
-            '<p class="lede">Most fantasy games end when the whistle goes. On Fantrade the same share is an investment, '
-            'a squad member and a scoring position at once.</p></div>', ic("layers", "ic")))
-land.append('<div class="bento"><div class="bezel c5" data-reveal>' +
-            layer("Layer 01", "Own", "Buy fractional shares in players and coaches. Every asset is split into ten "
-                  "million shares, so you can start with one or build a real position.",
-                  ["Player shares — $Bruno, $Saka, $Jackson", "Coach shares — $Arteta, $Pep, $Maresca",
-                   "Buy, sell, hold or swap at any time", "Swap fees settled in $FTR"], icon="wallet") +
-            '</div><div class="bento c7" style="align-content:start">'
-            '<div class="bezel c12" data-reveal>' +
-            layer("Layer 02", "Build", "Turn your holdings into a club with a name, a badge, a stadium and a shape. "
-                  "Your squad is your portfolio, arranged the way you see football.",
-                  ["Pick a coach, a formation and a captain", "Eleven starters plus a working bench"],
-                  cls="amber", icon="crest") +
-            '</div><div class="bezel c12" data-reveal>' +
-            layer("Layer 03", "Play", "Enter FanPlay with a single player or your whole club. Real match data settles "
-                  "the round into Fans Point, then $FTR.",
-                  ["Six market tiers, Simple to Viynx Max", "Club mode earns a configurable boost"],
-                  cls="lime", icon="bolt") +
-            '</div></div></div></div></section>')
+# 3 Simple Steps
+land.append(T('<section style="padding:70px 0 40px"><div class="wrap"><div class="sec-head center" data-reveal>'
+            '<span class="pill">@@ How It Works</span>'
+            '<h2>Three Simple Steps to Start</h2>'
+            '<p class="lede">Fantrade turns your football passion into an active portfolio in three easy steps.</p></div>'
+            '<div class="bento thirds">'
+            '<div class="step-card" data-reveal>'
+            '  <div class="step-num">01</div>'
+            '  <h3>Pick &amp; Buy Shares</h3>'
+            '  <p>Buy fractional shares in your favorite footballers like $Saka, $Haaland, and $Palmer. Every player has a strictly fixed supply of 10 million shares.</p>'
+            '</div>'
+            '<div class="step-card" data-reveal>'
+            '  <div class="step-num">02</div>'
+            '  <h3>Build Your Dream Club</h3>'
+            '  <p>Assemble your owned players and manager into a custom Dream Club squad. Track your portfolio value as players rise and fall in the global market.</p>'
+            '</div>'
+            '<div class="step-card" data-reveal>'
+            '  <div class="step-num">03</div>'
+            '  <h3>Win on Matchday (FanPlay)</h3>'
+            '  <p>Stake player shares on real match outcomes. When your predictions are right, earn Fans Point (FP) converted straight into $FTR with instant liquidity.</p>'
+            '</div>'
+            '</div></div></section>', ic("layers", "ic")))
 
-# club teaser
-land.append(T('<section id="clubs"><div class="wrap"><div class="sec-head" data-reveal>'
-            '<span class="pill">@@ Dream Clubs</span><h2>A squad you<br>actually own</h2>'
-            '<p class="lede">No loans, no drafting players out of thin air. A name only enters your teamsheet once the '
-            'shares are in your wallet — which is exactly what makes the club worth something.</p></div>', ic("crest", "ic")))
-land.append(T('<div class="bento"><div class="bezel c7" data-reveal><div class="core pitch" id="pitchMount"></div></div>'
-            '<div class="c5" style="display:flex;flex-direction:column;gap:16px">'
-            '<div class="bezel" data-reveal><div class="core pad"><div class="k-label">Club value</div>'
-            '<div class="value-big">245,800 <small>$FTR</small></div>'
-            '<div class="delta">▲ 12,400 this week · ▲ 145.8% since founding</div>'
-            '<div style="margin-top:24px;border-top:1px solid var(--hair);padding-top:6px">'
-            '<div class="b-row"><span>Starting XI</span><b>180,600</b></div>'
-            '<div class="b-row"><span>Bench (4)</span><b>45,200</b></div>'
-            '<div class="b-row"><span>Coach</span><b>20,000</b></div>'
-            '<div class="b-row total"><span>Club value</span><b>245,800</b></div></div></div></div>'
-            '<div class="mini-grid" data-reveal>'
-            '<div class="mini"><div class="k">Club rank</div><div class="v">#124</div></div>'
-            '<div class="mini"><div class="k">Club FP</div><div class="v lime">8,420</div></div>'
-            '<div class="mini"><div class="k">Club boost</div><div class="v amber">+15%</div></div>'
-            '<div class="mini"><div class="k">Win rate</div><div class="v">62%</div></div></div>'
-            '<div class="bezel" data-reveal style="flex:1"><div class="core pad-sm">'
-            '<div class="k-label">Chemistry · why Zero FC boosts +15%</div>'
-            '<div class="b-row"><span>Base club mode</span><b>+10.0%</b></div>'
-            '<div class="b-row"><span>Coach fits 4-3-3</span><b>+3.0%</b></div>'
-            '<div class="b-row"><span>XI in natural positions</span><b>+2.0%</b></div>'
-            '<div class="b-row"><span>Squad completeness</span><span>bench 4/5</span></div>'
-            '<div style="margin-top:18px">@@</div></div></div></div></div></div></section>', btn("Open the club builder", "btn-glass btn-sm", "clubs.html")))
+# 3 Clear Value Props
+land.append(T('<section style="padding:40px 0 60px"><div class="wrap"><div class="sec-head" data-reveal>'
+            '<span class="pill amber">@@ Why Fantrade</span>'
+            '<h2>Built for Real Football Fans</h2>'
+            '<p class="lede">No complex jargon, no fake loans, and no arbitrary resets. Real ownership of the game you love.</p></div>'
+            '<div class="bento halves">'
+            '<div class="prop-card" data-reveal>'
+            '  <div class="prop-icon">@@</div>'
+            '  <div>'
+            '    <h3>Real Share Ownership</h3>'
+            '    <p>You own actual fractional shares in players and coaches. Every share is authenticated by an institutional double-entry financial ledger.</p>'
+            '  </div>'
+            '</div>'
+            '<div class="prop-card" data-reveal>'
+            '  <div class="prop-icon amber">@@</div>'
+            '  <div>'
+            '    <h3>Driven by Matchday Reality</h3>'
+            '    <p>Real-world match events—goals, assists, key passes, clean sheets, and managerial wins—drive player share prices and matchday rewards.</p>'
+            '  </div>'
+            '</div>'
+            '<div class="prop-card" data-reveal>'
+            '  <div class="prop-icon">@@</div>'
+            '  <div>'
+            '    <h3>Instant Liquid Trading</h3>'
+            '    <p>Buy, sell, or swap between player shares in seconds with verified order matching and instant settlement. No lockups, no waiting.</p>'
+            '  </div>'
+            '</div>'
+            '<div class="prop-card" data-reveal>'
+            '  <div class="prop-icon amber">@@</div>'
+            '  <div>'
+            '    <h3>Zero Crypto Jargon</h3>'
+            '    <p>A pure sports trading experience with transparent prices in $FTR. Intuitive navigation designed for both beginners and seasoned market pros.</p>'
+            '  </div>'
+            '</div>'
+            '</div></div></section>', ic("shield", "ic"), ic("bolt", "ic"), ic("swap", "ic"), ic("coin", "ic")))
 
-# loop
-steps = [("01 / Buy", "Take a position", "Deposit, convert to $FTR and buy into the players and coaches you rate.", "c4", ""),
-         ("02 / Own", "Hold the shares", "Ownership is the key that unlocks every other part of the platform.", "c3", ""),
-         ("03 / Build", "Assemble the club", "Name it, badge it, pick a coach and a shape, fill the XI and the bench.", "c5", ""),
-         ("04 / Play", "Enter a round", "Solo or club, choose your market tier, verify ownership and activate.", "c5", ""),
-         ("05 / Earn", "Settle in $FTR", "Real match data converts performance into Fans Point.", "c3", ""),
-         ("06 / Reinvest", "Grow the portfolio", "Buy the next player. Club value rises with the squad underneath it.", "c4", "end")]
-land.append(T('<section id="loop"><div class="wrap"><div class="sec-head center" data-reveal>'
-            '<span class="pill">@@ The Fantrade loop</span><h2>Buy, own, build,<br>play, earn, reinvest</h2></div>'
-            '<div class="bento">', ic("swap", "ic")))
-for i, t, d, c, e in steps:
-    land.append(T('<div class="bezel tight @@" data-reveal><div class="core pad-sm step @@">'
-                '<div class="i">@@</div><h4>@@</h4><p>@@</p></div></div>', c, e, i, t, d))
-land.append('</div></div></section>')
-
-# rules
-rules = [("supply", "Ten million shares, fixed", "Every player and every coach is issued the same fixed supply. Price moves on demand, never on a quiet reprint.", "c6", ""),
-         ("lock", "No borrowing, ever", "If a player isn't in your wallet he isn't on your teamsheet. Every lineup is validated before a round opens.", "c6", ""),
-         ("whistle", "Coaches are real assets", "$Arteta trades like a player and works like a manager — his shares move on results and set your club modifier.", "c4", "am"),
-         ("subs", "Substitutes that matter", "A starter who gets no minutes is replaced by an eligible sub under the rules you set. Depth is strategy.", "c4", ""),
-         ("clock", "A deterministic window", "Rounds open and close on a published matchday clock, so everyone is scored on the same fixtures and the same data.", "c4", "")]
-land.append(T('<section><div class="wrap"><div class="sec-head" data-reveal>'
-            '<span class="pill amber">@@ Rules of the house</span><h2>How Fantrade<br>keeps it honest</h2></div>'
-            '<div class="bento halves">', ic("shield", "ic")))
-for icon, t, d, c, am in rules:
-    land.append(T('<div class="bezel tight @@" data-reveal><div class="core pad f">'
-                '<span class="ibox @@">@@</span><h4>@@</h4><p>@@</p></div></div>', c, am, ic(icon, "ic-lg"), t, d))
-land.append('</div></div></section>')
-
-land.append('<section class="cta-sec"><div class="wrap"><h2 data-reveal>Your club is<br>waiting to<br>be built</h2>'
-            '<p class="lede" data-reveal>Start with one share in one player. The rest of the squad is a decision you '
-            'get to make every single week.</p><div class="hero-cta" data-reveal>' +
-            btn("Create account") + btn("Browse the exchange", "btn-glass", "exchange.html") +
+land.append('<section class="cta-sec"><div class="wrap"><h2 data-reveal>Your Squad Starts Today</h2>'
+            '<p class="lede" data-reveal>Start with 1 share in the players you believe in. Back your football knowledge and own the game.</p>'
+            '<div class="hero-cta" data-reveal>' +
+            btn("Start Trading Now", href="dashboard.html") + btn("Explore All Players", "btn-glass", "exchange.html") +
             '</div></div></section></main>')
 
 PITCH_JS = r"""
@@ -326,13 +299,13 @@ EX_CSS = """
 .kc-avatar.coach{color:var(--amber);border-color:rgba(255,106,31,.25);background:rgba(255,106,31,.08)}
 .kc-pair-title{display:flex;align-items:center;gap:5px;font-family:Archivo,sans-serif;font-variation-settings:'wdth' 115,'wght' 800;font-size:14.5px;line-height:1.1;color:var(--ink)}
 .kc-pair-quote{font-size:11.5px;color:#767c82;font-weight:600}
-.kc-tag{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:600;color:#767c82;background:rgba(255,255,255,.08);border-radius:4px;padding:1px 4px;margin-left:2px}
+.kc-tag{font-family:'Montserrat', sans-serif;font-size:9px;font-weight:600;color:#767c82;background:rgba(255,255,255,.08);border-radius:4px;padding:1px 4px;margin-left:2px}
 .kc-pair-sub{font-size:11.5px;color:#767c82;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .kc-row-mid{text-align:right;padding-right:12px}
-.kc-price-main{font-family:'JetBrains Mono',monospace;font-size:14.5px;font-weight:600;color:var(--ink);letter-spacing:-.01em}
-.kc-price-sub{font-family:'JetBrains Mono',monospace;font-size:11px;color:#767c82;margin-top:2px}
+.kc-price-main{font-family:'Montserrat', sans-serif;font-size:14.5px;font-weight:600;color:var(--ink);letter-spacing:-.01em}
+.kc-price-sub{font-family:'Montserrat', sans-serif;font-size:11px;color:#767c82;margin-top:2px}
 .kc-row-right{display:flex;justify-content:flex-end}
-.kc-pill{display:inline-flex;align-items:center;justify-content:center;min-width:76px;height:32px;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:#0A0D03;background:var(--lime);box-sizing:border-box;padding:0 6px}
+.kc-pill{display:inline-flex;align-items:center;justify-content:center;min-width:76px;height:32px;border-radius:6px;font-family:'Montserrat', sans-serif;font-size:12.5px;font-weight:700;color:#0A0D03;background:var(--lime);box-sizing:border-box;padding:0 6px}
 .kc-pill.down{background:#FF3B47;color:#fff}
 """
 
@@ -542,7 +515,7 @@ CL_CSS = """
 .stepper button:hover:not([aria-current="step"]){color:var(--ink);border-color:var(--hair-2)}
 .forms{display:flex;gap:8px;flex-wrap:wrap}
 .forms button{flex:1;min-width:92px;border:1px solid var(--hair);background:rgba(255,255,255,.03);color:var(--dim);
-  border-radius:14px;padding:14px 0;font-family:'JetBrains Mono',monospace;font-size:14px;cursor:pointer;
+  border-radius:14px;padding:14px 0;font-family:'Montserrat', sans-serif;font-size:14px;cursor:pointer;
   box-shadow:var(--inset);transition:all .6s var(--ease)}
 .forms button[aria-pressed="true"]{background:var(--lime);border-color:var(--lime);color:#0A0D03}
 .forms button:hover:not([aria-pressed="true"]){color:var(--ink);border-color:var(--hair-2)}
@@ -554,7 +527,7 @@ CL_CSS = """
 .lb{display:grid;grid-template-columns:52px 2fr 1fr 1fr 1fr;gap:14px;align-items:center;padding:15px 24px;
   border-bottom:1px solid rgba(255,255,255,.05);font-size:13px}
 .lb.h{font-weight:600;font-size:9.5px;letter-spacing:.16em;color:var(--faint);text-transform:uppercase;border-bottom:1px solid var(--hair)}
-.lb .rank{font-family:'JetBrains Mono',monospace;color:var(--faint)}
+.lb .rank{font-family:'Montserrat', sans-serif;color:var(--faint)}
 .lb.you{background:rgba(196,248,42,.06)}
 .lb .cn{display:flex;align-items:center;gap:12px}
 .mini-crest{width:26px;height:29px;flex:none;clip-path:polygon(0 0,100% 0,100% 66%,50% 100%,0 66%)}
@@ -920,502 +893,764 @@ page("club-builder.html", "Club builder — Fantrade", "".join(bd), CL_JS, CL_CS
 
 
 # ══════════════════════════════════════════════════════════
-# 4. FANPLAY
+# 4. FANPLAY ENGINE (PROMPT 4)
 # ══════════════════════════════════════════════════════════
 FP_CSS = """
-.kc-home-wrap{max-width:680px;margin:0 auto;padding:12px 16px 84px}
-.kc-fut-topbar{display:flex;align-items:center;justify-content:space-between;padding:8px 0 12px}
-.kc-pair-btn{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);padding:6px 12px;border-radius:999px;cursor:pointer}
-.kc-pair-btn:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.14)}
-.kc-pair-sym{font-weight:700;font-size:14.5px;color:#fff}
-.kc-tag-perp{font-size:10px;padding:2px 6px;border-radius:4px;background:rgba(255,255,255,.08);color:#8E9AA8;font-weight:600}
-.kc-tag-lev{font-size:10px;padding:2px 6px;border-radius:4px;background:rgba(196,248,42,.15);color:#C4F82A;font-weight:700}
-.kc-delta-badge{font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:600;padding:3px 8px;border-radius:6px;background:rgba(196,248,42,.12);color:#C4F82A}
+.kc-home-wrap{max-width:760px;margin:0 auto;padding:12px 16px 94px}
+.fp-topbar{display:flex;align-items:center;justify-content:space-between;padding:8px 0 16px;border-bottom:1px solid rgba(255,255,255,.06)}
+.fp-title-box{display:flex;align-items:center;gap:12px}
+.fp-title-box h2{font-family:Archivo,sans-serif;font-variation-settings:'wdth' 120,'wght' 900;font-size:18px;margin:0;color:#fff;text-transform:uppercase}
+.fp-title-box span{font-size:11px;color:#8E9AA8}
 
-.kc-fut-stats{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-radius:12px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.06);font-size:11px;color:#8E9AA8;margin-bottom:14px;overflow-x:auto;gap:12px}
-.kc-stat-item{display:flex;flex-direction:column;gap:2px;white-space:nowrap}
-.kc-stat-item b{color:#fff;font-family:'JetBrains Mono',monospace;font-weight:500}
+/* Metric Chips Dashboard (§80) */
+.fp-metrics-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:16px 0 20px}
+@media (max-width:640px){.fp-metrics-grid{grid-template-columns:repeat(2,1fr)}}
+.fp-metric-card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;gap:4px}
+.fp-metric-lbl{font-size:10px;font-weight:600;color:#8E9AA8;text-transform:uppercase;letter-spacing:.08em}
+.fp-metric-val{font-family:'Montserrat',sans-serif;font-size:18px;font-weight:700;color:#fff}
+.fp-metric-val.lime{color:var(--lime)}
+.fp-metric-val.amber{color:var(--amber)}
 
-.kc-fut-desk{display:grid;grid-template-columns:1fr 1.2fr;gap:12px;margin-bottom:16px}
-@media (max-width:540px){.kc-fut-desk{grid-template-columns:1fr}}
+/* Navigation View Switcher */
+.fp-view-nav{display:flex;gap:10px;background:rgba(255,255,255,.03);padding:4px;border-radius:12px;border:1px solid rgba(255,255,255,.06);margin-bottom:20px}
+.fp-view-btn{flex:1;padding:9px 0;background:transparent;border:0;color:#8E9AA8;border-radius:8px;font-family:Montserrat,sans-serif;font-size:12.5px;font-weight:600;cursor:pointer;transition:all .2s;text-align:center}
+.fp-view-btn.on{background:rgba(255,255,255,.09);color:#fff;box-shadow:0 2px 8px rgba(0,0,0,.4)}
 
-.kc-book-col{display:flex;flex-direction:column;gap:3px;font-family:'JetBrains Mono',monospace;font-size:11px}
-.kc-book-row{display:flex;justify-content:space-between;padding:3px 6px;border-radius:4px;position:relative;overflow:hidden}
-.kc-book-row::after{content:"";position:absolute;top:0;bottom:0;right:0;pointer-events:none;border-radius:4px}
-.kc-book-row.ask::after{background:rgba(255,94,94,.12);width:var(--w,40%)}
-.kc-book-row.ask span:first-child{color:#FF5E5E}
-.kc-book-row.bid::after{background:rgba(196,248,42,.12);width:var(--w,40%)}
-.kc-book-row.bid span:first-child{color:#C4F82A}
-.kc-last-px{display:flex;align-items:baseline;gap:6px;padding:8px 6px;margin:4px 0;border-top:1px solid rgba(255,255,255,.06);border-bottom:1px solid rgba(255,255,255,.06)}
-.kc-last-px b{font-size:17px;color:#C4F82A;font-weight:700}
-.kc-last-px span{font-size:10px;color:#8E9AA8}
+/* Step Indicator Bar */
+.fp-step-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;position:relative}
+.fp-step-dot{display:flex;flex-direction:column;align-items:center;gap:6px;z-index:2;cursor:pointer}
+.fp-step-circle{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);color:#8E9AA8;display:grid;place-items:center;font-weight:700;font-size:12px;transition:all .2s}
+.fp-step-dot.active .fp-step-circle{background:var(--lime);border-color:var(--lime);color:#0A0D03;box-shadow:0 0 16px rgba(196,248,42,.4)}
+.fp-step-dot.completed .fp-step-circle{background:rgba(196,248,42,.15);border-color:var(--lime);color:var(--lime)}
+.fp-step-label{font-size:10px;color:#8E9AA8;font-weight:600;text-transform:uppercase}
+.fp-step-dot.active .fp-step-label{color:#fff}
 
-.kc-trade-col{display:flex;flex-direction:column;gap:10px}
-.kc-side-tgl{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:4px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07)}
-.kc-side-btn{border:0;background:transparent;padding:8px 0;border-radius:8px;font-family:Archivo,sans-serif;font-weight:700;font-size:11.5px;text-transform:uppercase;cursor:pointer;color:#8E9AA8;transition:all .2s}
-.kc-side-btn.buy.on{background:#C4F82A;color:#0A0D03}
-.kc-side-btn.sell.on{background:#FF5E5E;color:#fff}
+/* Step Container Card */
+.fp-panel{background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.07);border-radius:20px;padding:24px;margin-bottom:20px}
+.fp-panel-title{font-family:Archivo,sans-serif;font-variation-settings:'wdth' 115,'wght' 800;font-size:18px;color:#fff;margin:0 0 6px;text-transform:uppercase}
+.fp-panel-sub{font-size:13px;color:#8E9AA8;margin:0 0 18px}
 
-.kc-input-box{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-radius:10px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);font-size:12px}
-.kc-input-box label{font-size:9.5px;color:#8E9AA8;font-weight:600;text-transform:uppercase}
-.kc-input-box input{border:0;background:transparent;color:#fff;text-align:right;font-family:'JetBrains Mono',monospace;font-size:13.5px;outline:none;width:60%}
+/* Asset Selection Grid */
+.fp-asset-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px}
+.fp-asset-card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:14px;cursor:pointer;transition:all .2s;text-align:left}
+.fp-asset-card:hover{border-color:rgba(196,248,42,.4);background:rgba(255,255,255,.05)}
+.fp-asset-card.selected{border-color:var(--lime);background:rgba(196,248,42,.08);box-shadow:0 0 18px rgba(196,248,42,.15)}
+.fp-asset-sym{font-family:Archivo,sans-serif;font-variation-settings:'wdth' 120,'wght' 800;font-size:16px;color:#fff}
+.fp-asset-name{font-size:11.5px;color:#8E9AA8;margin-top:2px}
+.fp-asset-avail{margin-top:10px;font-size:11px;color:#C4F82A;font-weight:600}
 
-.kc-pct-chips{display:flex;gap:4px}
-.kc-pct-chip{flex:1;padding:5px 0;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);color:#8E9AA8;border-radius:6px;font-size:9.5px;font-family:'JetBrains Mono',monospace;cursor:pointer;text-align:center;transition:all .2s}
-.kc-pct-chip:hover{background:rgba(255,255,255,.08);color:#fff}
+/* Match Selection Grid */
+.fp-match-grid{display:flex;flex-direction:column;gap:10px}
+.fp-match-card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:16px;cursor:pointer;transition:all .2s}
+.fp-match-card:hover{border-color:rgba(196,248,42,.4)}
+.fp-match-card.selected{border-color:var(--lime);background:rgba(196,248,42,.08)}
+.fp-match-comp{font-size:10.5px;font-weight:700;color:var(--amber);text-transform:uppercase;letter-spacing:.06em}
+.fp-match-teams{font-family:Archivo,sans-serif;font-variation-settings:'wdth' 115,'wght' 800;font-size:17px;color:#fff;margin:6px 0}
+.fp-match-meta{font-size:11.5px;color:#8E9AA8;display:flex;align-items:center;gap:12px}
 
-.kc-fut-cta{width:100%;padding:12px 0;border-radius:12px;border:0;font-family:Archivo,sans-serif;font-variation-settings:'wdth' 115,'wght' 800;font-size:13px;letter-spacing:.04em;text-transform:uppercase;cursor:pointer;background:#C4F82A;color:#0A0D03;transition:all .2s}
-.kc-fut-cta.sell{background:#FF5E5E;color:#fff}
+/* Market Tiers Grid (§10, §11, §12) */
+.fp-market-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media (max-width:600px){.fp-market-grid{grid-template-columns:1fr}}
+.fp-market-card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:16px;cursor:pointer;transition:all .2s;display:flex;flex-direction:column;gap:8px}
+.fp-market-card:hover{border-color:rgba(196,248,42,.3)}
+.fp-market-card.selected{border-color:var(--lime);background:rgba(196,248,42,.08)}
+.fp-market-name{font-family:Archivo,sans-serif;font-variation-settings:'wdth' 120,'wght' 800;font-size:15px;color:#fff;text-transform:uppercase}
+.fp-market-limit{font-size:10.5px;color:var(--lime);font-weight:700}
+.fp-market-desc{font-size:12px;color:#8E9AA8;line-height:1.5;flex:1}
 
-.kc-fut-tabs{display:flex;gap:16px;border-bottom:1px solid rgba(255,255,255,.08);padding-bottom:4px;margin:20px 0 14px}
-.kc-fut-tab{background:transparent;border:0;color:#8E9AA8;font-family:Montserrat,sans-serif;font-size:13px;font-weight:600;cursor:pointer;padding:6px 0;position:relative}
-.kc-fut-tab.on{color:#fff}
-.kc-fut-tab.on::after{content:"";position:absolute;left:0;right:0;bottom:-5px;height:2px;background:#C4F82A;border-radius:2px}
+/* Prediction Option Cards (§13, §49) */
+.fp-opt-grid{display:flex;flex-direction:column;gap:10px}
+.fp-opt-card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:14px 16px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:16px;transition:all .2s}
+.fp-opt-card:hover{border-color:rgba(196,248,42,.3)}
+.fp-opt-card.selected{border-color:var(--lime);background:rgba(196,248,42,.07)}
+.fp-opt-left{display:flex;align-items:center;gap:14px}
+.fp-opt-check{width:22px;height:22px;border-radius:6px;border:1.5px solid rgba(255,255,255,.2);display:grid;place-items:center;color:#0A0D03;font-weight:800;font-size:12px;transition:all .2s}
+.fp-opt-card.selected .fp-opt-check{background:var(--lime);border-color:var(--lime)}
+.fp-opt-label{font-family:Archivo,sans-serif;font-variation-settings:'wdth' 115,'wght' 700;font-size:14px;color:#fff}
+.fp-opt-meta{font-size:11px;color:#8E9AA8;margin-top:2px;display:flex;gap:8px}
+.fp-opt-right{display:flex;gap:12px;text-align:right}
+.fp-opt-suc{font-family:'Montserrat',sans-serif;font-size:13px;font-weight:700;color:var(--lime)}
+.fp-opt-fail{font-family:'Montserrat',sans-serif;font-size:13px;font-weight:700;color:#FF5E5E}
 
-.kc-pos-card{padding:16px;border-radius:16px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);margin-bottom:12px}
-.kc-pos-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px}
-.kc-pos-name{font-weight:700;font-size:14px;color:#fff;display:flex;align-items:center;gap:6px}
-.kc-pos-pnl{text-align:right;font-family:'JetBrains Mono',monospace}
-.kc-pos-pnl .v{font-size:14.5px;font-weight:700;color:#C4F82A}
-.kc-pos-pnl .p{font-size:11px;color:#C4F82A}
-.kc-pos-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;font-size:11px;color:#8E9AA8;margin-top:10px}
-.kc-pos-grid b{display:block;color:#fff;font-family:'JetBrains Mono',monospace;margin-top:2px}
+/* Stake & Review Cards (§50, §51, §52) */
+.fp-stake-box{display:flex;flex-direction:column;gap:12px}
+.fp-stake-input-wrap{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1);border-radius:12px}
+.fp-stake-input{border:0;background:transparent;color:#fff;font-family:'Montserrat',sans-serif;font-size:22px;font-weight:700;outline:none;width:60%}
+.fp-stake-chips{display:flex;gap:8px}
+.fp-stake-chip{flex:1;padding:8px 0;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:#8E9AA8;border-radius:8px;font-size:11.5px;cursor:pointer;text-align:center;font-weight:600}
+.fp-stake-chip:hover{background:rgba(255,255,255,.09);color:#fff}
+.fp-breakdown{display:flex;flex-direction:column;gap:8px;padding:14px;background:rgba(255,255,255,.02);border-radius:12px;font-size:12.5px;color:#8E9AA8}
+.fp-breakdown-row{display:flex;justify-content:space-between;align-items:center}
+.fp-breakdown-row b{color:#fff;font-family:'Montserrat',sans-serif}
+.fp-risk-box{padding:12px 14px;border-radius:12px;background:rgba(255,106,31,.08);border:1px solid rgba(255,106,31,.2);color:#FF9D66;font-size:11.5px;line-height:1.5;margin-top:14px}
 
-.tierrail{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.tiercard{display:flex;flex-direction:column;gap:6px;padding:12px 14px;border-radius:12px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);color:#8E9AA8;cursor:pointer;text-align:left}
-.tiercard[aria-pressed="true"]{border-color:#C4F82A;background:rgba(196,248,42,.08);color:#fff}
-.tiercard .t{font-weight:700;font-size:11px;text-transform:uppercase}
-.tiercard .x{font-family:'JetBrains Mono',monospace;font-size:16px;color:#C4F82A}
-.tiercard .risk{height:3px;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden;margin-top:4px}
-.tiercard .risk i{display:block;height:100%;border-radius:99px;background:#C4F82A}
-
-.countdown{display:flex;gap:8px;margin-top:14px}
-.cd{flex:1;text-align:center;border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:10px 4px;background:rgba(255,255,255,.03)}
-.cd b{display:block;font-family:'JetBrains Mono',monospace;font-size:18px;color:#fff}
-.cd span{font-size:8px;letter-spacing:.12em;color:#8E9AA8;text-transform:uppercase}
-
-.calc .cr{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:12px;color:#8E9AA8}
-.calc .cr b{color:#fff;font-family:'JetBrains Mono',monospace}
-.calc .out{padding:14px;border-radius:12px;background:rgba(196,248,42,.06);border:1px solid rgba(196,248,42,.2);margin-top:12px;text-align:center}
-.calc .out .v{font-family:'JetBrains Mono',monospace;font-size:26px;color:#C4F82A;font-weight:700}
+/* Action Buttons */
+.fp-nav-btns{display:flex;gap:12px;margin-top:20px}
+.fp-btn-back{flex:1;padding:14px 0;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:#fff;border-radius:12px;font-family:Archivo,sans-serif;font-weight:700;font-size:13px;text-transform:uppercase;cursor:pointer;text-align:center}
+.fp-btn-next{flex:2;padding:14px 0;background:var(--lime);border:0;color:#0A0D03;border-radius:12px;font-family:Archivo,sans-serif;font-variation-settings:'wdth' 115,'wght' 800;font-size:13.5px;text-transform:uppercase;cursor:pointer;text-align:center;box-shadow:0 0 20px rgba(196,248,42,.3)}
 """
 
 fp = ['<main><div class="kc-home-wrap">']
 
 # Topbar
-fp.append(T('<div class="kc-fut-topbar">'
-            '<div class="kc-pair-btn">'
-            '<span class="kc-pair-sym">$SAKA/FTR</span>'
-            '<span class="kc-tag-perp">Perp</span>'
-            '<span class="kc-tag-lev">10x</span>'
+fp.append(T('<div class="fp-topbar">'
+            '<div class="fp-title-box">'
+            '  <a class="kc-icon-btn" href="dashboard.html" title="Back to Home" style="width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;color:#8E9AA8;text-decoration:none">@@</a>'
+            '  <div><h2>FanPlay Engine</h2><span>Stake Owned Shares · Match Predictions · $FTR Settlement</span></div>'
             '</div>'
-            '<div class="kc-delta-badge">+6.40%</div>'
-            '<div style="display:flex;align-items:center;gap:8px">'
-            '<a class="kc-icon-btn" href="asset.html?a=%24Saka" title="Candlestick Chart" style="width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;color:#8E9AA8;text-decoration:none">@@</a>'
-            '<button class="bell" type="button" id="fpBell" aria-label="Matchday alerts" style="width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;color:#8E9AA8;cursor:pointer">@@<span class="dot" id="fpBellDot" hidden></span></button>'
-            '</div>'
-            '<span hidden id="fpActiveCount">2 active</span>'
+            '<a class="kc-icon-btn" href="liveboard.html" title="Live Matchday Board" style="width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;color:#C4F82A;text-decoration:none">@@</a>'
             '</div>',
-            ic("candle", "ic"), ic("bell", "ic")))
+            ic("arrow", "ic"), ic("pulse", "ic")))
 
-# Sub Stats Bar
-fp.append('<div class="kc-fut-stats">'
-          '<div class="kc-stat-item"><span>Mark</span><b>14.80</b></div>'
-          '<div class="kc-stat-item"><span>Index</span><b>14.78</b></div>'
-          '<div class="kc-stat-item"><span>24h High</span><b>15.20</b></div>'
-          '<div class="kc-stat-item"><span>24h Low</span><b>13.90</b></div>'
-          '<div class="kc-stat-item"><span>Funding / Countdown</span><b style="color:#C4F82A">0.0100% 03:42:15</b></div>'
+# 4 Key Metrics Dashboard Chips (§80)
+fp.append('<div class="fp-metrics-grid">'
+          '<div class="fp-metric-card"><span class="fp-metric-lbl">Locked Shares</span><span class="fp-metric-val lime" id="mLockedShares">0</span></div>'
+          '<div class="fp-metric-card"><span class="fp-metric-lbl">Active Positions</span><span class="fp-metric-val" id="mActiveCount">0</span></div>'
+          '<div class="fp-metric-card"><span class="fp-metric-lbl">Provisional FP</span><span class="fp-metric-val lime" id="mProvFP">0 FP</span></div>'
+          '<div class="fp-metric-card"><span class="fp-metric-lbl">Settled Earnings</span><span class="fp-metric-val amber" id="mSettledFTR">0.00 $FTR</span></div>'
           '</div>')
 
-# Futures Desk (Order Book + Ticket)
-fp.append('<div class="kc-fut-desk">'
-          '<div class="kc-book-col">'
-          '<div class="kc-book-row ask" style="--w:78%"><span>14.95</span><span style="color:#8E9AA8">4,200</span></div>'
-          '<div class="kc-book-row ask" style="--w:62%"><span>14.90</span><span style="color:#8E9AA8">6,800</span></div>'
-          '<div class="kc-book-row ask" style="--w:45%"><span>14.85</span><span style="color:#8E9AA8">12,500</span></div>'
-          '<div class="kc-last-px"><b>14.80</b><span>≈ $1.19</span></div>'
-          '<div class="kc-book-row bid" style="--w:55%"><span>14.75</span><span style="color:#8E9AA8">8,900</span></div>'
-          '<div class="kc-book-row bid" style="--w:70%"><span>14.70</span><span style="color:#8E9AA8">14,200</span></div>'
-          '<div class="kc-book-row bid" style="--w:85%"><span>14.65</span><span style="color:#8E9AA8">19,500</span></div>'
-          '</div>'
-          '<div class="kc-trade-col">'
-          '<div class="kc-side-tgl" id="futSideTgl">'
-          '<button class="kc-side-btn buy on" type="button" data-side="buy">Open Long</button>'
-          '<button class="kc-side-btn sell" type="button" data-side="sell">Open Short</button>'
-          '</div>'
-          '<div class="kc-input-box"><label>Price</label><input id="futPx" value="14.80" inputmode="decimal"></div>'
-          '<div class="kc-input-box"><label>Qty</label><input id="futQty" value="1,000" inputmode="numeric"></div>'
-          '<div class="kc-pct-chips">'
-          '<button class="kc-pct-chip" type="button" data-fpct="25">25%</button>'
-          '<button class="kc-pct-chip" type="button" data-fpct="50">50%</button>'
-          '<button class="kc-pct-chip" type="button" data-fpct="75">75%</button>'
-          '<button class="kc-pct-chip" type="button" data-fpct="100">100%</button>'
-          '</div>'
-          '<div style="display:flex;justify-content:space-between;font-size:11px;color:#8E9AA8;margin-top:2px">'
-          '<span>Cost: <b style="color:#fff" id="futCost">1,480 FTR</b></span>'
-          '<span>Max: <b style="color:#C4F82A">86,790</b></span>'
-          '</div>'
-          '<button class="kc-fut-cta" id="futGoBtn" type="button">Open Long (Buy)</button>'
+# Tab Switcher: Wizard vs Active vs History
+fp.append('<div class="fp-view-nav">'
+          '<button type="button" class="fp-view-btn on" id="vbtnWizard" onclick="window.switchFPView(\'wizard\')">New FanPlay Position</button>'
+          '<button type="button" class="fp-view-btn" id="vbtnActive" onclick="window.switchFPView(\'active\')">Active &amp; Live (<span id="tabActiveCount">0</span>)</button>'
+          '<button type="button" class="fp-view-btn" id="vbtnHistory" onclick="window.switchFPView(\'history\')">Settled History</button>'
+          '</div>')
+
+# ══════════════════════════════════════════════════════════
+# VIEW 1: 7-STEP WIZARD (§48)
+# ══════════════════════════════════════════════════════════
+fp.append('<div id="fpViewWizard">'
+          '<!-- Step Indicator -->'
+          '<div class="fp-step-bar">'
+          '<div class="fp-step-dot active" id="sdot1" onclick="window.goToStep(1)"><div class="fp-step-circle">1</div><span class="fp-step-label">Asset</span></div>'
+          '<div class="fp-step-dot" id="sdot2" onclick="window.goToStep(2)"><div class="fp-step-circle">2</div><span class="fp-step-label">Match</span></div>'
+          '<div class="fp-step-dot" id="sdot3" onclick="window.goToStep(3)"><div class="fp-step-circle">3</div><span class="fp-step-label">Market</span></div>'
+          '<div class="fp-step-dot" id="sdot4" onclick="window.goToStep(4)"><div class="fp-step-circle">4</div><span class="fp-step-label">Picks</span></div>'
+          '<div class="fp-step-dot" id="sdot5" onclick="window.goToStep(5)"><div class="fp-step-circle">5</div><span class="fp-step-label">Stake</span></div>'
+          '<div class="fp-step-dot" id="sdot6" onclick="window.goToStep(6)"><div class="fp-step-circle">6</div><span class="fp-step-label">Review</span></div>'
+          '<div class="fp-step-dot" id="sdot7"><div class="fp-step-circle">7</div><span class="fp-step-label">Done</span></div>'
+          '</div>')
+
+# Step 1: Choose Asset
+fp.append('<div class="fp-panel" id="stepBox1">'
+          '<div class="fp-panel-title">Step 1: Choose Owned Player or Coach</div>'
+          '<div class="fp-panel-sub">Select an asset from your portfolio to stake. You must own available shares.</div>'
+          '<div class="fp-asset-grid" id="stepAssetGrid"></div>'
+          '<div class="fp-nav-btns"><button type="button" class="fp-btn-next" onclick="window.goToStep(2)">Next: Choose Match →</button></div>'
+          '</div>')
+
+# Step 2: Choose Match
+fp.append('<div class="fp-panel" id="stepBox2" style="display:none">'
+          '<div class="fp-panel-title">Step 2: Choose Fixture</div>'
+          '<div class="fp-panel-sub">Select an upcoming match before its activation cutoff point.</div>'
+          '<div class="fp-match-grid" id="stepMatchGrid"></div>'
+          '<div class="fp-nav-btns">'
+          '<button type="button" class="fp-btn-back" onclick="window.goToStep(1)">← Back</button>'
+          '<button type="button" class="fp-btn-next" onclick="window.goToStep(3)">Next: Choose Market →</button>'
           '</div></div>')
 
-# Lower Tabs: Positions / Orders / Matchday Fantasy
-fp.append('<div class="kc-fut-tabs" id="futTabs">'
-          '<button class="kc-fut-tab on" type="button" data-sec="pos">Positions (1)</button>'
-          '<button class="kc-fut-tab" type="button" data-sec="orders">Open Orders (0)</button>'
-          '<button class="kc-fut-tab" type="button" data-sec="fantasy">Matchday 07 Fantasy</button>'
-          '</div>')
+# Step 3: Choose Market Tier (§10, §11, §12)
+fp.append('<div class="fp-panel" id="stepBox3" style="display:none">'
+          '<div class="fp-panel-title">Step 3: Choose Market Tier</div>'
+          '<div class="fp-panel-sub">All market tiers are open to all fans with zero subscription gating. Tiers determine prediction complexity and exposure depth.</div>'
+          '<div class="fp-market-grid" id="stepMarketGrid"></div>'
+          '<div class="fp-nav-btns">'
+          '<button type="button" class="fp-btn-back" onclick="window.goToStep(2)">← Back</button>'
+          '<button type="button" class="fp-btn-next" onclick="window.goToStep(4)">Next: Select Predictions →</button>'
+          '</div></div>')
 
-# Section: Positions
-fp.append('<div id="secPos">'
-          '<div class="kc-pos-card">'
-          '<div class="kc-pos-head">'
-          '<div><div class="kc-pos-name">$SAKA Perp <span class="kc-tag-lev">10x Long</span></div>'
-          '<div style="font-size:11px;color:#8E9AA8;margin-top:3px">Isolated · Size: 10,000 shares</div></div>'
-          '<div class="kc-pos-pnl"><div class="v">+1,420.00 FTR</div><div class="p">+28.40% ROE</div></div>'
+# Step 4: Choose Predictions (§13, §14, §15, §16, §17, §49)
+fp.append('<div class="fp-panel" id="stepBox4" style="display:none">'
+          '<div class="fp-panel-title">Step 4: Select Predictions</div>'
+          '<div class="fp-panel-sub" id="stepPicksSub">Select options satisfying your chosen market tier. Contradictions and group conflicts are enforced automatically.</div>'
+          '<div class="fp-opt-grid" id="stepOptGrid"></div>'
+          '<div class="fp-nav-btns">'
+          '<button type="button" class="fp-btn-back" onclick="window.goToStep(3)">← Back</button>'
+          '<button type="button" class="fp-btn-next" onclick="window.goToStep(5)">Next: Choose Shares →</button>'
+          '</div></div>')
+
+# Step 5: Choose Stake (§5, §6, §50)
+fp.append('<div class="fp-panel" id="stepBox5" style="display:none">'
+          '<div class="fp-panel-title">Step 5: Choose Staked Shares</div>'
+          '<div class="fp-panel-sub">You stake player shares, NOT $FTR directly. Staked shares are locked until final match settlement.</div>'
+          '<div class="fp-stake-box">'
+          '<div class="fp-stake-input-wrap">'
+          '<label style="font-size:11px;color:#8E9AA8;text-transform:uppercase;font-weight:700">Shares Stake</label>'
+          '<input type="number" id="stakeInput" value="100" min="1" oninput="window.updateStakeCalculations()">'
           '</div>'
-          '<div class="kc-pos-grid">'
-          '<div><span>Entry Price</span><b>13.90</b></div>'
-          '<div><span>Mark Price</span><b>14.80</b></div>'
-          '<div><span>Liq. Price</span><b style="color:#FF5E5E">7.40</b></div>'
-          '<div><span>Margin</span><b>5,000 FTR</b></div>'
-          '<div><span>TP / SL</span><b>-- / --</b></div>'
-          '<div style="display:flex;align-items:flex-end">'
-          '<button type="button" onclick="showToast(\'Position closed at market price.\', \'success\')" style="padding:4px 10px;border-radius:6px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);color:#fff;font-size:11px;cursor:pointer">Close</button>'
-          '</div></div></div></div>')
-
-# Section: Orders
-fp.append('<div id="secOrders" style="display:none">'
-          '<div style="padding:28px;text-align:center;color:#8E9AA8;font-size:13px">No open limit orders right now.</div>'
-          '</div>')
-
-# Section: Matchday 07 Fantasy (FanPlay)
-fp.append('<div id="secFantasy" style="display:none">'
-          '<div style="display:flex;flex-direction:column;gap:16px">'
-          '<div class="bezel" style="border-radius:20px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.07);overflow:hidden;padding:18px" data-reveal>'
-          '<div class="fstep-h"><span class="n">1</span>Choose Play Mode</div>'
-          '<div class="seg2" role="tablist" style="margin-bottom:14px">'
-          '<button class="tab" role="tab" id="tab-solo" aria-selected="false" data-mode="solo" style="border-radius:12px;padding:12px">'
-          '<span class="l" style="font-weight:700">Individual</span><span class="s" style="font-size:11px;color:#8E9AA8">One player</span></button>'
-          '<button class="tab" role="tab" id="tab-club" aria-selected="true" data-mode="club" style="border-radius:12px;padding:12px">'
-          '<span class="l" style="font-weight:700">Dream Club</span><span class="s" id="clubModeNote" style="font-size:11px;color:#8E9AA8">Whole club</span></button>'
+          '<div class="fp-stake-chips">'
+          '<button type="button" class="fp-stake-chip" onclick="window.setStakePct(0.25)">25%</button>'
+          '<button type="button" class="fp-stake-chip" onclick="window.setStakePct(0.50)">50%</button>'
+          '<button type="button" class="fp-stake-chip" onclick="window.setStakePct(0.75)">75%</button>'
+          '<button type="button" class="fp-stake-chip" onclick="window.setStakePct(1.00)">100%</button>'
           '</div>'
-          '<div class="clubrail" id="fpClubs" style="margin-bottom:14px"></div>'
-          '<div class="fp-sel" style="margin-bottom:12px"><span class="badge" id="selBadge"></span>'
-          '<div style="min-width:0"><div class="nm" id="selName">Zero FC</div>'
-          '<p class="sub" id="selSub">4-3-3 · Coach $Arteta</p></div>'
-          '<div class="right">Ownership<span class="up" style="color:#C4F82A">Verified</span></div></div>'
-          '<div class="line"><span>Fixtures tracked</span><b id="fixtures">9 matches · 4 leagues</b></div>'
-          '<div class="line"><span>Entries live this round</span><b id="fpLive">—</b></div>'
+          '<div class="fp-breakdown">'
+          '<div class="fp-breakdown-row"><span>Total Owned Shares</span><b id="sOwned">500</b></div>'
+          '<div class="fp-breakdown-row"><span>Currently Locked</span><b id="sLocked">0</b></div>'
+          '<div class="fp-breakdown-row"><span>Available to Stake</span><b id="sAvail" style="color:var(--lime)">500</b></div>'
+          '<div class="fp-breakdown-row" style="border-top:1px solid rgba(255,255,255,.06);padding-top:8px"><span>Remaining After Lock</span><b id="sRemain">400</b></div>'
+          '</div>'
+          '</div>'
+          '<div class="fp-nav-btns">'
+          '<button type="button" class="fp-btn-back" onclick="window.goToStep(4)">← Back</button>'
+          '<button type="button" class="fp-btn-next" onclick="window.goToStep(6)">Review Position →</button>'
+          '</div></div>')
+
+# Step 6: Review & Risk Disclosure (§51, §52)
+fp.append('<div class="fp-panel" id="stepBox6" style="display:none">'
+          '<div class="fp-panel-title">Step 6: Review Position &amp; Risk Disclosure</div>'
+          '<div class="fp-panel-sub">Verify your exact potential FP range and $FTR settlement range before locking shares.</div>'
+          '<div class="fp-breakdown" id="reviewBreakdown"></div>'
+          '<div class="fp-risk-box">'
+          '⚠️ <b>FanPlay Risk Disclosure:</b> Staked shares are locked and cannot be sold on the Exchange until the match reaches final settlement. Incorrect predictions generate negative Fans Point (FP), which will debit your $FTR ledger balance upon settlement at 1,000 FP = 1 $FTR. Final settlement uses official authoritative matchday data.'
+          '</div>'
+          '<div class="fp-nav-btns">'
+          '<button type="button" class="fp-btn-back" onclick="window.goToStep(5)">← Back</button>'
+          '<button type="button" class="fp-btn-next" id="btnActivate" onclick="window.submitActivation()">Lock Shares &amp; Activate FanPlay</button>'
+          '</div></div>')
+
+# Step 7: Activated Success Receipt
+fp.append('<div class="fp-panel" id="stepBox7" style="display:none;text-align:center;padding:40px 20px">'
+          '<div style="font-size:48px;margin-bottom:12px">🎉</div>'
+          '<div class="fp-panel-title" style="color:var(--lime)">FanPlay Position Activated!</div>'
+          '<div class="fp-panel-sub" id="step7Msg">Your shares have been locked in the institutional custody reservation engine.</div>'
+          '<div style="display:flex;gap:12px;justify-content:center;margin-top:24px">'
+          '<button type="button" class="fp-btn-next" style="flex:none;padding:12px 28px" onclick="window.switchFPView(\'active\')">View Active Positions</button>'
+          '<button type="button" class="fp-btn-back" style="flex:none;padding:12px 28px" onclick="window.resetWizard()">Create Another</button>'
+          '</div></div>'
           '</div>')
 
-# Tiers Card
-fp.append('<div class="bezel" style="border-radius:20px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.07);overflow:hidden;padding:18px" data-reveal>'
-          '<div class="fstep-h"><span class="n">2</span>Select Market Tier</div>'
-          '<div class="tierrail" id="markets">')
+# ══════════════════════════════════════════════════════════
+# VIEW 2: ACTIVE & LIVE POSITIONS (§29, §45, §46)
+# ══════════════════════════════════════════════════════════
+fp.append('<div id="fpViewActive" style="display:none">'
+          '<div id="activeList" style="display:flex;flex-direction:column;gap:14px"></div>'
+          '</div>')
 
-TIERS = [("Simple", 1, "Goals, assists and clean sheets.", 18),
-         ("PRO", 1.4, "Adds key passes, duels won and expected goals.", 32),
-         ("Elite", 2, "Full performance data, position-weighted.", 50),
-         ("Killer", 3, "Elite scoring plus cards, misses and errors against you.", 68),
-         ("Viynx Move", 4.5, "Scoring swings with live in-match movement.", 84),
-         ("Viynx Max", 7, "Every event counts, at maximum weight.", 100)]
-
-for name, m, note, risk in TIERS:
-    fp.append(T('<button class="mkt tiercard"@@ data-m="@@" data-note="@@">'
-                '<span class="t">@@</span><span class="x">×@@</span>'
-                '<span class="risk"><i style="width:@@%"></i></span></button>',
-                ' aria-pressed="true"' if name == "Elite" else ' aria-pressed="false"',
-                m, note, name, ("%g" % m), risk))
-fp.append('</div><p class="mkt-note" id="mktNote" style="margin-top:10px;font-size:12px;color:#8E9AA8">Full performance data, position-weighted.</p></div>')
-
-# Stake & Output
-fp.append(T('<div class="bezel" style="border-radius:20px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.07);overflow:hidden;padding:18px" data-reveal>'
-            '<div class="fstep-h"><span class="n">3</span>Stake &amp; Activate</div>'
-            '<div class="field"><label>Amount</label>'
-            '<input id="fpStake" value="2,500" inputmode="numeric"></div>'
-            '<div class="quick"><button type="button" data-st="1000">1,000</button>'
-            '<button type="button" data-st="2500">2,500</button>'
-            '<button type="button" data-st="5000">5,000</button>'
-            '<button type="button" class="maxbtn" id="fpMax">Max</button></div>'
-            '<div class="line"><span>Available</span><b><span data-bind="balance">128,450</span> $FTR</b></div>'
-            '<div class="line"><span>Weekly cap remaining</span><b id="fpCapLeft">—</b></div>'
-            '<div class="capbar" style="margin:10px 0"><i id="fpCapBar" style="width:50%"></i></div>'
-            '<div class="calc" style="margin-top:14px">'
-            '<div class="cr"><span id="baseLabel">Club base points</span><b id="basePts">100 FP</b></div>'
-            '<div class="cr"><span>Market multiplier</span><b id="multPts">×2.0</b></div>'
-            '<div class="cr boost" id="boostRow"><span>Club boost</span><b style="color:var(--amber)">+15%</b></div>'
-            '<div class="out"><div style="font-size:10px;text-transform:uppercase;color:#8E9AA8;letter-spacing:.12em">Projected Fans Point</div>'
-            '<div class="v" id="fpOut">230</div>'
-            '<div style="font-size:11px;color:#8E9AA8" id="fpNote">Club mode · Elite</div></div>'
-            '</div>'
-            '@@'
-            '<a class="fp-boardlink" href="liveboard.html" style="margin-top:14px;display:flex;align-items:center;gap:8px;text-decoration:none;font-size:12px;color:#C4F82A">@@<span>Live Matchday Board</span><span style="margin-left:auto;color:#8E9AA8">9 fixtures @@</span></a>'
-            '</div></div></div>',
-            btn("Activate entry", tag="button",
-                extra='id="activateEntryBtn" style="margin-top:16px;width:100%;justify-content:space-between"'),
-            ic("pulse", "ic"), ic("arrow", "ic-sm")))
+# ══════════════════════════════════════════════════════════
+# VIEW 3: SETTLED HISTORY (§45, §46, §81)
+# ══════════════════════════════════════════════════════════
+fp.append('<div id="fpViewHistory" style="display:none">'
+          '<div id="historyList" style="display:flex;flex-direction:column;gap:14px"></div>'
+          '</div>')
 
 fp.append('</div></main>')
 
-
 FP_JS = r"""
-var mode='club', mult=2, mktName='ELITE';
-var tabs=document.querySelectorAll('.tab'), mkts=document.querySelectorAll('.mkt');
-var CREST="<svg class='ic'><use href='#i-crest'/></svg>", BOOT="<svg class='ic'><use href='#i-boot'/></svg>";
-// which club this entry stakes — defaults to the one you last switched to
-var pickedClub = FT.activeClubId();
+var curView = 'wizard';
+var curStep = 1;
+var eligibleAssets = [];
+var matchesList = [];
+var marketsList = [];
+var optionsList = [];
+var userFanPlays = [];
 
-function staked(id){
-  return (FT.getState().fanplay.activeEntries || []).filter(function(e){ return e.clubId === id; })[0];
-}
-function renderClubs(){
-  var rail=document.getElementById('fpClubs'), s=FT.getState();
-  if(!rail) return;
-  rail.hidden = mode!=='club';
-  if(mode!=='club') return;
-  rail.innerHTML=s.clubs.map(function(c){
-    var live=staked(c.id);
-    return '<button class="clubchip" type="button" data-club="'+c.id+'"'
-      +(c.id===pickedClub?' aria-pressed="true"':' aria-pressed="false"')+'>'
-      +'<span class="rc" style="background:linear-gradient(160deg,'+c.colors[0]+','
-      +(c.colors[1]||c.colors[0])+')">'
-      +c.name.split(/\s+/).map(function(w){ return w.charAt(0).toUpperCase(); }).join('').slice(0,3)+'</span>'
-      +'<span class="cn">'+c.name+'</span>'
-      +'<span class="cd">'+(live?'staked':'+'+(c.boost||0).toFixed(1)+'%')+'</span></button>';
-  }).join('');
-  rail.querySelectorAll('[data-club]').forEach(function(b){
-    b.addEventListener('click',function(){
-      pickedClub=b.dataset.club; renderClubs(); render();
-    });
-  });
-}
+var selAsset = null;
+var selMatch = null;
+var selMarket = null;
+var selOptionIds = [];
+var stakeShares = 100;
 
-function render(){
-  var s=FT.getState();
-  var club=mode==='club';
-  var c=club?FT.getClub(pickedClub):null;
-  var boost=club?(c.boost||0)/100:0;
-  var base=100, total=Math.round(base*(1+boost)*mult);
-  document.getElementById('basePts').textContent=base+' FP';
-  document.getElementById('multPts').textContent='×'+mult.toFixed(1);
-  document.getElementById('fpOut').textContent=total.toLocaleString();
-  document.getElementById('fpNote').textContent=(club?c.name:'Individual mode')+' · '+mktName;
-  var br=document.getElementById('boostRow');
-  br.style.display=club?'flex':'none';
-  br.querySelector('b').textContent='+'+(club?(c.boost||0).toFixed(1):'0.0')+'%';
-  document.getElementById('capRow').style.display=club?'flex':'none';
-  var cName=club?c.name:'$Bruno';
-  var cForm=club?(c.formation||'4-3-3'):'';
-  document.getElementById('selBadge').innerHTML=club?CREST:BOOT;
-  document.getElementById('selName').textContent=cName;
-  document.getElementById('selSub').textContent=club
-    ? cForm+' · Coach '+(c.coach||'$Arteta')+' · '+(c.division||'Challenger')+' division'
-    : 'Bruno Fernandes · 10,000 shares activated';
-  var cmn=document.getElementById('clubModeNote');
-  if(cmn) cmn.textContent=club
-    ? c.name+' · +'+(c.boost||0).toFixed(1)+'%'
-    : s.clubs.length+(s.clubs.length===1?' club':' clubs');
-  document.getElementById('baseLabel').textContent=club?'Club base points':'Player base points';
-  document.getElementById('fixtures').textContent=club?'9 matches · 4 leagues':'1 match · Man Utd v Spurs';
-  var lv=document.getElementById('fpLive');
-  if(lv){
-    var n=(s.fanplay.activeEntries||[]).length;
-    lv.textContent=n+(n===1?' entry':' entries');
-  }
-  var btn=document.getElementById('activateEntryBtn');
-  if(btn){
-    var done = club && staked(pickedClub);
-    btn.innerHTML = done
-      ? "Already staked <span class='cap'><svg class='ic'><use href='#i-check'/></svg></span>"
-      : "Activate entry <span class='cap'><svg class='ic'><use href='#i-arrow'/></svg></span>";
-    btn.classList.toggle('btn-glass', !!done);
-    btn.classList.toggle('btn-lime', !done);
+function switchFPView(v){
+  curView = v;
+  document.getElementById('vbtnWizard').classList.toggle('on', v==='wizard');
+  document.getElementById('vbtnActive').classList.toggle('on', v==='active');
+  document.getElementById('vbtnHistory').classList.toggle('on', v==='history');
+  document.getElementById('fpViewWizard').style.display = v==='wizard' ? '' : 'none';
+  document.getElementById('fpViewActive').style.display = v==='active' ? '' : 'none';
+  document.getElementById('fpViewHistory').style.display = v==='history' ? '' : 'none';
+  if(v==='active' || v==='history'){
+    loadUserFanPlays();
   }
 }
-tabs.forEach(function(t){ t.addEventListener('click',function(){
-  tabs.forEach(function(x){ x.setAttribute('aria-selected','false'); });
-  t.setAttribute('aria-selected','true'); mode=t.dataset.mode;
-  document.getElementById('pane').setAttribute('aria-labelledby',t.id);
-  renderClubs(); render(); }); });
-mkts.forEach(function(m){ m.addEventListener('click',function(){
-  mkts.forEach(function(x){ x.setAttribute('aria-pressed','false'); });
-  m.setAttribute('aria-pressed','true'); mult=parseFloat(m.dataset.m);
-  mktName=(m.querySelector('.t')||m).textContent.trim();
-  document.getElementById('mktNote').textContent=m.dataset.note; render(); }); });
-renderClubs(); render();
+window.switchFPView = switchFPView;
 
-function syncFPEntriesCount(){
-  var s=FT.getState();
-  var el=document.getElementById('fpActiveCount');
-  if(el) el.textContent=s.fanplay.activeEntries.length+' active';
-  render();
+function resetWizard(){
+  curStep = 1;
+  selAsset = null;
+  selMatch = null;
+  selMarket = null;
+  selOptionIds = [];
+  stakeShares = 100;
+  updateStepUI();
+  switchFPView('wizard');
+  loadInitialData();
 }
-syncFPEntriesCount();
+window.resetWizard = resetWizard;
 
-var actBtn=document.getElementById('activateEntryBtn');
-if(actBtn){
-  actBtn.addEventListener('click',function(){
-    var s=FT.getState();
-    var club=mode==='club'?FT.getClub(pickedClub):null;
-    var base=100;
-    var total=Math.round(base*(club?1+(club.boost||0)/100:1)*mult);
-    var target=club?club.name:'$Bruno';
-
-    try{
-      var stake=stakeAmount();
-      if(stake<100){ showToast("The smallest stake is 100 $FTR.", "error"); return; }
-      var entry=FT.activateFanPlayEntry({
-        mode: mode==='club'?'Dream Club':'Individual',
-        clubId: club?club.id:'',
-        target: target,
-        tier: mktName,
-        mult: mult,
-        stake: stake,
-        projectedFP: total
-      });
-      syncFPEntriesCount();
-      renderClubs();
-      showToast("Entry activated for "+target+" in "+mktName+" tier · "
-        +stake.toLocaleString('en-US')+" $FTR staked.", "success");
-      actBtn.innerHTML="Entry active <span class='cap'><svg class='ic'><use href='#i-check'/></svg></span>";
-      setTimeout(function(){
-        actBtn.innerHTML="Activate another entry <span class='cap'><svg class='ic'><use href='#i-arrow'/></svg></span>";
-      },3200);
-    }catch(err){
-      showToast(err.message, "error");
-      if(err.message.indexOf("Insufficient")!==-1){
-        setTimeout(function(){ showAccountModal(); }, 700);
+function goToStep(s){
+  if(s > curStep){
+    if(curStep === 1 && !selAsset){ showToast('Select an asset to continue.', 'error'); return; }
+    if(curStep === 2 && !selMatch){ showToast('Select a match fixture to continue.', 'error'); return; }
+    if(curStep === 3 && !selMarket){ showToast('Select a market tier to continue.', 'error'); return; }
+    if(curStep === 4){
+      if(selOptionIds.length === 0){ showToast('Select at least 1 prediction option.', 'error'); return; }
+      if(selMarket && selOptionIds.length > selMarket.maxSelections){
+        showToast('Maximum ' + selMarket.maxSelections + ' selections allowed in ' + selMarket.name + '.', 'error');
+        return;
       }
     }
-  });
-}
-window.addEventListener('fantrade:statechange', function(){ renderClubs(); syncFPEntriesCount(); });
-
-// ── stake field ─────────────────────────────────────────────────
-function el(id){ return document.getElementById(id); }
-function stakeAmount(){ return parseInt(String(el('fpStake').value).replace(/[^0-9]/g,''),10)||0; }
-function capBar(){
-  var s=FT.getState(), cap=s.prefs.stakeCap||5000, used=stakeAmount();
-  var left=Math.max(0, cap-used);
-  el('fpCapLeft').textContent=left.toLocaleString('en-US')+' of '+cap.toLocaleString('en-US')+' $FTR';
-  el('fpCapBar').style.width=Math.min(100, used/cap*100).toFixed(0)+'%';
-  el('fpCapBar').style.background=used>cap?'var(--red)':'var(--lime)';
-}
-el('fpStake').addEventListener('input',function(){
-  var v=el('fpStake').value.replace(/[^0-9]/g,'');
-  el('fpStake').value=v?(+v).toLocaleString('en-US'):'';
-  capBar();
-});
-document.querySelectorAll('[data-st]').forEach(function(b){
-  b.addEventListener('click',function(){
-    el('fpStake').value=(+b.dataset.st).toLocaleString('en-US'); capBar();
-  });
-});
-el('fpMax').addEventListener('click',function(){
-  var s=FT.getState();
-  el('fpStake').value=Math.min(s.wallet.balance, s.prefs.stakeCap||5000).toLocaleString('en-US');
-  capBar();
-});
-capBar();
-window.addEventListener('fantrade:statechange', capBar);
-
-// ── round clock ─────────────────────────────────────────────────
-var left=4*3600+12*60+38;
-function pad(n){ return n<10?'0'+n:''+n; }
-if(!reduce) setInterval(function(){
-  if(left<=0) return; left--;
-  el('fpH').textContent=pad(Math.floor(left/3600));
-  el('fpM').textContent=pad(Math.floor(left%3600/60));
-  el('fpS').textContent=pad(left%60);
-},1000);
-
-// ── matchday alerts, from the same feed the bell in the top bar reads ──
-var KIND={settle:'Settlement', order:'Order', club:'Club', system:'Account'};
-el('fpBell').addEventListener('click',function(){
-  var s=FT.getState();
-  var rows=(s.notifications||[]).filter(function(n){
-    return n.kind==='settle'||n.kind==='club';
-  }).slice(0,5);
-  var html='<h3 class="ft-modal-title">Matchday alerts</h3>';
-  if(!rows.length){
-    html+='<div class="empty-state"><svg class="ic-xl" aria-hidden="true"><use href="#i-pulse"/></svg>'
-      +'Nothing on the round yet.</div>';
-  } else {
-    html+='<div style="max-height:52vh;overflow:auto;margin-bottom:18px">'+rows.map(function(n){
-      return '<div class="trow"><span class="coin'+(n.tone==='up'?' lime':'')+'">'
-        +'<svg class="ic" aria-hidden="true"><use href="#i-'+n.icon+'"/></svg></span>'
-        +'<div class="bd"><div class="t">'+n.title+(n.read?'':' <span class="tag lime">New</span>')+'</div>'
-        +'<div class="d">'+KIND[n.kind]+' · '+n.time+'</div></div>'
-        +(n.amt?'<div class="a" style="color:'+(n.tone==='down'?'var(--red)':'var(--lime)')+'">'+n.amt+'</div>':'')
-        +'</div>';
-    }).join('')+'</div>';
-  }
-  html+='<div style="display:flex;gap:10px;flex-wrap:wrap">'
-    +'<a class="btn btn-lime" href="notifications.html" style="flex:1;justify-content:center">All activity</a>'
-    +'<button class="btn btn-glass" id="fpBellRead" type="button" style="flex:1;justify-content:center">'
-    +'Mark read</button></div>';
-  openModal(html);
-  var r=el('fpBellRead');
-  if(r) r.addEventListener('click',function(){ FT.readAll(); closeModal(); paintBell(); });
-});
-function paintBell(){
-  var n=FT.unread();
-  el('fpBellDot').hidden = n===0;
-  el('fpBell').setAttribute('aria-label', n ? n+' unread matchday alerts' : 'Matchday alerts');
-}
-paintBell();
-window.addEventListener('fantrade:statechange', paintBell);
-
-// Futures bottom tabs
-document.querySelectorAll('#futTabs button').forEach(function(b){
-  b.addEventListener('click', function(){
-    document.querySelectorAll('#futTabs button').forEach(function(x){ x.classList.remove('on'); });
-    b.classList.add('on');
-    var sec = b.dataset.sec;
-    el('secPos').style.display = sec === 'pos' ? '' : 'none';
-    el('secOrders').style.display = sec === 'orders' ? '' : 'none';
-    el('secFantasy').style.display = sec === 'fantasy' ? '' : 'none';
-  });
-});
-
-// Futures side toggle
-var futSide = 'buy';
-document.querySelectorAll('#futSideTgl button').forEach(function(b){
-  b.addEventListener('click', function(){
-    document.querySelectorAll('#futSideTgl button').forEach(function(x){ x.classList.remove('on'); });
-    b.classList.add('on');
-    futSide = b.dataset.side;
-    var btn = el('futGoBtn');
-    if(futSide === 'buy'){
-      btn.textContent = 'Open Long (Buy)';
-      btn.className = 'kc-fut-cta';
-    } else {
-      btn.textContent = 'Open Short (Sell)';
-      btn.className = 'kc-fut-cta sell';
+    if(curStep === 5){
+      var avail = selAsset ? (selAsset.availableQuantity || 0) : 0;
+      if(stakeShares <= 0){ showToast('Enter a valid share stake.', 'error'); return; }
+      if(stakeShares > avail){ showToast('Insufficient available shares. You have ' + avail + '.', 'error'); return; }
+      renderReview();
     }
-  });
-});
+  }
+  curStep = s;
+  updateStepUI();
+  if(s === 4) loadOptions();
+  if(s === 5) updateStakeCalculations();
+}
+window.goToStep = goToStep;
 
-// Futures percentage chips
-document.querySelectorAll('[data-fpct]').forEach(function(b){
-  b.addEventListener('click', function(){
-    var pct = parseInt(b.dataset.fpct, 10);
-    var px = parseFloat(el('futPx').value) || 14.80;
-    var s = FT.getState();
-    var available = s.wallet.balance || 128450;
-    var marginToUse = (available * (pct / 100)) * 0.1;
-    var qty = Math.floor((marginToUse * 10) / px);
-    el('futQty').value = qty.toLocaleString('en-US');
-    el('futCost').textContent = Math.round(qty * px * 0.1).toLocaleString('en-US') + ' FTR';
-  });
-});
+function updateStepUI(){
+  for(var i=1; i<=7; i++){
+    var dot = document.getElementById('sdot' + i);
+    var box = document.getElementById('stepBox' + i);
+    if(dot){
+      dot.classList.toggle('active', i === curStep);
+      dot.classList.toggle('completed', i < curStep);
+    }
+    if(box){
+      box.style.display = i === curStep ? '' : 'none';
+    }
+  }
+}
 
-// Futures order submit
-el('futGoBtn').addEventListener('click', function(){
-  var qty = parseInt(String(el('futQty').value).replace(/[^0-9]/g, ''), 10) || 0;
-  if(qty <= 0){ showToast('Enter a valid order quantity.', 'error'); return; }
-  showToast((futSide === 'buy' ? 'Long' : 'Short') + ' order for ' + qty.toLocaleString('en-US') + ' $SAKA placed at 10x leverage.', 'success');
-});
+function loadInitialData(){
+  // 1. Assets
+  if(window.FantradeAPI && FantradeAPI.getFanPlayEligibleAssets){
+    FantradeAPI.getFanPlayEligibleAssets().then(function(res){
+      if(res.success && res.data){
+        eligibleAssets = res.data;
+        renderAssetGrid();
+      }
+    }).catch(function(e){ console.warn('Eligible assets load error:', e); });
+  }
+
+  // 2. Matches
+  if(window.FantradeAPI && FantradeAPI.getFanPlayMatches){
+    FantradeAPI.getFanPlayMatches().then(function(res){
+      if(res.success && res.data){
+        matchesList = res.data;
+        renderMatchGrid();
+      }
+    }).catch(function(e){ console.warn('Matches load error:', e); });
+  }
+
+  // 3. Markets
+  if(window.FantradeAPI && FantradeAPI.getFanPlayMarkets){
+    FantradeAPI.getFanPlayMarkets().then(function(res){
+      if(res.success && res.data){
+        marketsList = res.data;
+        renderMarketGrid();
+      }
+    }).catch(function(e){ console.warn('Markets load error:', e); });
+  }
+
+  loadUserFanPlays();
+}
+
+function renderAssetGrid(){
+  var container = document.getElementById('stepAssetGrid');
+  if(!container) return;
+  if(eligibleAssets.length === 0){
+    container.innerHTML = '<div style="grid-column:1/-1;padding:24px;text-align:center;color:#8E9AA8;background:rgba(255,255,255,.02);border-radius:12px">No eligible player/coach shares owned. Buy shares on the Exchange first.</div>';
+    return;
+  }
+  container.innerHTML = eligibleAssets.map(function(a){
+    var isSel = selAsset && selAsset.id === a.id;
+    return '<div class="fp-asset-card' + (isSel ? ' selected' : '') + '" onclick="window.selectAsset(\'' + a.id + '\')">'
+      + '<div class="fp-asset-sym">' + a.symbol + '</div>'
+      + '<div class="fp-asset-name">' + a.name + ' · ' + (a.team || 'Pro') + '</div>'
+      + '<div class="fp-asset-avail">Available: <b>' + (a.availableQuantity || 0).toLocaleString() + '</b> shares</div>'
+      + '</div>';
+  }).join('');
+}
+
+function selectAsset(id){
+  selAsset = eligibleAssets.find(function(a){ return a.id === id; });
+  renderAssetGrid();
+  goToStep(2);
+}
+window.selectAsset = selectAsset;
+
+function renderMatchGrid(){
+  var container = document.getElementById('stepMatchGrid');
+  if(!container) return;
+  if(matchesList.length === 0){
+    container.innerHTML = '<div style="padding:24px;text-align:center;color:#8E9AA8">No fixtures scheduled currently.</div>';
+    return;
+  }
+  container.innerHTML = matchesList.map(function(m){
+    var isSel = selMatch && selMatch.id === m.id;
+    var dt = new Date(m.scheduledAt).toLocaleDateString(undefined, { weekday:'short', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
+    return '<div class="fp-match-card' + (isSel ? ' selected' : '') + '" onclick="window.selectMatch(\'' + m.id + '\')">'
+      + '<div class="fp-match-comp">' + m.competition + ' · Matchweek ' + (m.matchweek || 1) + '</div>'
+      + '<div class="fp-match-teams">' + m.homeTeam + ' vs ' + m.awayTeam + '</div>'
+      + '<div class="fp-match-meta"><span>📅 ' + dt + '</span><span style="color:var(--lime)">Status: ' + m.status + '</span></div>'
+      + '</div>';
+  }).join('');
+}
+
+function selectMatch(id){
+  selMatch = matchesList.find(function(m){ return m.id === id; });
+  renderMatchGrid();
+  goToStep(3);
+}
+window.selectMatch = selectMatch;
+
+function renderMarketGrid(){
+  var container = document.getElementById('stepMarketGrid');
+  if(!container) return;
+  container.innerHTML = marketsList.map(function(m){
+    var isSel = selMarket && selMarket.id === m.id;
+    return '<div class="fp-market-card' + (isSel ? ' selected' : '') + '" onclick="window.selectMarket(\'' + m.id + '\')">'
+      + '<div class="fp-market-name">' + m.name + '</div>'
+      + '<div class="fp-market-limit">Max ' + m.maxSelections + ' ' + (m.maxSelections === 1 ? 'Selection' : 'Selections') + '</div>'
+      + '<div class="fp-market-desc">' + (m.description || 'Configurable performance predictions.') + '</div>'
+      + '<div style="font-size:10px;color:#8E9AA8;text-transform:uppercase">Zero subscription gating · 100% accessible</div>'
+      + '</div>';
+  }).join('');
+}
+
+function selectMarket(id){
+  selMarket = marketsList.find(function(m){ return m.id === id; });
+  renderMarketGrid();
+  selOptionIds = [];
+  goToStep(4);
+}
+window.selectMarket = selectMarket;
+
+function loadOptions(){
+  if(!selAsset || !selMatch || !selMarket) return;
+  var sub = document.getElementById('stepPicksSub');
+  if(sub){
+    sub.textContent = selMarket.name + ' Tier: Select up to ' + selMarket.maxSelections + ' predictions for ' + selAsset.symbol + ' in ' + selMatch.homeTeam + ' vs ' + selMatch.awayTeam + '.';
+  }
+  if(window.FantradeAPI && FantradeAPI.getFanPlayOptions){
+    FantradeAPI.getFanPlayOptions(selAsset.id, selMatch.id, selMarket.id).then(function(res){
+      if(res.success && res.data){
+        optionsList = res.data;
+        renderOptionsGrid();
+      }
+    }).catch(function(e){ console.warn('Options load error:', e); });
+  }
+}
+
+function renderOptionsGrid(){
+  var container = document.getElementById('stepOptGrid');
+  if(!container) return;
+  if(optionsList.length === 0){
+    container.innerHTML = '<div style="padding:24px;text-align:center;color:#8E9AA8">No prediction options published yet for this fixture and asset.</div>';
+    return;
+  }
+  container.innerHTML = optionsList.map(function(opt){
+    var isSel = selOptionIds.indexOf(opt.id) !== -1;
+    return '<div class="fp-opt-card' + (isSel ? ' selected' : '') + '" onclick="window.toggleOption(\'' + opt.id + '\')">'
+      + '<div class="fp-opt-left">'
+      + '  <div class="fp-opt-check">' + (isSel ? '✓' : '') + '</div>'
+      + '  <div>'
+      + '    <div class="fp-opt-label">' + opt.label + '</div>'
+      + '    <div class="fp-opt-meta"><span>Category: ' + opt.category + '</span><span>•</span><span>Difficulty: ' + opt.difficulty + '</span>' + (opt.optionGroup ? '<span>• Group: ' + opt.optionGroup + '</span>' : '') + '</div>'
+      + '  </div>'
+      + '</div>'
+      + '<div class="fp-opt-right">'
+      + '  <div><div style="font-size:10px;color:#8E9AA8;text-transform:uppercase">Success</div><div class="fp-opt-suc">+' + opt.successFP + ' FP</div></div>'
+      + '  <div><div style="font-size:10px;color:#8E9AA8;text-transform:uppercase">Failure</div><div class="fp-opt-fail">' + opt.failureFP + ' FP</div></div>'
+      + '</div>'
+      + '</div>';
+  }).join('');
+}
+
+function toggleOption(id){
+  var idx = selOptionIds.indexOf(id);
+  var opt = optionsList.find(function(o){ return o.id === id; });
+  if(idx !== -1){
+    selOptionIds.splice(idx, 1);
+  } else {
+    // 1. Max selections check
+    if(selMarket && selOptionIds.length >= selMarket.maxSelections){
+      showToast('Maximum ' + selMarket.maxSelections + ' selections reached for ' + selMarket.name + '.', 'error');
+      return;
+    }
+    // 2. Option group exclusivity check
+    if(opt && opt.optionGroup){
+      var groupMatch = selOptionIds.map(function(oid){ return optionsList.find(function(o){ return o.id === oid; }); })
+        .find(function(o){ return o && o.optionGroup === opt.optionGroup; });
+      if(groupMatch){
+        showToast('Only one selection allowed from group "' + opt.optionGroup + '". Deselect ' + groupMatch.label + ' first.', 'error');
+        return;
+      }
+    }
+    selOptionIds.push(id);
+  }
+  renderOptionsGrid();
+}
+window.toggleOption = toggleOption;
+
+function setStakePct(pct){
+  if(!selAsset) return;
+  var avail = selAsset.availableQuantity || 0;
+  stakeShares = Math.max(1, Math.floor(avail * pct));
+  var inp = document.getElementById('stakeInput');
+  if(inp) inp.value = stakeShares;
+  updateStakeCalculations();
+}
+window.setStakePct = setStakePct;
+
+function updateStakeCalculations(){
+  var inp = document.getElementById('stakeInput');
+  if(inp){
+    stakeShares = parseInt(inp.value, 10) || 0;
+  }
+  var owned = selAsset ? (selAsset.totalQuantity || 0) : 0;
+  var locked = selAsset ? (selAsset.lockedQuantity || 0) : 0;
+  var avail = selAsset ? (selAsset.availableQuantity || 0) : 0;
+  var remain = Math.max(0, avail - stakeShares);
+
+  if(document.getElementById('sOwned')) document.getElementById('sOwned').textContent = owned.toLocaleString();
+  if(document.getElementById('sLocked')) document.getElementById('sLocked').textContent = locked.toLocaleString();
+  if(document.getElementById('sAvail')) document.getElementById('sAvail').textContent = avail.toLocaleString();
+  if(document.getElementById('sRemain')) document.getElementById('sRemain').textContent = remain.toLocaleString();
+}
+window.updateStakeCalculations = updateStakeCalculations;
+
+function renderReview(){
+  var container = document.getElementById('reviewBreakdown');
+  if(!container || !selAsset || !selMatch || !selMarket) return;
+  var selectedOpts = selOptionIds.map(function(id){ return optionsList.find(function(o){ return o.id === id; }); }).filter(Boolean);
+
+  var maxSucFP = selectedOpts.reduce(function(acc, o){ return acc + (o.successFP * stakeShares); }, 0);
+  var maxFailFP = selectedOpts.reduce(function(acc, o){ return acc + (o.failureFP * stakeShares); }, 0);
+
+  var maxSucFTR = (maxSucFP / 1000).toFixed(2);
+  var maxFailFTR = (maxFailFP / 1000).toFixed(2);
+
+  container.innerHTML = '<div class="fp-breakdown-row"><span>Player / Coach Asset</span><b>' + selAsset.symbol + ' (' + selAsset.name + ')</b></div>'
+    + '<div class="fp-breakdown-row"><span>Fixture</span><b>' + selMatch.homeTeam + ' vs ' + selMatch.awayTeam + '</b></div>'
+    + '<div class="fp-breakdown-row"><span>Market Tier</span><b>' + selMarket.name + '</b></div>'
+    + '<div class="fp-breakdown-row"><span>Staked Player Shares</span><b style="color:var(--lime)">' + stakeShares.toLocaleString() + ' shares locked</b></div>'
+    + '<div class="fp-breakdown-row" style="border-top:1px solid rgba(255,255,255,.06);padding-top:8px"><span>Selected Predictions</span><b>' + selectedOpts.length + ' options</b></div>'
+    + selectedOpts.map(function(o){
+        return '<div style="display:flex;justify-content:space-between;font-size:11.5px;color:#CAD2C5;padding-left:10px">• ' + o.label + ' <span style="color:var(--lime)">+' + o.successFP + '</span> / <span style="color:#FF5E5E">' + o.failureFP + ' FP</span></div>';
+      }).join('')
+    + '<div class="fp-breakdown-row" style="border-top:1px solid rgba(255,255,255,.06);padding-top:8px"><span>Potential Fans Point (FP) Range</span><b>' + maxFailFP.toLocaleString() + ' FP to +' + maxSucFP.toLocaleString() + ' FP</b></div>'
+    + '<div class="fp-breakdown-row"><span>Potential $FTR Settlement (1,000 FP = 1 $FTR)</span><b style="color:var(--amber)">' + (maxFailFTR > 0 ? '+' : '') + maxFailFTR + ' $FTR to +' + maxSucFTR + ' $FTR</b></div>';
+}
+
+function submitActivation(){
+  var btn = document.getElementById('btnActivate');
+  if(btn) { btn.disabled = true; btn.textContent = 'Locking Shares & Activating...'; }
+
+  var idempotencyKey = 'fp_act_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8);
+
+  var payload = {
+    type: 'INDIVIDUAL',
+    assetId: selAsset.id,
+    matchId: selMatch.id,
+    marketId: selMarket.id,
+    stakedShares: stakeShares,
+    selectedOptionIds: selOptionIds,
+    idempotencyKey: idempotencyKey
+  };
+
+  if(window.FantradeAPI && FantradeAPI.activateFanPlay){
+    FantradeAPI.activateFanPlay(payload).then(function(res){
+      if(res.success && res.data){
+        showToast('FanPlay position successfully activated! Shares locked.', 'success');
+        document.getElementById('step7Msg').textContent = 'Successfully locked ' + stakeShares.toLocaleString() + ' ' + selAsset.symbol + ' shares. ID: ' + res.data.id;
+        goToStep(7);
+        loadUserFanPlays();
+      } else {
+        showToast(res.error || 'Activation failed', 'error');
+        if(btn){ btn.disabled = false; btn.textContent = 'Lock Shares & Activate FanPlay'; }
+      }
+    }).catch(function(err){
+      showToast(err.message || 'Activation network error', 'error');
+      if(btn){ btn.disabled = false; btn.textContent = 'Lock Shares & Activate FanPlay'; }
+    });
+  }
+}
+window.submitActivation = submitActivation;
+
+function loadUserFanPlays(){
+  if(window.FantradeAPI && FantradeAPI.getFanPlays){
+    FantradeAPI.getFanPlays().then(function(res){
+      if(res.success && res.data){
+        userFanPlays = res.data;
+        updateDashboardMetrics();
+        renderActiveList();
+        renderHistoryList();
+      }
+    }).catch(function(e){ console.warn('Load fanplays error:', e); });
+  }
+}
+
+function updateDashboardMetrics(){
+  var active = userFanPlays.filter(function(fp){ return fp.status === 'ACTIVE' || fp.status === 'LIVE' || fp.status === 'PENDING_SETTLEMENT'; });
+  var settled = userFanPlays.filter(function(fp){ return fp.status === 'SETTLED'; });
+
+  var totalLocked = active.reduce(function(acc, fp){ return acc + (fp.stakedShares || 0); }, 0);
+  var provFP = active.reduce(function(acc, fp){ return acc + (fp.totalFP || 0); }, 0);
+  var settledFTR = settled.reduce(function(acc, fp){ return acc + (fp.ftrSettlement || 0); }, 0);
+
+  if(document.getElementById('mLockedShares')) document.getElementById('mLockedShares').textContent = totalLocked.toLocaleString();
+  if(document.getElementById('mActiveCount')) document.getElementById('mActiveCount').textContent = active.length;
+  if(document.getElementById('tabActiveCount')) document.getElementById('tabActiveCount').textContent = active.length;
+  if(document.getElementById('mProvFP')) document.getElementById('mProvFP').textContent = (provFP >= 0 ? '+' : '') + provFP.toLocaleString() + ' FP';
+  if(document.getElementById('mSettledFTR')) document.getElementById('mSettledFTR').textContent = (settledFTR >= 0 ? '+' : '') + settledFTR.toFixed(2) + ' $FTR';
+}
+
+function renderActiveList(){
+  var container = document.getElementById('activeList');
+  if(!container) return;
+  var active = userFanPlays.filter(function(fp){ return fp.status === 'ACTIVE' || fp.status === 'LIVE' || fp.status === 'PENDING_SETTLEMENT'; });
+  if(active.length === 0){
+    container.innerHTML = '<div style="padding:40px 20px;text-align:center;color:#8E9AA8;background:rgba(255,255,255,.02);border-radius:14px">'
+      + '<div style="font-size:32px;margin-bottom:8px">⚽</div>'
+      + '<div style="font-weight:700;color:#fff;margin-bottom:4px">No Active Positions</div>'
+      + '<div style="font-size:12px;margin-bottom:16px">You currently have no shares locked in active matchday FanPlays.</div>'
+      + '<button type="button" class="fp-btn-next" style="padding:10px 20px;font-size:12px" onclick="switchFPView(\'wizard\')">Create New Position</button>'
+      + '</div>';
+    return;
+  }
+  container.innerHTML = active.map(function(fp){
+    var assetSym = fp.asset ? fp.asset.symbol : '$ASSET';
+    var matchName = fp.match ? (fp.match.homeTeam + ' vs ' + fp.match.awayTeam) : 'Matchday Fixture';
+    var tierName = fp.market ? fp.market.name : 'FanPlay';
+    var canSettle = fp.match && (fp.match.status === 'FINISHED' || fp.match.status === 'FINAL');
+    var canCancel = fp.status === 'ACTIVE' && fp.match && (fp.match.status === 'SCHEDULED');
+
+    return '<div class="fp-panel" style="padding:18px;margin-bottom:12px">'
+      + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">'
+      + '  <div>'
+      + '    <span style="font-family:Archivo,sans-serif;font-variation-settings:\'wdth\' 120,\'wght\' 800;font-size:17px;color:#fff">' + assetSym + '</span>'
+      + '    <span style="font-size:12px;color:#8E9AA8;margin-left:8px">' + matchName + '</span>'
+      + '  </div>'
+      + '  <span style="font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px;background:rgba(196,248,42,.12);color:var(--lime)">' + fp.status + '</span>'
+      + '</div>'
+      + '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;background:rgba(255,255,255,.02);padding:10px;border-radius:10px;margin-bottom:12px">'
+      + '  <div><div style="font-size:10px;color:#8E9AA8;text-transform:uppercase">Market Tier</div><b style="font-size:12px;color:#fff">' + tierName + '</b></div>'
+      + '  <div><div style="font-size:10px;color:#8E9AA8;text-transform:uppercase">Locked Shares</div><b style="font-size:12px;color:var(--lime)">' + (fp.stakedShares || 0).toLocaleString() + '</b></div>'
+      + '  <div><div style="font-size:10px;color:#8E9AA8;text-transform:uppercase">Live Prov. FP</div><b style="font-size:12px;color:var(--amber)">' + (fp.totalFP || 0).toLocaleString() + ' FP</b></div>'
+      + '</div>'
+      + '<div style="display:flex;flex-direction:column;gap:4px;margin-bottom:12px">'
+      + (fp.selections || []).map(function(s){
+          return '<div style="display:flex;justify-content:space-between;font-size:12px;color:#CAD2C5">'
+            + '<span>' + s.optionLabel + '</span>'
+            + '<span style="font-weight:600;' + (s.evaluationResult === 'SUCCESS' ? 'color:var(--lime)' : s.evaluationResult === 'FAILURE' ? 'color:#FF5E5E' : 'color:#8E9AA8') + '">' + (s.evaluationResult || 'PENDING') + '</span>'
+            + '</div>';
+        }).join('')
+      + '</div>'
+      + '<div style="display:flex;gap:10px;justify-content:flex-end">'
+      + (canCancel ? '<button type="button" class="fp-btn-back" style="padding:6px 14px;font-size:11px" onclick="window.cancelFanPlay(\'' + fp.id + '\')">Cancel Position</button>' : '')
+      + (canSettle ? '<button type="button" class="fp-btn-next" style="padding:6px 14px;font-size:11px" onclick="window.settleFanPlay(\'' + fp.id + '\')">Execute Final Settlement</button>' : '')
+      + '</div>'
+      + '</div>';
+  }).join('');
+}
+
+function renderHistoryList(){
+  var container = document.getElementById('historyList');
+  if(!container) return;
+  var settled = userFanPlays.filter(function(fp){ return fp.status === 'SETTLED' || fp.status === 'CANCELLED' || fp.status === 'VOID'; });
+  if(settled.length === 0){
+    container.innerHTML = '<div style="padding:40px 20px;text-align:center;color:#8E9AA8;background:rgba(255,255,255,.02);border-radius:14px">'
+      + '<div style="font-weight:700;color:#fff;margin-bottom:4px">No Settled History</div>'
+      + '<div style="font-size:12px">Settled matchday positions and $FTR ledger payouts will appear here.</div>'
+      + '</div>';
+    return;
+  }
+  container.innerHTML = settled.map(function(fp){
+    var assetSym = fp.asset ? fp.asset.symbol : '$ASSET';
+    var matchName = fp.match ? (fp.match.homeTeam + ' vs ' + fp.match.awayTeam) : 'Matchday Fixture';
+    var isWin = (fp.ftrSettlement || 0) >= 0;
+    var dt = new Date(fp.settledAt || fp.createdAt).toLocaleDateString();
+
+    return '<div class="fp-panel" style="padding:18px;margin-bottom:12px">'
+      + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">'
+      + '  <div>'
+      + '    <span style="font-family:Archivo,sans-serif;font-variation-settings:\'wdth\' 120,\'wght\' 800;font-size:17px;color:#fff">' + assetSym + '</span>'
+      + '    <span style="font-size:12px;color:#8E9AA8;margin-left:8px">' + matchName + ' · ' + dt + '</span>'
+      + '  </div>'
+      + '  <span style="font-size:14px;font-weight:800;color:' + (isWin ? 'var(--lime)' : '#FF5E5E') + '">'
+      + (isWin ? '+' : '') + (fp.ftrSettlement || 0).toFixed(2) + ' $FTR'
+      + '  </span>'
+      + '</div>'
+      + '<div style="display:flex;gap:14px;font-size:11.5px;color:#8E9AA8;margin-bottom:12px">'
+      + '  <span>Staked: <b>' + (fp.stakedShares || 0).toLocaleString() + ' shares</b> (Unlocked ✓)</span>'
+      + '  <span>Total FP: <b style="color:#fff">' + (fp.totalFP || 0).toLocaleString() + ' FP</b></span>'
+      + '  <span>Status: <b>' + fp.status + '</b></span>'
+      + '</div>'
+      + '<div style="display:flex;flex-direction:column;gap:6px;border-top:1px solid rgba(255,255,255,.05);padding-top:10px">'
+      + (fp.selections || []).map(function(s){
+          var res = s.evaluationResult;
+          var resColor = res === 'SUCCESS' ? 'var(--lime)' : res === 'FAILURE' ? '#FF5E5E' : '#8E9AA8';
+          return '<div style="display:flex;justify-content:space-between;align-items:center;font-size:12px">'
+            + '<div><span style="color:#CAD2C5">• ' + s.optionLabel + '</span>'
+            + (s.evaluationReason ? '<div style="font-size:10.5px;color:#8E9AA8;padding-left:12px">' + s.evaluationReason + '</div>' : '')
+            + '</div>'
+            + '<div style="text-align:right">'
+            + '<span style="font-weight:700;color:' + resColor + '">' + (res || 'N/A') + '</span> '
+            + '<span style="color:#8E9AA8;font-size:11px">(' + (s.optionFP > 0 ? '+' : '') + s.optionFP + ' FP)</span>'
+            + '</div>'
+            + '</div>';
+        }).join('')
+      + '</div>'
+      + '</div>';
+  }).join('');
+}
+
+function cancelFanPlay(id){
+  if(!confirm('Are you sure you want to cancel this FanPlay position and unlock your shares?')) return;
+  if(window.FantradeAPI && FantradeAPI.cancelFanPlay){
+    FantradeAPI.cancelFanPlay(id).then(function(res){
+      if(res.success){
+        showToast('FanPlay position cancelled. Shares unlocked.', 'success');
+        loadUserFanPlays();
+      } else {
+        showToast(res.error || 'Failed to cancel', 'error');
+      }
+    }).catch(function(e){ showToast(e.message, 'error'); });
+  }
+}
+window.cancelFanPlay = cancelFanPlay;
+
+function settleFanPlay(id){
+  if(window.FantradeAPI && FantradeAPI.settleFanPlay){
+    FantradeAPI.settleFanPlay(id).then(function(res){
+      if(res.success){
+        showToast('Final match settlement complete! Shares unlocked and ledger updated.', 'success');
+        loadUserFanPlays();
+      } else {
+        showToast(res.error || 'Settlement failed', 'error');
+      }
+    }).catch(function(e){ showToast(e.message, 'error'); });
+  }
+}
+window.settleFanPlay = settleFanPlay;
+
+// Expose handlers to global window scope for inline HTML onclick attributes
+window.switchFPView = switchFPView;
+window.resetWizard = resetWizard;
+window.goToStep = goToStep;
+window.selectAsset = selectAsset;
+window.selectMatch = selectMatch;
+window.selectMarket = selectMarket;
+window.toggleOption = toggleOption;
+window.setStakePct = setStakePct;
+window.updateStakeCalculations = updateStakeCalculations;
+window.submitActivation = submitActivation;
+window.cancelFanPlay = cancelFanPlay;
+window.settleFanPlay = settleFanPlay;
+
+// Initial load
+loadInitialData();
+setInterval(loadUserFanPlays, 15000);
+window.addEventListener('fantrade:statechange', loadUserFanPlays);
 """
 page("fanplay.html", "FanPlay — Fantrade", "".join(fp), FP_JS, FP_CSS, app=True)
 

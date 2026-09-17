@@ -275,7 +275,7 @@ print("built signin.html + signup.html")
 OB_CSS = """
 .forms{display:flex;gap:8px;flex-wrap:wrap}
 .forms button{flex:1;min-width:92px;border:1px solid var(--hair);background:rgba(255,255,255,.03);color:var(--dim);
-  border-radius:14px;padding:14px 0;font-family:'JetBrains Mono',monospace;font-size:14px;cursor:pointer;
+  border-radius:14px;padding:14px 0;font-family:'Montserrat', sans-serif;font-size:14px;cursor:pointer;
   box-shadow:var(--inset);transition:all .6s var(--ease)}
 .forms button[aria-pressed="true"]{background:var(--lime);border-color:var(--lime);color:#0A0D03}
 .forms button:hover:not([aria-pressed="true"]){color:var(--ink);border-color:var(--hair-2)}
@@ -288,7 +288,7 @@ OB_CSS = """
   background:radial-gradient(ellipse at 50% 130%,rgba(196,248,42,.16),rgba(196,248,42,.03) 62%);
   box-shadow:var(--inset);margin-bottom:20px}
 .grant .k{font-weight:600;font-size:9.5px;letter-spacing:.2em;color:#95ad44;text-transform:uppercase}
-.grant .v{font-family:'JetBrains Mono',monospace;font-weight:200;font-size:clamp(34px,4.4vw,50px);
+.grant .v{font-family:'Montserrat', sans-serif;font-weight:200;font-size:clamp(34px,4.4vw,50px);
   color:var(--lime);line-height:1;margin:14px 0 10px;letter-spacing:-.035em}
 .grant p{font-size:12.5px;color:var(--dim);font-weight:300;margin:0 auto;max-width:42ch;line-height:1.6}
 .ob-h4{font-family:Archivo;font-variation-settings:'wdth' 118,'wght' 800;text-transform:uppercase;
@@ -611,10 +611,10 @@ DASH_CSS = """
 .kc-bal-header{display:flex;align-items:center;gap:8px;font-size:12px;color:#8E9AA8}
 .kc-eye-btn{background:transparent;border:0;color:inherit;cursor:pointer;display:grid;place-items:center;padding:2px;transition:color .2s}
 .kc-eye-btn:hover{color:var(--lime)}
-.kc-bal-delta-tag{margin-left:auto;background:rgba(196,248,42,.15);color:var(--lime);font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:999px;font-family:'JetBrains Mono',monospace}
-.kc-bal-val{font-family:'JetBrains Mono',monospace;font-size:34px;font-weight:700;letter-spacing:-.02em;color:var(--ink);margin:8px 0 2px}
+.kc-bal-delta-tag{margin-left:auto;background:rgba(196,248,42,.15);color:var(--lime);font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:999px;font-family:'Montserrat', sans-serif}
+.kc-bal-val{font-family:'Montserrat', sans-serif;font-size:34px;font-weight:700;letter-spacing:-.02em;color:var(--ink);margin:8px 0 2px}
 .kc-bal-val small{font-size:16px;color:var(--lime);font-weight:600}
-.kc-bal-sub{font-size:12px;color:#767c82;font-family:'JetBrains Mono',monospace}
+.kc-bal-sub{font-size:12px;color:#767c82;font-family:'Montserrat', sans-serif}
 
 /* Quick Action Circles */
 .kc-bal-actions{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:18px;padding-top:16px;border-top:1px solid rgba(255,255,255,.06)}
@@ -629,7 +629,7 @@ DASH_CSS = """
 .kc-live-dot{width:7px;height:7px;border-radius:50%;background:var(--lime);box-shadow:0 0 8px var(--lime);flex-shrink:0;animation:kcPulse 2s infinite}
 @keyframes kcPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(1.3)}}
 .kc-news-txt{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.kc-news-txt b{font-family:'JetBrains Mono',monospace;color:var(--lime)}
+.kc-news-txt b{font-family:'Montserrat', sans-serif;color:var(--lime)}
 .kc-news-close{background:transparent;border:0;color:#767c82;cursor:pointer;font-size:14px}
 
 /* Hot Trending Cards Strip - Horizontal Swipe & Scroll */
@@ -639,11 +639,11 @@ DASH_CSS = """
 .kc-hot-card:hover{border-color:rgba(196,248,42,.3);transform:translateY(-2px)}
 .kc-hot-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
 .kc-hot-ticker{font-family:Archivo,sans-serif;font-variation-settings:'wdth' 120,'wght' 800;font-size:13px;color:var(--ink)}
-.kc-hot-badge{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;padding:1px 5px;border-radius:4px}
+.kc-hot-badge{font-family:'Montserrat', sans-serif;font-size:10px;font-weight:700;padding:1px 5px;border-radius:4px}
 .kc-hot-badge.up{background:rgba(196,248,42,.15);color:var(--lime)}
 .kc-hot-badge.down{background:rgba(255,94,94,.15);color:#FF5E5E}
 .kc-hot-name{font-size:10.5px;color:#767c82;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:6px}
-.kc-hot-price{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:var(--ink)}
+.kc-hot-price{font-family:'Montserrat', sans-serif;font-size:14px;font-weight:700;color:var(--ink)}
 .kc-hot-price small{font-size:10px;color:var(--lime);font-weight:500}
 
 /* Category Tabs */
@@ -663,14 +663,14 @@ DASH_CSS = """
 .kc-avatar.coach{color:var(--amber);border-color:rgba(255,106,31,.25);background:rgba(255,106,31,.08)}
 .kc-pair-title{display:flex;align-items:center;gap:5px;font-family:Archivo,sans-serif;font-variation-settings:'wdth' 115,'wght' 800;font-size:14px;line-height:1.1;color:var(--ink)}
 .kc-pair-quote{font-size:11.5px;color:#767c82;font-weight:600}
-.kc-tag{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:600;color:#767c82;background:rgba(255,255,255,.08);border-radius:4px;padding:1px 4px;margin-left:2px}
+.kc-tag{font-family:'Montserrat', sans-serif;font-size:9px;font-weight:600;color:#767c82;background:rgba(255,255,255,.08);border-radius:4px;padding:1px 4px;margin-left:2px}
 .kc-tag.coach-tag{color:var(--amber);background:rgba(255,106,31,.12)}
 .kc-pair-sub{font-size:11.5px;color:#767c82;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .kc-row-mid{text-align:right;padding-right:12px}
-.kc-price-main{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;color:var(--ink);letter-spacing:-.01em}
-.kc-price-sub{font-family:'JetBrains Mono',monospace;font-size:11px;color:#767c82;margin-top:2px}
+.kc-price-main{font-family:'Montserrat', sans-serif;font-size:14px;font-weight:600;color:var(--ink);letter-spacing:-.01em}
+.kc-price-sub{font-family:'Montserrat', sans-serif;font-size:11px;color:#767c82;margin-top:2px}
 .kc-row-right{display:flex;justify-content:flex-end}
-.kc-pill{display:inline-flex;align-items:center;justify-content:center;min-width:76px;height:32px;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#0A0D03;background:var(--lime);box-sizing:border-box;padding:0 6px}
+.kc-pill{display:inline-flex;align-items:center;justify-content:center;min-width:76px;height:32px;border-radius:6px;font-family:'Montserrat', sans-serif;font-size:12px;font-weight:700;color:#0A0D03;background:var(--lime);box-sizing:border-box;padding:0 6px}
 .kc-pill.down{background:#FF5E5E;color:#fff}
 
 /* Dream club card */
@@ -959,7 +959,7 @@ print("built dashboard.html")
 PF_CSS = """
 .hcols{grid-template-columns:1.7fr .8fr .85fr .8fr .9fr 1.05fr 1.15fr 86px}
 .lcols{grid-template-columns:132px 1.6fr .9fr 1fr 104px}
-.chart-x{display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:10px;
+.chart-x{display:flex;justify-content:space-between;font-family:'Montserrat', sans-serif;font-size:10px;
   color:var(--faint);margin-top:10px}
 .seg-sm{display:flex;gap:4px;padding:4px;border-radius:999px;background:rgba(255,255,255,.035);
   border:1px solid var(--hair);box-shadow:var(--inset)}
@@ -967,7 +967,7 @@ PF_CSS = """
   font-weight:600;font-size:10px;letter-spacing:.1em;text-transform:uppercase;transition:all .5s var(--ease)}
 .seg-sm button[aria-pressed="true"]{background:var(--lime);color:#0A0D03}
 .seg-sm button:hover:not([aria-pressed="true"]){color:var(--ink)}
-.hashm{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--faint)}
+.hashm{font-family:'Montserrat', sans-serif;font-size:11px;color:var(--faint)}
 @media (max-width:1024px){
   .hcols{grid-template-columns:1.6fr .8fr .9fr 1fr 1.1fr 86px}
   .hcols>*:nth-child(3),.hcols>*:nth-child(4){display:none}
@@ -1310,7 +1310,7 @@ LB_CSS = """
   text-transform:uppercase;font-size:14px;margin-bottom:4px}
 .div-card .r{font-size:11.5px;color:var(--faint);font-weight:300}
 .div-card .pp{margin-left:auto;text-align:right;flex:none}
-.div-card .pp em{font-style:normal;font-family:'JetBrains Mono',monospace;font-size:15px;color:var(--lime)}
+.div-card .pp em{font-style:normal;font-family:'Montserrat', sans-serif;font-size:15px;color:var(--lime)}
 .div-card .pp span{display:block;font-weight:600;font-size:8.5px;letter-spacing:.14em;color:var(--faint);
   text-transform:uppercase;margin-top:5px}
 .idx{position:relative;height:170px;margin-top:20px}
@@ -1379,10 +1379,12 @@ def idx_chart(vals, w=620, h=170):
 
 lb = [T('<main><div class="kc-home-wrap">'
         '<div class="kc-p-topbar">'
-        '  <a href="dashboard.html" class="kc-p-back" title="Back to Home">'
-        '    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>'
-        '  </a>'
-        '  <div style="font-family:Archivo,sans-serif;font-variation-settings:\'wdth\' 120,\'wght\' 800;font-size:18px;color:var(--ink)">League Standings</div>'
+        '  <div class="kc-p-title-group">'
+        '    <a href="dashboard.html" class="kc-p-back" title="Back to Home">'
+        '      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>'
+        '    </a>'
+        '    <div style="font-family:Archivo,sans-serif;font-variation-settings:\'wdth\' 120,\'wght\' 800;font-size:18px;color:var(--ink);white-space:nowrap">League Standings</div>'
+        '  </div>'
         '  <a href="divisions.html" class="kc-p-action-btn" title="Divisions">'
         '    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>'
         '  </a>'
@@ -2084,7 +2086,7 @@ AC_CSS = """
 .kc-p-username{font-family:Archivo,sans-serif;font-variation-settings:'wdth' 120,'wght' 800;font-size:22px;letter-spacing:-.01em;color:var(--ink)}
 .kc-p-edit-btn{background:transparent;border:0;color:#767c82;cursor:pointer;display:grid;place-items:center;padding:2px;transition:color .15s}
 .kc-p-edit-btn:hover{color:var(--lime)}
-.kc-p-uid-row{display:flex;align-items:center;justify-content:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:12px;color:#767c82;margin-bottom:14px}
+.kc-p-uid-row{display:flex;align-items:center;justify-content:center;gap:6px;font-family:'Montserrat', sans-serif;font-size:12px;color:#767c82;margin-bottom:14px}
 .kc-p-copy-btn{background:transparent;border:0;color:inherit;cursor:pointer;display:grid;place-items:center;padding:2px;transition:color .15s}
 .kc-p-copy-btn:hover{color:var(--lime)}
 

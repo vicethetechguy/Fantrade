@@ -10,6 +10,7 @@ import { portfolioRouter } from './routes/portfolio.routes.js';
 import { swapRouter } from './routes/swap.routes.js';
 import { walletRouter } from './routes/wallet.routes.js';
 import { reconciliationRouter } from './routes/reconciliation.routes.js';
+import { fanplayRouter } from './routes/fanplay.routes.js';
 import { errorHandler } from './middlewares/error.middleware.js';
 
 export function createServer() {
@@ -31,6 +32,7 @@ export function createServer() {
   app.use('/api/portfolio', portfolioRouter);
   app.use('/api/swaps', swapRouter);
   app.use('/api/wallet', walletRouter);
+  app.use('/api/fanplay', fanplayRouter);
   app.use('/api/reconcile', reconciliationRouter);
 
   // Serve static UI prototype pages alongside the API for seamless development

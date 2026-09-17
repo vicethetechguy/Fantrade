@@ -108,6 +108,8 @@ model User {
   sellTrades       Trade[]           @relation("SellerTrades")
   swaps            Swap[]
   idempotencyLogs  IdempotencyRecord[]
+  fanPlays         FanPlay[]
+  fanPlaySettlements FanPlaySettlement[]
 
   @@map("users")
 }
@@ -153,6 +155,10 @@ model Asset {
   trades             Trade[]
   fromSwaps          Swap[]             @relation("FromAsset")
   toSwaps            Swap[]             @relation("ToAsset")
+  fanPlays           FanPlay[]
+  fanPlayOptions     FanPlayOption[]
+  playerMatchStats   PlayerMatchStat[]
+  fanPlayTeamLegs    FanPlayTeamLeg[]
 
   @@map("assets")
 }
@@ -439,3 +445,308 @@ model IdempotencyRecord {
   @@index([key])
   @@map("idempotency_records")
 }
+
+enum FanPlayType {
+  INDIVIDUAL
+  TEAM
+}
+
+enum FanPlayStatus {
+  DRAFT
+  ACTIVE
+  LIVE
+  PENDING_SETTLEMENT
+  SETTLED
+  CANCELLED
+  SUSPENDED
+  VOID
+  DISPUTED
+}
+
+enum MarketTier {
+  SIMPLE
+  PRO
+  ELITE
+  KILLER
+  VIYNX_MOVE
+  VIYNX_MAX
+}
+
+enum PredictionType {
+  BOOLEAN
+  THRESHOLD
+  EXACT
+  RANGE
+  TEAM_RESULT
+}
+
+enum OptionDifficulty {
+  EASY
+  MEDIUM
+  HARD
+  EXTREME
+}
+
+enum OptionEvaluationResult {
+  PENDING
+  SUCCESS
+  FAILURE
+  VOID
+}
+
+enum MatchStatus {
+  SCHEDULED
+  LINEUPS_CONFIRMED
+  LIVE
+  HALFTIME
+  FULL_TIME
+  POSTPONED
+  ABANDONED
+  CANCELLED
+}
+
+enum FootballEventType {
+  GOAL
+  ASSIST
+  YELLOW_CARD
+  RED_CARD
+  SHOT
+  SHOT_ON_TARGET
+  KEY_PASS
+  FOUL
+  OFFSIDE
+  SUBSTITUTION
+  MINUTES_PLAYED
+  TEAM_RESULT
+  CORNERS
+  CARDS
+}
+
+enum PlayerMatchEligibility {
+  CONFIRMED_STARTER
+  BENCH
+  INJURED
+  SUSPENDED
+  UNKNOWN
+}
+
+model FanPlayMarketConfig {
+  id                 String     @id // e.g. "SIMPLE", "PRO", "ELITE", "KILLER", "VIYNX_MOVE", "VIYNX_MAX"
+  tier               MarketTier @unique
+  name               String
+  description        String
+  minSelections      Int        @default(1)
+  maxSelections      Int        @default(1)
+  allowedCategories  String     @default("[]") // JSON string array of allowed categories
+  maxFromOptionGroup Int        @default(1)
+  enabled            Boolean    @default(true)
+  createdAt          DateTime   @default(now())
+  updatedAt          DateTime   @updatedAt
+
+  options            FanPlayOption[]
+  fanPlays           FanPlay[]
+
+  @@map("fanplay_market_configs")
+}
+
+model MatchFixture {
+  id                 String         @id @default(uuid())
+  externalId         String?        @unique
+  homeTeam           String
+  awayTeam           String
+  competition        String
+  venue              String?
+  kickoffTime        DateTime
+  cutoffTime         DateTime
+  status             MatchStatus    @default(SCHEDULED)
+  homeScore          Int            @default(0)
+  awayScore          Int            @default(0)
+  minute             Int?
+  period             String?        // "1H", "HT", "2H", "FT"
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
+
+  events             FootballEventRecord[]
+  playerStats        PlayerMatchStat[]
+  options            FanPlayOption[]
+  fanPlays           FanPlay[]
+
+  @@index([status, kickoffTime])
+  @@map("match_fixtures")
+}
+
+model FootballEventRecord {
+  id                 String            @id @default(uuid())
+  matchId            String
+  minute             Int
+  timestamp          DateTime          @default(now())
+  eventType          FootballEventType
+  playerId           String?           // Asset ID if mapped to platform asset
+  playerExternalId   String?
+  teamId             String?
+  value              Decimal?          @db.Decimal(18, 4)
+  metadata           String?           // JSON details (e.g. shot distance, assist player)
+  createdAt          DateTime          @default(now())
+
+  match              MatchFixture      @relation(fields: [matchId], references: [id], onDelete: Cascade)
+
+  @@index([matchId, minute])
+  @@index([playerId])
+  @@map("football_event_records")
+}
+
+model PlayerMatchStat {
+  id                 String                 @id @default(uuid())
+  matchId            String
+  assetId            String
+  eligibility        PlayerMatchEligibility @default(UNKNOWN)
+  minutesPlayed      Int                    @default(0)
+  goals              Int                    @default(0)
+  assists            Int                    @default(0)
+  shots              Int                    @default(0)
+  shotsOnTarget      Int                    @default(0)
+  keyPasses          Int                    @default(0)
+  yellowCards        Int                    @default(0)
+  redCards           Int                    @default(0)
+  foulsCommitted     Int                    @default(0)
+  foulsDrawn         Int                    @default(0)
+  rating             Decimal?               @db.Decimal(5, 2)
+  createdAt          DateTime               @default(now())
+  updatedAt          DateTime               @updatedAt
+
+  match              MatchFixture           @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  asset              Asset                  @relation(fields: [assetId], references: [id], onDelete: Cascade)
+
+  @@unique([matchId, assetId])
+  @@index([matchId])
+  @@index([assetId])
+  @@map("player_match_stats")
+}
+
+model FanPlayOption {
+  id                 String           @id @default(uuid())
+  marketConfigId     String
+  matchId            String
+  assetId            String?          // Nullable for team/match-wide options
+  category           String           // e.g. "GOALS", "SHOOTING", "DISCIPLINE", "PLAYMAKING", "MATCH_OUTCOME"
+  predictionType     PredictionType
+  difficulty         OptionDifficulty @default(MEDIUM)
+  label              String
+  description        String
+  evaluationRule     String           // JSON serialized rule: { metric: 'goals', op: 'gte', value: 1 }
+  successFP          Int
+  failureFP          Int
+  optionGroup        String?          // e.g. "saka-goals", "bruno-shots"
+  dependencies       String?          // JSON array of optionIds required
+  contradictions     String?          // JSON array of optionIds prohibited
+  status             String           @default("ACTIVE")
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+
+  marketConfig       FanPlayMarketConfig @relation(fields: [marketConfigId], references: [id], onDelete: Cascade)
+  match              MatchFixture        @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  asset              Asset?              @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  selections         FanPlaySelection[]
+
+  @@index([matchId, assetId])
+  @@index([marketConfigId])
+  @@map("fanplay_options")
+}
+
+model FanPlay {
+  id                 String         @id @default(uuid())
+  userId             String
+  type               FanPlayType    @default(INDIVIDUAL)
+  assetId            String?        // Individual player/coach asset
+  dreamClubId        String?        // Team mode reference
+  matchId            String
+  marketConfigId     String
+  stakedShares       Int
+  status             FanPlayStatus  @default(ACTIVE)
+  reservationId      String?        @unique
+  provisionalFP      Int            @default(0)
+  totalFP            Int?
+  ftrSettlement      Decimal?       @db.Decimal(18, 4)
+  idempotencyKey     String?        @unique
+  activatedAt        DateTime       @default(now())
+  settledAt          DateTime?
+  teamExposure       Decimal?       @db.Decimal(8, 4)
+  teamBoostConfig    String?        // JSON team boost params
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
+
+  user               User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  asset              Asset?              @relation(fields: [assetId], references: [id], onDelete: Restrict)
+  match              MatchFixture        @relation(fields: [matchId], references: [id], onDelete: Restrict)
+  marketConfig       FanPlayMarketConfig @relation(fields: [marketConfigId], references: [id], onDelete: Restrict)
+  selections         FanPlaySelection[]
+  settlement         FanPlaySettlement?
+  teamLegs           FanPlayTeamLeg[]
+
+  @@index([userId, status])
+  @@index([matchId, status])
+  @@map("fanplays")
+}
+
+model FanPlaySelection {
+  id                     String                 @id @default(uuid())
+  fanPlayId              String
+  optionId               String
+  assetId                String?
+  // Immutable activation snapshots (§23)
+  label                  String
+  category               String
+  predictionType         PredictionType
+  successFP              Int
+  failureFP              Int
+  evaluationRuleSnapshot String                 // JSON serialized rule snapshot
+  evaluationResult       OptionEvaluationResult @default(PENDING)
+  resultFP               Int?
+  optionContributionFP   Int?                   // resultFP * stakedShares (or allocated shares in team mode)
+  explanation            String?
+  evaluatedAt            DateTime?
+
+  fanPlay                FanPlay                @relation(fields: [fanPlayId], references: [id], onDelete: Cascade)
+  option                 FanPlayOption          @relation(fields: [optionId], references: [id], onDelete: Restrict)
+
+  @@index([fanPlayId])
+  @@index([optionId])
+  @@map("fanplay_selections")
+}
+
+model FanPlayTeamLeg {
+  id                 String   @id @default(uuid())
+  fanPlayId          String
+  assetId            String
+  allocatedShares    Int
+  assetFP            Int      @default(0)
+  boostContribution  Int      @default(0)
+  createdAt          DateTime @default(now())
+
+  fanPlay            FanPlay  @relation(fields: [fanPlayId], references: [id], onDelete: Cascade)
+  asset              Asset    @relation(fields: [assetId], references: [id], onDelete: Restrict)
+
+  @@index([fanPlayId])
+  @@index([assetId])
+  @@map("fanplay_team_legs")
+}
+
+model FanPlaySettlement {
+  id                 String   @id @default(uuid())
+  fanPlayId          String   @unique
+  userId             String
+  totalFP            Int
+  ftrAmount          Decimal  @db.Decimal(18, 4)
+  ledgerTxGroup      String
+  status             String   @default("COMPLETED")
+  auditSnapshot      String   // Immutable JSON audit trail (§39)
+  settledAt          DateTime @default(now())
+
+  fanPlay            FanPlay  @relation(fields: [fanPlayId], references: [id], onDelete: Cascade)
+  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([settledAt])
+  @@map("fanplay_settlements")
+}
+

@@ -44,10 +44,10 @@ FTR_CSS = """
 .kc-card-lbl{font-size:11px;font-weight:600;letter-spacing:.12em;color:#8E9AA8;text-transform:uppercase;display:flex;align-items:center;gap:6px}
 .kc-eye-btn{background:transparent;border:0;color:#8E9AA8;cursor:pointer;padding:2px;display:flex;align-items:center;transition:color .2s}
 .kc-eye-btn:hover{color:#fff}
-.kc-card-bal{font-family:'JetBrains Mono',monospace;font-size:32px;font-weight:700;letter-spacing:-.02em;color:#FFFFFF;margin:4px 0 6px;line-height:1.1;display:flex;align-items:baseline;gap:6px}
+.kc-card-bal{font-family:'Montserrat', sans-serif;font-size:32px;font-weight:700;letter-spacing:-.02em;color:#FFFFFF;margin:4px 0 6px;line-height:1.1;display:flex;align-items:baseline;gap:6px}
 .kc-card-bal small{font-size:16px;color:#C4F82A;font-weight:500}
 .kc-card-sub{display:flex;align-items:center;gap:10px;font-size:12.5px;color:#8E9AA8}
-.kc-pnl-pill{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;padding:2px 8px;border-radius:6px;background:rgba(196,248,42,.12);color:#C4F82A;border:1px solid rgba(196,248,42,.25)}
+.kc-pnl-pill{font-family:'Montserrat', sans-serif;font-size:11px;font-weight:600;padding:2px 8px;border-radius:6px;background:rgba(196,248,42,.12);color:#C4F82A;border:1px solid rgba(196,248,42,.25)}
 
 .kc-actions-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:20px;padding-top:16px;border-top:1px solid rgba(255,255,255,.06)}
 .kc-act-btn{display:flex;flex-direction:column;align-items:center;gap:8px;text-decoration:none;color:#C3C9BE;cursor:pointer;transition:transform .2s ease}
@@ -63,7 +63,7 @@ FTR_CSS = """
 .kc-alloc-legend{display:flex;justify-content:space-between;gap:8px;font-size:11px;color:#8E9AA8;flex-wrap:wrap}
 .kc-leg-item{display:flex;align-items:center;gap:6px}
 .kc-leg-dot{width:8px;height:8px;border-radius:50%}
-.kc-leg-item b{color:#fff;font-family:'JetBrains Mono',monospace;font-weight:500}
+.kc-leg-item b{color:#fff;font-family:'Montserrat', sans-serif;font-weight:500}
 
 .kc-tabs{display:flex;gap:12px;border-bottom:1px solid rgba(255,255,255,.07);margin-bottom:12px;padding-bottom:2px}
 .kc-tab-btn{background:transparent;border:0;color:#8E9AA8;font-family:Montserrat,sans-serif;font-size:13px;font-weight:600;padding:8px 4px;cursor:pointer;position:relative;transition:color .2s}
@@ -79,8 +79,8 @@ FTR_CSS = """
 .kc-asset-name{font-weight:700;font-size:13.5px;color:#fff}
 .kc-asset-sub{font-size:11px;color:#8E9AA8;margin-top:2px}
 .kc-asset-right{text-align:right}
-.kc-asset-val{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;color:#fff}
-.kc-asset-chg{font-family:'JetBrains Mono',monospace;font-size:11px;margin-top:2px}
+.kc-asset-val{font-family:'Montserrat', sans-serif;font-size:14px;font-weight:600;color:#fff}
+.kc-asset-chg{font-family:'Montserrat', sans-serif;font-size:11px;margin-top:2px}
 .kc-asset-chg.up{color:#C4F82A}
 .kc-asset-chg.down{color:#FF5E5E}
 """
@@ -230,7 +230,7 @@ HIW_CSS = """
 .tier{height:100%}
 .tier .top{display:flex;align-items:center;gap:14px;margin-bottom:16px}
 .tier h4{font-size:19px}
-.tier .x{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:20px;color:var(--lime)}
+.tier .x{margin-left:auto;font-family:'Montserrat', sans-serif;font-size:20px;color:var(--lime)}
 .tier p{font-size:13px;font-weight:300;color:var(--dim);margin:0 0 16px}
 .risk{height:4px;border-radius:99px;background:rgba(255,255,255,.07);overflow:hidden}
 .risk i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#C4F82A,#FF6A1F)}
@@ -281,7 +281,7 @@ details p{color:var(--dim);font-weight:300;font-size:14px;max-width:62ch;padding
 .tl div{flex:1;min-width:150px;padding:22px 20px;border-left:1px solid var(--hair);position:relative}
 .tl div:first-child{border-left:0}
 .tl .k{font-weight:600;font-size:9.5px;letter-spacing:.16em;color:var(--faint);text-transform:uppercase}
-.tl .v{font-family:'JetBrains Mono',monospace;font-size:16px;margin-top:10px}
+.tl .v{font-family:'Montserrat', sans-serif;font-size:16px;margin-top:10px}
 .tl .d{font-size:12.5px;color:var(--dim);font-weight:300;margin-top:8px;line-height:1.5}
 @media (max-width:900px){.walk{grid-template-columns:1fr}.walk.flip .art{order:0}.art{min-height:200px}
  .walk .body{padding:30px 26px}.cmp{grid-template-columns:1.2fr .8fr .8fr;padding:14px 18px}}

@@ -7,6 +7,15 @@ export async function seed() {
   console.log('[Seed] Starting deterministic development seed...');
 
   // Clear existing records in reverse dependency order
+  await prisma.fanPlaySettlement.deleteMany();
+  await prisma.fanPlayTeamLeg.deleteMany();
+  await prisma.fanPlaySelection.deleteMany();
+  await prisma.fanPlay.deleteMany();
+  await prisma.fanPlayOption.deleteMany();
+  await prisma.playerMatchStat.deleteMany();
+  await prisma.footballEventRecord.deleteMany();
+  await prisma.matchFixture.deleteMany();
+  await prisma.fanPlayMarketConfig.deleteMany();
   await prisma.priceHistoryPoint.deleteMany();
   await prisma.tradeFill.deleteMany();
   await prisma.trade.deleteMany();
@@ -402,6 +411,294 @@ export async function seed() {
         low: new Prisma.Decimal(a.price * 0.97),
         close: new Prisma.Decimal(a.price),
         volume: 125000,
+      },
+    });
+  }
+
+  // ============================================================
+  // 9. Seed FanPlay Market Configurations (§10, §11, §12)
+  // ============================================================
+  console.log('[Seed] Seeding FanPlay Market Configurations...');
+  const marketConfigs = [
+    {
+      id: 'SIMPLE',
+      tier: 'SIMPLE' as const,
+      name: 'Simple Market',
+      description: 'One clear, decisive prediction with focused exposure.',
+      minSelections: 1,
+      maxSelections: 1,
+      allowedCategories: JSON.stringify(['GOALS', 'ASSISTS', 'CARDS', 'MATCH_OUTCOME']),
+      maxFromOptionGroup: 1,
+      enabled: true,
+    },
+    {
+      id: 'PRO',
+      tier: 'PRO' as const,
+      name: 'Pro Market',
+      description: 'Several related tactical decisions across key attacking and possession metrics.',
+      minSelections: 2,
+      maxSelections: 4,
+      allowedCategories: JSON.stringify(['GOALS', 'ASSISTS', 'SHOOTING', 'PLAYMAKING', 'DISCIPLINE']),
+      maxFromOptionGroup: 1,
+      enabled: true,
+    },
+    {
+      id: 'ELITE',
+      tier: 'ELITE' as const,
+      name: 'Elite Market',
+      description: 'Multi-category prediction matrix testing deep football intelligence.',
+      minSelections: 3,
+      maxSelections: 6,
+      allowedCategories: JSON.stringify(['GOALS', 'SHOOTING', 'PLAYMAKING', 'DISCIPLINE', 'DEFENDING', 'MATCH_OUTCOME']),
+      maxFromOptionGroup: 1,
+      enabled: true,
+    },
+    {
+      id: 'KILLER',
+      tier: 'KILLER' as const,
+      name: 'Killer Market',
+      description: 'Complex, high-conviction player thesis spanning multiple match dimensions.',
+      minSelections: 4,
+      maxSelections: 8,
+      allowedCategories: JSON.stringify(['GOALS', 'SHOOTING', 'PLAYMAKING', 'DISCIPLINE', 'DEFENDING', 'MATCH_OUTCOME']),
+      maxFromOptionGroup: 1,
+      enabled: true,
+    },
+    {
+      id: 'VIYNX_MOVE',
+      tier: 'VIYNX_MOVE' as const,
+      name: 'Viynx Move',
+      description: 'Unified player + team + match thesis for master sports strategists.',
+      minSelections: 5,
+      maxSelections: 10,
+      allowedCategories: JSON.stringify(['GOALS', 'SHOOTING', 'PLAYMAKING', 'DISCIPLINE', 'DEFENDING', 'TEAM_RESULT', 'MATCH_OUTCOME']),
+      maxFromOptionGroup: 2,
+      enabled: true,
+    },
+    {
+      id: 'VIYNX_MAX',
+      tier: 'VIYNX_MAX' as const,
+      name: 'Viynx Max',
+      description: 'Maximum configurable prediction complexity with total squad and match exposure.',
+      minSelections: 6,
+      maxSelections: 14,
+      allowedCategories: JSON.stringify(['GOALS', 'SHOOTING', 'PLAYMAKING', 'DISCIPLINE', 'DEFENDING', 'TEAM_RESULT', 'MATCH_OUTCOME']),
+      maxFromOptionGroup: 2,
+      enabled: true,
+    },
+  ];
+
+  for (const mc of marketConfigs) {
+    await prisma.fanPlayMarketConfig.create({ data: mc });
+  }
+
+  // ============================================================
+  // 10. Seed Match Fixtures (§27)
+  // ============================================================
+  console.log('[Seed] Seeding Match Fixtures...');
+  const tomorrow = new Date(Date.now() + 24 * 3600 * 1000);
+  const nextDay = new Date(Date.now() + 48 * 3600 * 1000);
+
+  const fixtureArsenalCity = await prisma.matchFixture.create({
+    data: {
+      homeTeam: 'Arsenal',
+      awayTeam: 'Manchester City',
+      competition: 'Premier League',
+      venue: 'Emirates Stadium',
+      kickoffTime: tomorrow,
+      cutoffTime: tomorrow,
+      status: 'SCHEDULED',
+      homeScore: 0,
+      awayScore: 0,
+    },
+  });
+
+  const fixtureClasico = await prisma.matchFixture.create({
+    data: {
+      homeTeam: 'Real Madrid',
+      awayTeam: 'Barcelona',
+      competition: 'La Liga',
+      venue: 'Santiago Bernabéu',
+      kickoffTime: nextDay,
+      cutoffTime: nextDay,
+      status: 'SCHEDULED',
+      homeScore: 0,
+      awayScore: 0,
+    },
+  });
+
+  // ============================================================
+  // 11. Seed Prediction Options (§13, §14, §15, §16, §17)
+  // ============================================================
+  console.log('[Seed] Seeding FanPlay Prediction Options...');
+  const sakaAsset = await prisma.asset.findUnique({ where: { symbol: '$Saka' } });
+  const haalandAsset = await prisma.asset.findUnique({ where: { symbol: '$Haaland' } });
+  const viniciusAsset = await prisma.asset.findUnique({ where: { symbol: '$Vinicius' } });
+
+  if (sakaAsset) {
+    // 1+ goal (Option Group: saka-goals)
+    const optSakaGoal1 = await prisma.fanPlayOption.create({
+      data: {
+        marketConfigId: 'SIMPLE',
+        matchId: fixtureArsenalCity.id,
+        assetId: sakaAsset.id,
+        category: 'GOALS',
+        predictionType: 'THRESHOLD',
+        difficulty: 'MEDIUM',
+        label: 'Saka scores 1+ goal',
+        description: 'Bukayo Saka scores at least one goal in regular time.',
+        evaluationRule: JSON.stringify({ metric: 'goals', op: 'gte', value: 1 }),
+        successFP: 5,
+        failureFP: -5,
+        optionGroup: 'saka-goals',
+      },
+    });
+
+    // 2+ goals (Option Group: saka-goals, depends on 1+ goal)
+    await prisma.fanPlayOption.create({
+      data: {
+        marketConfigId: 'PRO',
+        matchId: fixtureArsenalCity.id,
+        assetId: sakaAsset.id,
+        category: 'GOALS',
+        predictionType: 'THRESHOLD',
+        difficulty: 'HARD',
+        label: 'Saka scores 2+ goals',
+        description: 'Bukayo Saka scores 2 or more goals in regular time.',
+        evaluationRule: JSON.stringify({ metric: 'goals', op: 'gte', value: 2 }),
+        successFP: 12,
+        failureFP: -8,
+        optionGroup: 'saka-goals',
+        dependencies: JSON.stringify([optSakaGoal1.id]),
+      },
+    });
+
+    // 3+ shots (Option Group: saka-shots)
+    await prisma.fanPlayOption.create({
+      data: {
+        marketConfigId: 'PRO',
+        matchId: fixtureArsenalCity.id,
+        assetId: sakaAsset.id,
+        category: 'SHOOTING',
+        predictionType: 'THRESHOLD',
+        difficulty: 'MEDIUM',
+        label: 'Saka records 3+ shots',
+        description: 'Bukayo Saka takes at least 3 total shots.',
+        evaluationRule: JSON.stringify({ metric: 'shots', op: 'gte', value: 3 }),
+        successFP: 6,
+        failureFP: -6,
+        optionGroup: 'saka-shots',
+      },
+    });
+
+    // 2+ key passes (Option Group: saka-passes)
+    await prisma.fanPlayOption.create({
+      data: {
+        marketConfigId: 'PRO',
+        matchId: fixtureArsenalCity.id,
+        assetId: sakaAsset.id,
+        category: 'PLAYMAKING',
+        predictionType: 'THRESHOLD',
+        difficulty: 'EASY',
+        label: 'Saka records 2+ key passes',
+        description: 'Bukayo Saka creates 2 or more chances from open play or set pieces.',
+        evaluationRule: JSON.stringify({ metric: 'key_passes', op: 'gte', value: 2 }),
+        successFP: 4,
+        failureFP: -4,
+        optionGroup: 'saka-passes',
+      },
+    });
+
+    // Saka avoids yellow card
+    await prisma.fanPlayOption.create({
+      data: {
+        marketConfigId: 'ELITE',
+        matchId: fixtureArsenalCity.id,
+        assetId: sakaAsset.id,
+        category: 'DISCIPLINE',
+        predictionType: 'BOOLEAN',
+        difficulty: 'EASY',
+        label: 'Saka avoids a yellow card',
+        description: 'Bukayo Saka receives no yellow or red disciplinary bookings.',
+        evaluationRule: JSON.stringify({ metric: 'yellow', op: 'avoid' }),
+        successFP: 3,
+        failureFP: -5,
+        optionGroup: 'saka-discipline',
+      },
+    });
+
+    // Arsenal wins match
+    await prisma.fanPlayOption.create({
+      data: {
+        marketConfigId: 'ELITE',
+        matchId: fixtureArsenalCity.id,
+        assetId: sakaAsset.id,
+        category: 'MATCH_OUTCOME',
+        predictionType: 'TEAM_RESULT',
+        difficulty: 'MEDIUM',
+        label: 'Arsenal wins match',
+        description: 'Arsenal claims victory over Manchester City at the final whistle.',
+        evaluationRule: JSON.stringify({ metric: 'team_result', op: 'eq', value: true }),
+        successFP: 5,
+        failureFP: -5,
+        optionGroup: 'arsenal-win',
+      },
+    });
+  }
+
+  if (haalandAsset) {
+    // Haaland scores 1+ goal
+    await prisma.fanPlayOption.create({
+      data: {
+        marketConfigId: 'SIMPLE',
+        matchId: fixtureArsenalCity.id,
+        assetId: haalandAsset.id,
+        category: 'GOALS',
+        predictionType: 'THRESHOLD',
+        difficulty: 'EASY',
+        label: 'Haaland scores 1+ goal',
+        description: 'Erling Haaland scores at least one goal in regular time.',
+        evaluationRule: JSON.stringify({ metric: 'goals', op: 'gte', value: 1 }),
+        successFP: 4,
+        failureFP: -6,
+        optionGroup: 'haaland-goals',
+      },
+    });
+
+    // Haaland records 4+ shots
+    await prisma.fanPlayOption.create({
+      data: {
+        marketConfigId: 'PRO',
+        matchId: fixtureArsenalCity.id,
+        assetId: haalandAsset.id,
+        category: 'SHOOTING',
+        predictionType: 'THRESHOLD',
+        difficulty: 'MEDIUM',
+        label: 'Haaland records 4+ shots',
+        description: 'Erling Haaland attempts 4 or more shots on goal.',
+        evaluationRule: JSON.stringify({ metric: 'shots', op: 'gte', value: 4 }),
+        successFP: 6,
+        failureFP: -6,
+        optionGroup: 'haaland-shots',
+      },
+    });
+  }
+
+  if (viniciusAsset) {
+    await prisma.fanPlayOption.create({
+      data: {
+        marketConfigId: 'SIMPLE',
+        matchId: fixtureClasico.id,
+        assetId: viniciusAsset.id,
+        category: 'GOALS',
+        predictionType: 'THRESHOLD',
+        difficulty: 'MEDIUM',
+        label: 'Vinícius scores 1+ goal',
+        description: 'Vinícius Júnior scores at least one goal in El Clásico.',
+        evaluationRule: JSON.stringify({ metric: 'goals', op: 'gte', value: 1 }),
+        successFP: 5,
+        failureFP: -5,
+        optionGroup: 'vini-goals',
       },
     });
   }

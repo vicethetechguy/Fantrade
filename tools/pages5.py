@@ -36,7 +36,7 @@ WAL_CSS = """
 .kc-icon-btn{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;color:#8E9AA8;cursor:pointer;transition:all .2s ease;text-decoration:none}
 .kc-icon-btn:hover{color:#fff;background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.15)}
 .kc-icon-btn .ic{width:18px;height:18px}
-.kc-bal-badge{display:flex;align-items:center;gap:7px;padding:6px 12px;border-radius:999px;background:rgba(196,248,42,.08);border:1px solid rgba(196,248,42,.25);color:#C4F82A;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;text-decoration:none;transition:all .2s}
+.kc-bal-badge{display:flex;align-items:center;gap:7px;padding:6px 12px;border-radius:999px;background:rgba(196,248,42,.08);border:1px solid rgba(196,248,42,.25);color:#C4F82A;font-family:'Montserrat', sans-serif;font-size:12px;font-weight:600;text-decoration:none;transition:all .2s}
 .kc-bal-badge:hover{background:rgba(196,248,42,.15)}
 .kc-bal-dot{width:6px;height:6px;border-radius:50%;background:#C4F82A;box-shadow:0 0 8px #C4F82A}
 
@@ -51,7 +51,7 @@ WAL_CSS = """
 .dist .key{display:flex;flex-direction:column;gap:12px;flex:1;min-width:180px}
 .dist .kr{display:flex;align-items:center;gap:11px;font-size:13px;color:var(--dim)}
 .dist .kr i{width:10px;height:10px;border-radius:3px;display:block;flex:none}
-.dist .kr b{margin-left:auto;font-family:'JetBrains Mono',monospace;color:var(--ink);font-weight:400}
+.dist .kr b{margin-left:auto;font-family:'Montserrat', sans-serif;color:var(--ink);font-weight:400}
 """
 
 
@@ -59,8 +59,10 @@ def shell(fname, title, label, icon, body_inner, js, tone=""):
     """Mobile crypto container: header bar with back navigation, title, live balance, and stacked cards."""
     head_html = T('<main><div class="kc-wallet-wrap">'
                   '<div class="kc-topbar">'
+                  '<div style="display:flex;align-items:center;gap:12px;min-width:0">'
                   '<a class="kc-icon-btn" href="ftr.html" aria-label="Back to Assets">@@</a>'
-                  '<div class="kc-top-title">@@</div>'
+                  '<div class="kc-top-title" style="white-space:nowrap">@@</div>'
+                  '</div>'
                   '<a class="kc-bal-badge" href="ftr.html" title="Available balance">'
                   '<span class="kc-bal-dot"></span><span id="wBal">128,450</span> $FTR</a>'
                   '</div>'
