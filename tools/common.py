@@ -76,7 +76,7 @@ CSS = r"""
   --lime:#C4F82A;--amber:#FF6A1F;--ink:#F4F6F1;--dim:#8B918A;--faint:#5A605B;--red:#FF5E5E;
   --r-out:2rem;--r-in:calc(2rem - .5rem);
   --inset:inset 0 1px 1px rgba(255,255,255,.12);
-  --ambient:0 30px 80px -20px rgba(0,0,0,.8),0 0 0 1px rgba(255,255,255,.03);
+  --ambient:0 30px 80px -20px rgba(0,0,0,.8);
   --ease:cubic-bezier(.32,.72,0,1);--ease-out:cubic-bezier(.16,1,.3,1);--maxw:1280px;
 }
 *{box-sizing:border-box}
@@ -176,10 +176,11 @@ body.menu-open .overlay a:nth-child(3){transition-delay:.22s}
 body.menu-open .overlay a:nth-child(4){transition-delay:.28s}
 .overlay .btn{align-self:flex-start;margin-top:34px}
 
-/* bezel */
-.bezel{background:var(--shell);border:1px solid var(--hair);border-radius:var(--r-out);padding:8px;box-shadow:var(--ambient)}
-.bezel>.core{background:var(--core);border-radius:var(--r-in);box-shadow:var(--inset);overflow:hidden;height:100%}
-.bezel.tight{padding:6px;--r-out:1.5rem;--r-in:calc(1.5rem - .375rem)}
+/* card: single clean container without additional outer outline border */
+.bezel{background:transparent;border:0;border-radius:0;padding:0;box-shadow:none}
+.bezel>.core{background:var(--core);border:1px solid var(--hair);border-radius:20px;overflow:hidden;height:100%}
+.bezel.tight{padding:0}
+.bezel.tight>.core{border-radius:16px}
 .pad{padding:36px 34px}.pad-sm{padding:26px 26px}
 
 /* ── flat: the same block with the card taken off, so the content
@@ -1472,8 +1473,10 @@ body.app .lede{font-size:12.5px}
 body.app .greet{font-size:9px;letter-spacing:.16em}
 
 body.app .bento{gap:10px}
-body.app .bezel{padding:5px;--r-out:16px;--r-in:12px}
-body.app .bezel.tight{padding:4px;--r-out:13px;--r-in:10px}
+body.app .bezel{padding:0;border:0;background:transparent;box-shadow:none}
+body.app .bezel>.core{border:1px solid rgba(255,255,255,.07);border-radius:16px}
+body.app .bezel.tight{padding:0}
+body.app .bezel.tight>.core{border-radius:14px}
 body.app .pad{padding:18px 16px}
 body.app .pad-sm{padding:14px 13px}
 body.app .k-label{font-size:8.5px;letter-spacing:.15em;margin-bottom:9px}
