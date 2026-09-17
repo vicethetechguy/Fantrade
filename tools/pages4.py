@@ -121,7 +121,8 @@ ASSET_CSS = """
 .asset-drawer-item:hover{background:rgba(255,255,255,.05)}
 .asset-drawer-item.active{background:rgba(196,248,42,.08);border:1px solid rgba(196,248,42,.2)}
 .asset-drawer-item-left{display:flex;align-items:center;gap:10px}
-.asset-drawer-avatar{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.08);display:grid;place-items:center;font-weight:700;font-size:12px;color:var(--lime)}
+.asset-drawer-avatar{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.08);display:grid;place-items:center;font-weight:700;font-size:12px;color:var(--lime);overflow:hidden;border:1px solid rgba(255,255,255,.09)}
+.asset-drawer-avatar .player-photo{width:100%;height:100%;object-fit:cover;object-position:50% 18%;display:block}
 .asset-drawer-item-name{font-family:Archivo,sans-serif;font-variation-settings:'wdth' 115,'wght' 700;font-size:13.5px;color:#fff}
 .asset-drawer-item-sub{font-size:11px;color:#767c82}
 .asset-drawer-item-right{text-align:right}
@@ -402,7 +403,7 @@ function renderAssetDrawerList(q){
     var pxStr = item.p.toFixed(item.p < 1 ? 4 : 2);
     return '<a href="asset.html?a=' + encodeURIComponent(item.t) + '" class="asset-drawer-item' + (isCur ? ' active' : '') + '">' +
       '<div class="asset-drawer-item-left">' +
-      '  <div class="asset-drawer-avatar">' + item.t.replace('$', '').substring(0, 2).toUpperCase() + '</div>' +
+      '  <div class="asset-drawer-avatar">' + playerPhoto(item.t,item.n) + '</div>' +
       '  <div>' +
       '    <div class="asset-drawer-item-name">' + item.t + '</div>' +
       '    <div class="asset-drawer-item-sub">' + item.n + '</div>' +

@@ -658,7 +658,8 @@ DASH_CSS = """
 .kc-row{display:grid;grid-template-columns:1fr 110px 92px;align-items:center;padding:12px 10px;border-radius:12px;border-bottom:1px solid rgba(255,255,255,.04);text-decoration:none;color:inherit;transition:background .2s ease}
 .kc-row:hover{background:rgba(255,255,255,.03)}
 .kc-row-left{display:flex;align-items:center;gap:12px;min-width:0}
-.kc-avatar{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);display:grid;place-items:center;flex:none;color:var(--lime);font-family:Archivo,sans-serif;font-size:11px;font-weight:800}
+.kc-avatar{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);display:grid;place-items:center;flex:none;color:var(--lime);font-family:Archivo,sans-serif;font-size:11px;font-weight:800;overflow:hidden}
+.kc-avatar .player-photo{width:100%;height:100%;object-fit:cover;object-position:50% 18%;display:block}
 .kc-avatar.coach{color:var(--amber);border-color:rgba(255,106,31,.25);background:rgba(255,106,31,.08)}
 .kc-pair-title{display:flex;align-items:center;gap:5px;font-family:Archivo,sans-serif;font-variation-settings:'wdth' 115,'wght' 800;font-size:14px;line-height:1.1;color:var(--ink)}
 .kc-pair-quote{font-size:11.5px;color:#767c82;font-weight:600}
@@ -911,12 +912,11 @@ DASH_JS = r"""
       var to = 'asset.html?a=' + encodeURIComponent(a.t);
       var sym = a.t.replace('$', '');
       var quote = a.q || 'FTR';
-      var avatarLetter = sym.substring(0, 2).toUpperCase();
       var posTag = a.pos || (a.c ? 'MGR' : 'FWD');
       var clubName = a.club || (a.c ? 'Premier League Manager' : 'Premier League');
       return "<a class='kc-row' href='" + to + "'>"
         + "<div class='kc-row-left'>"
-        + "  <div class='kc-avatar" + (a.c ? " coach" : "") + "'>" + avatarLetter + "</div>"
+        + "  <div class='kc-avatar" + (a.c ? " coach" : "") + "'>" + playerPhoto(a.t,a.n) + "</div>"
         + "  <div style='min-width:0'>"
         + "    <div class='kc-pair-title'>"
         + "      <span>" + sym + "</span>"
@@ -1555,6 +1555,10 @@ NT_CSS = """
 .fd .ibox .ic{width:17px;height:17px}
 .quiet{display:flex;gap:10px;align-items:center;margin-top:10px}
 .quiet .tf{flex:1;margin:0}
+.nt-filter-head{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:18px 18px 12px}
+.nt-filter-head .markets{flex:1;min-width:0;overflow-x:auto;flex-wrap:nowrap;scrollbar-width:none}
+.nt-read{border:0;background:transparent;color:var(--lime);font:600 10px Montserrat,sans-serif;white-space:nowrap;cursor:pointer;padding:7px 4px}
+@media(max-width:560px){.nt-filter-head{align-items:flex-start;flex-direction:column}.nt-read{align-self:flex-end}}
 """
 
 nt = [T('<main><div class="kc-home-wrap">'
@@ -1563,55 +1567,24 @@ nt = [T('<main><div class="kc-home-wrap">'
         '    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>'
         '  </a>'
         '  <div style="font-family:Archivo,sans-serif;font-variation-settings:\'wdth\' 120,\'wght\' 800;font-size:18px;color:var(--ink)">Notifications</div>'
-        '  <button type="button" class="kc-p-action-btn" id="ntRead" title="Mark all read">'
-        '    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>'
-        '  </button>'
+        '  <a href="settings-alerts.html" class="kc-p-action-btn" title="Notification settings" aria-label="Notification settings">'
+        '    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.05.05a2 2 0 1 1-2.83 2.83l-.05-.05a1.7 1.7 0 0 0-1.88-.34 1.7 1.7 0 0 0-1.03 1.56V21a2 2 0 1 1-4 0v-.07a1.7 1.7 0 0 0-1.03-1.56 1.7 1.7 0 0 0-1.88.34l-.05.05a2 2 0 1 1-2.83-2.83l.05-.05A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.56-1.03H3a2 2 0 1 1 0-4h.04A1.7 1.7 0 0 0 4.6 8.94a1.7 1.7 0 0 0-.34-1.88l-.05-.05a2 2 0 1 1 2.83-2.83l.05.05a1.7 1.7 0 0 0 1.88.34A1.7 1.7 0 0 0 10 3.01V3a2 2 0 1 1 4 0v.01a1.7 1.7 0 0 0 1.03 1.56 1.7 1.7 0 0 0 1.88-.34l.05-.05a2 2 0 1 1 2.83 2.83l-.05.05a1.7 1.7 0 0 0-.34 1.88 1.7 1.7 0 0 0 1.56 1.03H21a2 2 0 1 1 0 4h-.04A1.7 1.7 0 0 0 19.4 15z"/></svg>'
+        '  </a>'
         '</div>'
         '<div class="bento">')]
 
-nt.append(T('<div class="bezel c8" data-reveal><div class="core mobile-flat">'
-            '<div style="padding:26px 24px 16px"><div class="markets" id="ntFilter">'
+nt.append(T('<div class="bezel c12" data-reveal><div class="core mobile-flat">'
+            '<div class="nt-filter-head"><div class="markets" id="ntFilter">'
             '<button class="mkt" type="button" aria-pressed="true" data-k="all">Everything</button>'
             '<button class="mkt" type="button" aria-pressed="false" data-k="settle">Settlements</button>'
             '<button class="mkt" type="button" aria-pressed="false" data-k="order">Orders</button>'
             '<button class="mkt" type="button" aria-pressed="false" data-k="club">Club</button>'
             '<button class="mkt" type="button" aria-pressed="false" data-k="system">Account</button>'
-            '</div></div><div id="ntFeed"></div>'
+            '</div><button type="button" class="nt-read" id="ntRead">Mark all read · <span id="ntTotal">8</span></button></div><div id="ntFeed"></div>'
             '<div style="padding:22px 24px 28px;text-align:center">'
             '<span style="font-size:11.5px;color:var(--faint);font-weight:300">'
             'Activity older than 90 days is available in your ledger export.</span></div>'
             '</div></div>'))
-
-nt.append(T('<div class="bezel c4" data-reveal><div class="core pad">'
-            '<div class="k-label">Needs you before the lock</div>'
-            '<div class="warn" style="margin:0 0 24px">@@<p>W. Saliba is a late fitness test. Auto-sub will '
-            'field Gabriel if he is withdrawn — turn auto-sub off in Settings if you would rather take the zero.</p>'
-            '</div>'
-            '<div class="k-label">What you get told about</div>'
-            '<p style="font-size:12.5px;color:var(--dim);font-weight:300;margin:0 0 8px;line-height:1.6">'
-            'Toggle a channel off and Fantrade stops sending it — the event still lands in your ledger.</p>'
-            '<div class="sw-row"><div><div class="t">Round settlements</div>'
-            '<div class="d">Results, points and payouts when a window closes.</div></div>'
-            '<button class="tgl" type="button" data-pref="settleAlerts" aria-pressed="true"><i></i></button></div>'
-            '<div class="sw-row"><div><div class="t">Order fills</div>'
-            '<div class="d">Market and limit orders that execute on the book.</div></div>'
-            '<button class="tgl" type="button" data-pref="orderFills" aria-pressed="true"><i></i></button></div>'
-            '<div class="sw-row"><div><div class="t">Club &amp; teamsheet risk</div>'
-            '<div class="d">Injuries, late fitness tests and auto-sub decisions.</div></div>'
-            '<button class="tgl" type="button" data-pref="clubAlerts" aria-pressed="true"><i></i></button></div>'
-            '<div class="sw-row"><div><div class="t">Price moves on your holdings</div>'
-            '<div class="d">Alerts when an asset you own moves more than 8% in a session.</div></div>'
-            '<button class="tgl" type="button" data-pref="priceMoves" aria-pressed="false"><i></i></button></div>'
-            '<div class="k-label" style="margin-top:26px">This week</div>'
-            '<div class="b-row"><span>Events recorded</span><b id="ntTotal">8</b></div>'
-            '<div class="b-row"><span>Unread</span><b class="pl up" data-unread>3</b></div>'
-            '<div class="b-row total"><span>Net balance movement</span>'
-            '<b style="color:var(--lime)">+6,620 $FTR</b></div>'
-            '<div style="margin-top:22px">@@</div>'
-            '</div></div>',
-            ic("flag", "ic"),
-            btn("All settings", "btn-glass", "settings.html",
-                extra='style="width:100%;justify-content:space-between"')))
 
 nt.append('</div></div></main>')
 
@@ -1640,7 +1613,8 @@ function renderFeed(){
       + '</div>');
   });
   box.innerHTML = out.join('');
-  document.getElementById('ntTotal').textContent = s.notifications.length;
+  var total = document.getElementById('ntTotal');
+  if(total) total.textContent = s.notifications.length;
 
   box.querySelectorAll('.fd').forEach(function(row){
     function open(){
@@ -1688,6 +1662,32 @@ ST_CSS = """
   border-radius:999px;padding:7px 15px;font-weight:600;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;
   cursor:pointer;transition:all .5s var(--ease)}
 .sess .kill:hover{border-color:rgba(255,94,94,.5);color:#ff9a9a}
+.kc-settings-wrap{width:min(820px,100%);margin:0 auto;padding:6px 16px 110px;box-sizing:border-box}
+.settings-head{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:6px 0 18px}
+.settings-head-copy{min-width:0;text-align:center}
+.settings-head-copy h1{font:800 19px Archivo,sans-serif;font-variation-settings:'wdth' 120,'wght' 800;margin:0;color:var(--ink)}
+.settings-head-copy p{font-size:10.5px;color:var(--faint);margin:3px 0 0}
+.settings-nav{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:7px;margin:0 0 14px}
+.settings-nav a{min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:11px 5px;border:1px solid rgba(255,255,255,.065);border-radius:12px;background:rgba(255,255,255,.025);color:var(--faint);text-decoration:none;text-align:center;font-size:9px;line-height:1.2;transition:.2s ease}
+.settings-nav a .ic{width:16px;height:16px}
+.settings-nav a:hover{color:var(--ink);border-color:rgba(255,255,255,.14);background:rgba(255,255,255,.045)}
+.settings-nav a.on{color:#0a0d03;background:var(--lime);border-color:var(--lime);box-shadow:var(--shadow-action)}
+.settings-hero{padding:3px 2px 14px}
+.settings-hero h2{margin:0 0 5px;font:800 17px Archivo,sans-serif!important;text-transform:none!important}
+.settings-hero p{margin:0;color:var(--faint);font-size:11.5px}
+.settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.settings-card{display:flex;align-items:center;gap:13px;padding:16px;border:1px solid rgba(255,255,255,.07);border-radius:15px;background:rgba(10,12,14,.7);color:var(--ink);text-decoration:none;box-shadow:var(--shadow-card);transition:.2s ease}
+.settings-card:hover{transform:translateY(-2px);border-color:rgba(196,248,42,.22)}
+.settings-card .bd{min-width:0;flex:1}.settings-card b{display:block;font-size:13px}.settings-card p{font-size:10.5px;line-height:1.45;color:var(--faint);margin:4px 0 0}
+.settings-card>.ic{width:14px;height:14px;color:var(--faint)}
+.sec-card>.core{background:linear-gradient(145deg,rgba(16,19,18,.92),rgba(8,10,10,.96))}
+@media(max-width:680px){
+  .kc-settings-wrap{padding-left:12px;padding-right:12px}
+  .settings-nav{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;padding-bottom:2px}
+  .settings-nav a{flex:0 0 82px;scroll-snap-align:start}
+  .settings-grid{grid-template-columns:1fr}
+  .sec-title{align-items:flex-start}.sec-title p{max-width:36ch}
+}
 """
 
 SETNAV = [("profile", "user", "Manager profile"), ("club", "crest", "Club identity"),
@@ -2252,7 +2252,7 @@ ac = [T('<main><div class="kc-profile-wrap">'
         '<div class="kc-group">'
         '  <div class="kc-group-title">Security &amp; System</div>'
         '  <div class="kc-group-box">'
-        '    <div class="kc-item-row" id="kcSecurityRow" role="button" tabindex="0">'
+        '    <a href="settings-security.html" class="kc-item-row">'
         '      <div class="kc-item-left">'
         '        <div class="kc-item-ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg></div>'
         '        <div class="kc-item-text-wrap"><div class="kc-item-title">Security Settings</div></div>'
@@ -2261,17 +2261,17 @@ ac = [T('<main><div class="kc-profile-wrap">'
         '        <span>Change password</span>'
         '        <svg class="kc-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>'
         '      </div>'
-        '    </div>'
-        '    <div class="kc-item-row" id="kcPreferencesRow" role="button" tabindex="0">'
+        '    </a>'
+        '    <a href="settings.html" class="kc-item-row">'
         '      <div class="kc-item-left">'
         '        <div class="kc-item-ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div>'
-        '        <div class="kc-item-text-wrap"><div class="kc-item-title">Preferences</div></div>'
+        '        <div class="kc-item-text-wrap"><div class="kc-item-title">Profile &amp; App Settings</div><div class="kc-item-desc">Profile, club, alerts, wallet and play limits</div></div>'
         '      </div>'
         '      <div class="kc-item-right">'
-        '        <span>USD · English</span>'
+        '        <span>7 sections</span>'
         '        <svg class="kc-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>'
         '      </div>'
-        '    </div>'
+        '    </a>'
         '  </div>'
         '</div>'
 
@@ -2479,15 +2479,52 @@ AC_JS = r"""
 page("account.html", "Profile — Fantrade", "".join(ac), AC_JS, AC_CSS)
 print("built account.html")
 
-# Write clean instant redirects for obsolete settings pages and wallet.html
-REDIRECT_TO_ACCOUNT = """<!DOCTYPE html><html><head><meta charset="utf-8"><meta http-equiv="refresh" content="0; url=account.html"><title>Redirecting to Profile...</title><script>window.location.replace('account.html');</script></head><body style="background:#050505;color:#F4F6F1;font-family:sans-serif;display:grid;place-items:center;height:100vh;margin:0"><div style="text-align:center"><p style="color:#8E9AA8">Redirecting to your Profile...</p><a href="account.html" style="color:#C4F82A;font-weight:600">Click here if not redirected</a></div></body></html>"""
+# Profile settings now use focused pages instead of redirects or one long screen.
+SETTINGS_COPY = {
+    "profile": ("Manager profile", "Control the identity shown with your club and activity."),
+    "club": ("Club identity", "Set your club name, formation, colour and substitution rules."),
+    "security": ("Security", "Manage your password, two-factor protection and active sessions."),
+    "alerts": ("Notification settings", "Choose which match, market and account updates Fantrade sends."),
+    "wallet": ("Wallet & payouts", "Review balances and choose where settled funds are paid."),
+    "play": ("Responsible play", "Set clear limits and take a break whenever you need one."),
+    "data": ("Data & account", "Export your information, reset the prototype or close the account."),
+}
 
-for _fname in ["settings.html", "settings-profile.html", "settings-club.html",
-               "settings-security.html", "settings-alerts.html", "settings-wallet.html",
-               "settings-play.html", "settings-data.html"]:
-    with open(os.path.join(OUT, _fname), "w", encoding="utf-8") as f:
-        f.write(REDIRECT_TO_ACCOUNT)
-print("built instant redirects for 8 obsolete settings pages -> account.html")
+def settings_nav(active=""):
+    links = []
+    for key, icon_name, label in SETNAV:
+        links.append('<a href="settings-%s.html" class="%s">%s<span>%s</span></a>' %
+                     (key, "on" if key == active else "", ic(icon_name, "ic"), label))
+    return '<nav class="settings-nav" aria-label="Profile settings">%s</nav>' % "".join(links)
+
+def settings_top(title, subtitle):
+    return ('<div class="settings-head">'
+            '<a href="account.html" class="kc-p-back" title="Back to profile">'
+            '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></a>'
+            '<div class="settings-head-copy"><h1>%s</h1><p>%s</p></div>'
+            '<a href="notifications.html" class="kc-p-action-btn" title="Notifications">%s</a>'
+            '</div>') % (title, subtitle, ic("pulse", "ic"))
+
+settings_cards = []
+for key, icon_name, label in SETNAV:
+    title, desc = SETTINGS_COPY[key]
+    settings_cards.append('<a class="settings-card" href="settings-%s.html"><span class="ibox">%s</span>'
+                          '<div class="bd"><b>%s</b><p>%s</p></div>%s</a>' %
+                          (key, ic(icon_name, "ic-lg"), title, desc, ic("arrow", "ic")))
+
+settings_index = ('<main><div class="kc-settings-wrap">' +
+                  settings_top("Profile settings", "Everything personal, in one place") +
+                  '<div class="settings-hero"><h2>Choose what to update</h2><p>Changes save to your Fantrade profile and follow you across devices.</p></div>' +
+                  '<div class="settings-grid">' + "".join(settings_cards) + '</div></div></main>')
+page("settings.html", "Profile settings — Fantrade", settings_index, ST_JS, ST_CSS)
+print("built settings.html")
+
+for key, _icon_name, _label in SETNAV:
+    title, desc = SETTINGS_COPY[key]
+    body = ('<main><div class="kc-settings-wrap">' + settings_top(title, desc) +
+            settings_nav(key) + SECTIONS[key] + '</div></main>')
+    page("settings-%s.html" % key, "%s — Fantrade" % title, body, ST_JS, ST_CSS)
+    print("built settings-%s.html" % key)
 
 REDIRECT_TO_WALLET = """<!DOCTYPE html><html><head><meta charset="utf-8"><meta http-equiv="refresh" content="0; url=ftr.html"><title>Redirecting to Wallet...</title><script>window.location.replace('ftr.html');</script></head><body style="background:#050505;color:#F4F6F1;font-family:sans-serif;display:grid;place-items:center;height:100vh;margin:0"><div style="text-align:center"><p style="color:#8E9AA8">Redirecting to your Wallet...</p><a href="ftr.html" style="color:#C4F82A;font-weight:600">Click here if not redirected</a></div></body></html>"""
 

@@ -1,0 +1,262 @@
+{
+  "saka": {
+    "name": "Bukayo Saka",
+    "file": "assets/players/saka.webp",
+    "article": "https://en.wikipedia.org/wiki/Bukayo_Saka",
+    "source": "https://commons.wikimedia.org/wiki/File:Bukayo_Saka_England_v_Ghana_23_June_2026-057_(cropped).jpg",
+    "license": "CC BY-SA 4.0",
+    "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Berlination\" title=\"User:Berlination\">Bryan Berlin</a>",
+    "credit": "<span class=\"int-own-work\" lang=\"en\">Own work</span>",
+    "fetched": "2026-09-17"
+  },
+  "haaland": {
+    "name": "Erling Haaland",
+    "file": "assets/players/haaland.webp",
+    "article": "https://en.wikipedia.org/wiki/Erling_Haaland",
+    "source": "https://commons.wikimedia.org/wiki/File:Erling_Haaland_Morocco_v_Norway_7_June_2026-51.jpg",
+    "license": "CC BY-SA 4.0",
+    "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Berlination\" title=\"User:Berlination\">Bryan Berlin</a>",
+    "credit": "<span class=\"int-own-work\" lang=\"en\">Own work</span>",
+    "fetched": "2026-09-17"
+  },
+  "mbappe": {
+    "name": "Kylian Mbappé",
+    "file": "assets/players/mbappe.webp",
+    "article": "https://en.wikipedia.org/wiki/Kylian_Mbapp%C3%A9",
+    "source": "https://commons.wikimedia.org/wiki/File:Kylian_Mbappe_France_v_Senegal_16_June_2026-391_(cropped).jpg",
+    "license": "CC BY-SA 4.0",
+    "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Berlination\" title=\"User:Berlination\">Bryan Berlin</a>",
+    "credit": "<span class=\"int-own-work\" lang=\"en\">Own work</span>",
+    "fetched": "2026-09-17"
+  },
+  "vinicius": {
+    "name": "Vinícius Júnior",
+    "file": "assets/players/vinicius.webp",
+    "article": "https://en.wikipedia.org/wiki/Vin%C3%ADcius_J%C3%BAnior",
+    "source": "https://commons.wikimedia.org/wiki/File:Vin%C3%ADcius_J%C3%BAnior_Brazil_V_Morocco_13_June_2026-207_(cropped).jpg",
+    "license": "CC BY-SA 4.0",
+    "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Berlination\" title=\"User:Berlination\">Bryan Berlin</a>",
+    "credit": "<span class=\"int-own-work\" lang=\"en\">Own work</span>",
+    "fetched": "2026-09-17"
+  },
+  "bellingham": {
+    "name": "Jude Bellingham",
+    "file": "assets/players/bellingham.webp",
+    "article": "https://en.wikipedia.org/wiki/Jude_Bellingham",
+    "source": "https://commons.wikimedia.org/wiki/File:Jude_Bellingham_England_v_Ghana_23_June_2026-061_(cropped).jpg",
+    "license": "CC BY-SA 4.0",
+    "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Berlination\" title=\"User:Berlination\">Bryan Berlin</a>",
+    "credit": "<span class=\"int-own-work\" lang=\"en\">Own work</span>",
+    "fetched": "2026-09-17"
+  },
+  "palmer": {
+    "name": "Cole Palmer",
+    "file": "assets/players/palmer.webp",
+    "article": "https://en.wikipedia.org/wiki/Cole_Palmer",
+    "source": "https://commons.wikimedia.org/wiki/File:Cole_Palmer_2025_FIFA_Club_World_Cup_Final.jpg",
+    "license": "Public domain",
+    "artist": "The White House",
+    "credit": "<a rel=\"nofollow\" class=\"external free\" href=\"https://www.flickr.com/photos/202101414@N05/54654580653/\">https://www.flickr.com/photos/202101414@N05/54654580653/</a>",
+    "fetched": "2026-09-17"
+  },
+  "yamal": {
+    "name": "Lamine Yamal",
+    "file": "assets/players/yamal.webp",
+    "article": "https://en.wikipedia.org/wiki/Lamine_Yamal",
+    "source": "https://commons.wikimedia.org/wiki/File:Lamine_Yamal_France_v_Spain_7.24.26-142.jpg",
+    "license": "CC BY-SA 4.0",
+    "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Berlination\" title=\"User:Berlination\">Bryan Berlin</a>",
+    "credit": "<span class=\"int-own-work\" lang=\"en\">Own work</span>",
+    "fetched": "2026-09-17"
+  },
+  "musiala": {
+    "name": "Jamal Musiala",
+    "file": "assets/players/musiala.webp",
+    "article": "https://en.wikipedia.org/wiki/Jamal_Musiala",
+    "source": "https://commons.wikimedia.org/wiki/File:Jamal_Musiala_Ecuador_v_Germany_25_June_2026-174_(cropped).jpg",
+    "license": "CC BY-SA 4.0",
+    "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Berlination\" title=\"User:Berlination\">Bryan Berlin</a>",
+    "credit": "<span class=\"int-own-work\" lang=\"en\">Own work</span>",
+    "fetched": "2026-09-17"
+  },
+  "wirtz": {
+    "name": "Florian Wirtz",
+    "file": "assets/players/wirtz.webp",
+    "article": "https://en.wikipedia.org/wiki/Florian_Wirtz",
+    "source": "https://commons.wikimedia.org/wiki/File:Florian_Wirtz_Ecuador_v_Germany_25_June_2026-181_(cropped).jpg",
+    "license": "CC BY-SA 4.0",
+    "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Berlination\" title=\"User:Berlination\">Bryan Berlin</a>",
+    "credit": "<span class=\"int-own-work\" lang=\"en\">Own work</span>",
+    "fetched": "2026-09-17"
+  },
+  "rodri": {
+    "name": "Rodri",
+    "file": "assets/players/rodri.webp",
+    "article": "https://en.wikipedia.org/wiki/Rodri",
+    "source": "https://commons.wikimedia.org/wiki/File:Rodri_Argentina_v_Spain_19_July_2026-187_(cropped).jpg",
+    "license": "CC BY-SA 4.0",
+    "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Berlination\" title=\"User:Berlination\">Bryan Berlin</a>",
+    "credit": "<span class=\"int-own-work\" lang=\"en\">Own work</span>",
+    "fetched": "2026-09-17"
+  },
+  "foden": {
+    "name": "Phil Foden",
+    "file": "assets/players/foden.webp",
+    "article": "https://en.wikipedia.org/wiki/Phil_Foden",
+    "source": "https://commons.wikimedia.org/wiki/File:2023-10-04_Fu%C3%9Fball,_M%C3%A4nner,_UEFA_Champions_League,_RB_Leipzig_-_Manchester_City_FC_1DX_2613,_Phil_Foden.jpg",
+    "license": "CC BY-SA 4.0",
+    "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Stepro\" title=\"User:Stepro\">Steffen Prößdorf</a>",
+    "credit": "<span class=\"int-own-work\">Self-photographed</span>",
+    "fetched": "2026-09-17"
+  },
+  "pedri": {
+    "name": "Pedri",
+    "file": "assets/players/pedri.webp",
+    "article": "https://en.wikipedia.org/wiki/Pedri",
+    "source": "https://commons.wikimedia.org/wiki/File:Pedri_France_v_Spain_7.24.26-245.jpg",
+    "license": "CC BY-SA 4.0",
+    "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Berlination\" title=\"User:Berlination\">Bryan Berlin</a>",
+    "credit": "<span class=\"int-own-work\" lang=\"en\">Own work</span>",
+    "fetched": "2026-09-17"
+  },
+  "saliba": {
+    "name": "William Saliba",
+    "file": "assets/players/saliba.webp",
+    "article": "https://en.wikipedia.org/wiki/William_Saliba",
+    "source": "https://commons.wikimedia.org/wiki/File:William_Saliba_France_v_Senegal_16_June_2026-336_(cropped).jpg",
+    "license": "CC BY-SA 4.0",
+    "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Berlination\" title=\"User:Berlination\">Bryan Berlin</a>",
+    "credit": "<span class=\"int-own-work\" lang=\"en\">Own work</span>",
+    "fetched": "2026-09-17"
+  },
+  "bruno": {
+    "name": "Bruno Fernandes",
+    "file": "assets/players/bruno.webp",
+    "article": "https://en.wikipedia.org/wiki/Bruno_Fernandes",
+    "source": "https://commons.wikimedia.org/wiki/File:Bruno_Fernandes_USMNT_v_Portugal_Mar_31_2026-27_(cropped).jpg",
+    "license": "CC BY-SA 4.0",
+    "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Berlination\" title=\"User:Berlination\">Bryan Berlin</a>",
+    "credit": "<span class=\"int-own-work\" lang=\"en\">Own work</span>",
+    "fetched": "2026-09-17"
+  },
+  "jackson": {
+    "name": "Nicolas Jackson",
+    "file": "assets/players/jackson.webp",
+    "article": "https://en.wikipedia.org/wiki/Nicolas_Jackson",
+    "source": "https://commons.wikimedia.org/wiki/File:Nicolas_Jackson_France_v_Senegal_16_June_2026-369_(cropped).jpg",
+    "license": "CC BY-SA 4.0",
+    "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Berlination\" title=\"User:Berlination\">Bryan Berlin</a>",
+    "credit": "<span class=\"int-own-work\" lang=\"en\">Own work</span>",
+    "fetched": "2026-09-17"
+  },
+  "arteta": {
+    "name": "Mikel Arteta",
+    "file": "assets/players/arteta.webp",
+    "article": "https://en.wikipedia.org/wiki/Mikel_Arteta",
+    "source": "https://commons.wikimedia.org/wiki/File:Mikel_Arteta_2021_(cropped).png",
+    "license": "CC BY 3.0",
+    "artist": "Prime Video AU &amp; NZ",
+    "credit": "<bdi lang=\"en\" dir=\"ltr\"><a href=\"//commons.wikimedia.org/wiki/Commons:YouTube_files\" title=\"Commons:YouTube files\">YouTube</a>: <a rel=\"nofollow\" class=\"external text\" href=\"https://www.youtube.com/watch?v=4o2YVBGWsYY\"><bdi lang=\"\">All or Nothing: Arsenal - Official Trailer</bdi></a> – View/save archived versions on <a rel=\"nofollow\" class=\"external text\" href=\"https://web.archive.org/web/*/https://www.youtube.com/watch?v=4o2YVBGWsYY\">archive.org</a></bdi>",
+    "fetched": "2026-09-17"
+  },
+  "pep": {
+    "name": "Pep Guardiola",
+    "file": "assets/players/pep.webp",
+    "article": "https://en.wikipedia.org/wiki/Pep_Guardiola",
+    "source": "https://commons.wikimedia.org/wiki/File:Josep_Guardiola_2023-10-04_Fu%C3%9Fball,_M%C3%A4nner,_UEFA_Champions_League,_RB_Leipzig_-_Manchester_City_FC_1DX_2797_(cropped).jpg",
+    "license": "CC BY-SA 4.0",
+    "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Stepro\" title=\"User:Stepro\">Steffen Prößdorf</a>",
+    "credit": "<span class=\"int-own-work\">Self-photographed</span>",
+    "fetched": "2026-09-17"
+  },
+  "maresca": {
+    "name": "Enzo Maresca",
+    "file": "assets/players/maresca.webp",
+    "article": "https://en.wikipedia.org/wiki/Enzo_Maresca",
+    "source": "https://commons.wikimedia.org/wiki/File:Enzo_maresca_chelsea_gent_2024_(extracted).jpg",
+    "license": "CC BY-SA 4.0",
+    "artist": "<a href=\"//commons.wikimedia.org/w/index.php?title=User:Oscar0123&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"User:Oscar0123 (page does not exist)\">Oscar0123</a>",
+    "credit": "<a href=\"//commons.wikimedia.org/wiki/File:Enzo_maresca_chelsea_gent_2024.jpg\" title=\"File:Enzo maresca chelsea gent 2024.jpg\">File:Enzo_maresca_chelsea_gent_2024.jpg</a>",
+    "fetched": "2026-09-17"
+  },
+  "rice": {
+    "name": "Declan Rice",
+    "file": "assets/players/rice.webp",
+    "article": "https://en.wikipedia.org/wiki/Declan_Rice",
+    "source": "https://commons.wikimedia.org/wiki/File:Declan_Rice_England_v_Ghana_23_June_2026-150.jpg",
+    "license": "CC BY-SA 4.0",
+    "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Berlination\" title=\"User:Berlination\">Bryan Berlin</a>",
+    "credit": "<span class=\"int-own-work\" lang=\"en\">Own work</span>",
+    "fetched": "2026-09-17"
+  },
+  "odegaard": {
+    "name": "Martin Ødegaard",
+    "file": "assets/players/odegaard.webp",
+    "article": "https://en.wikipedia.org/wiki/Martin_%C3%98degaard",
+    "source": "https://commons.wikimedia.org/wiki/File:Martin_Odegaard_France_v_Norway_26_June_26-014.jpg",
+    "license": "CC BY-SA 4.0",
+    "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Berlination\" title=\"User:Berlination\">Bryan Berlin</a>",
+    "credit": "<span class=\"int-own-work\" lang=\"en\">Own work</span>",
+    "fetched": "2026-09-17"
+  },
+  "davies": {
+    "name": "Alphonso Davies",
+    "file": "assets/players/davies.webp",
+    "article": "https://en.wikipedia.org/wiki/Alphonso_Davies",
+    "source": "https://commons.wikimedia.org/wiki/File:Alphonso_Davies_Canada_v_Qatar_18_June_2026-007_(cropped).jpg",
+    "license": "CC BY-SA 4.0",
+    "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Berlination\" title=\"User:Berlination\">Bryan Berlin</a>",
+    "credit": "<span class=\"int-own-work\" lang=\"en\">Own work</span>",
+    "fetched": "2026-09-17"
+  },
+  "vandijk": {
+    "name": "Virgil van Dijk",
+    "file": "assets/players/vandijk.webp",
+    "article": "https://en.wikipedia.org/wiki/Virgil_van_Dijk",
+    "source": "https://commons.wikimedia.org/wiki/File:20160604_AUT_NED_8876_(cropped).jpg",
+    "license": "CC BY-SA 3.0 at",
+    "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Ailura\" title=\"User:Ailura\">Ailura</a>",
+    "credit": "<span class=\"int-own-work\" lang=\"en\">Own work</span>",
+    "fetched": "2026-09-17"
+  },
+  "white": {
+    "name": "Ben White (footballer)",
+    "file": "assets/players/white.webp",
+    "article": "https://en.wikipedia.org/wiki/Ben_White_%28footballer%29",
+    "source": "https://commons.wikimedia.org/wiki/File:Ben_White_2018.jpg",
+    "license": "CC BY 2.0",
+    "artist": "<a rel=\"nofollow\" class=\"external text\" href=\"https://www.flickr.com/people/37972999@N07\">James Boyes</a> from UK",
+    "credit": "<a rel=\"nofollow\" class=\"external text\" href=\"https://www.flickr.com/photos/jamesboyes/43852451581/\">BHA v FC Nantes pre season 03 08 2018-34.jpg</a>",
+    "fetched": "2026-09-17"
+  },
+  "raya": {
+    "name": "David Raya",
+    "file": "assets/players/raya.webp",
+    "article": "https://en.wikipedia.org/wiki/David_Raya",
+    "source": "https://commons.wikimedia.org/wiki/File:David_Raya_Argentina_v_Spain_19_July_2026-003_(cropped).jpg",
+    "license": "CC BY-SA 4.0",
+    "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Berlination\" title=\"User:Berlination\">Bryan Berlin</a>",
+    "credit": "<span class=\"int-own-work\" lang=\"en\">Own work</span>",
+    "fetched": "2026-09-17"
+  },
+  "alisson": {
+    "name": "Alisson Becker",
+    "file": "assets/players/alisson.webp",
+    "article": "https://en.wikipedia.org/wiki/Alisson_Becker",
+    "source": "https://commons.wikimedia.org/wiki/File:Alisson_Becker_Brazil_V_Morocco_13_June_2026-117_(cropped).jpg",
+    "license": "CC BY-SA 4.0",
+    "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Berlination\" title=\"User:Berlination\">Bryan Berlin</a>",
+    "credit": "<span class=\"int-own-work\" lang=\"en\">Own work</span>",
+    "fetched": "2026-09-17"
+  },
+  "gabriel": {
+    "name": "Gabriel Magalhães",
+    "file": "assets/players/gabriel.webp",
+    "article": "https://en.wikipedia.org/wiki/Gabriel_Magalh%C3%A3es",
+    "source": "https://commons.wikimedia.org/wiki/File:Gabriel_Magalhaes_Brazil_V_Morocco_13_June_2026-132_(cropped).jpg",
+    "license": "CC BY-SA 4.0",
+    "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Berlination\" title=\"User:Berlination\">Bryan Berlin</a>",
+    "credit": "<span class=\"int-own-work\" lang=\"en\">Own work</span>",
+    "fetched": "2026-09-17"
+  }
+}

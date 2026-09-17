@@ -202,18 +202,18 @@ var ARM="<svg class='ic' aria-hidden='true'><use href='#i-armband'/></svg>";
 function pitchHTML(){
   var h="<div class='pitch-head'><span class='crest'>ZFC</span><div><div class='name'>Zero FC</div>"+
     "<div class='meta'>4-3-3 · Emirates of the North · Est. 2026</div></div>"+
-    "<div class='coach'><span class='badge coach'><svg class='ic' aria-hidden='true'><use href='#i-whistle'/></svg></span>"+
+    "<div class='coach'><span class='player-face'>"+playerPhoto('$Arteta','Mikel Arteta')+"</span>"+
     "<div><b>$Arteta</b><span>Coach · owned</span></div></div></div>";
   XI.forEach(function(row){
     h+="<div class='line-row'>";
     row.forEach(function(p){
-      h+="<div class='chip"+(p[2]?" cap":"")+"'><div class='pos'>"+p[0]+"</div><div class='nm'>"+p[1]+"</div>"+
+      h+="<div class='chip"+(p[2]?" cap":"")+"'><div class='pos'>"+p[0]+"</div><span class='player-face'>"+playerPhoto(p[1],p[1])+"</span><div class='nm'>"+p[1]+"</div>"+
          (p[2]?"<div class='arm'>"+ARM+"Captain ×1.5</div>":"")+"</div>";
     });
     h+="</div>";
   });
   h+="<div class='bench'><div class='k-label'>Bench · auto-subs if a starter doesn't play</div><div class='bench-row'>";
-  BENCH.forEach(function(p){ h+="<div class='chip sm'><div class='pos'>"+p[0]+"</div><div class='nm'>"+p[1]+"</div></div>"; });
+  BENCH.forEach(function(p){ h+="<div class='chip sm'><div class='pos'>"+p[0]+"</div><span class='player-face'>"+playerPhoto(p[1],p[1])+"</span><div class='nm'>"+p[1]+"</div></div>"; });
   h+="<button class='chip sm empty' id='addSub' aria-expanded='false'><div class='pos'>Sub 5</div><div class='nm'>+ Add</div></button></div>"+
      "<div class='own-alert' id='ownAlert' role='status'><div><p>You hold <strong>0</strong> of 10,000,000 <strong>$Mbapp\u00e9</strong> shares.</p>"+
      "<p style='color:var(--dim);font-size:12px;font-weight:300;margin-top:4px'>Buy shares to unlock him for Zero FC. Players can't be borrowed.</p></div>"+
@@ -296,7 +296,8 @@ EX_CSS = """
 .kc-row{display:grid;grid-template-columns:1fr 110px 92px;align-items:center;padding:13px 0;border-bottom:1px solid rgba(255,255,255,.04);text-decoration:none;color:inherit;transition:background .2s ease}
 .kc-row:hover{background:rgba(255,255,255,.025)}
 .kc-row-left{display:flex;align-items:center;gap:12px;min-width:0}
-.kc-avatar{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);display:grid;place-items:center;flex:none;color:var(--lime);font-family:Archivo,sans-serif;font-size:11px;font-weight:800}
+.kc-avatar{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);display:grid;place-items:center;flex:none;color:var(--lime);font-family:Archivo,sans-serif;font-size:11px;font-weight:800;overflow:hidden}
+.kc-avatar .player-photo{width:100%;height:100%;object-fit:cover;object-position:50% 18%;display:block}
 .kc-avatar.coach{color:var(--amber);border-color:rgba(255,106,31,.25);background:rgba(255,106,31,.08)}
 .kc-pair-title{display:flex;align-items:center;gap:5px;font-family:Archivo,sans-serif;font-variation-settings:'wdth' 115,'wght' 800;font-size:14.5px;line-height:1.1;color:var(--ink)}
 .kc-pair-quote{font-size:11.5px;color:#767c82;font-weight:600}
@@ -424,11 +425,10 @@ function renderMarketRows(){
     var sym = a.t.replace('$', '');
     var up = a.d >= 0;
     var subPrice = a.club ? a.club : (a.p * 0.9997).toFixed(2) + ' FTR';
-    var avatarLetter = sym.substring(0, 2).toUpperCase();
 
     return "<a class='kc-row' href='" + to + "'>"
       + "<div class='kc-row-left'>"
-      + "  <div class='kc-avatar" + (a.c ? " coach" : "") + "'>" + avatarLetter + "</div>"
+      + "  <div class='kc-avatar" + (a.c ? " coach" : "") + "'>" + playerPhoto(a.t,a.n) + "</div>"
       + "  <div style='min-width:0'>"
       + "    <div class='kc-pair-title'>"
       + "      <span>" + sym + "</span>"

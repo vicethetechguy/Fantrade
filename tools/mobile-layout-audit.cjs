@@ -9,7 +9,9 @@ const pages = [
   'club-builder.html', 'fanplay.html', 'liveboard.html', 'ftr.html', 'send.html',
   'receive.html', 'swap.html', 'buy.html', 'activity.html', 'portfolio.html',
   'leaderboard.html', 'divisions.html', 'notifications.html', 'account.html',
-  'onboarding.html'
+  'settings.html', 'settings-profile.html', 'settings-club.html',
+  'settings-security.html', 'settings-alerts.html', 'settings-wallet.html',
+  'settings-play.html', 'settings-data.html', 'onboarding.html'
 ];
 
 const server = http.createServer((request, response) => {
