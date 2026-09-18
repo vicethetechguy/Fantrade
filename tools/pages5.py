@@ -36,17 +36,17 @@ WAL_CSS = """
 .kc-icon-btn{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;color:#8E9AA8;cursor:pointer;transition:all .2s ease;text-decoration:none}
 .kc-icon-btn:hover{color:#fff;background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.15)}
 .kc-icon-btn .ic{width:18px;height:18px}
-.kc-bal-badge{display:flex;align-items:center;gap:7px;padding:6px 12px;border-radius:999px;background:rgba(196,248,42,.08);border:1px solid rgba(196,248,42,.25);color:#C4F82A;font-family:'Montserrat', sans-serif;font-size:12px;font-weight:600;text-decoration:none;transition:all .2s}
-.kc-bal-badge:hover{background:rgba(196,248,42,.15)}
-.kc-bal-dot{width:6px;height:6px;border-radius:50%;background:#C4F82A;box-shadow:0 0 8px #C4F82A}
+.kc-bal-badge{display:flex;align-items:center;gap:7px;padding:6px 12px;border-radius:999px;background:rgba(24,0,173,.08);border:1px solid rgba(24,0,173,.25);color:#1800ad;font-family:'Montserrat', sans-serif;font-size:12px;font-weight:600;text-decoration:none;transition:all .2s}
+.kc-bal-badge:hover{background:rgba(24,0,173,.15)}
+.kc-bal-dot{width:6px;height:6px;border-radius:50%;background:#1800ad;box-shadow:0 0 8px #1800ad}
 
 .kc-stack{display:flex;flex-direction:column;gap:16px}
 .kc-stack .bezel{border-radius:20px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.07);overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.4)}
 .kc-stack .core{border-radius:19px}
-.maxbtn{border:1px solid rgba(196,248,42,.3);background:rgba(196,248,42,.09);color:var(--lime);
+.maxbtn{border:1px solid rgba(24,0,173,.3);background:rgba(24,0,173,.09);color:var(--lime);
   border-radius:999px;padding:5px 12px;font-weight:600;font-size:9px;letter-spacing:.12em;
   text-transform:uppercase;cursor:pointer;flex:none;transition:all .5s var(--ease)}
-.maxbtn:hover{background:rgba(196,248,42,.18)}
+.maxbtn:hover{background:rgba(24,0,173,.18)}
 .dist{display:flex;align-items:center;gap:26px;flex-wrap:wrap}
 .dist .key{display:flex;flex-direction:column;gap:12px;flex:1;min-width:180px}
 .dist .kr{display:flex;align-items:center;gap:11px;font-size:13px;color:var(--dim)}
@@ -138,7 +138,7 @@ el('sendGo').addEventListener('click', function(){
 });
 
 var RECENT = [{n:'GoonerDAO', h:'@gooner_dao', c:'#EF0107'}, {n:'KaiserWeb3', h:'@kaiserweb3', c:'#DC052D'},
-              {n:'MilanoWhale', h:'@milanowhale', c:'#4DA6FF'}, {n:'LagosLedger', h:'@lagosledger', c:'#C4F82A'},
+              {n:'MilanoWhale', h:'@milanowhale', c:'#4DA6FF'}, {n:'LagosLedger', h:'@lagosledger', c:'#1800ad'},
               {n:'SambaStake', h:'@sambastake', c:'#FF6A1F'}];
 var box = el('quickRow');
 box.innerHTML = RECENT.map(function(r){
@@ -447,14 +447,14 @@ act.append(T('<div class="bezel c5" data-reveal><div class="core pad">'
              '<div class="dist" style="margin-top:10px">'
              '<svg viewBox="0 0 42 42" style="width:112px;height:112px;flex:none">'
              '<circle cx="21" cy="21" r="15.9" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="5"/>'
-             '<circle cx="21" cy="21" r="15.9" fill="none" stroke="#C4F82A" stroke-width="5" '
+             '<circle cx="21" cy="21" r="15.9" fill="none" stroke="#1800ad" stroke-width="5" '
              'stroke-dasharray="46 54" stroke-dashoffset="25" transform="rotate(-90 21 21)"/>'
              '<circle cx="21" cy="21" r="15.9" fill="none" stroke="#FF6A1F" stroke-width="5" '
              'stroke-dasharray="28 72" stroke-dashoffset="79" transform="rotate(-90 21 21)"/>'
              '<circle cx="21" cy="21" r="15.9" fill="none" stroke="rgba(255,255,255,.28)" stroke-width="5" '
              'stroke-dasharray="14 86" stroke-dashoffset="51" transform="rotate(-90 21 21)"/></svg>'
              '<div class="key">'
-             '<div class="kr"><i style="background:#C4F82A"></i>Held by fans<b>46%</b></div>'
+             '<div class="kr"><i style="background:#1800ad"></i>Held by fans<b>46%</b></div>'
              '<div class="kr"><i style="background:#FF6A1F"></i>Staked in rounds<b>28%</b></div>'
              '<div class="kr"><i style="background:rgba(255,255,255,.28)"></i>Rewards pool<b>14%</b></div>'
              '<div class="kr"><i style="background:rgba(255,255,255,.08)"></i>Treasury<b>12%</b></div>'

@@ -88,7 +88,7 @@ ASSET_CSS = """
 .kc-asset-pair-head{font-family:Archivo,sans-serif;font-variation-settings:'wdth' 115,'wght' 800;font-size:16px;line-height:1.1;color:var(--ink)}
 .kc-asset-sub-head{font-size:11px;color:#767c82;margin-top:2px}
 .kc-top-right{display:flex;align-items:center;gap:8px;margin-left:auto}
-.kc-tool-ai{height:28px;padding:0 10px;border-radius:999px;background:rgba(196,248,42,.1);border:1px solid rgba(196,248,42,.3);color:var(--lime);font-family:Archivo,sans-serif;font-weight:700;font-size:11px;display:flex;align-items:center;gap:4px;cursor:pointer}
+.kc-tool-ai{height:28px;padding:0 10px;border-radius:999px;background:rgba(24,0,173,.1);border:1px solid rgba(24,0,173,.3);color:var(--lime);font-family:Archivo,sans-serif;font-weight:700;font-size:11px;display:flex;align-items:center;gap:4px;cursor:pointer}
 
 /* Main View Tabs */
 .kc-asset-tabs{display:flex;align-items:center;gap:24px;border-bottom:1px solid rgba(255,255,255,.07);margin-bottom:12px}
@@ -119,7 +119,7 @@ ASSET_CSS = """
 .asset-drawer-list{flex:1;overflow-y:auto;padding:8px}
 .asset-drawer-item{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-radius:8px;text-decoration:none;transition:background .2s;margin-bottom:4px}
 .asset-drawer-item:hover{background:rgba(255,255,255,.05)}
-.asset-drawer-item.active{background:rgba(196,248,42,.08);border:1px solid rgba(196,248,42,.2)}
+.asset-drawer-item.active{background:rgba(24,0,173,.08);border:1px solid rgba(24,0,173,.2)}
 .asset-drawer-item-left{display:flex;align-items:center;gap:10px}
 .asset-drawer-avatar{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.08);display:grid;place-items:center;font-weight:700;font-size:12px;color:var(--lime);overflow:hidden;border:1px solid rgba(255,255,255,.09)}
 .asset-drawer-avatar .player-photo{width:100%;height:100%;object-fit:cover;object-position:50% 18%;display:block}
@@ -190,7 +190,7 @@ ASSET_CSS = """
 .kc-dock-tool:hover{color:var(--ink)}
 .kc-dock-tool .ic{width:18px;height:18px}
 .kc-dock-btns{display:flex;align-items:center;gap:10px;flex:1;max-width:320px}
-.kc-btn-buy{flex:1;height:40px;background:var(--lime);color:#0A0D03;border-radius:8px;font-family:Archivo,sans-serif;font-variation-settings:'wdth' 115,'wght' 800;font-size:14px;display:grid;place-items:center;text-decoration:none;text-transform:uppercase;letter-spacing:.02em}
+.kc-btn-buy{flex:1;height:40px;background:var(--lime);color:#fff;border-radius:8px;font-family:Archivo,sans-serif;font-variation-settings:'wdth' 115,'wght' 800;font-size:14px;display:grid;place-items:center;text-decoration:none;text-transform:uppercase;letter-spacing:.02em}
 .kc-btn-sell{flex:1;height:40px;background:#FF3B47;color:#fff;border-radius:8px;font-family:Archivo,sans-serif;font-variation-settings:'wdth' 115,'wght' 800;font-size:14px;display:grid;place-items:center;text-decoration:none;text-transform:uppercase;letter-spacing:.02em}
 """
 
@@ -499,7 +499,7 @@ function drawKucoinCandles(host, data){
     if(d.l < minCandle.l){ minCandle = d; minCandle._i = i; }
 
     var x = i * cw + cw / 2, up = d.c >= d.o;
-    var col = up ? '#C4F82A' : '#FF3B47';
+    var col = up ? '#1800ad' : '#FF3B47';
     var top = y(Math.max(d.o, d.c)), bot = y(Math.min(d.o, d.c));
     parts.push('<line x1="' + x.toFixed(1) + '" y1="' + y(d.h).toFixed(1) + '" x2="' + x.toFixed(1) + '" y2="' + y(d.l).toFixed(1) + '" stroke="' + col + '" stroke-width="1.2"/>');
     parts.push('<rect x="' + (x - bw / 2).toFixed(1) + '" y="' + top.toFixed(1) + '" width="' + bw.toFixed(1) + '" height="' + Math.max(1.5, bot - top).toFixed(1) + '" fill="' + col + '" rx="0.5"/>');
@@ -661,7 +661,7 @@ TRADE_CSS = """
 .ticksel .chev{flex:none}
 .bkbtn{display:grid;place-items:center;width:32px;height:32px;flex:none;border-radius:8px;
   border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.04);color:#767c82;transition:all .2s}
-.bkbtn:hover{color:var(--lime);border-color:rgba(196,248,42,.4)}
+.bkbtn:hover{color:var(--lime);border-color:rgba(24,0,173,.4)}
 .bkbtn .ic{width:14px;height:14px}
 .book2 .b2row i{opacity:.72}
 .book2 .last span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -682,7 +682,7 @@ TRADE_CSS = """
   cursor:pointer;font-family:Montserrat,sans-serif;font-weight:700;font-size:11.5px;letter-spacing:.04em;
   text-transform:uppercase;transition:all .2s}
 .sideseg button:hover{color:var(--ink)}
-.sideseg button[aria-pressed="true"]{background:var(--lime);color:#0A0D03;font-weight:800}
+.sideseg button[aria-pressed="true"]{background:var(--lime);color:#fff;font-weight:800}
 .sideseg button[data-m="sell"][aria-pressed="true"]{background:#FF3B47;color:#fff}
 .sideseg button[data-m="swap"][aria-pressed="true"]{background:rgba(255,255,255,.12);color:var(--ink)}
 
@@ -707,7 +707,7 @@ TRADE_CSS = """
 .tline b{font-family:'Montserrat', sans-serif;font-weight:500;color:var(--ink);font-size:12px}
 .bigbtn{display:block;width:100%;border:0;border-radius:10px;padding:14px 0;margin-top:12px;cursor:pointer;
   font-family:Archivo,sans-serif;font-variation-settings:'wdth' 115,'wght' 800;font-size:13.5px;letter-spacing:.04em;text-transform:uppercase;
-  background:var(--lime);color:#0A0D03;transition:filter .2s}
+  background:var(--lime);color:#fff;transition:filter .2s}
 .bigbtn:hover{filter:brightness(1.08)}
 .bigbtn.sell{background:#FF3B47;color:#fff}
 .bigbtn.neutral{background:rgba(255,255,255,.08);color:var(--ink);border:1px solid rgba(255,255,255,.14)}
@@ -1142,12 +1142,12 @@ def idx_chart(vals, w=620, h=180):
         pb.append("%.1f,%.1f" % (x, h - ((v * 0.86 - lo) / rng) * h))
     return ('<svg viewBox="0 0 %d %d" preserveAspectRatio="none">'
             '<defs><linearGradient id="dvg" x1="0" y1="0" x2="0" y2="1">'
-            '<stop offset="0%%" stop-color="#C4F82A" stop-opacity=".22"/>'
-            '<stop offset="100%%" stop-color="#C4F82A" stop-opacity="0"/></linearGradient></defs>'
+            '<stop offset="0%%" stop-color="#1800ad" stop-opacity=".22"/>'
+            '<stop offset="100%%" stop-color="#1800ad" stop-opacity="0"/></linearGradient></defs>'
             '<polygon points="0,%d %s %d,%d" fill="url(#dvg)"/>'
             '<polyline points="%s" fill="none" stroke="#4DA6FF" stroke-width="1.4" '
             'stroke-dasharray="4 4" opacity=".8"/>'
-            '<polyline points="%s" fill="none" stroke="#C4F82A" stroke-width="1.8" stroke-linejoin="round"/>'
+            '<polyline points="%s" fill="none" stroke="#1800ad" stroke-width="1.8" stroke-linejoin="round"/>'
             '</svg>' % (w, h, h, " ".join(pa), w, h, " ".join(pb), " ".join(pa)))
 
 
@@ -1166,7 +1166,7 @@ dv.append('<div style="display:flex;flex-direction:column;gap:16px">')
 
 dv.append(T('<div class="bezel" style="border-radius:20px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.07);overflow:hidden" data-reveal><div class="core pad">'
             '<div class="k-label">The three tiers</div>'
-            '<div class="div-card"><span class="dot" style="background:#C4F82A"></span>'
+            '<div class="div-card"><span class="dot" style="background:#1800ad"></span>'
             '<div><b>Apex · Tier 1</b><span class="r">Ranks 1–150 worldwide. Your club is here.</span></div>'
             '<div class="pp"><em>50%</em><span>Prize pool</span></div></div>'
             '<div class="div-card"><span class="dot" style="background:#4DA6FF"></span>'

@@ -87,7 +87,7 @@ if(book){
 var band=document.getElementById('band');
 if(band){
   var s=ASSETS.map(function(a){ return "<span><b>"+a.t+"</b> "+a.p.toFixed(2)+" <em style='font-style:normal;color:"+
-    (a.d>=0?'#C4F82A':'#FF5E5E')+"'>"+(a.d>=0?'+':'')+a.d.toFixed(1)+"%</em></span>"; }).join('');
+    (a.d>=0?'#1800ad':'#FF5E5E')+"'>"+(a.d>=0?'+':'')+a.d.toFixed(1)+"%</em></span>"; }).join('');
   band.innerHTML=s+s;
 }
 """
@@ -129,7 +129,7 @@ EX_CSS = """
 .kc-edit-btn:hover{color:var(--ink)}
 
 /* Announcement Banner */
-.kc-banner{display:flex;align-items:center;justify-content:space-between;gap:14px;background:rgba(196,248,42,.06);border:1px solid rgba(196,248,42,.22);border-radius:10px;padding:10px 14px;margin-bottom:14px}
+.kc-banner{display:flex;align-items:center;justify-content:space-between;gap:14px;background:rgba(24,0,173,.06);border:1px solid rgba(24,0,173,.22);border-radius:10px;padding:10px 14px;margin-bottom:14px}
 .kc-banner-text{font-size:12px;line-height:1.45;color:var(--lime);flex:1}
 .kc-banner-actions{display:flex;align-items:center;gap:10px;flex:none}
 .kc-banner-set{background:transparent;border:1px solid var(--lime);color:var(--lime);border-radius:999px;padding:4px 14px;font-size:11.5px;font-weight:600;cursor:pointer;font-family:Montserrat,sans-serif}
@@ -155,7 +155,7 @@ EX_CSS = """
 .kc-price-main{font-family:'Montserrat', sans-serif;font-size:14.5px;font-weight:600;color:var(--ink);letter-spacing:-.01em}
 .kc-price-sub{font-family:'Montserrat', sans-serif;font-size:11px;color:#767c82;margin-top:2px}
 .kc-row-right{display:flex;justify-content:flex-end}
-.kc-pill{display:inline-flex;align-items:center;justify-content:center;min-width:76px;height:32px;border-radius:6px;font-family:'Montserrat', sans-serif;font-size:12.5px;font-weight:700;color:#0A0D03;background:var(--lime);box-sizing:border-box;padding:0 6px}
+.kc-pill{display:inline-flex;align-items:center;justify-content:center;min-width:76px;height:32px;border-radius:6px;font-family:'Montserrat', sans-serif;font-size:12.5px;font-weight:700;color:#fff;background:var(--lime);box-sizing:border-box;padding:0 6px}
 .kc-pill.down{background:#FF3B47;color:#fff}
 """
 
@@ -360,13 +360,13 @@ CL_CSS = """
   padding:9px 16px;font-weight:600;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;
   box-shadow:var(--inset);display:flex;align-items:center;gap:9px;transition:all .6s var(--ease)}
 .stepper button .ic{width:14px;height:14px}
-.stepper button[aria-current="step"]{background:var(--lime);border-color:var(--lime);color:#0A0D03}
+.stepper button[aria-current="step"]{background:var(--lime);border-color:var(--lime);color:#fff}
 .stepper button:hover:not([aria-current="step"]){color:var(--ink);border-color:var(--hair-2)}
 .forms{display:flex;gap:8px;flex-wrap:wrap}
 .forms button{flex:1;min-width:92px;border:1px solid var(--hair);background:rgba(255,255,255,.03);color:var(--dim);
   border-radius:14px;padding:14px 0;font-family:'Montserrat', sans-serif;font-size:14px;cursor:pointer;
   box-shadow:var(--inset);transition:all .6s var(--ease)}
-.forms button[aria-pressed="true"]{background:var(--lime);border-color:var(--lime);color:#0A0D03}
+.forms button[aria-pressed="true"]{background:var(--lime);border-color:var(--lime);color:#fff}
 .forms button:hover:not([aria-pressed="true"]){color:var(--ink);border-color:var(--hair-2)}
 .swatches{display:flex;gap:8px;margin-top:12px}
 .sw{width:34px;height:34px;border-radius:11px;border:1px solid var(--hair);cursor:pointer;box-shadow:var(--inset);
@@ -377,7 +377,7 @@ CL_CSS = """
   border-bottom:1px solid rgba(255,255,255,.05);font-size:13px}
 .lb.h{font-weight:600;font-size:9.5px;letter-spacing:.16em;color:var(--faint);text-transform:uppercase;border-bottom:1px solid var(--hair)}
 .lb .rank{font-family:'Montserrat', sans-serif;color:var(--faint)}
-.lb.you{background:rgba(196,248,42,.06)}
+.lb.you{background:rgba(24,0,173,.06)}
 .lb .cn{display:flex;align-items:center;gap:12px}
 .mini-crest{width:26px;height:29px;flex:none;clip-path:polygon(0 0,100% 0,100% 66%,50% 100%,0 66%)}
 @media (max-width:768px){.lb{grid-template-columns:40px 1.6fr 1fr;padding:13px 16px}
@@ -388,7 +388,7 @@ cl = ['<main><div class="kc-home-wrap" style="padding-top:0;padding-bottom:84px"
 cl.append(T('<div class="kc-topbar">'
             '<a class="kc-icon-btn" href="dashboard.html" aria-label="Back to Home">@@</a>'
             '<div class="kc-top-title" id="clName">Zero FC</div>'
-            '<a class="kc-icon-btn" href="club-builder.html?new=1" title="New Club" style="background:rgba(196,248,42,.1);border-color:rgba(196,248,42,.3);color:#C4F82A;font-weight:700;font-size:18px">+</a>'
+            '<a class="kc-icon-btn" href="club-builder.html?new=1" title="New Club" style="background:rgba(24,0,173,.1);border-color:rgba(24,0,173,.3);color:#1800ad;font-weight:700;font-size:18px">+</a>'
             '</div>', ic("arrow", "ic")))
 cl.append('<div class="clubrail" id="clubRail" style="margin-bottom:16px" data-reveal></div>')
 
@@ -567,7 +567,7 @@ var FORMS={
 };
 var bp=document.getElementById('builderPitch');
 var curShape='4-3-3';
-var curColor='#C4F82A';
+var curColor='#1800ad';
 
 function renderBuilder(shape){
   curShape=shape;
@@ -589,7 +589,7 @@ function syncClubUI(){
   var s=FT.getState();
   var c=s.club;
   curShape=c.formation||'4-3-3';
-  curColor=c.color||'#C4F82A';
+  curColor=c.color||'#1800ad';
 
   // building a second club starts from a blank name, not the one you already own
   var ni=document.getElementById('clubNameInput');
@@ -646,7 +646,7 @@ if(bp){
       document.querySelectorAll('.sw').forEach(function(x){ x.setAttribute('aria-pressed','false'); });
       s.setAttribute('aria-pressed','true');
       var c=getComputedStyle(s).backgroundImage;
-      curColor = s.style.background || '#C4F82A';
+      curColor = s.style.background || '#1800ad';
       [bp.querySelector('.crest'), document.querySelector('#pitchMount .crest')].forEach(function(cr){
         if(cr) cr.style.backgroundImage=c;
       });
@@ -690,10 +690,10 @@ if(vc){
   var vals=[118,132,141,160,179,196,233,245.8], w=340, h=110, max=260;
   var pts=vals.map(function(v,i){ return (i*(w/(vals.length-1))).toFixed(1)+','+(h-(v/max)*h).toFixed(1); });
   vc.innerHTML="<svg viewBox='0 0 "+w+" "+h+"' preserveAspectRatio='none' style='width:100%;height:110px;display:block'>"+
-    "<defs><linearGradient id='vg' x1='0' y1='0' x2='0' y2='1'><stop offset='0' stop-color='#C4F82A' stop-opacity='.35'/>"+
-    "<stop offset='1' stop-color='#C4F82A' stop-opacity='0'/></linearGradient></defs>"+
+    "<defs><linearGradient id='vg' x1='0' y1='0' x2='0' y2='1'><stop offset='0' stop-color='#1800ad' stop-opacity='.35'/>"+
+    "<stop offset='1' stop-color='#1800ad' stop-opacity='0'/></linearGradient></defs>"+
     "<polygon points='0,"+h+" "+pts.join(' ')+" "+w+","+h+"' fill='url(#vg)'/>"+
-    "<polyline points='"+pts.join(' ')+"' fill='none' stroke='#C4F82A' stroke-width='1.6' stroke-linejoin='round'/></svg>"+
+    "<polyline points='"+pts.join(' ')+"' fill='none' stroke='#1800ad' stroke-width='1.6' stroke-linejoin='round'/></svg>"+
     "<div class='b-row' style='margin-top:12px'><span>8 rounds ago</span><b>118,000</b></div>"+
     "<div class='b-row'><span>Now</span><b>245,800</b></div>";
 }
@@ -720,7 +720,7 @@ bd.append(T('<div class="bezel" style="border-radius:20px;background:rgba(255,25
           '<div class="field"><label>Stadium</label><input id="clubStadiumInput" value="Emirates of the North" style="text-align:right;font-size:13px"></div>'
           '<div class="k-label" style="margin-top:20px">Club colours</div>'
           '<div class="swatches">'
-          '<button class="sw" aria-pressed="true" style="background:linear-gradient(160deg,#C4F82A,#83b300)" aria-label="Lime"></button>'
+          '<button class="sw" aria-pressed="true" style="background:linear-gradient(160deg,#1800ad,#0f0075)" aria-label="Indigo"></button>'
           '<button class="sw" style="background:linear-gradient(160deg,#FF6A1F,#a83c00)" aria-label="Amber"></button>'
           '<button class="sw" style="background:linear-gradient(160deg,#4DA3FF,#0a4d99)" aria-label="Blue"></button>'
           '<button class="sw" style="background:linear-gradient(160deg,#E8E8E8,#8a8a8a)" aria-label="Silver"></button>'
@@ -769,8 +769,8 @@ FP_CSS = """
 .fp-step-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;position:relative}
 .fp-step-dot{display:flex;flex-direction:column;align-items:center;gap:6px;z-index:2;cursor:pointer}
 .fp-step-circle{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);color:#8E9AA8;display:grid;place-items:center;font-weight:700;font-size:12px;transition:all .2s}
-.fp-step-dot.active .fp-step-circle{background:var(--lime);border-color:var(--lime);color:#0A0D03;box-shadow:0 0 16px rgba(196,248,42,.4)}
-.fp-step-dot.completed .fp-step-circle{background:rgba(196,248,42,.15);border-color:var(--lime);color:var(--lime)}
+.fp-step-dot.active .fp-step-circle{background:var(--lime);border-color:var(--lime);color:#fff;box-shadow:0 0 16px rgba(24,0,173,.4)}
+.fp-step-dot.completed .fp-step-circle{background:rgba(24,0,173,.15);border-color:var(--lime);color:var(--lime)}
 .fp-step-label{font-size:10px;color:#8E9AA8;font-weight:600;text-transform:uppercase}
 .fp-step-dot.active .fp-step-label{color:#fff}
 
@@ -782,17 +782,17 @@ FP_CSS = """
 /* Asset Selection Grid */
 .fp-asset-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px}
 .fp-asset-card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:14px;cursor:pointer;transition:all .2s;text-align:left}
-.fp-asset-card:hover{border-color:rgba(196,248,42,.4);background:rgba(255,255,255,.05)}
-.fp-asset-card.selected{border-color:var(--lime);background:rgba(196,248,42,.08);box-shadow:0 0 18px rgba(196,248,42,.15)}
+.fp-asset-card:hover{border-color:rgba(24,0,173,.4);background:rgba(255,255,255,.05)}
+.fp-asset-card.selected{border-color:var(--lime);background:rgba(24,0,173,.08);box-shadow:0 0 18px rgba(24,0,173,.15)}
 .fp-asset-sym{font-family:Archivo,sans-serif;font-variation-settings:'wdth' 120,'wght' 800;font-size:16px;color:#fff}
 .fp-asset-name{font-size:11.5px;color:#8E9AA8;margin-top:2px}
-.fp-asset-avail{margin-top:10px;font-size:11px;color:#C4F82A;font-weight:600}
+.fp-asset-avail{margin-top:10px;font-size:11px;color:#1800ad;font-weight:600}
 
 /* Match Selection Grid */
 .fp-match-grid{display:flex;flex-direction:column;gap:10px}
 .fp-match-card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:16px;cursor:pointer;transition:all .2s}
-.fp-match-card:hover{border-color:rgba(196,248,42,.4)}
-.fp-match-card.selected{border-color:var(--lime);background:rgba(196,248,42,.08)}
+.fp-match-card:hover{border-color:rgba(24,0,173,.4)}
+.fp-match-card.selected{border-color:var(--lime);background:rgba(24,0,173,.08)}
 .fp-match-comp{font-size:10.5px;font-weight:700;color:var(--amber);text-transform:uppercase;letter-spacing:.06em}
 .fp-match-teams{font-family:Archivo,sans-serif;font-variation-settings:'wdth' 115,'wght' 800;font-size:17px;color:#fff;margin:6px 0}
 .fp-match-meta{font-size:11.5px;color:#8E9AA8;display:flex;align-items:center;gap:12px}
@@ -801,8 +801,8 @@ FP_CSS = """
 .fp-market-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
 @media (max-width:600px){.fp-market-grid{grid-template-columns:1fr}}
 .fp-market-card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:16px;cursor:pointer;transition:all .2s;display:flex;flex-direction:column;gap:8px}
-.fp-market-card:hover{border-color:rgba(196,248,42,.3)}
-.fp-market-card.selected{border-color:var(--lime);background:rgba(196,248,42,.08)}
+.fp-market-card:hover{border-color:rgba(24,0,173,.3)}
+.fp-market-card.selected{border-color:var(--lime);background:rgba(24,0,173,.08)}
 .fp-market-name{font-family:Archivo,sans-serif;font-variation-settings:'wdth' 120,'wght' 800;font-size:15px;color:#fff;text-transform:uppercase}
 .fp-market-limit{font-size:10.5px;color:var(--lime);font-weight:700}
 .fp-market-desc{font-size:12px;color:#8E9AA8;line-height:1.5;flex:1}
@@ -810,10 +810,10 @@ FP_CSS = """
 /* Prediction Option Cards (§13, §49) */
 .fp-opt-grid{display:flex;flex-direction:column;gap:10px}
 .fp-opt-card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:14px 16px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:16px;transition:all .2s}
-.fp-opt-card:hover{border-color:rgba(196,248,42,.3)}
-.fp-opt-card.selected{border-color:var(--lime);background:rgba(196,248,42,.07)}
+.fp-opt-card:hover{border-color:rgba(24,0,173,.3)}
+.fp-opt-card.selected{border-color:var(--lime);background:rgba(24,0,173,.07)}
 .fp-opt-left{display:flex;align-items:center;gap:14px}
-.fp-opt-check{width:22px;height:22px;border-radius:6px;border:1.5px solid rgba(255,255,255,.2);display:grid;place-items:center;color:#0A0D03;font-weight:800;font-size:12px;transition:all .2s}
+.fp-opt-check{width:22px;height:22px;border-radius:6px;border:1.5px solid rgba(255,255,255,.2);display:grid;place-items:center;color:#fff;font-weight:800;font-size:12px;transition:all .2s}
 .fp-opt-card.selected .fp-opt-check{background:var(--lime);border-color:var(--lime)}
 .fp-opt-label{font-family:Archivo,sans-serif;font-variation-settings:'wdth' 115,'wght' 700;font-size:14px;color:#fff}
 .fp-opt-meta{font-size:11px;color:#8E9AA8;margin-top:2px;display:flex;gap:8px}
@@ -836,7 +836,7 @@ FP_CSS = """
 /* Action Buttons */
 .fp-nav-btns{display:flex;gap:12px;margin-top:20px}
 .fp-btn-back{flex:1;padding:14px 0;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:#fff;border-radius:12px;font-family:Archivo,sans-serif;font-weight:700;font-size:13px;text-transform:uppercase;cursor:pointer;text-align:center}
-.fp-btn-next{flex:2;padding:14px 0;background:var(--lime);border:0;color:#0A0D03;border-radius:12px;font-family:Archivo,sans-serif;font-variation-settings:'wdth' 115,'wght' 800;font-size:13.5px;text-transform:uppercase;cursor:pointer;text-align:center;box-shadow:0 0 20px rgba(196,248,42,.3)}
+.fp-btn-next{flex:2;padding:14px 0;background:var(--lime);border:0;color:#fff;border-radius:12px;font-family:Archivo,sans-serif;font-variation-settings:'wdth' 115,'wght' 800;font-size:13.5px;text-transform:uppercase;cursor:pointer;text-align:center;box-shadow:0 0 20px rgba(24,0,173,.3)}
 """
 
 fp = ['<main><div class="kc-home-wrap">']
@@ -847,7 +847,7 @@ fp.append(T('<div class="fp-topbar">'
             '  <a class="kc-icon-btn" href="dashboard.html" title="Back to Home" style="width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;color:#8E9AA8;text-decoration:none">@@</a>'
             '  <div><h2>FanPlay Engine</h2><span>Stake Owned Shares · Match Predictions · $FTR Settlement</span></div>'
             '</div>'
-            '<a class="kc-icon-btn" href="liveboard.html" title="Live Matchday Board" style="width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;color:#C4F82A;text-decoration:none">@@</a>'
+            '<a class="kc-icon-btn" href="liveboard.html" title="Live Matchday Board" style="width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;color:#1800ad;text-decoration:none">@@</a>'
             '</div>',
             ic("arrow", "ic"), ic("pulse", "ic")))
 
@@ -1379,7 +1379,7 @@ function renderActiveList(){
       + '    <span style="font-family:Archivo,sans-serif;font-variation-settings:\'wdth\' 120,\'wght\' 800;font-size:17px;color:#fff">' + assetSym + '</span>'
       + '    <span style="font-size:12px;color:#8E9AA8;margin-left:8px">' + matchName + '</span>'
       + '  </div>'
-      + '  <span style="font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px;background:rgba(196,248,42,.12);color:var(--lime)">' + fp.status + '</span>'
+      + '  <span style="font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px;background:rgba(24,0,173,.12);color:var(--lime)">' + fp.status + '</span>'
       + '</div>'
       + '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;background:rgba(255,255,255,.02);padding:10px;border-radius:10px;margin-bottom:12px">'
       + '  <div><div style="font-size:10px;color:#8E9AA8;text-transform:uppercase">Market Tier</div><b style="font-size:12px;color:#fff">' + tierName + '</b></div>'
@@ -1644,7 +1644,7 @@ if(!reduce) setInterval(function(){
   if(Math.random()<.45){ run+=Math.round(Math.random()*4)+1;
     var el=document.getElementById('runFP');
     el.innerHTML=run+" <small>FP</small>";
-    el.style.color='#C4F82A'; setTimeout(function(){ el.style.color=''; },800); }
+    el.style.color='#1800ad'; setTimeout(function(){ el.style.color=''; },800); }
 },2600);
 
 // ══ matchday board ══════════════════════════════════════════════

@@ -276,15 +276,15 @@ OB_CSS = """
 .forms button{flex:1;min-width:92px;border:1px solid var(--hair);background:rgba(255,255,255,.03);color:var(--dim);
   border-radius:14px;padding:14px 0;font-family:'Montserrat', sans-serif;font-size:14px;cursor:pointer;
   box-shadow:var(--inset);transition:all .6s var(--ease)}
-.forms button[aria-pressed="true"]{background:var(--lime);border-color:var(--lime);color:#0A0D03}
+.forms button[aria-pressed="true"]{background:var(--lime);border-color:var(--lime);color:#fff}
 .forms button:hover:not([aria-pressed="true"]){color:var(--ink);border-color:var(--hair-2)}
 .swatches{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}
 .sw{width:36px;height:36px;border-radius:12px;border:1px solid var(--hair);cursor:pointer;box-shadow:var(--inset);
   transition:transform .6s var(--ease)}
 .sw:hover,.sw[aria-pressed="true"]{transform:scale(1.08)}
 .sw[aria-pressed="true"]{border-color:var(--ink)}
-.grant{border:1px solid rgba(196,248,42,.3);border-radius:20px;padding:28px 24px;text-align:center;
-  background:radial-gradient(ellipse at 50% 130%,rgba(196,248,42,.16),rgba(196,248,42,.03) 62%);
+.grant{border:1px solid rgba(24,0,173,.3);border-radius:20px;padding:28px 24px;text-align:center;
+  background:radial-gradient(ellipse at 50% 130%,rgba(24,0,173,.16),rgba(24,0,173,.03) 62%);
   box-shadow:var(--inset);margin-bottom:20px}
 .grant .k{font-weight:600;font-size:9.5px;letter-spacing:.2em;color:#95ad44;text-transform:uppercase}
 .grant .v{font-family:'Montserrat', sans-serif;font-weight:200;font-size:clamp(34px,4.4vw,50px);
@@ -394,8 +394,8 @@ ob.append('<div class="k-label" style="margin-top:22px">Starting formation</div>
           '<button type="button" aria-pressed="false">3-5-2</button>'
           '<button type="button" aria-pressed="false">4-2-3-1</button></div>')
 ob.append('<div class="k-label" style="margin-top:24px">Club colour</div><div class="swatches" id="obSw">'
-          '<button class="sw" type="button" aria-pressed="true" data-c="#C4F82A" data-n="Lime" '
-          'style="background:linear-gradient(160deg,#C4F82A,#83b300)" aria-label="Lime"></button>'
+          '<button class="sw" type="button" aria-pressed="true" data-c="#1800ad" data-n="Indigo" '
+          'style="background:linear-gradient(160deg,#1800ad,#0f0075)" aria-label="Indigo"></button>'
           '<button class="sw" type="button" aria-pressed="false" data-c="#FF6A1F" data-n="Amber" '
           'style="background:linear-gradient(160deg,#FF6A1F,#b33f06)" aria-label="Amber"></button>'
           '<button class="sw" type="button" aria-pressed="false" data-c="#4DA6FF" data-n="Azure" '
@@ -522,7 +522,7 @@ el('obBuy').addEventListener('click', function(){
 });
 
 // step 4 — club identity
-var formation = '4-3-3', colors = ['#C4F82A', '#83b300'], colorName = 'Lime';
+var formation = '4-3-3', colors = ['#1800ad', '#0f0075'], colorName = 'Indigo';
 document.querySelectorAll('#obForms button').forEach(function(b){
   b.addEventListener('click', function(){
     document.querySelectorAll('#obForms button').forEach(function(x){ x.setAttribute('aria-pressed', 'false'); });
@@ -606,11 +606,11 @@ DASH_CSS = """
 .kc-home-scan-btn:hover{background:rgba(255,255,255,.1);border-color:var(--lime);color:var(--lime)}
 
 /* Hero Portfolio Card */
-.kc-home-bal-card{background:linear-gradient(135deg,rgba(196,248,42,.09) 0%,rgba(10,12,14,.92) 55%,rgba(255,255,255,.02) 100%);border:1px solid rgba(196,248,42,.22);border-radius:20px;padding:20px 22px;margin-bottom:16px;box-shadow:0 14px 34px rgba(0,0,0,.45)}
+.kc-home-bal-card{background:linear-gradient(135deg,rgba(24,0,173,.09) 0%,rgba(10,12,14,.92) 55%,rgba(255,255,255,.02) 100%);border:1px solid rgba(24,0,173,.22);border-radius:20px;padding:20px 22px;margin-bottom:16px;box-shadow:0 14px 34px rgba(0,0,0,.45)}
 .kc-bal-header{display:flex;align-items:center;gap:8px;font-size:12px;color:#8E9AA8}
 .kc-eye-btn{background:transparent;border:0;color:inherit;cursor:pointer;display:grid;place-items:center;padding:2px;transition:color .2s}
 .kc-eye-btn:hover{color:var(--lime)}
-.kc-bal-delta-tag{margin-left:auto;background:rgba(196,248,42,.15);color:var(--lime);font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:999px;font-family:'Montserrat', sans-serif}
+.kc-bal-delta-tag{margin-left:auto;background:rgba(24,0,173,.15);color:var(--lime);font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:999px;font-family:'Montserrat', sans-serif}
 .kc-bal-val{font-family:'Montserrat', sans-serif;font-size:34px;font-weight:700;letter-spacing:-.02em;color:var(--ink);margin:8px 0 2px}
 .kc-bal-val small{font-size:16px;color:var(--lime);font-weight:600}
 .kc-bal-sub{font-size:12px;color:#767c82;font-family:'Montserrat', sans-serif}
@@ -619,7 +619,7 @@ DASH_CSS = """
 .kc-bal-actions{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:18px;padding-top:16px;border-top:1px solid rgba(255,255,255,.06)}
 .kc-act-circle{display:flex;flex-direction:column;align-items:center;gap:6px;text-decoration:none;color:var(--ink);transition:transform .2s}
 .kc-act-circle:hover{transform:translateY(-2px)}
-.kc-act-circle:hover .kc-act-ico{background:rgba(196,248,42,.2);border-color:var(--lime);color:var(--lime)}
+.kc-act-circle:hover .kc-act-ico{background:rgba(24,0,173,.2);border-color:var(--lime);color:var(--lime)}
 .kc-act-ico{width:46px;height:46px;border-radius:50%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);display:grid;place-items:center;color:var(--ink);transition:all .2s}
 .kc-act-circle span{font-size:11.5px;font-weight:500;color:#8E9AA8}
 
@@ -635,11 +635,11 @@ DASH_CSS = """
 .kc-hot-strip{display:flex;align-items:stretch;gap:10px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding:2px 2px 8px;margin-bottom:20px}
 .kc-hot-strip::-webkit-scrollbar{display:none}
 .kc-hot-card{flex:0 0 142px;width:142px;min-width:142px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:12px 14px;text-decoration:none;color:inherit;transition:border-color .2s,transform .2s;box-sizing:border-box}
-.kc-hot-card:hover{border-color:rgba(196,248,42,.3);transform:translateY(-2px)}
+.kc-hot-card:hover{border-color:rgba(24,0,173,.3);transform:translateY(-2px)}
 .kc-hot-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
 .kc-hot-ticker{font-family:Archivo,sans-serif;font-variation-settings:'wdth' 120,'wght' 800;font-size:13px;color:var(--ink)}
 .kc-hot-badge{font-family:'Montserrat', sans-serif;font-size:10px;font-weight:700;padding:1px 5px;border-radius:4px}
-.kc-hot-badge.up{background:rgba(196,248,42,.15);color:var(--lime)}
+.kc-hot-badge.up{background:rgba(24,0,173,.15);color:var(--lime)}
 .kc-hot-badge.down{background:rgba(255,94,94,.15);color:#FF5E5E}
 .kc-hot-name{font-size:10.5px;color:#767c82;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:6px}
 .kc-hot-price{font-family:'Montserrat', sans-serif;font-size:14px;font-weight:700;color:var(--ink)}
@@ -670,12 +670,12 @@ DASH_CSS = """
 .kc-price-main{font-family:'Montserrat', sans-serif;font-size:14px;font-weight:600;color:var(--ink);letter-spacing:-.01em}
 .kc-price-sub{font-family:'Montserrat', sans-serif;font-size:11px;color:#767c82;margin-top:2px}
 .kc-row-right{display:flex;justify-content:flex-end}
-.kc-pill{display:inline-flex;align-items:center;justify-content:center;min-width:76px;height:32px;border-radius:6px;font-family:'Montserrat', sans-serif;font-size:12px;font-weight:700;color:#0A0D03;background:var(--lime);box-sizing:border-box;padding:0 6px}
+.kc-pill{display:inline-flex;align-items:center;justify-content:center;min-width:76px;height:32px;border-radius:6px;font-family:'Montserrat', sans-serif;font-size:12px;font-weight:700;color:#fff;background:var(--lime);box-sizing:border-box;padding:0 6px}
 .kc-pill.down{background:#FF5E5E;color:#fff}
 
 /* Dream club card */
 .kc-ref-card{display:flex;align-items:center;justify-content:space-between;gap:16px;background:linear-gradient(135deg,rgba(255,255,255,.04) 0%,rgba(255,255,255,.02) 100%);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:16px 20px;text-decoration:none;transition:border-color .2s,transform .2s}
-.kc-ref-card:hover{border-color:rgba(196,248,42,.3);transform:translateY(-1px)}
+.kc-ref-card:hover{border-color:rgba(24,0,173,.3);transform:translateY(-1px)}
 .kc-ref-left{flex:1}
 .kc-ref-title{font-family:Archivo,sans-serif;font-variation-settings:'wdth' 115,'wght' 700;font-size:15px;color:var(--ink);margin-bottom:4px}
 .kc-ref-sub{font-size:12px;color:#767c82}
@@ -964,7 +964,7 @@ PF_CSS = """
   border:1px solid var(--hair);box-shadow:var(--inset)}
 .seg-sm button{border:0;background:transparent;color:var(--dim);border-radius:999px;padding:7px 15px;cursor:pointer;
   font-weight:600;font-size:10px;letter-spacing:.1em;text-transform:uppercase;transition:all .5s var(--ease)}
-.seg-sm button[aria-pressed="true"]{background:var(--lime);color:#0A0D03}
+.seg-sm button[aria-pressed="true"]{background:var(--lime);color:#fff}
 .seg-sm button:hover:not([aria-pressed="true"]){color:var(--ink)}
 .hashm{font-family:'Montserrat', sans-serif;font-size:11px;color:var(--faint)}
 @media (max-width:1024px){
@@ -1025,7 +1025,7 @@ pf.append(T('<div class="bezel c4" data-reveal><div class="core pad">'
             'How your balance is split between locked club assets, liquid reserves and speculative positions '
             'you have not assigned to a club.</p>'
             '<div class="alloc" id="pfAlloc">'
-            '<i style="width:66%;background:linear-gradient(90deg,#8fbe00,#C4F82A)"></i>'
+            '<i style="width:66%;background:linear-gradient(90deg,#0f0075,#1800ad)"></i>'
             '<i style="width:25%;background:#4DA6FF"></i>'
             '<i style="width:9%;background:rgba(255,255,255,.34)"></i></div>'
             '<div class="b-row"><span>@@Fielded in your Dream Club</span><b id="pfFielded">—</b></div>'
@@ -1038,7 +1038,7 @@ pf.append(T('<div class="bezel c4" data-reveal><div class="core pad">'
             '<div class="mini"><div class="k">Assigned to club</div><div class="v lime" id="pfNField">11</div></div>'
             '<div class="mini"><div class="k">Total positions</div><div class="v" id="pfNTotal">18</div></div>'
             '</div></div></div>',
-            '<i style="display:inline-block;width:8px;height:8px;border-radius:3px;background:#C4F82A;margin-right:9px"></i>',
+            '<i style="display:inline-block;width:8px;height:8px;border-radius:3px;background:#1800ad;margin-right:9px"></i>',
             '<i style="display:inline-block;width:8px;height:8px;border-radius:3px;background:#4DA6FF;margin-right:9px"></i>',
             '<i style="display:inline-block;width:8px;height:8px;border-radius:3px;background:rgba(255,255,255,.34);margin-right:9px"></i>'))
 
@@ -1299,7 +1299,7 @@ LB_CSS = """
 .club-cell{display:flex;align-items:center;gap:13px;min-width:0}
 .mcrest{width:34px;height:38px;flex:none;clip-path:polygon(0 0,100% 0,100% 66%,50% 100%,0 66%);
   display:grid;place-items:center;font-family:Archivo;font-variation-settings:'wdth' 100,'wght' 900;
-  font-size:11px;color:#0A0D03}
+  font-size:11px;color:#fff}
 .club-cell .cn{font-size:13.5px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .div-card{border:1px solid var(--hair);background:rgba(255,255,255,.03);border-radius:18px;padding:20px;
   box-shadow:var(--inset);display:flex;gap:16px;align-items:flex-start;margin-bottom:10px}
@@ -1328,7 +1328,7 @@ LB_CSS = """
 # rank, club, manager, holders, value, delta%, core XI, coach + shape, boost, FP, yield, division
 BOARD = [
     (1, "Apex Titans FC", "@TacticalKlopp", 48, 612400, 7.2, ["Mbappé 98", "Haaland 97", "Vinícius 95"],
-     "$Pep · 4-3-3 Tiki-taka", 18.5, 14890, 34200, "apex", "#C4F82A"),
+     "$Pep · 4-3-3 Tiki-taka", 18.5, 14890, 34200, "apex", "#1800ad"),
     (2, "Galactico Syndicate", "@ZidaneTactics", 32, 540100, 5.6, ["Bellingham 96", "Kane 95", "Rodri 94"],
      "$DonCarlo · 4-3-1-2 Fluid", 17.0, 13920, 29800, "apex", "#F4F6F1"),
     (3, "Arsenal Elite FC", "@GoonerBoss", 112, 495200, 6.9, ["Saka 95", "Ødegaard 94", "Saliba 93"],
@@ -1340,9 +1340,9 @@ BOARD = [
     (6, "Anfield Collective", "@KopLedger", 88, 398400, 3.1, ["Salah 94", "Van Dijk 92", "Szoboszlai 89"],
      "$Slot · 4-3-3 High press", 13.0, 11740, 19900, "apex", "#FF5E5E"),
     (7, "Seleção Futures", "@SambaStake", 27, 371900, 4.4, ["Vinícius 95", "Rodrygo 90", "Éder 88"],
-     "$Dorival · 4-2-3-1 Counter", 12.5, 11020, 18300, "apex", "#C4F82A"),
+     "$Dorival · 4-2-3-1 Counter", 12.5, 11020, 18300, "apex", "#1800ad"),
     (124, "Zero FC", "You · single-owner", 1, 245800, 7.9, ["Bruno 90", "Saka 95", "Haaland 97"],
-     "$Arteta · 4-3-3 High press", 15.0, 8420, 18400, "apex", "#C4F82A"),
+     "$Arteta · 4-3-3 High press", 15.0, 8420, 18400, "apex", "#1800ad"),
     (151, "Rioja Rising", "@TempranilloFC", 12, 198200, 1.4, ["Yamal 92", "Pedri 91", "Cubarsí 87"],
      "$Flick · 4-3-3 Youth", 11.0, 7180, 9400, "contender", "#FF6A1F"),
     (188, "Naija Nine", "@LagosLedger", 34, 176500, 9.8, ["Osimhen 91", "Lookman 88", "Iwobi 84"],
@@ -1352,7 +1352,7 @@ BOARD = [
     (503, "Academy Origins", "@FirstTeamFund", 5, 84600, 12.6, ["Yıldız 84", "Endrick 83", "Zaïre 82"],
      "$Motta · 4-2-3-1 Raw", 7.0, 3910, 3200, "challenger", "#FF5E8A"),
     (612, "Sunday League Ltd", "@ParkPitchDAO", 3, 61200, 5.5, ["Elanga 81", "Mainoo 83", "Hato 80"],
-     "$Dyche · 4-4-2 Honest", 6.5, 3140, 2400, "challenger", "#C4F82A"),
+     "$Dyche · 4-4-2 Honest", 6.5, 3140, 2400, "challenger", "#1800ad"),
 ]
 
 IDX = [104, 109, 113, 118, 122, 129, 134, 138, 145, 148]
@@ -1368,11 +1368,11 @@ def idx_chart(vals, w=620, h=170):
         pb.append("%.1f,%.1f" % (x, h - ((v * 0.86 - lo) / rng) * h))
     return ('<svg viewBox="0 0 %d %d" preserveAspectRatio="none">'
             '<defs><linearGradient id="lbg" x1="0" y1="0" x2="0" y2="1">'
-            '<stop offset="0%%" stop-color="#C4F82A" stop-opacity=".22"/>'
-            '<stop offset="100%%" stop-color="#C4F82A" stop-opacity="0"/></linearGradient></defs>'
+            '<stop offset="0%%" stop-color="#1800ad" stop-opacity=".22"/>'
+            '<stop offset="100%%" stop-color="#1800ad" stop-opacity="0"/></linearGradient></defs>'
             '<polygon points="0,%d %s %d,%d" fill="url(#lbg)"/>'
             '<polyline points="%s" fill="none" stroke="#4DA6FF" stroke-width="1.4" stroke-dasharray="4 4" opacity=".8"/>'
-            '<polyline points="%s" fill="none" stroke="#C4F82A" stroke-width="1.8" stroke-linejoin="round"/>'
+            '<polyline points="%s" fill="none" stroke="#1800ad" stroke-width="1.8" stroke-linejoin="round"/>'
             '</svg>' % (w, h, h, " ".join(pa), w, h, " ".join(pb), " ".join(pa)))
 
 
@@ -1393,7 +1393,7 @@ lb = [T('<main><div class="kc-home-wrap">'
 # your rank, as a strip
 lb.append(T('<div class="bezel flat c12" data-reveal><div class="core pad-sm">'
             '<div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">'
-            '<div class="crest-lg" id="lbCrest" style="background:linear-gradient(160deg,#C4F82A,#83b300)">ZF</div>'
+            '<div class="crest-lg" id="lbCrest" style="background:linear-gradient(160deg,#1800ad,#0f0075)">ZF</div>'
             '<div style="min-width:0"><div style="font-family:Archivo;'
             'font-variation-settings:\'wdth\' 125,\'wght\' 900;text-transform:uppercase;font-size:21px;'
             'line-height:1" data-bind="club">Zero FC</div>'
@@ -1493,7 +1493,7 @@ function renderBoard(){
       + '<div class="pl up">+' + money(b.y) + '</div>'
       + '<div>' + (b.you
         ? '<a class="tradebtn" href="clubs.html" style="display:block;text-align:center;text-decoration:none;'
-          + 'line-height:1.6;background:var(--lime);border-color:var(--lime);color:#0A0D03">Rebalance</a>'
+          + 'line-height:1.6;background:var(--lime);border-color:var(--lime);color:#fff">Rebalance</a>'
         : '<button class="tradebtn" type="button" data-inspect="' + b.c + '">Inspect</button>') + '</div>'
       + '</div>';
   }).join('') || '<div class="empty-state"><svg class="ic-xl" aria-hidden="true"><use href="#i-search"/></svg>'
@@ -1677,7 +1677,7 @@ ST_CSS = """
 .settings-hero p{margin:0;color:var(--faint);font-size:11.5px}
 .settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .settings-card{display:flex;align-items:center;gap:13px;padding:16px;border:1px solid rgba(255,255,255,.07);border-radius:15px;background:rgba(10,12,14,.7);color:var(--ink);text-decoration:none;box-shadow:var(--shadow-card);transition:.2s ease}
-.settings-card:hover{transform:translateY(-2px);border-color:rgba(196,248,42,.22)}
+.settings-card:hover{transform:translateY(-2px);border-color:rgba(24,0,173,.22)}
 .settings-card .bd{min-width:0;flex:1}.settings-card b{display:block;font-size:13px}.settings-card p{font-size:10.5px;line-height:1.45;color:var(--faint);margin:4px 0 0}
 .settings-card>.ic{width:14px;height:14px;color:var(--faint)}
 .sec-card>.core{background:linear-gradient(145deg,rgba(16,19,18,.92),rgba(8,10,10,.96))}
@@ -1727,8 +1727,8 @@ SECTIONS["club"] = T('<div class="bezel flat sec-card" data-reveal><div class="c
             '<button type="button" aria-pressed="false">3-5-2</button>'
             '<button type="button" aria-pressed="false">4-2-3-1</button></div>'
             '<div class="k-label" style="margin-top:24px">Club colour</div><div class="swatches" id="stSw">'
-            '<button class="sw" type="button" aria-pressed="true" data-c="#C4F82A" data-n="Lime" '
-            'style="background:linear-gradient(160deg,#C4F82A,#83b300)" aria-label="Lime"></button>'
+            '<button class="sw" type="button" aria-pressed="true" data-c="#1800ad" data-n="Indigo" '
+            'style="background:linear-gradient(160deg,#1800ad,#0f0075)" aria-label="Indigo"></button>'
             '<button class="sw" type="button" aria-pressed="false" data-c="#FF6A1F" data-n="Amber" '
             'style="background:linear-gradient(160deg,#FF6A1F,#b33f06)" aria-label="Amber"></button>'
             '<button class="sw" type="button" aria-pressed="false" data-c="#4DA6FF" data-n="Azure" '
@@ -2080,7 +2080,7 @@ AC_CSS = """
 /* Hero Avatar & Identity */
 .kc-p-hero{display:flex;flex-direction:column;align-items:center;text-align:center;padding:6px 0 20px}
 .kc-p-avatar-box{position:relative;width:88px;height:88px;margin-bottom:12px}
-.kc-p-avatar-img{width:100%;height:100%;border-radius:50%;object-fit:cover;border:2.5px solid var(--lime);box-shadow:0 0 24px rgba(196,248,42,.2)}
+.kc-p-avatar-img{width:100%;height:100%;border-radius:50%;object-fit:cover;border:2.5px solid var(--lime);box-shadow:0 0 24px rgba(24,0,173,.2)}
 .kc-p-name-row{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:5px}
 .kc-p-username{font-family:Archivo,sans-serif;font-variation-settings:'wdth' 120,'wght' 800;font-size:22px;letter-spacing:-.01em;color:var(--ink)}
 .kc-p-edit-btn{background:transparent;border:0;color:#767c82;cursor:pointer;display:grid;place-items:center;padding:2px;transition:color .15s}
@@ -2093,12 +2093,12 @@ AC_CSS = """
 .kc-p-pills{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap}
 .kc-p-pill{display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:999px;padding:5px 13px;font-size:11.5px;color:#8E9AA8;text-decoration:none;cursor:pointer;transition:border-color .2s,background .2s}
 .kc-p-pill:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.16);color:var(--ink)}
-.kc-p-pill.safeguard{color:var(--lime);border-color:rgba(196,248,42,.25);background:rgba(196,248,42,.06)}
+.kc-p-pill.safeguard{color:var(--lime);border-color:rgba(24,0,173,.25);background:rgba(24,0,173,.06)}
 .kc-p-pill .chev{font-size:11px;opacity:.7;margin-left:2px}
 
 /* Referral Banner Card */
 .kc-ref-card{display:flex;align-items:center;justify-content:space-between;gap:16px;background:linear-gradient(135deg,rgba(255,255,255,.04) 0%,rgba(255,255,255,.02) 100%);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:16px 20px;margin:18px 0 24px;text-decoration:none;cursor:pointer;transition:border-color .2s,transform .2s}
-.kc-ref-card:hover{border-color:rgba(196,248,42,.3);transform:translateY(-1px)}
+.kc-ref-card:hover{border-color:rgba(24,0,173,.3);transform:translateY(-1px)}
 .kc-ref-left{flex:1}
 .kc-ref-title{font-family:Archivo,sans-serif;font-variation-settings:'wdth' 115,'wght' 700;font-size:16px;color:var(--ink);margin-bottom:4px}
 .kc-ref-sub{font-size:12px;color:#767c82}
@@ -2119,7 +2119,7 @@ AC_CSS = """
 .kc-item-desc{font-size:11px;color:#767c82;margin-top:2px}
 .kc-item-right{display:flex;align-items:center;gap:8px;font-size:12px;color:#767c82;flex-shrink:0}
 .kc-badge-k1{display:inline-flex;align-items:center;gap:4px;color:#8E9AA8;font-size:11.5px}
-.kc-badge-k1 .k1-tag{background:rgba(196,248,42,.15);color:var(--lime);font-size:9.5px;font-weight:700;padding:1px 5px;border-radius:4px}
+.kc-badge-k1 .k1-tag{background:rgba(24,0,173,.15);color:var(--lime);font-size:9.5px;font-weight:700;padding:1px 5px;border-radius:4px}
 .kc-chevron{color:#555c63}
 
 /* Toggle Switch */
@@ -2463,7 +2463,7 @@ AC_JS = r"""
   on('kcSwitchProfileBtn', function(){
     modal('Switch Profile',
       '<div class="ft-modal-card">'
-      + '<div class="m-row" style="background:rgba(196,248,42,.08)"><span>Viceonchain (Active)</span><b style="color:var(--lime)">Primary Manager</b></div>'
+      + '<div class="m-row" style="background:rgba(24,0,173,.08)"><span>Viceonchain (Active)</span><b style="color:var(--lime)">Primary Manager</b></div>'
       + '<div class="m-row"><span>NorthBank_Scout</span><b>Secondary Scout</b></div>'
       + '</div>'
       + '<p style="font-size:11.5px;color:#767c82;margin-top:10px">You can manage multiple football identities or club divisions under one wallet.</p>');
@@ -2526,7 +2526,7 @@ for key, _icon_name, _label in SETNAV:
     page("settings-%s.html" % key, "%s — Fantrade" % title, body, ST_JS, ST_CSS)
     print("built settings-%s.html" % key)
 
-REDIRECT_TO_WALLET = """<!DOCTYPE html><html><head><meta charset="utf-8"><meta http-equiv="refresh" content="0; url=ftr.html"><title>Redirecting to Wallet...</title><script>window.location.replace('ftr.html');</script></head><body style="background:#050505;color:#F4F6F1;font-family:sans-serif;display:grid;place-items:center;height:100vh;margin:0"><div style="text-align:center"><p style="color:#8E9AA8">Redirecting to your Wallet...</p><a href="ftr.html" style="color:#C4F82A;font-weight:600">Click here if not redirected</a></div></body></html>"""
+REDIRECT_TO_WALLET = """<!DOCTYPE html><html><head><meta charset="utf-8"><meta http-equiv="refresh" content="0; url=ftr.html"><title>Redirecting to Wallet...</title><script>window.location.replace('ftr.html');</script></head><body style="background:#050505;color:#F4F6F1;font-family:sans-serif;display:grid;place-items:center;height:100vh;margin:0"><div style="text-align:center"><p style="color:#8E9AA8">Redirecting to your Wallet...</p><a href="ftr.html" style="color:#1800ad;font-weight:600">Click here if not redirected</a></div></body></html>"""
 
 with open(os.path.join(OUT, "wallet.html"), "w", encoding="utf-8") as f:
     f.write(REDIRECT_TO_WALLET)

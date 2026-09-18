@@ -39,21 +39,21 @@ FTR_CSS = """
 .kc-icon-btn .ic{width:18px;height:18px}
 
 .kc-assets-card{background:linear-gradient(135deg,#0E1114 0%,#08090A 100%);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:22px;box-shadow:0 12px 32px rgba(0,0,0,.6);margin-bottom:18px;position:relative;overflow:hidden}
-.kc-assets-card::before{content:"";position:absolute;top:-60px;right:-60px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(196,248,42,.12),transparent 70%);pointer-events:none}
+.kc-assets-card::before{content:"";position:absolute;top:-60px;right:-60px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(24,0,173,.12),transparent 70%);pointer-events:none}
 .kc-card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
 .kc-card-lbl{font-size:11px;font-weight:600;letter-spacing:.12em;color:#8E9AA8;text-transform:uppercase;display:flex;align-items:center;gap:6px}
 .kc-eye-btn{background:transparent;border:0;color:#8E9AA8;cursor:pointer;padding:2px;display:flex;align-items:center;transition:color .2s}
 .kc-eye-btn:hover{color:#fff}
 .kc-card-bal{font-family:'Montserrat', sans-serif;font-size:32px;font-weight:700;letter-spacing:-.02em;color:#FFFFFF;margin:4px 0 6px;line-height:1.1;display:flex;align-items:baseline;gap:6px}
-.kc-card-bal small{font-size:16px;color:#C4F82A;font-weight:500}
+.kc-card-bal small{font-size:16px;color:#1800ad;font-weight:500}
 .kc-card-sub{display:flex;align-items:center;gap:10px;font-size:12.5px;color:#8E9AA8}
-.kc-pnl-pill{font-family:'Montserrat', sans-serif;font-size:11px;font-weight:600;padding:2px 8px;border-radius:6px;background:rgba(196,248,42,.12);color:#C4F82A;border:1px solid rgba(196,248,42,.25)}
+.kc-pnl-pill{font-family:'Montserrat', sans-serif;font-size:11px;font-weight:600;padding:2px 8px;border-radius:6px;background:rgba(24,0,173,.12);color:#1800ad;border:1px solid rgba(24,0,173,.25)}
 
 .kc-actions-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:20px;padding-top:16px;border-top:1px solid rgba(255,255,255,.06)}
 .kc-act-btn{display:flex;flex-direction:column;align-items:center;gap:8px;text-decoration:none;color:#C3C9BE;cursor:pointer;transition:transform .2s ease}
 .kc-act-btn:hover{transform:translateY(-2px);color:#fff}
-.kc-act-icon{width:44px;height:44px;border-radius:14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);display:flex;align-items:center;justify-content:center;color:#C4F82A;transition:all .2s ease}
-.kc-act-btn:hover .kc-act-icon{background:rgba(196,248,42,.15);border-color:rgba(196,248,42,.4)}
+.kc-act-icon{width:44px;height:44px;border-radius:14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);display:flex;align-items:center;justify-content:center;color:#1800ad;transition:all .2s ease}
+.kc-act-btn:hover .kc-act-icon{background:rgba(24,0,173,.15);border-color:rgba(24,0,173,.4)}
 .kc-act-lbl{font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase}
 
 .kc-alloc-card{background:#0A0B0C;border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:16px;margin-bottom:18px}
@@ -68,20 +68,20 @@ FTR_CSS = """
 .kc-tabs{display:flex;gap:12px;border-bottom:1px solid rgba(255,255,255,.07);margin-bottom:12px;padding-bottom:2px}
 .kc-tab-btn{background:transparent;border:0;color:#8E9AA8;font-family:Montserrat,sans-serif;font-size:13px;font-weight:600;padding:8px 4px;cursor:pointer;position:relative;transition:color .2s}
 .kc-tab-btn.on{color:#fff}
-.kc-tab-btn.on::after{content:"";position:absolute;left:0;right:0;bottom:-3px;height:2px;background:#C4F82A;border-radius:2px}
+.kc-tab-btn.on::after{content:"";position:absolute;left:0;right:0;bottom:-3px;height:2px;background:#1800ad;border-radius:2px}
 
 .kc-holdings-list{display:flex;flex-direction:column;gap:4px}
 .kc-asset-row{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04);text-decoration:none;transition:all .2s ease}
 .kc-asset-row:hover{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.09)}
 .kc-asset-left{display:flex;align-items:center;gap:12px}
-.kc-asset-icon{width:38px;height:38px;border-radius:12px;background:rgba(196,248,42,.1);border:1px solid rgba(196,248,42,.25);display:flex;align-items:center;justify-content:center;color:#C4F82A}
+.kc-asset-icon{width:38px;height:38px;border-radius:12px;background:rgba(24,0,173,.1);border:1px solid rgba(24,0,173,.25);display:flex;align-items:center;justify-content:center;color:#1800ad}
 .kc-asset-icon.coach{background:rgba(255,106,31,.1);border-color:rgba(255,106,31,.25);color:var(--amber)}
 .kc-asset-name{font-weight:700;font-size:13.5px;color:#fff}
 .kc-asset-sub{font-size:11px;color:#8E9AA8;margin-top:2px}
 .kc-asset-right{text-align:right}
 .kc-asset-val{font-family:'Montserrat', sans-serif;font-size:14px;font-weight:600;color:#fff}
 .kc-asset-chg{font-family:'Montserrat', sans-serif;font-size:11px;margin-top:2px}
-.kc-asset-chg.up{color:#C4F82A}
+.kc-asset-chg.up{color:#1800ad}
 .kc-asset-chg.down{color:#FF5E5E}
 """
 
@@ -109,7 +109,7 @@ f.append(T('<div class="kc-assets-card">'
            '<div class="kc-pnl-pill" id="walDelta">+2.35% (+2,940)</div>'
            '</div>'
            '<div class="kc-card-bal"><span id="walBal">128,450.00</span><small>$FTR</small></div>'
-           '<div class="kc-card-sub"><span id="walGbp">≈ $10,358.80 USD</span> · <span style="color:#C4F82A">Protected</span></div>'
+           '<div class="kc-card-sub"><span id="walGbp">≈ $10,358.80 USD</span> · <span style="color:#1800ad">Protected</span></div>'
            '<div class="kc-actions-grid">'
            '<a class="kc-act-btn" href="buy.html"><div class="kc-act-icon">@@</div><span class="kc-act-lbl">Deposit</span></a>'
            '<a class="kc-act-btn" href="send.html"><div class="kc-act-icon">@@</div><span class="kc-act-lbl">Withdraw</span></a>'
@@ -122,12 +122,12 @@ f.append(T('<div class="kc-assets-card">'
 f.append('<div class="kc-alloc-card">'
          '<div class="kc-alloc-head"><span>Portfolio Allocation</span><span id="walPosCount">4 Positions</span></div>'
          '<div class="kc-alloc-bar">'
-         '<div class="kc-alloc-bar-seg" style="width:62%;background:#C4F82A" title="Liquid FTR"></div>'
+         '<div class="kc-alloc-bar-seg" style="width:62%;background:#1800ad" title="Liquid FTR"></div>'
          '<div class="kc-alloc-bar-seg" style="width:28%;background:#4DA3FF" title="Player Shares"></div>'
          '<div class="kc-alloc-bar-seg" style="width:10%;background:#FF6A1F" title="Locked in Entries"></div>'
          '</div>'
          '<div class="kc-alloc-legend">'
-         '<div class="kc-leg-item"><div class="kc-leg-dot" style="background:#C4F82A"></div>Liquid <b id="walLiquidAmt">128,450 FTR</b></div>'
+         '<div class="kc-leg-item"><div class="kc-leg-dot" style="background:#1800ad"></div>Liquid <b id="walLiquidAmt">128,450 FTR</b></div>'
          '<div class="kc-leg-item"><div class="kc-leg-dot" style="background:#4DA3FF"></div>Shares <b id="walSharesAmt">58,240 FTR</b></div>'
          '<div class="kc-leg-item"><div class="kc-leg-dot" style="background:#FF6A1F"></div>Locked <b id="walLockedAmt">10,000 FTR</b></div>'
          '</div></div>')
@@ -233,7 +233,7 @@ HIW_CSS = """
 .tier .x{margin-left:auto;font-family:'Montserrat', sans-serif;font-size:20px;color:var(--lime)}
 .tier p{font-size:13px;font-weight:300;color:var(--dim);margin:0 0 16px}
 .risk{height:4px;border-radius:99px;background:rgba(255,255,255,.07);overflow:hidden}
-.risk i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#C4F82A,#FF6A1F)}
+.risk i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#1800ad,#FF6A1F)}
 .risk-k{display:flex;justify-content:space-between;font-weight:600;font-size:9px;letter-spacing:.14em;
   color:var(--faint);margin-top:10px;text-transform:uppercase}
 .rule{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:14px;padding:14px 24px;
@@ -249,16 +249,16 @@ HIW_CSS = """
 .walk.flip .art{order:-1}
 .walk .body{padding:44px 40px}
 .walk .n{font-family:Archivo;font-variation-settings:'wdth' 125,'wght' 900;font-size:clamp(52px,7vw,86px);
-  color:transparent;-webkit-text-stroke:1px rgba(196,248,42,.5);line-height:.85}
+  color:transparent;-webkit-text-stroke:1px rgba(24,0,173,.5);line-height:.85}
 .walk h3{font-size:clamp(26px,3.4vw,38px);margin:18px 0 14px}
 .walk p{color:var(--dim);font-weight:300;font-size:14.5px;max-width:46ch;margin:0}
 .walk ul{list-style:none;padding:0;margin:22px 0 0;font-size:13px;color:var(--dim)}
 .walk li{padding:10px 0;border-top:1px solid rgba(255,255,255,.055);display:flex;gap:12px;align-items:center}
 .walk li .ic{color:var(--lime);width:15px;height:15px}
 .art{min-height:280px;display:grid;place-items:center;position:relative;overflow:hidden;
-  background:radial-gradient(ellipse at 50% 40%,rgba(196,248,42,.10),transparent 62%)}
+  background:radial-gradient(ellipse at 50% 40%,rgba(24,0,173,.10),transparent 62%)}
 .art .glyph{width:104px;height:104px;color:var(--lime);opacity:.9;fill:currentColor;
-  filter:drop-shadow(0 18px 40px rgba(196,248,42,.28))}
+  filter:drop-shadow(0 18px 40px rgba(24,0,173,.28))}
 .art.am{background:radial-gradient(ellipse at 50% 40%,rgba(255,106,31,.10),transparent 62%)}
 .art.am .glyph{color:var(--amber);filter:drop-shadow(0 18px 40px rgba(255,106,31,.26))}
 .art .ring{position:absolute;border:1px solid rgba(255,255,255,.06);border-radius:50%}
@@ -275,7 +275,7 @@ details summary{list-style:none;cursor:pointer;padding:22px 0;display:flex;align
 details summary::-webkit-details-marker{display:none}
 details summary .pm{margin-left:auto;width:28px;height:28px;border-radius:999px;border:1px solid var(--hair);
   display:grid;place-items:center;color:var(--dim);transition:transform .7s var(--ease),background .6s var(--ease)}
-details[open] summary .pm{transform:rotate(45deg);background:var(--lime);color:#0A0D03;border-color:var(--lime)}
+details[open] summary .pm{transform:rotate(45deg);background:var(--lime);color:#fff;border-color:var(--lime)}
 details p{color:var(--dim);font-weight:300;font-size:14px;max-width:62ch;padding:0 0 22px}
 .tl{display:flex;gap:0;margin-top:10px;flex-wrap:wrap}
 .tl div{flex:1;min-width:150px;padding:22px 20px;border-left:1px solid var(--hair);position:relative}
