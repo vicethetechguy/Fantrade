@@ -120,8 +120,9 @@ main,header,footer,.nav-island{position:relative;z-index:1}
   height:45px;box-sizing:border-box;padding:0 6px 0 18px;border-radius:999px;background:rgba(10,11,12,.62);
   backdrop-filter:blur(22px) saturate(160%);-webkit-backdrop-filter:blur(22px) saturate(160%);
   border:1px solid var(--hair);box-shadow:var(--inset),0 20px 50px -20px rgba(0,0,0,.9)}
-.logo{display:flex;align-items:center;gap:10px;font-family:Archivo;font-variation-settings:'wdth' 125,'wght' 900;
+.logo{display:flex;align-items:center;gap:8px;font-family:Archivo;font-variation-settings:'wdth' 125,'wght' 900;
   text-transform:uppercase;font-size:14px;white-space:nowrap}
+.logo .brand-logo-img{width:22px;height:22px;object-fit:contain;flex-shrink:0;display:inline-block}
 .logo .ic{color:var(--lime);width:22px;height:22px}
 .nav-links{display:flex;gap:24px;font-size:13px;color:var(--dim)}
 .nav-links a{position:relative;padding:4px 0;transition:color .5s var(--ease)}
@@ -214,7 +215,7 @@ body.menu-open .overlay a:nth-child(4){transition-delay:.28s}
 /* type */
 .pill{display:inline-flex;align-items:center;gap:9px;border-radius:999px;padding:6px 15px;
   background:rgba(24,0,173,.08);border:1px solid rgba(24,0,173,.22);
-  font-weight:600;font-size:10px;letter-spacing:.2em;color:var(--lime);text-transform:uppercase}
+  font-weight:600;font-size:10px;letter-spacing:.02em;color:var(--lime);text-transform:uppercase}
 .pill .ic{width:13px;height:13px}
 .pill.amber{background:rgba(255,106,31,.08);border-color:rgba(255,106,31,.24);color:var(--amber)}
 h2{font-size:clamp(32px,5.4vw,64px)}
@@ -376,7 +377,7 @@ section{padding:130px 0}
 .mkt[aria-pressed="true"]{background:var(--lime);border-color:var(--lime);color:#fff;box-shadow:var(--inset),0 12px 30px -14px rgba(24,0,173,.9)}
 .out{margin-top:24px;padding:32px 24px;border-radius:22px;text-align:center;border:1px solid rgba(24,0,173,.28);
   background:radial-gradient(ellipse at 50% 120%,rgba(24,0,173,.18),rgba(24,0,173,.04) 60%);box-shadow:var(--inset)}
-.out .k{font-weight:600;font-size:9.5px;letter-spacing:.2em;color:#95ad44;text-transform:uppercase}
+.out .k{font-weight:600;font-size:9.5px;letter-spacing:.02em;color:#95ad44;text-transform:uppercase}
 .out .v{font-family:Archivo;font-variation-settings:'wdth' 120,'wght' 900;font-size:clamp(44px,5vw,62px);
   color:var(--lime);line-height:1;margin-top:12px;text-shadow:0 0 50px rgba(24,0,173,.4)}
 .out .n{font-weight:600;font-size:10px;color:#8d9f4d;margin-top:12px;letter-spacing:.12em;text-transform:uppercase}
@@ -804,7 +805,7 @@ APP_CSS = r"""
 .prog{display:flex;gap:12px;margin-bottom:38px;flex-wrap:wrap}
 .prog .st{flex:1;min-width:118px;border-top:2px solid rgba(255,255,255,.09);padding-top:13px;
   transition:border-color .7s var(--ease)}
-.prog .st .n{font-weight:600;font-size:9px;letter-spacing:.2em;color:var(--faint);text-transform:uppercase}
+.prog .st .n{font-weight:600;font-size:9px;letter-spacing:.02em;color:var(--faint);text-transform:uppercase}
 .prog .st .l{font-size:12.5px;color:var(--faint);margin-top:6px;font-weight:300}
 .prog .st.done{border-top-color:rgba(24,0,173,.4)}
 .prog .st.done .l{color:var(--dim)}
@@ -845,7 +846,7 @@ APP_CSS = r"""
 .rowlink:hover{color:var(--ink)}
 .rowlink .ic{color:var(--faint);width:16px;height:16px}
 .rowlink b{margin-left:auto;font-family:'Montserrat', sans-serif;font-weight:400;color:var(--ink)}
-.greet{font-weight:600;font-size:10px;letter-spacing:.2em;color:var(--lime);text-transform:uppercase}
+.greet{font-weight:600;font-size:10px;letter-spacing:.02em;color:var(--lime);text-transform:uppercase}
 .app-head{padding:150px 0 44px}
 .app-head h1{font-size:clamp(32px,5vw,58px);font-variation-settings:'wdth' 125,'wght' 900;margin-top:20px}
 .app-head .lede{margin-top:20px;font-size:15px}
@@ -1604,7 +1605,8 @@ body.app .taskbar a.on{padding:0}
 body.app .taskbar a .ic{width:20px;height:20px}
 body.app .taskbar a span{font-size:10px}
 .nav-island.topbar{position:fixed;top:22px;left:50%;transform:translateX(-50%);width:min(680px, calc(100vw - 28px));height:45px;min-height:45px;box-sizing:border-box;padding:0 16px;border-radius:999px;display:flex!important;align-items:center;justify-content:space-between;background:rgba(10,12,14,.94);backdrop-filter:blur(24px) saturate(160%);-webkit-backdrop-filter:blur(24px) saturate(160%);border:1px solid rgba(255,255,255,.09);box-shadow:0 16px 36px rgba(0,0,0,.6);z-index:100}
-.nav-island.topbar .logo{font-family:Archivo,sans-serif;font-variation-settings:'wdth' 125,'wght' 900;font-size:14px;text-transform:uppercase;color:#fff;display:flex;align-items:center;gap:9px;text-decoration:none}
+.nav-island.topbar .logo{font-family:Archivo,sans-serif;font-variation-settings:'wdth' 125,'wght' 900;font-size:14px;text-transform:uppercase;color:#fff;display:flex;align-items:center;gap:8px;text-decoration:none}
+.nav-island.topbar .logo .brand-logo-img{width:20px;height:20px;object-fit:contain;flex-shrink:0}
 .nav-island.topbar .logo .ic{color:var(--lime);width:22px;height:22px}
 .nav-island.topbar #navBell{width:28px;height:28px;border:0;outline:0;box-shadow:none;background:transparent;color:#8E9AA8;display:grid;place-items:center;transition:color .2s ease}
 .nav-island.topbar #navBell:hover{color:#fff}
@@ -1738,14 +1740,14 @@ def taskbar(current=""):
 def nav(current="", app=False):
     """Floating top bar. app=True returns topbar with profile avatar + full bottom taskbar."""
     if app:
-        top = ('<nav class="nav-island topbar" id="appHeader"><a class="logo" href="dashboard.html">%s Fantrade</a>'
+        top = ('<nav class="nav-island topbar" id="appHeader"><a class="logo" href="dashboard.html"><img src="assets/fantrade-logo.png" alt="" class="brand-logo-img" width="20" height="20"> Fantrade</a>'
                '<div style="display:flex;align-items:center;gap:12px;margin-left:auto">'
                '<a class="bell" id="navBell" href="notifications.html" aria-label="Notifications">%s'
                '<span class="dot" id="navDot" hidden></span></a>'
                '<a class="nav-profile-btn" id="navProfileBtn" href="account.html" aria-label="User Profile" title="User Profile">'
                '<img src="assets/astronaut_avatar.jpg" alt="Profile" class="nav-avatar-img">'
                '</a>'
-               '</div></nav>') % (ic("ball", "ic"), ic("bell", "ic"))
+               '</div></nav>') % ic("bell", "ic")
         return top + taskbar(current)
 
     links = "".join('<a href="%s"%s>%s</a>' % (h, ' class="on"' if h == current else '', l)
@@ -1757,22 +1759,22 @@ def nav(current="", app=False):
     foot = ('<a class="btn btn-glass" href="signin.html" data-close>Sign in<span class="cap">%s</span></a>'
             '<a class="btn btn-lime" href="signup.html" data-close>Get started<span class="cap">%s</span></a>'
             % (ic("arrow", "ic"), ic("arrow", "ic")))
-    return ('<nav class="nav-island"><a class="logo" href="index.html">%s Fantrade</a>'
+    return ('<nav class="nav-island"><a class="logo" href="index.html"><img src="assets/fantrade-logo.png" alt="" class="brand-logo-img" width="22" height="22"> Fantrade</a>'
             '<div class="nav-links">%s</div><div class="nav-cta">%s</div>'
             '<button class="burger" id="burger" aria-label="Open menu" aria-expanded="false"><i></i><i></i>'
             '</button></nav><div class="overlay" id="overlay">%s%s</div>'
-            ) % (ic("ball", "ic"), links, right, over, foot)
+            ) % (links, right, over, foot)
 
 
 def nav_min(back="index.html", label="Back to Fantrade"):
     """Stripped nav for auth screens — logo and one way out."""
-    return ('<div class="nav-min"><a class="logo" href="index.html">%s Fantrade</a>'
+    return ('<div class="nav-min"><a class="logo" href="index.html"><img src="assets/fantrade-logo.png" alt="" class="brand-logo-img" width="22" height="22"> Fantrade</a>'
             '<a class="back" href="%s">%s<span>%s</span></a></div>'
-            % (ic("ball", "ic"), back, ic("arrow", "ic"), label))
+            % (back, ic("arrow", "ic"), label))
 
 def footer():
     return ('<footer><div class="wrap"><div class="foot">'
-            '<div class="col brandcol"><a class="logo" href="index.html">%s Fantrade</a>'
+            '<div class="col brandcol"><a class="logo" href="index.html"><img src="assets/fantrade-logo.png" alt="" class="brand-logo-img" width="22" height="22"> Fantrade</a>'
             '<p>A football ownership economy. Own players and coaches, build your Dream Club, play every matchday.</p></div>'
             '<div class="col"><b>Platform</b><a href="dashboard.html">Home</a><a href="exchange.html">Exchange</a>'
             '<a href="fanplay.html">FanPlay</a><a href="leaderboard.html">Leaderboard</a></div>'
@@ -1783,7 +1785,7 @@ def footer():
             '<div class="col"><b>Company</b><a href="signup.html">Create account</a><a href="signin.html">Sign in</a>'
             '<a href="#">Press</a><a href="#">Contact</a></div>'
             '</div><div class="legal"><span>© 2026 Fantrade. Prototype interface — figures shown are illustrative.</span>'
-            '<span>Terms · Privacy · Responsible play</span></div></div></footer>') % ic("ball", "ic")
+            '<span>Terms · Privacy · Responsible play</span></div></div></footer>')
 
 JS_CHART = r"""
 // ── candlesticks ─────────────────────────────────────────────
