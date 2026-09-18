@@ -6,6 +6,7 @@ The twenty-four HTML pages in the repository root are generated, not hand-edited
 - `icons_data.py` — Phosphor Light icon paths, compiled to a sprite
 - `qr_data.py` — pre-computed QR matrix for the wallet receive address (keeps the build dependency-free)
 - `pages.py` — builds index, exchange, clubs, fanplay
+- `landing.py` — standalone landing-page design, called by `pages.py`; Fomo reference artwork and fonts are recorded in `assets/landing/sources.json`
 - `pages2.py` — builds ftr, how-it-works
 - `pages3.py` — builds signin, signup, onboarding, dashboard (Home), portfolio, leaderboard, notifications, settings, account
 - `pages4.py` — builds the drill-down screens: asset, trade, divisions

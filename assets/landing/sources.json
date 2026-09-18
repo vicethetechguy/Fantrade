@@ -1,0 +1,15 @@
+{
+  "reference": "https://fomo.family/",
+  "description": "Reference artwork and typography reused at the project owner's request; original artwork belongs to its respective owners. Fantrade content and product previews are implemented separately.",
+  "assets": {
+    "space-bg.webp": "https://fomo.family/images/landing/space-bg.webp",
+    "astronaut.webp": "https://fomo.family/images/landing/astronaut.webp",
+    "astronaut-mobile.webp": "https://fomo.family/images/landing/astronaut-mobile.webp",
+    "legends.webp": "https://fomo.family/images/landing/legends.webp",
+    "inner-circle.webp": "https://fomo.family/images/landing/inner-circle.webp",
+    "outer-circle.webp": "https://fomo.family/images/landing/outer-circle.webp",
+    "Aeonik-Regular.woff2": "https://fomo.family/fonts/Aeonik-Regular.woff2",
+    "Aeonik-Medium.woff2": "https://fomo.family/fonts/Aeonik-Medium.woff2",
+    "arrow.svg": "https://fomo.family/assets/arrow-v2-K0J5ysgQ.js"
+  }
+}
