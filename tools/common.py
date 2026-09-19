@@ -1674,6 +1674,194 @@ body.app .kc-item-row:hover{box-shadow:inset 3px 0 0 rgba(24,0,173,.42)}
 
 CSS = CSS + EXCHANGE_CSS + DENSE_CSS + SHADOW_CSS
 
+# Final authenticated-app skin.  It is appended after each page's local CSS in
+# head(), so the shared product shell stays visually consistent even when an
+# older screen still carries page-specific presentation rules.
+APP_REFERENCE_CSS = r"""
+@font-face{font-family:Aeonik;src:url('assets/landing/Aeonik-Regular.woff2') format('woff2');font-style:normal;font-weight:400;font-display:swap}
+@font-face{font-family:Aeonik;src:url('assets/landing/Aeonik-Medium.woff2') format('woff2');font-style:normal;font-weight:600 900;font-display:swap}
+body.app{
+  --void:#05030d;--core:#0c0a15;--shell:#12101c;--ink:#f7f6fb;--dim:#aaa7b6;--faint:#6d6979;
+  --hair:rgba(255,255,255,.075);--hair-2:rgba(255,255,255,.14);--lime:#4d63ff;--positive:#24c86b;
+  --red:#ff5668;--amber:#ffbd52;--panel:#11101a;--panel-2:#171521;--dock:#2a2833;
+  background:#05030d;color:var(--ink);font-family:Aeonik,Montserrat,system-ui,sans-serif;
+  font-size:14px;line-height:1.45;min-height:100vh;padding-bottom:102px
+}
+body.app button,body.app input,body.app select,body.app textarea{font-family:Aeonik,Montserrat,system-ui,sans-serif}
+body.app .orb,body.app .grain{display:none!important}
+body.app h1,body.app h2,body.app h3,body.app h4,body.app .disp,
+body.app .kc-top-title,body.app .kc-p-username,body.app .kc-pair-title,
+body.app .kc-hot-ticker,body.app .kc-ref-title,body.app .kc-item-title{
+  font-family:Aeonik,Montserrat,system-ui,sans-serif!important;font-variation-settings:normal!important;
+  text-transform:none!important;letter-spacing:-.02em
+}
+body.app [style*="font-family:Archivo"]{font-family:Aeonik,Montserrat,system-ui,sans-serif!important;font-variation-settings:normal!important}
+body.app main{padding-top:78px!important;min-height:100vh}
+body.app .kc-home-wrap{max-width:1040px!important;padding:8px 22px 118px!important}
+body.app .kc-ex-wrap{max-width:860px!important;padding:8px 22px 118px!important}
+body.app .kc-assets-wrap,body.app .kc-wallet-wrap,body.app .kc-trade-wrap{max-width:820px!important;padding:8px 22px 118px!important}
+body.app .kc-profile-wrap,body.app .kc-settings-wrap{max-width:780px!important;padding:8px 22px 118px!important}
+body.app .wrap{max-width:1040px!important;padding-left:22px!important;padding-right:22px!important}
+
+/* restrained app header */
+body.app .nav-island.topbar{
+  top:14px!important;width:min(1040px,calc(100vw - 32px))!important;height:48px!important;min-height:48px!important;
+  padding:0 5px 0 7px!important;border:0!important;border-radius:0!important;background:transparent!important;
+  backdrop-filter:none!important;-webkit-backdrop-filter:none!important;box-shadow:none!important
+}
+body.app .nav-island.topbar .logo{font-size:0!important;gap:0!important}
+body.app .nav-island.topbar .logo .brand-logo-img{width:34px!important;height:34px!important;object-fit:contain!important}
+body.app .nav-island.topbar>div{gap:8px!important}
+body.app .nav-island.topbar #navBell,body.app .nav-profile-btn{
+  width:38px!important;height:38px!important;border-radius:12px!important;background:rgba(255,255,255,.045)!important;
+  border:1px solid rgba(255,255,255,.055)!important;color:var(--dim)!important
+}
+body.app .nav-profile-btn{padding:4px!important}
+body.app .nav-profile-btn .nav-avatar-img{object-fit:contain!important;background:#45f48b!important;padding:5px!important}
+
+/* fomo-style bottom dock */
+body.app .taskbar{
+  left:50%!important;right:auto!important;bottom:max(14px,env(safe-area-inset-bottom))!important;
+  transform:translateX(-50%)!important;width:min(620px,calc(100vw - 32px))!important;
+  height:68px!important;padding:6px!important;margin:0!important;border:1px solid rgba(255,255,255,.085)!important;
+  border-radius:34px!important;background:rgba(42,40,51,.94)!important;
+  backdrop-filter:blur(24px) saturate(140%)!important;-webkit-backdrop-filter:blur(24px) saturate(140%)!important;
+  box-shadow:0 16px 45px rgba(0,0,0,.48)!important
+}
+body.app .taskbar a{height:56px!important;gap:3px!important;border-radius:28px!important;color:#9996a5!important}
+body.app .taskbar a:hover{color:#fff!important;background:rgba(255,255,255,.045)!important}
+body.app .taskbar a.on{color:#fff!important;background:rgba(255,255,255,.085)!important}
+body.app .taskbar a.on .ic{color:#fff!important;transform:none!important}
+body.app .taskbar a .ic{width:23px!important;height:23px!important}
+body.app .taskbar a span.tb-label{font-size:10px!important;font-weight:500!important}
+body.app .taskbar .tb-badge{background:var(--red)!important;border-color:#2a2833!important}
+
+/* flatter surfaces and denser rows */
+body.app .bezel,body.app .bezel.flat{background:transparent!important;border:0!important;padding:0!important;box-shadow:none!important}
+body.app .bezel>.core,body.app .bezel.flat>.core{
+  background:var(--panel)!important;border:1px solid var(--hair)!important;border-radius:18px!important;
+  box-shadow:none!important;overflow:hidden
+}
+body.app .bezel.flat>.core{background:transparent!important;border:0!important;border-radius:0!important;overflow:visible!important}
+body.app .kc-home-bal-card,body.app .kc-assets-card,body.app .kc-group-box,body.app .kc-ref-card,
+body.app .fp-panel,body.app .div-card,body.app .settings-card,body.app .wcard{
+  background:var(--panel)!important;border:1px solid var(--hair)!important;border-radius:18px!important;
+  box-shadow:none!important
+}
+body.app .kc-group-box{overflow:hidden!important}
+body.app .kc-row,body.app .kc-item-row,body.app .arow,body.app .trow,body.app .fd,body.app .dr{
+  border-color:rgba(255,255,255,.055)!important;box-shadow:none!important
+}
+body.app .kc-row:hover,body.app .kc-item-row:hover,body.app .arow:hover,body.app .dr:hover{
+  background:rgba(255,255,255,.035)!important;box-shadow:none!important
+}
+body.app .kc-hot-card{background:var(--panel)!important;border:1px solid var(--hair)!important;border-radius:16px!important;box-shadow:none!important}
+body.app .kc-news{background:rgba(77,99,255,.1)!important;border-color:rgba(77,99,255,.2)!important;border-radius:14px!important}
+body.app .kc-live-dot{background:var(--positive)!important;box-shadow:none!important}
+
+/* actions, chips and tabs */
+body.app .btn{border-radius:12px!important;text-transform:none!important;letter-spacing:0!important;font-size:13px!important}
+body.app .btn-lime,body.app .kc-btn-buy,body.app .tradebtn,
+body.app .range button[aria-pressed="true"],body.app .seg button[aria-pressed="true"],
+body.app .tabstrip button[aria-pressed="true"],body.app .mkt[aria-pressed="true"]{
+  background:var(--lime)!important;border-color:var(--lime)!important;color:#fff!important;box-shadow:none!important
+}
+body.app .kc-act-ico,body.app .ibox,body.app .coin,body.app .kc-action-btn,
+body.app .kc-p-back,body.app .kc-p-action-btn,body.app .kc-icon-btn{
+  background:rgba(255,255,255,.055)!important;border:1px solid rgba(255,255,255,.075)!important;
+  color:#d7d5df!important;box-shadow:none!important
+}
+body.app .kc-cat-tabs,body.app .utabs{gap:10px!important;border-bottom:1px solid var(--hair)!important;padding-bottom:7px!important}
+body.app .kc-cat-tab,body.app .utabs button{
+  border:1px solid var(--hair)!important;border-radius:10px!important;padding:8px 13px!important;
+  color:var(--dim)!important;background:transparent!important
+}
+body.app .kc-cat-tab.on,body.app .utabs button[aria-pressed="true"]{
+  background:var(--panel-2)!important;color:#fff!important;border-color:rgba(255,255,255,.11)!important
+}
+body.app .kc-cat-tab::after,body.app .utabs button::after{display:none!important}
+body.app .markets,body.app .seg-sm{display:flex!important;gap:7px!important;overflow-x:auto!important;scrollbar-width:none!important;flex-wrap:nowrap!important}
+body.app .mkt,body.app .seg-sm button,body.app .range button{
+  border-radius:10px!important;border:1px solid var(--hair)!important;background:rgba(255,255,255,.035)!important;
+  color:var(--dim)!important;white-space:nowrap!important
+}
+body.app .searchbox,body.app .kc-search-box,body.app .kc-home-search-box,body.app .tf .inp,body.app .field{
+  background:var(--panel-2)!important;border:1px solid var(--hair)!important;border-radius:14px!important;box-shadow:none!important
+}
+body.app .searchbox:focus-within,body.app .kc-search-box:focus-within,body.app .kc-home-search-box:focus-within,body.app .tf .inp:focus-within{
+  border-color:rgba(77,99,255,.6)!important
+}
+
+/* value semantics */
+body.app .pl.up,body.app .kc-asset-chg.up,body.app .kc-hot-badge.up,
+body.app .kc-bal-delta-tag,body.app .kc-news-txt b{color:var(--positive)!important}
+body.app .kc-pill:not(.down){background:rgba(77,99,255,.95)!important;color:#fff!important;border-radius:9px!important}
+body.app .kc-hot-badge.up,body.app .kc-bal-delta-tag{background:rgba(36,200,107,.1)!important}
+body.app .kc-pair-title,body.app .kc-price-main,body.app .kc-hot-price,body.app .kc-item-title{font-weight:600!important}
+body.app .kc-pair-sub,body.app .kc-price-sub,body.app .kc-item-desc,body.app .sub-line{color:var(--faint)!important}
+body.app .kc-avatar{width:42px!important;height:42px!important;border:0!important;background:#171521!important}
+body.app .player-photo{filter:saturate(.92) contrast(1.02)}
+body.app .tgl[aria-pressed="true"],body.app .kc-switch.on{background:var(--lime)!important}
+body.app .tgl[aria-pressed="true"] i{background:#fff!important;box-shadow:none!important}
+
+/* page title bars and profile */
+body.app .kc-p-topbar{min-height:44px!important;padding:4px 0 18px!important;margin:0!important}
+body.app .kc-p-topbar [style*="font-family:Archivo"]{font-family:Aeonik,system-ui,sans-serif!important;text-transform:none!important;font-size:19px!important;font-weight:600!important}
+body.app .kc-p-hero{align-items:flex-start!important;text-align:left!important;padding:6px 2px 20px!important}
+body.app .kc-p-avatar-box{width:92px!important;height:92px!important;margin-bottom:18px!important}
+body.app .kc-p-avatar-img{object-fit:contain!important;background:#45f48b!important;padding:18px!important;border:0!important;box-shadow:none!important}
+body.app .kc-p-name-row,body.app .kc-p-uid-row{justify-content:flex-start!important}
+body.app .kc-p-username{font-size:28px!important;font-weight:600!important}
+body.app .kc-p-pills{justify-content:flex-start!important}
+body.app .kc-p-pill{border-radius:10px!important;background:var(--panel-2)!important}
+body.app .settings-nav a.on{background:var(--lime)!important;color:#fff!important;border-color:var(--lime)!important;box-shadow:none!important}
+body.app .settings-card:hover{transform:none!important;border-color:rgba(77,99,255,.34)!important}
+
+/* reference-like portfolio strip used on the profile */
+.profile-performance{margin:2px 0 24px;padding:20px 0 18px;border-top:1px solid var(--hair);border-bottom:1px solid var(--hair)}
+.profile-social{display:flex;gap:24px;color:var(--dim);font-size:13px;margin:0 0 14px}
+.profile-social b{font-size:15px;color:#fff;margin-right:4px}
+.profile-value-row{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
+.profile-value{font-size:34px;font-weight:600;letter-spacing:-.04em;line-height:1}
+.profile-change{font-size:13px;color:var(--positive);margin-top:8px}
+.profile-range{display:flex;gap:5px}.profile-range button{border:0;border-radius:9px;padding:7px 10px;background:transparent;color:var(--faint);font-weight:600}.profile-range button.on{background:var(--panel-2);color:#fff}
+.profile-chart{height:112px;margin-top:15px}.profile-chart svg{width:100%;height:100%;overflow:visible}
+.profile-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:16px}
+.profile-summary div{background:var(--panel);border:1px solid var(--hair);border-radius:14px;padding:13px}.profile-summary span{display:block;font-size:10px;color:var(--faint)}.profile-summary b{display:block;font-size:14px;margin-top:4px}
+
+@media(max-width:768px){
+  body.app{padding-bottom:98px}
+  body.app main{padding-top:62px!important}
+  body.app .nav-island.topbar{top:7px!important;left:12px!important;right:12px!important;width:auto!important;max-width:none!important}
+  body.app .nav-island.topbar .logo .brand-logo-img{width:32px!important;height:32px!important}
+  body.app .nav-island.topbar #navBell,body.app .nav-profile-btn{width:36px!important;height:36px!important}
+  body.app .kc-home-wrap,body.app .kc-ex-wrap,body.app .kc-assets-wrap,body.app .kc-wallet-wrap,
+  body.app .kc-profile-wrap,body.app .kc-trade-wrap,body.app .kc-settings-wrap,body.app .wrap{
+    width:100%!important;padding-left:20px!important;padding-right:20px!important
+  }
+  body.app .taskbar{width:calc(100vw - 28px)!important;height:66px!important;bottom:max(10px,env(safe-area-inset-bottom))!important}
+  body.app .taskbar a{height:54px!important}
+  body.app .taskbar a span.tb-label{display:none!important}
+  body.app .taskbar a .ic{width:25px!important;height:25px!important}
+  body.app .kc-home-bal-card{padding:18px!important}
+  body.app .kc-bal-val{font-size:32px!important}
+  body.app .kc-hot-card{flex-basis:154px!important;width:154px!important;min-width:154px!important}
+  body.app .kc-row{grid-template-columns:minmax(0,1fr) 80px 72px!important;padding:12px 0!important;gap:6px!important}
+  body.app .kc-row-mid{padding-right:4px!important}.kc-pill{min-width:68px!important}
+  body.app .kc-group-box{border-left:0!important;border-right:0!important;border-radius:0!important;background:transparent!important}
+  body.app .kc-ref-card{padding:15px!important}
+  body.app .kc-p-hero{padding-top:10px!important}
+  body.app .kc-p-actions{gap:4px!important}
+  body.app .profile-summary{grid-template-columns:1fr 1fr}.profile-summary div:last-child{grid-column:1/-1}
+}
+@media(max-width:360px){
+  body.app .kc-home-wrap,body.app .kc-ex-wrap,body.app .kc-assets-wrap,body.app .kc-wallet-wrap,
+  body.app .kc-profile-wrap,body.app .kc-trade-wrap,body.app .kc-settings-wrap,body.app .wrap{padding-left:16px!important;padding-right:16px!important}
+  body.app .kc-bal-actions{gap:4px!important}.kc-act-ico{width:42px!important;height:42px!important}
+  body.app .profile-value{font-size:29px}.profile-social{gap:15px}
+}
+"""
+
 MARKET_NAV = [("exchange.html", "Exchange"), ("clubs.html", "Dream Clubs"),
               ("fanplay.html", "FanPlay"), ("ftr.html", "$FTR"),
               ("how-it-works.html", "How it works")]
@@ -1683,8 +1871,8 @@ NAVITEMS = MARKET_NAV  # kept for backwards compatibility
 def head(title, extra_css="", body_class=""):
     return ('<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">'
             '<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">'
-            '<title>%s</title>%s<style>%s%s</style></head><body class="%s">'
-            % (title, FONTS, CSS, extra_css, body_class))
+            '<title>%s</title>%s<style>%s%s%s</style></head><body class="%s">'
+            % (title, FONTS, CSS, extra_css, APP_REFERENCE_CSS if body_class == "app" else "", body_class))
 
 def atmosphere():
     return ('<div class="orb orb-a"></div><div class="orb orb-b"></div><div class="orb orb-c"></div>'
@@ -1701,7 +1889,7 @@ TASKBAR = [("dashboard.html", "Home", "home"),
            ("exchange.html", "Markets", "market"),
            ("fanplay.html", "FanPlay", "ball"),
            ("leaderboard.html", "Leaderboard", "podium"),
-           ("ftr.html", "Assets", "wallet")]
+           ("account.html", "Profile", "profile")]
 
 # Every app page lights up one of the five tabs.
 TAB_OF = {"dashboard.html": "dashboard.html", "clubs.html": "dashboard.html",
@@ -1710,9 +1898,9 @@ TAB_OF = {"dashboard.html": "dashboard.html", "clubs.html": "dashboard.html",
           "trade.html": "exchange.html",
           "fanplay.html": "fanplay.html", "liveboard.html": "fanplay.html",
           "leaderboard.html": "leaderboard.html", "divisions.html": "leaderboard.html",
-          "ftr.html": "ftr.html", "wallet.html": "ftr.html", "send.html": "ftr.html",
-          "receive.html": "ftr.html", "swap.html": "ftr.html", "buy.html": "ftr.html",
-          "activity.html": "ftr.html", "portfolio.html": "ftr.html",
+          "ftr.html": "", "wallet.html": "", "send.html": "",
+          "receive.html": "", "swap.html": "", "buy.html": "",
+          "activity.html": "", "portfolio.html": "",
           "account.html": "account.html", "notifications.html": "dashboard.html",
           "settings.html": "account.html", "settings-profile.html": "account.html",
           "settings-club.html": "account.html", "settings-security.html": "account.html",
@@ -1745,7 +1933,7 @@ def nav(current="", app=False):
                '<a class="bell" id="navBell" href="notifications.html" aria-label="Notifications">%s'
                '<span class="dot" id="navDot" hidden></span></a>'
                '<a class="nav-profile-btn" id="navProfileBtn" href="account.html" aria-label="User Profile" title="User Profile">'
-               '<img src="assets/astronaut_avatar.jpg" alt="Profile" class="nav-avatar-img">'
+               '<img src="assets/fantrade-outline-logo.png" alt="Profile" class="nav-avatar-img">'
                '</a>'
                '</div></nav>') % ic("bell", "ic")
         return top + taskbar(current)

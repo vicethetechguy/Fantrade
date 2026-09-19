@@ -1,6 +1,6 @@
 # Generators
 
-The twenty-four HTML pages in the repository root are generated, not hand-edited.
+The HTML pages in the repository root are generated, not hand-edited.
 
 - `common.py` — design tokens, CSS, icon sprite, the `FT` state store, the shell (top bar, five-item taskbar, `TAB_OF` mapping, marketing and auth navs) and footer
 - `icons_data.py` — Phosphor Light icon paths, compiled to a sprite
@@ -18,3 +18,10 @@ cd tools && python3 pages.py && python3 pages2.py && python3 pages3.py && python
 
 All five scripts write to the repository root. Edit the generators, not the HTML, or the next
 build will overwrite your changes.
+
+The authenticated pages share the reference-style product shell in `common.py`. Validate every
+app page at phone, tablet, and desktop widths with:
+
+```bash
+node tools/check-app-ui.cjs
+```
