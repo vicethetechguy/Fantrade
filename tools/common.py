@@ -1682,7 +1682,7 @@ APP_REFERENCE_CSS = r"""
 @font-face{font-family:Aeonik;src:url('assets/landing/Aeonik-Medium.woff2') format('woff2');font-style:normal;font-weight:600 900;font-display:swap}
 body.app{
   --void:#05030d;--core:#0c0a15;--shell:#12101c;--ink:#f7f6fb;--dim:#aaa7b6;--faint:#6d6979;
-  --hair:rgba(255,255,255,.075);--hair-2:rgba(255,255,255,.14);--lime:#4d63ff;--positive:#24c86b;
+  --hair:rgba(255,255,255,.075);--hair-2:rgba(255,255,255,.14);--lime:#1800ad;--positive:#24c86b;
   --red:#ff5668;--amber:#ffbd52;--panel:#11101a;--panel-2:#171521;--dock:#2a2833;
   background:#05030d;color:var(--ink);font-family:Aeonik,Montserrat,system-ui,sans-serif;
   font-size:14px;line-height:1.45;min-height:100vh;padding-bottom:102px
@@ -1709,6 +1709,7 @@ body.app .nav-island.topbar{
   padding:0 5px 0 7px!important;border:0!important;border-radius:0!important;background:transparent!important;
   backdrop-filter:none!important;-webkit-backdrop-filter:none!important;box-shadow:none!important
 }
+body.app .nav-island.topbar::before{content:"";position:fixed;z-index:-1;left:0;right:0;top:0;height:68px;background:#05030d;border-bottom:1px solid rgba(255,255,255,.035);pointer-events:none}
 body.app .nav-island.topbar .logo{font-size:0!important;gap:0!important}
 body.app .nav-island.topbar .logo .brand-logo-img{width:34px!important;height:34px!important;object-fit:contain!important}
 body.app .nav-island.topbar>div{gap:8px!important}
@@ -1733,6 +1734,11 @@ body.app .taskbar a:hover{color:#fff!important;background:rgba(255,255,255,.045)
 body.app .taskbar a.on{color:#fff!important;background:rgba(255,255,255,.085)!important}
 body.app .taskbar a.on .ic{color:#fff!important;transform:none!important}
 body.app .taskbar a .ic{width:23px!important;height:23px!important}
+body.app .taskbar .tb-line-icon{width:25px;height:25px;display:block;fill:none;stroke:currentColor;stroke-width:1.65;stroke-linecap:round;stroke-linejoin:round}
+body.app .taskbar .tb-fanplay-mark{width:31px;height:31px;object-fit:contain;display:block;filter:none}
+body.app .taskbar a[data-tab="fanplay"] .tb-icon-box{width:44px;height:44px;border-radius:50%;background:var(--lime);color:#fff}
+body.app .taskbar a[data-tab="fanplay"].on .tb-icon-box{background:#fff}
+body.app .taskbar a[data-tab="fanplay"].on .tb-fanplay-mark{filter:drop-shadow(0 0 0 transparent)}
 body.app .taskbar a span.tb-label{font-size:10px!important;font-weight:500!important}
 body.app .taskbar .tb-badge{background:var(--red)!important;border-color:#2a2833!important}
 
@@ -1756,7 +1762,7 @@ body.app .kc-row:hover,body.app .kc-item-row:hover,body.app .arow:hover,body.app
   background:rgba(255,255,255,.035)!important;box-shadow:none!important
 }
 body.app .kc-hot-card{background:var(--panel)!important;border:1px solid var(--hair)!important;border-radius:16px!important;box-shadow:none!important}
-body.app .kc-news{background:rgba(77,99,255,.1)!important;border-color:rgba(77,99,255,.2)!important;border-radius:14px!important}
+body.app .kc-news{background:rgba(24,0,173,.16)!important;border-color:rgba(24,0,173,.34)!important;border-radius:14px!important}
 body.app .kc-live-dot{background:var(--positive)!important;box-shadow:none!important}
 
 /* actions, chips and tabs */
@@ -1789,13 +1795,13 @@ body.app .searchbox,body.app .kc-search-box,body.app .kc-home-search-box,body.ap
   background:var(--panel-2)!important;border:1px solid var(--hair)!important;border-radius:14px!important;box-shadow:none!important
 }
 body.app .searchbox:focus-within,body.app .kc-search-box:focus-within,body.app .kc-home-search-box:focus-within,body.app .tf .inp:focus-within{
-  border-color:rgba(77,99,255,.6)!important
+  border-color:rgba(24,0,173,.72)!important
 }
 
 /* value semantics */
 body.app .pl.up,body.app .kc-asset-chg.up,body.app .kc-hot-badge.up,
 body.app .kc-bal-delta-tag,body.app .kc-news-txt b{color:var(--positive)!important}
-body.app .kc-pill:not(.down){background:rgba(77,99,255,.95)!important;color:#fff!important;border-radius:9px!important}
+body.app .kc-pill:not(.down){background:#1800ad!important;color:#fff!important;border-radius:9px!important}
 body.app .kc-hot-badge.up,body.app .kc-bal-delta-tag{background:rgba(36,200,107,.1)!important}
 body.app .kc-pair-title,body.app .kc-price-main,body.app .kc-hot-price,body.app .kc-item-title{font-weight:600!important}
 body.app .kc-pair-sub,body.app .kc-price-sub,body.app .kc-item-desc,body.app .sub-line{color:var(--faint)!important}
@@ -1815,7 +1821,7 @@ body.app .kc-p-username{font-size:28px!important;font-weight:600!important}
 body.app .kc-p-pills{justify-content:flex-start!important}
 body.app .kc-p-pill{border-radius:10px!important;background:var(--panel-2)!important}
 body.app .settings-nav a.on{background:var(--lime)!important;color:#fff!important;border-color:var(--lime)!important;box-shadow:none!important}
-body.app .settings-card:hover{transform:none!important;border-color:rgba(77,99,255,.34)!important}
+body.app .settings-card:hover{transform:none!important;border-color:rgba(24,0,173,.5)!important}
 
 /* reference-like portfolio strip used on the profile */
 .profile-performance{margin:2px 0 24px;padding:20px 0 18px;border-top:1px solid var(--hair);border-bottom:1px solid var(--hair)}
@@ -1913,15 +1919,25 @@ def taskbar(current=""):
     if current == "asset.html":
         return ""
     tab = TAB_OF.get(current, "")
+    line_icons = {
+        "home": '<svg class="tb-line-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5v9a1.5 1.5 0 0 1-1.5 1.5H15v-6H9v6H4.5A1.5 1.5 0 0 1 3 19.5z"/></svg>',
+        "market": '<svg class="tb-line-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4v16M12 4v16M19 4v16M3 8h4M10 14h4M17 10h4"/></svg>',
+        "podium": '<svg class="tb-line-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20v-6h5v6M9 20V8h6v12M15 20v-9h5v9M2 20h20M12 3l.7 1.4 1.6.2-1.2 1.1.3 1.6L12 6.5l-1.4.8.3-1.6-1.2-1.1 1.6-.2z"/></svg>',
+        "profile": '<svg class="tb-line-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4.5 21a7.5 7.5 0 0 1 15 0"/></svg>'
+    }
     out = []
     for href, label, icon in TASKBAR:
         on = href == tab
         badge_html = '<span class="tb-badge">3</span>' if label == "Home" else ""
+        icon_html = ('<img class="tb-fanplay-mark" src="assets/fantrade-outline-logo.png" alt="">'
+                     if label == "FanPlay" else line_icons.get(icon, ic(icon, "ic")))
         out.append(('<a href="%s" class="tb-item%s"%s aria-label="%s">'
                     '<div class="tb-icon-box">%s%s</div>'
                     '<span class="tb-label">%s</span></a>')
                    % (href, ' on' if on else "", ' aria-current="page"' if on else "",
-                      label, ic(icon, "ic"), badge_html, label))
+                      label, icon_html, badge_html, label))
+        if label == "FanPlay":
+            out[-1] = out[-1].replace('class="tb-item', 'data-tab="fanplay" class="tb-item', 1)
     return '<nav class="taskbar kc-dock" aria-label="Primary">%s</nav>' % "".join(out)
 
 

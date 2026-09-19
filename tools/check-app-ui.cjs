@@ -13,7 +13,7 @@ const pages = [
   'settings-security.html','settings-alerts.html','settings-wallet.html','settings-play.html',
   'settings-data.html','onboarding.html'
 ];
-const shots = new Set(['dashboard.html','exchange.html','clubs.html','fanplay.html','leaderboard.html','account.html']);
+const shots = new Set(['dashboard.html','exchange.html','clubs.html','fanplay.html','leaderboard.html','notifications.html','account.html']);
 const server = http.createServer((request, response) => {
   const file = path.resolve(root, '.' + decodeURIComponent(request.url.split('?')[0]));
   if (!file.startsWith(root + path.sep)) return response.writeHead(403).end();
@@ -62,6 +62,28 @@ const server = http.createServer((request, response) => {
       }
       console.log(`App UI pass: ${width}px across ${pages.length} pages`);
     }
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto(`${base}/notifications.html`, { waitUntil: 'domcontentloaded' });
+    await page.evaluate(() => scrollTo(0, 420));
+    await page.waitForTimeout(250);
+    const notificationLayout = await page.evaluate(() => {
+      const title = document.querySelector('.notifications-page > .kc-p-topbar');
+      const feed = document.querySelector('.notification-feed > .core');
+      const titleStyle = getComputedStyle(title);
+      const feedStyle = getComputedStyle(feed);
+      return {
+        titleTop: Math.round(title.getBoundingClientRect().top),
+        titlePosition: titleStyle.position,
+        titleBackground: titleStyle.backgroundColor,
+        feedBorder: feedStyle.borderTopWidth,
+        feedBackground: feedStyle.backgroundColor
+      };
+    });
+    assert.equal(notificationLayout.titlePosition, 'fixed', 'Notification title is not fixed while scrolling');
+    assert(notificationLayout.titleTop >= 57, 'Notification content scrolls over the app header');
+    assert.equal(notificationLayout.feedBorder, '0px', 'Notification feed still has a card border');
+    assert(notificationLayout.feedBackground === 'rgba(0, 0, 0, 0)', 'Notification feed still has a card background');
+    await page.screenshot({ path: path.join(output, 'notifications-scroll-390.png'), fullPage: false });
     assert.deepEqual(errors, [], `Browser errors: ${errors.join('; ')}`);
   } finally {
     await browser.close();

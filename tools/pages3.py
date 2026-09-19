@@ -1544,24 +1544,105 @@ renderBoard();
 window.addEventListener('fantrade:statechange', renderBoard);
 """
 
-page("leaderboard.html", "Leaderboard — Fantrade", "".join(lb), LB_JS, LB_CSS + PF_CSS)
+# Rebuilt social leaderboard.  The earlier table data remains the source of
+# truth, while this presentation follows the compact mobile ranking reference.
+LB2_CSS = """
+.lb2-wrap{width:100%;max-width:680px;margin:0 auto;padding:0 20px 118px;box-sizing:border-box}
+.lb2-tabs{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--hair);margin-bottom:26px}
+.lb2-tabs button{position:relative;border:0;background:transparent;color:var(--faint);padding:13px 8px 16px;font-size:17px;font-weight:600;cursor:pointer}
+.lb2-tabs button.on{color:#fff}.lb2-tabs button.on::after{content:"";position:absolute;left:26%;right:26%;bottom:-1px;height:3px;border-radius:4px;background:var(--lime)}
+.lb2-tabs em{font-style:normal;font-size:11px;color:var(--faint);margin-left:4px}
+.lb2-section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:13px}
+.lb2-section-head h2{font-size:21px!important;font-weight:600!important}.lb2-section-head h2 span{font-size:10px;color:#fff;background:rgba(24,0,173,.34);border-radius:5px;padding:3px 6px;vertical-align:3px;margin-left:5px}
+.lb2-section-head a{color:var(--dim);font-size:13px}
+.lb2-clans{display:flex;gap:10px;overflow-x:auto;scrollbar-width:none;margin:0 -20px 22px;padding:0 20px 2px}.lb2-clans::-webkit-scrollbar{display:none}
+.lb2-clan{flex:0 0 182px;background:var(--panel);border:1px solid var(--hair);border-radius:17px;padding:14px;text-decoration:none;color:#fff}
+.lb2-clan-top{display:flex;align-items:center;gap:11px}.lb2-clan-mark{width:48px;height:48px;border-radius:13px;background:#fff;display:grid;place-items:center;overflow:hidden;color:#090713;font-weight:800}.lb2-clan-mark img{width:100%;height:100%;object-fit:cover}
+.lb2-clan b{display:block;font-size:14px;margin-top:10px}.lb2-clan small{display:block;color:var(--faint);font-size:10.5px;margin-top:5px}.lb2-clan strong{display:block;color:var(--positive);font-size:13px;margin-top:10px}
+.lb2-filter{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:8px 0 16px}
+.lb2-select{border:1px solid var(--hair);background:var(--panel-2);color:#fff;border-radius:13px;padding:9px 14px;font-weight:600}
+.lb2-ranges{display:flex;align-items:center;gap:5px}.lb2-ranges button{border:0;background:transparent;color:var(--faint);border-radius:9px;padding:8px 10px;font-weight:600;cursor:pointer}.lb2-ranges button.on{background:var(--panel-2);color:#fff}
+.lb2-me{display:grid;grid-template-columns:52px 1fr auto;gap:12px;align-items:center;background:var(--panel);border:1px solid var(--hair);border-radius:17px;padding:14px;margin-bottom:15px}
+.lb2-me-logo{width:48px;height:48px;border-radius:50%;background:#46f58c;padding:10px;object-fit:contain}.lb2-me span{display:block;color:var(--dim);font-size:12px}.lb2-me b{display:block;color:var(--lime);font-size:20px;margin-top:1px}.lb2-me-value{text-align:right;font-size:20px;color:#fff}.lb2-me-value small{display:block;color:var(--faint);font-size:10px;margin-top:3px}
+.lb2-list{display:flex;flex-direction:column}.lb2-row{display:grid;grid-template-columns:34px 48px minmax(0,1fr) auto;gap:10px;align-items:center;padding:13px 0;border-bottom:1px solid rgba(255,255,255,.045)}
+.lb2-rank{font-size:14px;color:var(--dim);text-align:center}.lb2-rank.medal{width:26px;height:31px;clip-path:polygon(0 0,100% 0,100% 72%,50% 100%,0 72%);display:grid;place-items:center;color:#160d02;font-weight:800;background:#f6c94c}.lb2-rank.silver{background:#c6cad2}.lb2-rank.bronze{background:#c17d48}
+.lb2-avatar{width:44px;height:44px;border-radius:50%;object-fit:cover;background:var(--panel-2)}.lb2-name{min-width:0}.lb2-name b{display:block;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.lb2-name span{display:block;color:var(--faint);font-size:11px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lb2-profit{text-align:right;color:var(--positive);font-size:15px;font-weight:600}.lb2-profit small{display:flex;justify-content:flex-end;margin-top:6px}.lb2-profit small img{width:20px;height:20px;border-radius:50%;object-fit:cover;margin-left:-5px;border:2px solid #05030d}
+@media(min-width:900px){.lb2-wrap{padding-top:10px}.lb2-clan{flex-basis:200px}.lb2-tabs button{font-size:18px}}
+@media(max-width:360px){.lb2-wrap{padding-left:16px;padding-right:16px}.lb2-clans{margin-left:-16px;margin-right:-16px;padding-left:16px;padding-right:16px}.lb2-row{grid-template-columns:28px 42px minmax(0,1fr) auto;gap:8px}.lb2-avatar{width:40px;height:40px}.lb2-profit{font-size:13px}}
+"""
+
+lb2 = ['<main><div class="lb2-wrap">'
+       '<div class="lb2-tabs"><button type="button">Friends <em>3</em></button><button class="on" type="button">Leaderboard</button></div>'
+       '<div class="lb2-section-head"><h2>Clans <span>New</span></h2><a href="divisions.html">View all ›</a></div>'
+       '<div class="lb2-clans">'
+       '<a class="lb2-clan" href="clubs.html"><div class="lb2-clan-top"><span class="lb2-clan-mark">RMO</span></div><b>Risk On</b><small>🏆 4 members</small><strong>+3,497,855 $FTR</strong></a>'
+       '<a class="lb2-clan" href="clubs.html"><div class="lb2-clan-top"><span class="lb2-clan-mark"><img src="assets/players/mbappe.webp" alt=""></span></div><b>Apex Eleven</b><small>⚽ 20 members</small><strong>+1,853,334 $FTR</strong></a>'
+       '<a class="lb2-clan" href="clubs.html"><div class="lb2-clan-top"><span class="lb2-clan-mark"><img src="assets/players/saka.webp" alt=""></span></div><b>North Bank</b><small>🔥 23 members</small><strong>+1,800,986 $FTR</strong></a>'
+       '</div>'
+       '<div class="lb2-filter"><button class="lb2-select" type="button">All⌄</button><div class="lb2-ranges" id="lb2Ranges"><button class="on" data-m="1" type="button">24h</button><button data-m="3" type="button">7d</button><button data-m="7" type="button">30d</button><button data-m="12" type="button">All</button></div></div>'
+       '<div class="lb2-me"><img class="lb2-me-logo" src="assets/fantrade-outline-logo.png" alt=""><div><span>Your rank</span><b data-bind="rank">#124</b></div><div class="lb2-me-value">245,800<small>$FTR club value</small></div></div>'
+       '<div class="lb2-list" id="lb2List">']
+
+lb2_avatars = ["pep", "mbappe", "saka", "musiala", "vinicius", "haaland", "bellingham", "arteta", "yamal", "palmer", "rodri", "vandijk", "rice"]
+lb2_bubbles = [["saka", "haaland", "mbappe"], ["bellingham", "rodri", "vinicius"], ["saka", "odegaard", "saliba"], ["musiala", "wirtz", "rodri"], ["mbappe", "vinicius", "bellingham"]]
+for i, row in enumerate(BOARD):
+    rank, club, manager, _holders, _value, _delta, _xi, _coach, _boost, _fp, yearly, _division, _colour = row
+    if club == "Zero FC":
+        continue
+    rank_html = ('<span class="lb2-rank medal%s">%d</span>' %
+                 (" silver" if rank == 2 else (" bronze" if rank == 3 else ""), rank)
+                 if rank <= 3 else '<span class="lb2-rank">%d.</span>' % rank)
+    avatar = lb2_avatars[i % len(lb2_avatars)]
+    bubbles = lb2_bubbles[i % len(lb2_bubbles)]
+    bubble_html = "".join('<img src="assets/players/%s.webp" alt="">' % name for name in bubbles)
+    profit = yearly * 73
+    lb2.append('%s<img class="lb2-avatar" src="assets/players/%s.webp" alt=""><div class="lb2-name"><b>%s</b><span>%s</span></div><div class="lb2-profit" data-profit="%d">+%s<small>%s</small></div>' %
+               (rank_html, avatar, club, manager, profit, format(profit, ",d"), bubble_html))
+    lb2[-1] = '<div class="lb2-row">' + lb2[-1] + '</div>'
+lb2.append('</div></div></main>')
+
+LB2_JS = r"""
+document.querySelectorAll('#lb2Ranges button').forEach(function(button){
+  button.addEventListener('click', function(){
+    document.querySelectorAll('#lb2Ranges button').forEach(function(item){ item.classList.remove('on'); });
+    button.classList.add('on');
+    var multiplier = Number(button.dataset.m || 1);
+    document.querySelectorAll('[data-profit]').forEach(function(value){
+      value.childNodes[0].nodeValue = '+' + (Number(value.dataset.profit) * multiplier).toLocaleString('en-US');
+    });
+  });
+});
+"""
+
+page("leaderboard.html", "Leaderboard — Fantrade", "".join(lb2), LB2_JS, LB2_CSS)
 print("built leaderboard.html")
 
 # ══════════════════════════════════════════════════════════════════
 # NOTIFICATIONS — activity feed
 # ══════════════════════════════════════════════════════════════════
 NT_CSS = """
+.notifications-page{max-width:680px!important}
+.notifications-page>.kc-p-topbar{position:fixed!important;top:68px!important;left:50%!important;transform:translateX(-50%)!important;width:min(640px,calc(100vw - 40px))!important;z-index:24;background:#05030d!important;box-shadow:0 -12px 0 12px #05030d;padding:9px 0 14px!important}
+.notifications-page .bento{display:block!important;padding-top:62px!important}
+.notifications-page .notification-feed{padding:0!important;background:transparent!important;border:0!important;box-shadow:none!important}
+body.app .notifications-page .notification-feed>.core{background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important;overflow:visible!important}
 .fd .ibox{flex:none}
 .fd .ibox .ic{width:17px;height:17px}
 .quiet{display:flex;gap:10px;align-items:center;margin-top:10px}
 .quiet .tf{flex:1;margin:0}
-.nt-filter-head{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:18px 18px 12px}
+.notifications-page .fd{padding:16px 0!important;background:transparent!important;border-bottom:1px solid rgba(255,255,255,.055)!important}
+.notifications-page .fd:hover,.notifications-page .fd.unread{background:transparent!important}
+.notifications-page .fd .ibox{background:transparent!important;border:0!important;width:32px!important;padding:0!important}
+.notifications-page .daysep{padding:17px 0 9px!important;background:transparent!important;border-bottom:1px solid rgba(255,255,255,.045)!important}
+.nt-filter-head{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:10px 0 12px}
 .nt-filter-head .markets{flex:1;min-width:0;overflow-x:auto;flex-wrap:nowrap;scrollbar-width:none}
-.nt-read{border:0;background:transparent;color:var(--lime);font:600 10px Montserrat,sans-serif;white-space:nowrap;cursor:pointer;padding:7px 4px}
-@media(max-width:560px){.nt-filter-head{align-items:flex-start;flex-direction:column}.nt-read{align-self:flex-end}}
+.nt-read{border:0;background:transparent;color:var(--lime);font:600 10px Aeonik,Montserrat,sans-serif;white-space:nowrap;cursor:pointer;padding:7px 4px}
+@media(max-width:768px){.notifications-page>.kc-p-topbar{top:58px!important}}
+@media(max-width:560px){.nt-filter-head{align-items:flex-start;flex-direction:column}.nt-read{align-self:flex-end}.notifications-page .fd .amt{font-size:12px}}
 """
 
-nt = [T('<main><div class="kc-home-wrap">'
+nt = [T('<main><div class="kc-home-wrap notifications-page">'
         '<div class="kc-p-topbar">'
         '  <a href="dashboard.html" class="kc-p-back" title="Back to Home">'
         '    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>'
@@ -1573,7 +1654,7 @@ nt = [T('<main><div class="kc-home-wrap">'
         '</div>'
         '<div class="bento">')]
 
-nt.append(T('<div class="bezel c12" data-reveal><div class="core mobile-flat">'
+nt.append(T('<div class="bezel c12 notification-feed" data-reveal><div class="core mobile-flat">'
             '<div class="nt-filter-head"><div class="markets" id="ntFilter">'
             '<button class="mkt" type="button" aria-pressed="true" data-k="all">Everything</button>'
             '<button class="mkt" type="button" aria-pressed="false" data-k="settle">Settlements</button>'
@@ -1608,7 +1689,7 @@ function renderFeed(){
       + '<div class="bd"><div class="tt">' + n.title + '</div><div class="ms">' + n.msg + '</div>'
       + '<div class="tm">' + n.time + '</div></div>'
       + (n.amt ? '<div class="amt ' + (n.tone === 'up' ? 'up' : (n.tone === 'down' ? 'down' : ''))
-        + '" style="color:' + (n.tone === 'up' ? 'var(--lime)' : (n.tone === 'down' ? 'var(--red)' : 'var(--faint)'))
+        + '" style="color:' + (n.tone === 'up' ? 'var(--positive)' : (n.tone === 'down' ? 'var(--red)' : 'var(--faint)'))
         + '">' + n.amt + '</div>' : '')
       + '</div>');
   });
