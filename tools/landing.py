@@ -26,6 +26,8 @@ CSS = r"""
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth;scroll-padding-top:32px}
+/* Base & Typography */
+html,body{overflow-x:hidden;width:100%}
 body{
   margin:0;background:var(--bg);color:var(--text);
   font-family:Montserrat,system-ui,-apple-system,sans-serif;
@@ -48,7 +50,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-off
 .skip{position:fixed;top:-80px;left:16px;z-index:99;background:var(--accent);color:var(--accent-ink);font-weight:700;padding:12px 18px;border-radius:8px;transition:top .2s}
 .skip:focus{top:12px}
 
-.landing{position:relative;overflow:hidden;background:radial-gradient(ellipse 80% 50% at 50% -20%,rgba(24,0,173,.06),transparent 70%),var(--bg)}
+.landing{position:relative;overflow-x:hidden;width:100%;background:radial-gradient(ellipse 80% 50% at 50% -20%,rgba(24,0,173,.06),transparent 70%),var(--bg)}
 .space-bg{position:absolute;inset:0 0 auto;width:100%;height:auto;z-index:0;pointer-events:none;opacity:.35;mix-blend-mode:screen}
 .bg-deco{position:absolute;pointer-events:none;user-select:none;z-index:0}
 .bg-deco img{width:100%;height:auto;display:block}
@@ -71,12 +73,12 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-off
 .mobile-menu a:hover{background:rgba(24,0,173,.08);color:var(--accent)}
 
 .hero{position:relative;text-align:center;padding:140px 24px 0}
-.wordmark{font-size:clamp(80px,14vw,180px);letter-spacing:-.04em;line-height:.85;color:rgba(255,255,255,.04);user-select:none;margin-bottom:-10px}
+.wordmark{font-size:clamp(34px,11vw,180px);letter-spacing:-.03em;line-height:.85;color:rgba(255,255,255,.04);user-select:none;margin-bottom:-10px;width:100%;text-align:center;overflow:hidden;white-space:nowrap}
 .hero-pill{display:inline-flex;align-items:center;gap:8px;padding:6px 16px;border-radius:999px;background:rgba(24,0,173,.08);border:1px solid rgba(24,0,173,.24);color:var(--accent);font-size:11px;font-weight:700;letter-spacing:normal;margin-bottom:18px}
 .hero-pill .dot{width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 10px var(--accent);animation:pulse 2s infinite}
-.hero h1{font-size:clamp(32px,5.5vw,56px);margin:0 0 14px;letter-spacing:-.02em}
+.hero h1{font-size:clamp(28px,5.5vw,56px);margin:0 0 14px;letter-spacing:-.02em}
 .hero h1 span{color:var(--accent)}
-.hero-copy{color:var(--muted);font-size:clamp(16px,2vw,20px);line-height:1.55;max-width:680px;margin:0 auto}
+.hero-copy{color:var(--muted);font-size:clamp(15px,2vw,20px);line-height:1.55;max-width:680px;margin:0 auto}
 
 .actions{display:flex;justify-content:center;align-items:center;gap:14px;margin-top:32px;position:relative;z-index:2;flex-wrap:wrap}
 .action{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:52px;min-width:190px;padding:14px 30px;border-radius:999px;font-size:15px;font-weight:700;letter-spacing:.02em;transition:all .2s;background:rgba(255,255,255,.06);color:var(--text);border:1px solid var(--line)}
@@ -85,7 +87,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-off
 .action:hover{background:rgba(255,255,255,.12);border-color:var(--line-light);transform:translateY(-2px)}
 .action img{width:16px;height:16px}
 
-/* Hero Toilet Trader Media (Humorous & High Tech) */
+/* Hero Media Wrap */
 .hero-media-wrap{position:relative;width:min(620px,94%);margin:32px auto 0;display:flex;justify-content:center;align-items:center}
 .character-box{position:relative;border-radius:32px;overflow:visible;animation:float 6s ease-in-out infinite}
 .character-img{width:100%;max-width:540px;height:auto;border-radius:28px;box-shadow:0 24px 80px rgba(0,0,0,.8),0 0 70px rgba(24,0,173,.12);border:1px solid rgba(24,0,173,.25);background:radial-gradient(circle at 50% 30%,rgba(24,0,173,.15),#050505 75%)}
@@ -98,20 +100,55 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-off
 .chip b{color:var(--accent)}
 .chip-badge{background:rgba(24,0,173,.15);color:var(--accent);padding:3px 8px;border-radius:999px;font-size:10px;font-weight:700}
 
-.section-heading h2{font-size:clamp(34px,5vw,56px);letter-spacing:-.02em}
-.section-heading p{font-size:clamp(16px,2vw,20px);color:var(--muted);margin-top:14px}
+.section-heading h2{font-size:clamp(28px,5vw,56px);letter-spacing:-.02em}
+.section-heading p{font-size:clamp(15px,2vw,20px);color:var(--muted);margin-top:14px}
 .eyebrow{display:inline-block;font-size:11.5px;color:var(--accent);font-weight:700;letter-spacing:normal;margin-bottom:14px;text-transform:uppercase}
 
+/* Anywhere Section & Real iPad + iPhone Mockups */
 .anywhere{position:relative;text-align:center;padding:70px 24px 100px}
-.product-preview{position:relative;width:min(1080px,94%);margin:60px auto 0;padding:0 80px 80px 0}
-.monitor{position:relative;z-index:1;background:linear-gradient(145deg,#16171b,#08090a);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:12px 12px 26px;box-shadow:0 24px 80px rgba(0,0,0,.7),0 0 50px rgba(24,0,173,.06)}
-.monitor:after{content:'FANTRADE TERMINAL';font-family:Archivo;font-size:8px;letter-spacing:1.5px;position:absolute;left:0;right:0;bottom:7px;color:#5A605B;text-align:center}
-.monitor-stand{position:absolute;top:calc(100% - 98px);left:34%;width:20%;height:100px;background:linear-gradient(90deg,#1c1e22,#2e3138 50%,#141619);clip-path:polygon(23% 0,77% 0,82% 85%,100% 92%,100% 100%,0 100%,0 92%,18% 85%)}
-.screen{background:#060708;border:1px solid rgba(255,255,255,.06);border-radius:6px;overflow:hidden;text-align:left;aspect-ratio:1.77}
-.screen-top{height:38px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 14px;font-size:11px;background:#090A0C}
-.screen-brand{font-size:16px;letter-spacing:-.01em;color:#fff}
-.screen-top span:last-child{color:var(--accent);font-weight:700}
-.screen-body{display:grid;grid-template-columns:26% 51% 23%;height:calc(100% - 38px)}
+.product-preview{position:relative;width:min(1100px,94%);margin:55px auto 0;padding:0 35px 50px 0}
+
+/* Real iPad Mockup (Landscape) */
+.ipad-frame{
+  position:relative;z-index:1;background:linear-gradient(145deg,#1f2228,#121316);
+  border:3px solid #2d3038;border-radius:32px;padding:12px 14px 18px;
+  box-shadow:0 32px 90px rgba(0,0,0,.8),0 0 60px rgba(24,0,173,.10),inset 0 0 2px rgba(255,255,255,.2);
+  margin:0 auto;text-align:left;
+}
+.ipad-cam{
+  position:absolute;top:6px;left:50%;transform:translateX(-50%);
+  width:6px;height:6px;border-radius:50%;background:#040507;border:1px solid #22252c;
+  box-shadow:inset 0 0 2px rgba(24,0,173,.8);z-index:4;
+}
+.ipad-screen{
+  background:#07080a;border:1px solid rgba(255,255,255,.07);border-radius:20px;
+  overflow:hidden;aspect-ratio:1.62;display:flex;flex-direction:column;
+  box-shadow:inset 0 0 20px rgba(0,0,0,.7);
+}
+.ipad-status-bar{
+  height:24px;background:#090a0d;border-bottom:1px solid rgba(255,255,255,.04);
+  display:flex;align-items:center;justify-content:space-between;padding:0 16px;
+  font-size:10px;color:#8c9099;font-weight:500;
+}
+.ipad-status-left{display:flex;align-items:center;gap:6px}
+.ipad-status-right{display:flex;align-items:center;gap:8px;font-size:9.5px}
+.ipad-nav{
+  height:38px;background:#0a0b0e;border-bottom:1px solid var(--line);
+  display:flex;align-items:center;justify-content:space-between;padding:0 16px;font-size:11px;
+}
+.ipad-nav-brand{font-size:15px;color:#fff;display:flex;align-items:center;gap:6px;font-family:Archivo,sans-serif}
+.ipad-nav-links{display:flex;align-items:center;gap:18px;font-size:11px;font-weight:600;color:var(--muted)}
+.ipad-nav-links .active{color:var(--text);position:relative}
+.ipad-nav-links .active:after{content:'';position:absolute;bottom:-10px;left:0;right:0;height:2px;background:var(--accent);border-radius:2px}
+.ipad-nav-wallet{
+  display:flex;align-items:center;gap:6px;background:rgba(24,0,173,.15);
+  border:1px solid rgba(24,0,173,.3);padding:4px 10px;border-radius:999px;
+  font-weight:700;color:#fff;font-size:10.5px;
+}
+.ipad-nav-wallet .dot{width:5px;height:5px;border-radius:50%;background:#00e676;box-shadow:0 0 6px #00e676}
+.ipad-home-bar{width:120px;height:4px;background:rgba(255,255,255,.3);border-radius:999px;margin:6px auto 3px}
+
+.screen-body{display:grid;grid-template-columns:26% 51% 23%;flex:1;min-height:0}
 .market-list{border-right:1px solid var(--line);padding:12px 10px;background:#08090A}
 .micro-label{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:normal;font-weight:700;display:block;margin-bottom:8px}
 .preview-row{display:flex;align-items:center;gap:8px;border-bottom:1px solid rgba(255,255,255,.04);padding:9px 0;font-size:11px}
@@ -123,6 +160,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-off
 .chart-area{padding:14px;border-right:1px solid var(--line);overflow:hidden;background:#070809}
 .chart-title{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600}
 .chart-title img{width:24px;height:24px;border-radius:50%;object-fit:cover}
+.badge-live{background:rgba(24,0,173,.2);color:var(--accent);font-size:8px;font-weight:700;padding:2px 6px;border-radius:4px;margin-left:6px}
 .chart-price{font-size:26px;font-weight:800;margin:14px 0 4px;font-family:Montserrat,sans-serif}
 .chart-price small{font-size:11px;margin-left:8px;color:var(--accent)}
 .chart-tools{display:flex;gap:14px;font-size:9px;color:var(--muted);margin:10px 0}
@@ -138,22 +176,57 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-off
 .order-note{display:flex;justify-content:space-between;font-size:9px;color:var(--muted);margin:10px 0}
 .order-buy{background:var(--accent);color:var(--accent-ink);font-weight:700;text-align:center;border-radius:8px;padding:9px;font-size:11px;cursor:pointer}
 
-.phone{position:absolute;right:0;bottom:20px;z-index:3;width:225px;background:#08090A;border:4px solid #282A2F;outline:1px solid rgba(255,255,255,.1);border-radius:36px;padding:11px 10px 15px;transform:rotate(8deg);box-shadow:0 0 35px rgba(24,0,173,.12),15px 18px 45px rgba(0,0,0,.8);text-align:left;animation:phone-float 6s ease-in-out infinite}
-.phone-status{display:flex;justify-content:space-between;font-size:9px;padding:4px 8px 10px;color:#c0c4be}
-.phone-notch{background:#000;width:60px;height:12px;border-radius:8px}
-.phone-head{font-size:9px;color:var(--muted);margin:8px 0 2px;text-transform:uppercase;letter-spacing:normal}
-.phone-balance{font-size:26px;letter-spacing:-1px;font-weight:800;font-family:Montserrat,sans-serif}
-.phone-gain{font-size:10px;color:var(--accent);margin-top:2px;font-weight:600}
-.phone-actions{display:flex;gap:6px;margin:12px 0}
-.phone-actions span{background:rgba(255,255,255,.06);flex:1;border-radius:8px;padding:8px 0;text-align:center;font-size:9px;font-weight:600;border:1px solid var(--line)}
-.phone-actions span:first-child{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
-.phone-tabs{display:flex;gap:14px;font-size:10px;padding:8px 0;border-bottom:1px solid var(--line)}
-.phone-tabs b{font-weight:600;color:var(--accent)}
-.phone-tabs span{color:var(--muted)}
-.phone .preview-row{padding:8px 0;font-size:9.5px}
-.phone .preview-row img{width:22px;height:22px}
-.phone-nav{display:flex;justify-content:space-around;margin-top:12px;color:var(--muted);font-size:8px}
-.phone-nav span:first-child{color:var(--accent);font-weight:700}
+/* Real iPhone 16 Pro Mockup (Portrait) */
+.iphone-frame{
+  position:absolute;right:0;bottom:0;z-index:5;width:245px;
+  background:linear-gradient(145deg,#24272f,#141519);
+  border-radius:44px;padding:10px 10px 14px;border:3px solid #333640;
+  box-shadow:0 30px 80px rgba(0,0,0,.9),0 0 45px rgba(24,0,173,.18),inset 0 0 2px rgba(255,255,255,.25);
+  transform:rotate(6deg);animation:phone-float 6s ease-in-out infinite;text-align:left;
+}
+.iphone-screen{
+  background:#08090c;border-radius:34px;border:1px solid rgba(255,255,255,.07);
+  overflow:hidden;padding:8px 10px 10px;position:relative;
+  box-shadow:inset 0 0 14px rgba(0,0,0,.8);
+}
+.iphone-island{
+  width:74px;height:17px;background:#000;border-radius:20px;
+  margin:0 auto 6px;display:flex;align-items:center;justify-content:space-between;
+  padding:0 6px;box-shadow:0 0 1px rgba(255,255,255,.2);font-size:7px;color:#00e676;font-weight:700;
+}
+.iphone-island-lens{width:6px;height:6px;border-radius:50%;background:#0c0d12;border:1px solid #1a1c22}
+.iphone-status{display:flex;justify-content:space-between;align-items:center;font-size:9px;font-weight:700;padding:0 4px 6px;color:#d2d6d0}
+.iphone-status-icons{display:flex;align-items:center;gap:4px;font-size:8px}
+
+.iphone-user-row{display:flex;align-items:center;justify-content:space-between;padding:4px 0 8px;border-bottom:1px solid rgba(255,255,255,.05)}
+.user-meta{display:flex;align-items:center;gap:6px}
+.user-meta img{width:22px;height:22px;border-radius:50%;border:1px solid var(--accent);object-fit:cover}
+.user-meta small{font-size:7px;color:var(--muted);display:block;text-transform:uppercase}
+.user-meta b{font-size:10px;color:#fff}
+.iphone-bell{position:relative;color:var(--muted);display:flex;align-items:center}
+.bell-dot{position:absolute;top:0;right:0;width:4px;height:4px;border-radius:50%;background:var(--red)}
+
+.iphone-card{
+  background:radial-gradient(ellipse at 80% 20%,rgba(24,0,173,.22),transparent 70%),#0F1116;
+  border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:10px 10px 8px;margin:8px 0;
+}
+.iphone-card-lbl{font-size:7.5px;color:var(--muted);text-transform:uppercase;font-weight:700;letter-spacing:normal}
+.iphone-balance{font-size:22px;letter-spacing:-1px;font-weight:800;font-family:Montserrat,sans-serif;margin:3px 0 2px}
+.iphone-gain{font-size:9px;color:var(--accent);font-weight:600}
+.iphone-actions{display:flex;gap:5px;margin:8px 0 2px}
+.iphone-actions span{background:rgba(255,255,255,.06);flex:1;border-radius:6px;padding:6px 0;text-align:center;font-size:8px;font-weight:600;border:1px solid var(--line)}
+.iphone-actions span:first-child{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+
+.iphone-market-head{display:flex;justify-content:space-between;font-size:8px;color:var(--muted);font-weight:700;text-transform:uppercase;margin:8px 0 4px}
+.iphone-market-head span:last-child{color:var(--accent);font-weight:600}
+.iphone-frame .preview-row{padding:6px 0;font-size:9px}
+.iphone-frame .preview-row img{width:20px;height:20px}
+
+.iphone-dock{display:flex;justify-content:space-around;margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,.06);color:var(--muted);font-size:8px}
+.iphone-dock-item{display:flex;flex-direction:column;align-items:center;gap:2px}
+.iphone-dock-item.active{color:var(--accent);font-weight:700}
+.iphone-dock-item svg{width:11px;height:11px}
+.iphone-home-bar{width:80px;height:3.5px;background:rgba(255,255,255,.35);border-radius:999px;margin:8px auto 2px}
 
 .features{position:relative;max-width:1440px;margin:0 auto;padding:60px 48px 0}
 .features .section-heading{margin-bottom:44px}
@@ -216,8 +289,8 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-off
 .orbit{position:absolute;left:50%;top:50%;width:min(900px,78vw);transform:translate(-50%,-50%);pointer-events:none;z-index:-1;animation:orbit 55s linear infinite;opacity:.4}
 .orbit.inner{width:min(470px,42vw);animation-direction:reverse;animation-duration:40s;opacity:.5}
 .final-copy{max-width:680px;position:relative;z-index:1}
-.final-copy h2{font-size:clamp(36px,5.5vw,58px);line-height:1.05;letter-spacing:-.02em}
-.final-copy p{font-size:clamp(16px,2vw,20px);color:var(--muted);margin:20px auto 36px;max-width:540px}
+.final-copy h2{font-size:clamp(34px,5.5vw,58px);line-height:1.05;letter-spacing:-.02em}
+.final-copy p{font-size:clamp(15px,2vw,20px);color:var(--muted);margin:20px auto 36px;max-width:540px}
 .final-copy .actions{margin-top:0}
 
 .footer{padding:50px 40px 60px;max-width:1440px;margin:auto;position:relative;border-top:1px solid var(--line)}
@@ -232,7 +305,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-off
 .demo-note{color:#5A605B;font-size:11px;margin-top:6px}
 
 @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
-@keyframes phone-float{0%,100%{transform:rotate(8deg) translateY(0)}50%{transform:rotate(8deg) translateY(-10px)}}
+@keyframes phone-float{0%,100%{transform:rotate(6deg) translateY(0)}50%{transform:rotate(6deg) translateY(-10px)}}
 @keyframes orbit{from{transform:translate(-50%,-50%) rotate(0)}to{transform:translate(-50%,-50%) rotate(360deg)}}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 @keyframes chip-float-1{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
@@ -243,8 +316,8 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-off
   .feature{padding:26px 22px 0;min-height:360px}
   .feature h3{font-size:24px}
   .feature-art{height:210px}
-  .product-preview{width:96%;padding-right:60px}
-  .phone{width:195px}
+  .product-preview{width:96%;padding-right:30px}
+  .iphone-frame{width:215px}
   .screen-body{grid-template-columns:28% 48% 24%}
   .price-chart{height:120px}
 }
@@ -257,49 +330,76 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-off
   .nav-link{display:none}
   .nav-login{font-size:13px;padding:8px 18px}
   .menu-toggle{display:flex}
-  .hero{padding:110px 20px 0}
-  .hero-pill{font-size:9.5px}
-  .hero h1{font-size:32px}
-  .hero-copy{font-size:15px}
-  .actions{gap:10px;margin-top:24px}
+  .hero{padding:105px 20px 0}
+  .wordmark{font-size:clamp(32px,10vw,80px);margin-bottom:-6px}
+  .hero-pill{font-size:9.5px;padding:5px 12px;margin-bottom:14px}
+  .hero h1{font-size:clamp(24px,7.2vw,36px);line-height:1.08}
+  .hero-copy{font-size:14.5px;line-height:1.5}
+  .actions{gap:10px;margin-top:22px}
   .action{min-width:0;width:100%;font-size:14px;min-height:46px;padding:12px 20px}
   .hero-media-wrap{width:100%;margin-top:24px}
   .character-img{border-radius:20px}
-  .chip{padding:6px 12px;font-size:10px}
-  .chip-top{top:10px;left:0}
-  .chip-right{right:0;top:auto;bottom:40px}
+  .chip{padding:6px 12px;font-size:9.5px}
+  .chip-top{top:8px;left:4px}
+  .chip-right{right:4px;top:auto;bottom:35px}
   .chip-bottom{display:none}
-  .anywhere{padding:50px 20px 60px}
-  .section-heading h2{font-size:32px}
-  .section-heading p{font-size:15px}
-  .product-preview{width:100%;margin-top:30px;padding:0 0 40px}
-  .monitor{padding:6px 6px 14px;border-radius:12px;width:94%}
-  .monitor-stand{display:none}
-  .screen-top{height:28px;padding:0 8px;font-size:7px}
-  .screen-brand{font-size:11px}
-  .screen-body{height:calc(100% - 28px);grid-template-columns:35% 65%}
+
+  .anywhere{padding:50px 18px 60px}
+  .section-heading h2{font-size:clamp(23px,6.8vw,32px);line-height:1.15}
+  .section-heading p{font-size:14px;max-width:340px;margin:10px auto 0;line-height:1.5}
+
+  .product-preview{
+    width:100%;margin-top:28px;padding:0;
+    display:flex;flex-direction:column;align-items:center;gap:22px;
+  }
+  .ipad-frame{
+    width:100%;border-radius:20px;padding:8px 8px 12px;border-width:2.5px;
+  }
+  .ipad-cam{top:4px;width:5px;height:5px}
+  .ipad-screen{border-radius:14px;aspect-ratio:auto}
+  .ipad-status-bar{height:20px;padding:0 10px;font-size:8px}
+  .ipad-nav{height:30px;padding:0 10px;font-size:8.5px}
+  .ipad-nav-brand{font-size:12px}
+  .ipad-nav-links{display:none}
+  .ipad-nav-wallet{font-size:8.5px;padding:2px 8px}
+  .screen-body{height:auto;grid-template-columns:38% 62%}
   .market-list{padding:6px 4px}
-  .preview-row{font-size:7px;padding:4px 0}
-  .preview-row img{width:16px;height:16px}
+  .preview-row{font-size:7.5px;padding:4px 0}
+  .preview-row img{width:18px;height:18px}
   .chart-area{padding:6px;border-right:0}
-  .chart-title{font-size:8px}
-  .chart-title img{width:16px;height:16px}
-  .chart-price{font-size:18px;margin:6px 0 2px}
-  .chart-tools{font-size:6px;gap:8px;margin:4px 0}
-  .price-chart{height:80px}
+  .chart-title{font-size:8.5px}
+  .chart-title img{width:18px;height:18px}
+  .chart-price{font-size:17px;margin:4px 0 2px}
+  .chart-tools{font-size:6.5px;gap:6px;margin:3px 0}
+  .price-chart{height:75px}
   .chart-bottom,.order-preview{display:none}
-  .phone{width:125px;right:2%;bottom:5px;border-width:3px;border-radius:20px;padding:6px}
-  .phone-balance{font-size:17px}
+  .ipad-home-bar{width:70px;height:3px;margin:4px auto 1px}
+
+  .iphone-frame{
+    position:relative;right:auto;bottom:auto;transform:none;
+    animation:float 6s ease-in-out infinite;width:min(240px,80%);
+    margin:0 auto;border-radius:36px;padding:8px 8px 12px;border-width:3px;
+  }
+  .iphone-screen{border-radius:28px;padding:7px 9px 8px}
+  .iphone-island{width:64px;height:15px;margin-bottom:4px}
+  .iphone-status{font-size:8px;padding:0 2px 4px}
+  .iphone-balance{font-size:18px}
+  .iphone-dock{font-size:7.5px;padding-top:6px;margin-top:6px}
+  .iphone-dock-item svg{width:11px;height:11px}
+  .iphone-home-bar{width:60px;height:3px;margin:6px auto 1px}
+
   .features{padding:40px 18px 0}
+  .features .section-heading{text-align:center;margin-bottom:32px}
+  .features .section-heading p{max-width:340px;margin:10px auto 0}
   .feature-grid{grid-template-columns:1fr;gap:16px}
   .feature{min-height:330px;padding:24px 20px 0}
   .feature h3{font-size:24px}
-  .final-cta{min-height:650px;margin-top:50px;padding:100px 20px}
-  .final-copy h2{font-size:32px}
-  .final-copy p{font-size:15px}
+  .final-cta{min-height:600px;margin-top:40px;padding:80px 20px}
+  .final-copy h2{font-size:clamp(26px,7.5vw,36px);line-height:1.1}
+  .final-copy p{font-size:14.5px;margin:16px auto 28px}
   .footer{padding:35px 20px 40px}
   .footer-top{grid-template-columns:1fr 1fr;gap:30px 16px}
-  .footer-brand{grid-column:1/-1}
+  .footer-brand{grid-column:1/-1;text-align:left}
 }
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{animation:none!important;transition:none!important}}
 """
@@ -307,7 +407,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-off
 PLAYERS = [('saka','Saka','Arsenal','48.20','+6.40%'),('haaland','Haaland','Manchester City','71.40','−1.80%'),('mbappe','Mbappé','Real Madrid','78.50','+4.80%'),('vinicius','Vinícius','Real Madrid','63.10','+0.70%'),('palmer','Palmer','Chelsea','52.80','+8.20%')]
 
 def rows(phone=False):
-    return ''.join(f'<div class="preview-row"><img src="assets/players/{slug}.webp" alt="" loading="lazy" width="32" height="32"><div><b>{name}</b><small>{club}</small></div><div class="quote"><b>{price}</b><small class="green">{change}</small></div></div>' for slug,name,club,price,change in PLAYERS[:4 if phone else 5])
+    return ''.join(f'<div class="preview-row"><img src="assets/players/{slug}.webp" alt="" loading="lazy" width="32" height="32"><div><b>{name}</b><small>{club}</small></div><div class="quote"><b>{price}</b><small class="green">{change}</small></div></div>' for slug,name,club,price,change in PLAYERS[:3 if phone else 5])
 
 def actions(primary='Start trading',secondary='Explore FanPlay'):
     return f'<div class="actions"><a class="action primary" href="signup.html">{primary}</a><a class="action" href="fanplay.html">{secondary}<img src="assets/landing/arrow.svg" alt="" width="18" height="18"></a></div>'
@@ -338,11 +438,122 @@ def product_preview():
         prev=values[max(0,i-1)]+7
         color='var(--accent)' if y<prev else 'var(--red)'
         candles.append(f'<path d="M{i*12+12} {min(y,prev)-9}V{max(y,prev)+9}" stroke="{color}"/><rect x="{i*12+8}" y="{min(y,prev)}" width="8" height="{max(3,abs(prev-y))}" rx="1" fill="{color}"/>')
-    return '''<div class="product-preview" role="img" aria-label="Fantrade on desktop and mobile: player markets, a Saka price chart and your portfolio. Illustrative prices.">
-      <div class="monitor"><div class="screen"><div class="screen-top"><b class="screen-brand"><img src="assets/landing/fantrade-logo.png" alt="" width="14" height="14" style="vertical-align:-2px;margin-right:5px">fantrade</b><span>Markets &nbsp; Dream Clubs &nbsp; FanPlay</span><span>128,450 $FTR</span></div><div class="screen-body">
-      <div class="market-list"><span class="micro-label">Player markets</span>''' + rows() + '''</div><div class="chart-area"><div class="chart-title"><img src="assets/players/saka.webp" alt="" loading="lazy"><b>Saka / FTR</b></div><div class="chart-price">48.20 <small class="green">+6.40%</small></div><div class="chart-tools"><b>1D</b><span>1W</span><span>1M</span><span>1Y</span><span>All time</span></div><svg class="price-chart" viewBox="0 0 360 175" aria-hidden="true">''' + ''.join(candles) + '''</svg><div class="chart-bottom"><span>Holdings</span><span>Open orders</span><span>Activity</span></div></div>
-      <div class="order-preview"><div class="order-tabs"><b>Buy</b><span>Sell</span></div><span class="micro-label">Market order</span><div class="order-field"><small>Player share</small>$Saka</div><div class="order-field"><small>Quantity</small>10 shares</div><div class="order-note"><span>Price</span><span>48.20 FTR</span></div><div class="order-note"><span>Subtotal</span><span>482.00 FTR</span></div><div class="order-buy">Review order</div></div></div></div></div><div class="monitor-stand"></div>
-      <div class="phone"><div class="phone-status"><b>9:41</b><span class="phone-notch"></span><span>▰</span></div><div class="phone-head">Your portfolio</div><div class="phone-balance">128,450<span style="font-size:.36em"> FTR</span></div><div class="phone-gain">+6.42% this week</div><div class="phone-actions"><span>Buy shares</span><span>FanPlay</span><span>My club</span></div><div class="phone-tabs"><b>Watchlist</b><span>All players</span></div>''' + rows(True) + '''<div class="phone-nav"><span>Home</span><span>Markets</span><span>FanPlay</span><span>Assets</span></div></div></div>'''
+    
+    return '''<div class="product-preview" role="region" aria-label="Fantrade on iPad and iPhone">
+      <!-- Real iPad Pro Mockup (Landscape) -->
+      <div class="ipad-frame">
+        <div class="ipad-cam" aria-hidden="true"></div>
+        <div class="ipad-screen">
+          <div class="ipad-status-bar">
+            <div class="ipad-status-left"><b>9:41 AM</b> &nbsp; Wed Oct 22</div>
+            <div class="ipad-status-right">
+              <svg width="12" height="9" viewBox="0 0 16 12" fill="currentColor" aria-hidden="true"><path d="M8 2.5a11.9 11.9 0 0 1 7.2 2.5.8.8 0 0 1 .1 1.1l-6.7 7.4a.8.8 0 0 1-1.2 0L.7 6.1a.8.8 0 0 1 .1-1.1A11.9 11.9 0 0 1 8 2.5z"/></svg>
+              <span>5G</span>
+              <svg width="18" height="9" viewBox="0 0 24 12" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="1" y="1" width="19" height="10" rx="3"/><rect x="3" y="3" width="15" height="6" rx="1.5" fill="currentColor"/><path d="M22 4v4" stroke-linecap="round"/></svg>
+            </div>
+          </div>
+          <div class="ipad-nav">
+            <div class="ipad-nav-brand">
+              <img src="assets/landing/fantrade-logo.png" alt="" width="16" height="16">
+              <b>fantrade<span class="brand-dot">.</span></b>
+            </div>
+            <div class="ipad-nav-links">
+              <span class="active">Markets</span>
+              <span>Dream Clubs</span>
+              <span>FanPlay</span>
+              <span>Leaderboard</span>
+            </div>
+            <div class="ipad-nav-wallet">
+              <span class="dot"></span>
+              <span>128,450 $FTR</span>
+            </div>
+          </div>
+          <div class="screen-body">
+            <div class="market-list">
+              <span class="micro-label">Player markets</span>''' + rows() + '''
+            </div>
+            <div class="chart-area">
+              <div class="chart-title">
+                <img src="assets/players/saka.webp" alt="" loading="lazy">
+                <b>Saka / FTR</b>
+                <span class="badge-live">LIVE</span>
+              </div>
+              <div class="chart-price">48.20 <small class="green">+6.40%</small></div>
+              <div class="chart-tools"><b>1D</b><span>1W</span><span>1M</span><span>1Y</span><span>All time</span></div>
+              <svg class="price-chart" viewBox="0 0 360 175" aria-hidden="true">''' + ''.join(candles) + '''</svg>
+              <div class="chart-bottom"><span>Holdings: 1,250 Saka</span><span>Avg: 42.10</span><span>P&L: <b class="green">+14.4%</b></span></div>
+            </div>
+            <div class="order-preview">
+              <div class="order-tabs"><b>Buy</b><span>Sell</span></div>
+              <span class="micro-label">Market order</span>
+              <div class="order-field"><small>Player share</small>$Saka</div>
+              <div class="order-field"><small>Quantity</small>10 shares</div>
+              <div class="order-note"><span>Price</span><span>48.20 FTR</span></div>
+              <div class="order-note"><span>Subtotal</span><span>482.00 FTR</span></div>
+              <div class="order-buy">Review order</div>
+            </div>
+          </div>
+          <div class="ipad-home-bar" aria-hidden="true"></div>
+        </div>
+      </div>
+
+      <!-- Real iPhone 16 Pro Mockup (Portrait) -->
+      <div class="iphone-frame">
+        <div class="iphone-screen">
+          <div class="iphone-island" aria-hidden="true">
+            <span class="iphone-island-lens"></span>
+            <span>$Saka +6.4%</span>
+            <span style="font-size:9px">⚡</span>
+          </div>
+          <div class="iphone-status">
+            <b>9:41</b>
+            <div class="iphone-status-icons">
+              <svg width="10" height="8" viewBox="0 0 16 12" fill="currentColor" aria-hidden="true"><path d="M8 2.5a11.9 11.9 0 0 1 7.2 2.5.8.8 0 0 1 .1 1.1l-6.7 7.4a.8.8 0 0 1-1.2 0L.7 6.1a.8.8 0 0 1 .1-1.1A11.9 11.9 0 0 1 8 2.5z"/></svg>
+              <svg width="15" height="8" viewBox="0 0 24 12" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="1" y="1" width="19" height="10" rx="3"/><rect x="3" y="3" width="14" height="6" rx="1.5" fill="currentColor"/><path d="M22 4v4" stroke-linecap="round"/></svg>
+            </div>
+          </div>
+          <div class="iphone-user-row">
+            <div class="user-meta">
+              <img src="assets/players/saka.webp" alt="">
+              <div><small>WELCOME BACK</small><b>Alex Morgan</b></div>
+            </div>
+            <div class="iphone-bell">
+              <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+              <span class="bell-dot"></span>
+            </div>
+          </div>
+          <div class="iphone-card">
+            <span class="iphone-card-lbl">Total Portfolio</span>
+            <div class="iphone-balance">128,450 <span style="font-size:.4em;color:var(--muted)">FTR</span></div>
+            <div class="iphone-gain">▲ +6.42% this week</div>
+            <div class="iphone-actions"><span>+ Trade</span><span>⚡ FanPlay</span><span>🛡 Club</span></div>
+          </div>
+          <div class="iphone-market-head">
+            <span>Watchlist</span>
+            <span>Markets &gt;</span>
+          </div>''' + rows(True) + '''
+          <div class="iphone-dock">
+            <div class="iphone-dock-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 10.5 12 3l9 7.5v9a1.5 1.5 0 0 1-1.5 1.5H15v-6H9v6H4.5A1.5 1.5 0 0 1 3 19.5z"/></svg>
+              <span>Home</span>
+            </div>
+            <div class="iphone-dock-item active">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 4v16M12 4v16M19 4v16M3 8h4M10 14h4M17 10h4"/></svg>
+              <span>Markets</span>
+            </div>
+            <div class="iphone-dock-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>
+              <span>FanPlay</span>
+            </div>
+            <div class="iphone-dock-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4.5 21a7.5 7.5 0 0 1 15 0"/></svg>
+              <span>Profile</span>
+            </div>
+          </div>
+          <div class="iphone-home-bar" aria-hidden="true"></div>
+        </div>
+      </div>
+    </div>'''
 
 def feature(label,title,art,href=None):
     return f'<div class="feature"><span class="eyebrow">{label}</span><h3>{title}</h3>{art}</div>'
