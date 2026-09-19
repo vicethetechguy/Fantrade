@@ -63,8 +63,20 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-off
 .nav-right{display:flex;gap:12px;align-items:center}
 .nav-link{font-size:14px;font-weight:500;padding:8px 16px;color:#c0c4be;border-radius:999px;transition:color .2s,background .2s}
 .nav-link:hover{color:#fff;background:rgba(255,255,255,.05)}
-.nav-login{background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:999px;padding:9px 24px;font-size:14px;font-weight:600;color:#fff;transition:all .2s}
-.nav-login:hover{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.nav-login{
+  background:rgba(255,255,255,.08);
+  backdrop-filter:blur(24px) saturate(190%);-webkit-backdrop-filter:blur(24px) saturate(190%);
+  border:1px solid rgba(255,255,255,.18);
+  box-shadow:inset 0 1px 1.5px rgba(255,255,255,.32), 0 4px 16px rgba(0,0,0,.25);
+  border-radius:999px;padding:9px 24px;font-size:14px;font-weight:600;color:#fff;
+  transition:all .25s cubic-bezier(.16,1,.3,1);
+}
+.nav-login:hover{
+  background:rgba(255,255,255,.16);
+  border-color:rgba(255,255,255,.35);
+  box-shadow:inset 0 1px 2px rgba(255,255,255,.45), 0 8px 24px rgba(0,0,0,.35);
+  transform:translateY(-1px);color:#fff;
+}
 .menu-toggle{
   display:none;border:none;background:transparent;color:var(--text);
   width:48px;height:48px;align-items:center;justify-content:center;
@@ -83,12 +95,13 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-off
   display:none;position:fixed;inset:0;width:100vw;height:100vh;height:100dvh;
   z-index:90;background:rgba(5,5,5,.96);
   backdrop-filter:blur(36px);-webkit-backdrop-filter:blur(36px);
-  padding:120px 32px 48px;flex-direction:column;justify-content:center;
+  padding:max(88px, calc(72px + env(safe-area-inset-top))) 32px 40px;
+  flex-direction:column;justify-content:flex-start;
   align-items:flex-start;text-align:left;overflow-y:auto;
   box-shadow:0 30px 100px rgba(0,0,0,.95), inset 0 0 80px rgba(24,0,173,.15);
 }
 .mobile-menu.open{display:flex;animation:menu-fade-in .3s ease-out forwards}
-.mobile-menu-inner{width:100%;max-width:440px;display:flex;flex-direction:column;gap:18px}
+.mobile-menu-inner{width:100%;max-width:440px;display:flex;flex-direction:column;gap:clamp(14px,2.8vh,22px);margin-top:10px}
 .mobile-menu a{
   font-family:Archivo,sans-serif;font-size:clamp(30px,8.5vw,46px);
   font-variation-settings:'wdth' 120,'wght' 850;text-transform:uppercase;
@@ -124,10 +137,26 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-off
 .hero-copy{color:var(--muted);font-size:clamp(15px,2vw,20px);line-height:1.55;max-width:680px;margin:0 auto}
 
 .actions{display:flex;justify-content:center;align-items:center;gap:14px;margin-top:32px;position:relative;z-index:2;flex-wrap:wrap}
-.action{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:52px;min-width:190px;padding:14px 30px;border-radius:999px;font-size:15px;font-weight:700;letter-spacing:.02em;transition:all .2s;background:rgba(255,255,255,.06);color:var(--text);border:1px solid var(--line)}
-.action.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);box-shadow:0 8px 24px rgba(24,0,173,.22)}
+.action{
+  display:inline-flex;align-items:center;justify-content:center;gap:10px;
+  min-height:52px;min-width:190px;padding:14px 30px;border-radius:999px;
+  font-size:15px;font-weight:700;letter-spacing:.02em;transition:all .25s cubic-bezier(.16,1,.3,1);
+  background:rgba(255,255,255,.08);
+  backdrop-filter:blur(24px) saturate(190%);-webkit-backdrop-filter:blur(24px) saturate(190%);
+  border:1px solid rgba(255,255,255,.18);
+  box-shadow:inset 0 1px 1.5px rgba(255,255,255,.28), 0 8px 24px rgba(0,0,0,.3);
+  color:#fff;
+}
+.action.primary{
+  background:var(--accent);color:var(--accent-ink);border-color:var(--accent);
+  box-shadow:0 8px 24px rgba(24,0,173,.22);backdrop-filter:none;-webkit-backdrop-filter:none;
+}
 .action.primary:hover{background:var(--accent-hover);transform:translateY(-2px);box-shadow:0 12px 32px rgba(24,0,173,.35)}
-.action:hover{background:rgba(255,255,255,.12);border-color:var(--line-light);transform:translateY(-2px)}
+.action:not(.primary):hover{
+  background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.35);
+  box-shadow:inset 0 1px 2px rgba(255,255,255,.45), 0 12px 32px rgba(0,0,0,.4);
+  transform:translateY(-2px);color:#fff;
+}
 .action img{width:16px;height:16px}
 
 /* Hero Media Wrap */
@@ -318,10 +347,15 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-off
 }
 .signup-option:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(255,255,255,.18)}
 .signup-option.dark{
-  background:rgba(255,255,255,.07);color:var(--text);border:1px solid var(--line);box-shadow:none;
+  background:rgba(255,255,255,.08);
+  backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);
+  color:#fff;border:1px solid rgba(255,255,255,.18);
+  box-shadow:inset 0 1px 1.5px rgba(255,255,255,.28), 0 4px 16px rgba(0,0,0,.25);
 }
 .signup-option.dark:hover{
-  background:rgba(255,255,255,.12);border-color:var(--line-light);transform:translateY(-2px);
+  background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.35);
+  transform:translateY(-2px);color:#fff;
+  box-shadow:inset 0 1px 2px rgba(255,255,255,.45), 0 8px 24px rgba(0,0,0,.35);
 }
 .signup-option svg{width:16px;height:16px}
 .signup-art .cursor{

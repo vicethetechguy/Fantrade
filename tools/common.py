@@ -628,6 +628,8 @@ APP_CSS = r"""
 .bell .ic{width:17px;height:17px}
 .bell .dot{position:absolute;top:6px;right:7px;width:8px;height:8px;border-radius:99px;background:var(--lime);
   box-shadow:0 0 0 2px #0A0B0C,0 0 12px rgba(24,0,173,.9)}
+.nav-bell-badge{position:absolute;top:-4px;right:-4px;min-width:17px;height:17px;border-radius:999px;background:var(--accent);color:var(--accent-ink);font-size:10px;font-weight:800;display:grid;place-items:center;padding:0 4px;box-shadow:0 0 10px rgba(24,0,173,.6);border:1.5px solid #0A0B0C;line-height:1;z-index:2}
+.topbar .bell{display:grid!important}
 .menu{position:absolute;right:0;top:calc(100% + 14px);width:252px;padding:10px;border-radius:20px;z-index:95;
   background:rgba(10,11,12,.95);backdrop-filter:blur(24px) saturate(160%);-webkit-backdrop-filter:blur(24px) saturate(160%);
   border:1px solid var(--hair);box-shadow:var(--inset),0 26px 60px -18px rgba(0,0,0,.95);
@@ -1234,7 +1236,7 @@ APP_CSS = r"""
   .auth{grid-template-columns:1fr}
   .auth-brand{display:none}
   .qa{grid-template-columns:1fr 1fr}
-  .nav-island .bell{display:none}
+  .nav-island:not(.topbar) .bell{display:none}
 }
 @media (max-width:768px){
   .auth-form{padding:104px 20px 54px}
@@ -1928,7 +1930,7 @@ def taskbar(current=""):
     out = []
     for href, label, icon in TASKBAR:
         on = href == tab
-        badge_html = '<span class="tb-badge">3</span>' if label == "Home" else ""
+        badge_html = ""
         icon_html = ('<img class="tb-fanplay-mark" src="assets/fantrade-outline-logo.png" alt="">'
                      if label == "FanPlay" else line_icons.get(icon, ic(icon, "ic")))
         out.append(('<a href="%s" class="tb-item%s"%s aria-label="%s">'
@@ -1944,6 +1946,7 @@ def taskbar(current=""):
 def nav(current="", app=False):
     """Floating top bar. app=True returns topbar with profile avatar + full bottom taskbar."""
     if app:
+        bell_icon = ic("bell", "ic") + '<span class="nav-bell-badge">3</span>'
         top = ('<nav class="nav-island topbar" id="appHeader"><a class="logo" href="dashboard.html"><img src="assets/fantrade-logo.png" alt="" class="brand-logo-img" width="20" height="20"> Fantrade</a>'
                '<div style="display:flex;align-items:center;gap:12px;margin-left:auto">'
                '<a class="bell" id="navBell" href="notifications.html" aria-label="Notifications">%s'
@@ -1951,7 +1954,7 @@ def nav(current="", app=False):
                '<a class="nav-profile-btn" id="navProfileBtn" href="account.html" aria-label="User Profile" title="User Profile">'
                '<img src="assets/fantrade-outline-logo.png" alt="Profile" class="nav-avatar-img">'
                '</a>'
-               '</div></nav>') % ic("bell", "ic")
+               '</div></nav>') % bell_icon
         return top + taskbar(current)
 
     links = "".join('<a href="%s"%s>%s</a>' % (h, ' class="on"' if h == current else '', l)
