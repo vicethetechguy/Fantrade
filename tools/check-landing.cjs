@@ -13,12 +13,12 @@ const server=http.createServer((req,res)=>{const file=path.resolve(root,'.'+deco
     for(const width of [320,390,768,1024,1440]){
       await page.setViewportSize({width,height:900});await page.goto(base+'/index.html');await page.evaluate(()=>document.fonts.ready);
       await page.evaluate(async()=>{for(const img of document.images){img.loading='eager';await img.decode().catch(()=>{});}});
-      const result=await page.evaluate(()=>({overflow:document.documentElement.scrollWidth>innerWidth,broken:[...document.images].filter(i=>!i.naturalWidth).map(i=>i.src),links:[...document.querySelectorAll('a')].map(a=>a.getAttribute('href')),astronaut:Math.round(document.querySelector('.astronaut').getBoundingClientRect().width),footer:document.querySelectorAll('footer').length}));
+      const result=await page.evaluate(()=>({overflow:document.documentElement.scrollWidth>innerWidth,broken:[...document.images].filter(i=>!i.naturalWidth).map(i=>i.src),links:[...document.querySelectorAll('a')].map(a=>a.getAttribute('href')),character:Math.round(document.querySelector('.character-img').getBoundingClientRect().width),footer:document.querySelectorAll('footer').length}));
       assert(!result.overflow,`Page overflow at ${width}`);assert.deepEqual(result.broken,[],`Broken assets at ${width}`);assert.equal(result.footer,1);
       for(const href of result.links){if(href.startsWith('#'))continue;assert(fs.existsSync(path.resolve(root,href.split('#')[0].split('?')[0])),`Missing destination ${href}`);}
       if(width<800){await page.locator('#landingMenu').click();assert.equal(await page.locator('#landingMenu').getAttribute('aria-expanded'),'true');assert(await page.locator('#landingNav').isVisible());await page.keyboard.press('Escape');assert.equal(await page.locator('#landingMenu').getAttribute('aria-expanded'),'false');}
       await page.screenshot({path:path.join(root,'artifacts','landing',`home-${width}.png`),fullPage:true});
-      console.log(`${width}px: no overflow, images loaded, destinations valid, menu checked; astronaut ${result.astronaut}px`);
+      console.log(`${width}px: no overflow, images loaded, destinations valid, menu checked; character ${result.character}px`);
     }
     assert.deepEqual(errors,[],'Browser errors');
     console.log('Landing checks passed.');

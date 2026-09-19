@@ -159,11 +159,10 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-off
 }
 .action img{width:16px;height:16px}
 
-/* Hero Media Wrap */
-.hero-media-wrap{position:relative;width:min(620px,94%);margin:32px auto 0;display:flex;justify-content:center;align-items:center}
-.character-box{position:relative;border-radius:32px;overflow:visible;animation:float 6s ease-in-out infinite}
-.character-img{width:100%;max-width:540px;height:auto;border-radius:28px;box-shadow:0 24px 80px rgba(0,0,0,.8),0 0 70px rgba(24,0,173,.12);border:1px solid rgba(24,0,173,.25);background:radial-gradient(circle at 50% 30%,rgba(24,0,173,.15),#050505 75%)}
-.character-aura{position:absolute;inset:-20px;border-radius:40px;background:radial-gradient(circle,rgba(24,0,173,.18) 0%,transparent 65%);filter:blur(30px);z-index:-1;pointer-events:none}
+/* Transparent hero character — placed directly on the page background. */
+.hero-media-wrap{position:relative;width:min(920px,100%);margin:18px auto -18px;display:flex;justify-content:center;align-items:flex-end;isolation:isolate}
+.hero-media-wrap::before{content:"";position:absolute;z-index:-1;left:12%;right:12%;bottom:7%;height:62%;background:radial-gradient(ellipse,rgba(24,0,173,.18),transparent 70%);filter:blur(34px);pointer-events:none}
+.character-img{width:min(860px,100%);height:auto;object-fit:contain;filter:drop-shadow(0 34px 30px rgba(0,0,0,.58));animation:float 7s ease-in-out infinite}
 .chip{position:absolute;z-index:3;display:flex;align-items:center;gap:9px;background:rgba(10,11,12,.88);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid var(--line-light);padding:10px 18px;border-radius:999px;font-size:12px;font-weight:600;box-shadow:0 12px 30px rgba(0,0,0,.6);white-space:nowrap}
 .chip-top{top:25px;left:-25px;border-color:rgba(24,0,173,.35);animation:chip-float-1 5s ease-in-out infinite}
 .chip-right{top:45%;right:-35px;border-color:rgba(24,0,173,.4);animation:chip-float-2 6s ease-in-out infinite}
@@ -388,7 +387,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-off
 .final-copy p{font-size:clamp(15px,2vw,20px);color:var(--muted);margin:20px auto 36px;max-width:540px}
 .final-copy .actions{margin-top:0}
 
-.footer{padding:50px 40px 60px;max-width:1440px;margin:auto;position:relative;border-top:1px solid var(--line)}
+.footer{padding:50px 40px 60px;max-width:1440px;margin:auto;position:relative}
 .footer-top{display:grid;grid-template-columns:2.5fr repeat(3,1fr);gap:40px}
 .footer-brand .brand{font-size:36px;letter-spacing:-.02em}
 .footer-brand .brand-mark{width:36px;height:36px}
@@ -432,12 +431,8 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-off
   .hero-copy{font-size:14.5px;line-height:1.5}
   .actions{gap:10px;margin-top:22px}
   .action{min-width:0;width:100%;font-size:14px;min-height:46px;padding:12px 20px}
-  .hero-media-wrap{width:100%;margin-top:24px}
-  .character-img{border-radius:20px}
-  .chip{padding:6px 12px;font-size:9.5px}
-  .chip-top{top:8px;left:4px}
-  .chip-right{right:4px;top:auto;bottom:35px}
-  .chip-bottom{display:none}
+  .hero-media-wrap{width:calc(100% + 30px);margin:18px -15px -10px}
+  .character-img{width:100%;max-width:650px}
 
   .anywhere{padding:50px 18px 60px}
   .section-heading h2{font-size:clamp(23px,6.8vw,32px);line-height:1.15}
@@ -508,22 +503,8 @@ def actions(primary='Start trading',secondary='Explore FanPlay'):
     return f'<div class="actions"><a class="action primary" href="signup.html">{primary}</a><a class="action" href="fanplay.html">{secondary}<img src="assets/landing/arrow.svg" alt="" width="18" height="18"></a></div>'
 
 def hero_media():
-    return '''<div class="hero-media-wrap" role="region" aria-label="Fantrade trader on the toilet illustration">
-      <div class="character-box">
-        <div class="character-aura"></div>
-        <img class="character-img" src="assets/landing/toilet-trader.jpg" alt="Passionate football fan trading player shares from the toilet" width="700" height="700" fetchpriority="high">
-        <div class="chip chip-top">
-          <span class="chip-pulse"></span>
-          <span><b>Trade from anywhere</b> (yes, even here)</span>
-        </div>
-        <div class="chip chip-right">
-          <span class="chip-badge">LIVE</span>
-          <span><b>$Saka</b> 48.20 <span class="green">+6.40%</span></span>
-        </div>
-        <div class="chip chip-bottom">
-          <span>⚡ Instant Settlement in <b>$FTR</b></span>
-        </div>
-      </div>
+    return '''<div class="hero-media-wrap" role="img" aria-label="Fantrade character checking the market on a phone">
+      <img class="character-img" src="assets/landing/fantrade-character-2.png" alt="Fantrade character checking player markets on a phone" width="1306" height="1205" fetchpriority="high">
     </div>'''
 
 def product_preview():
@@ -674,7 +655,7 @@ def build_landing():
         feature('Real ownership','10 million shares.<br>one football economy.',coins,'how-it-works.html'),
         feature('FanPlay','turn football knowledge<br>into matchday points.',entry,'fanplay.html'),
     ])
-    html='''<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="theme-color" content="#050505"><meta name="description" content="Trade shares in football players, build your Dream Club and put your football knowledge into play with FanPlay. Welcome to Fantrade."><title>Fantrade — Own the game.</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"><link rel="preload" as="image" href="assets/landing/toilet-trader.jpg"><style>'''+CSS+'''</style></head><body><a class="skip" href="#main">Skip to content</a><div class="landing"><header class="masthead"><a class="brand" href="index.html" aria-label="Fantrade home"><img class="brand-mark" src="assets/landing/fantrade-logo.png" alt="Fantrade"><span>fantrade<span class="brand-dot">.</span></span></a><nav class="nav-right" aria-label="Main navigation"><a class="nav-link" href="exchange.html">Explore players</a><a class="nav-link" href="how-it-works.html">How it works</a><a class="nav-login" href="signin.html">Log in</a><button class="menu-toggle" id="landingMenu" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="landingNav"><svg class="icon-bars" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M3 6h18M3 12h18M3 18h18" stroke-linecap="round"/></svg><svg class="icon-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M18 6 6 18M6 6l12 12" stroke-linecap="round"/></svg></button></nav></header><nav class="mobile-menu" id="landingNav" aria-label="Mobile navigation" inert><div class="mobile-menu-inner"><a href="exchange.html">Explore players</a><a href="clubs.html">Dream Clubs</a><a href="fanplay.html">FanPlay</a><a href="how-it-works.html">How it works</a><a href="signup.html" class="menu-highlight">Create account <span class="arrow">&rarr;</span></a></div></nav><main id="main"><section class="hero" aria-labelledby="heroTitle"><div class="hero-pill"><span class="dot"></span> The Football Player Stock Market</div><div class="wordmark" aria-hidden="true">fantrade</div><h1 id="heroTitle">where football fans<br><span>own the game.</span></h1><p class="hero-copy">Trade real fractional shares in world-class footballers. Build your dream club squad. Put your football IQ into play anytime, anywhere.</p>'''+actions()+hero_media()+'''</section><section class="anywhere" aria-labelledby="anywhereTitle"><div class="section-heading"><span class="eyebrow">YOUR FOOTBALL WORLD, ON WEB</span><h2 id="anywhereTitle">trade from anywhere.<br>stay close to the game.</h2><p>From your phone to your desktop — your players, club and matchday in one place.</p></div>'''+product_preview()+'''</section><section class="features" aria-labelledby="featuresTitle"><div class="bg-deco bg-deco-features" aria-hidden="true"><img src="assets/landing/fantrade-outline-logo.png" alt="" width="560" height="560"></div><div class="section-heading"><span class="eyebrow">THE FOOTBALL ECONOMY</span><h2 id="featuresTitle">more than a spectator.</h2><p>The sports trading ecosystem built around passion, performance and true ownership.</p></div><div class="feature-grid">'''+features+'''</div></section><section class="final-cta" aria-labelledby="finalTitle"><img class="legends" src="assets/landing/legends.webp" alt="" loading="lazy" aria-hidden="true"><img class="orbit" src="assets/landing/outer-circle.webp" alt="" loading="lazy" aria-hidden="true"><img class="orbit inner" src="assets/landing/inner-circle.webp" alt="" loading="lazy" aria-hidden="true"><div class="final-copy"><h2 id="finalTitle">a trading platform<br>for the football in us.</h2><p>Start with a share in a player you believe in.<br>Your squad starts right here.</p>'''+actions()+'''</div></section></main><footer class="footer"><div class="footer-top"><div class="footer-brand"><a class="brand" href="index.html"><img class="brand-mark" src="assets/landing/fantrade-logo.png" alt="Fantrade"><span>fantrade<span class="brand-dot">.</span></span></a><p>where football fans own the game.</p></div><div class="footer-col"><h2>Platform</h2><a href="exchange.html">Player market</a><a href="clubs.html">Dream Clubs</a><a href="fanplay.html">FanPlay</a><a href="leaderboard.html">Leaderboard</a></div><div class="footer-col"><h2>Get started</h2><a href="how-it-works.html">How it works</a><a href="signup.html">Create account</a><a href="signin.html">Log in</a><a href="ftr.html">$FTR wallet</a></div><div class="footer-col"><h2>Your Fantrade</h2><a href="portfolio.html">Portfolio</a><a href="account.html">Your profile</a><a href="settings-play.html">Responsible play</a><a href="settings-data.html">Data &amp; account</a></div></div><p class="copyright">© 2026 Fantrade.</p><p class="demo-note">Prototype experience. Player prices, balances and rewards shown are illustrative.</p></footer></div><script>
+    html='''<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="theme-color" content="#050505"><meta name="description" content="Trade shares in football players, build your Dream Club and put your football knowledge into play with FanPlay. Welcome to Fantrade."><title>Fantrade — Own the game.</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"><link rel="preload" as="image" href="assets/landing/fantrade-character-2.png"><style>'''+CSS+'''</style></head><body><a class="skip" href="#main">Skip to content</a><div class="landing"><header class="masthead"><a class="brand" href="index.html" aria-label="Fantrade home"><img class="brand-mark" src="assets/landing/fantrade-logo.png" alt="Fantrade"><span>fantrade<span class="brand-dot">.</span></span></a><nav class="nav-right" aria-label="Main navigation"><a class="nav-link" href="exchange.html">Explore players</a><a class="nav-link" href="how-it-works.html">How it works</a><a class="nav-login" href="signin.html">Log in</a><button class="menu-toggle" id="landingMenu" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="landingNav"><svg class="icon-bars" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M3 6h18M3 12h18M3 18h18" stroke-linecap="round"/></svg><svg class="icon-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M18 6 6 18M6 6l12 12" stroke-linecap="round"/></svg></button></nav></header><nav class="mobile-menu" id="landingNav" aria-label="Mobile navigation" inert><div class="mobile-menu-inner"><a href="exchange.html">Explore players</a><a href="clubs.html">Dream Clubs</a><a href="fanplay.html">FanPlay</a><a href="how-it-works.html">How it works</a><a href="signup.html" class="menu-highlight">Create account <span class="arrow">&rarr;</span></a></div></nav><main id="main"><section class="hero" aria-labelledby="heroTitle"><div class="hero-pill"><span class="dot"></span> The Football Player Stock Market</div><div class="wordmark" aria-hidden="true">fantrade</div><h1 id="heroTitle">where football fans<br><span>own the game.</span></h1><p class="hero-copy">Trade real fractional shares in world-class footballers. Build your dream club squad. Put your football IQ into play anytime, anywhere.</p>'''+actions()+hero_media()+'''</section><section class="anywhere" aria-labelledby="anywhereTitle"><div class="section-heading"><span class="eyebrow">YOUR FOOTBALL WORLD, ON WEB</span><h2 id="anywhereTitle">trade from anywhere.<br>stay close to the game.</h2><p>From your phone to your desktop — your players, club and matchday in one place.</p></div>'''+product_preview()+'''</section><section class="features" aria-labelledby="featuresTitle"><div class="bg-deco bg-deco-features" aria-hidden="true"><img src="assets/landing/fantrade-outline-logo.png" alt="" width="560" height="560"></div><div class="section-heading"><span class="eyebrow">THE FOOTBALL ECONOMY</span><h2 id="featuresTitle">more than a spectator.</h2><p>The sports trading ecosystem built around passion, performance and true ownership.</p></div><div class="feature-grid">'''+features+'''</div></section><section class="final-cta" aria-labelledby="finalTitle"><img class="legends" src="assets/landing/legends.webp" alt="" loading="lazy" aria-hidden="true"><img class="orbit" src="assets/landing/outer-circle.webp" alt="" loading="lazy" aria-hidden="true"><img class="orbit inner" src="assets/landing/inner-circle.webp" alt="" loading="lazy" aria-hidden="true"><div class="final-copy"><h2 id="finalTitle">a trading platform<br>for the football in us.</h2><p>Start with a share in a player you believe in.<br>Your squad starts right here.</p>'''+actions()+'''</div></section></main><footer class="footer"><div class="footer-top"><div class="footer-brand"><a class="brand" href="index.html"><img class="brand-mark" src="assets/landing/fantrade-logo.png" alt="Fantrade"><span>fantrade<span class="brand-dot">.</span></span></a><p>where football fans own the game.</p></div><div class="footer-col"><h2>Platform</h2><a href="exchange.html">Player market</a><a href="clubs.html">Dream Clubs</a><a href="fanplay.html">FanPlay</a><a href="leaderboard.html">Leaderboard</a></div><div class="footer-col"><h2>Get started</h2><a href="how-it-works.html">How it works</a><a href="signup.html">Create account</a><a href="signin.html">Log in</a><a href="ftr.html">$FTR wallet</a></div><div class="footer-col"><h2>Your Fantrade</h2><a href="portfolio.html">Portfolio</a><a href="account.html">Your profile</a><a href="settings-play.html">Responsible play</a><a href="settings-data.html">Data &amp; account</a></div></div><p class="copyright">© 2026 Fantrade.</p><p class="demo-note">Prototype experience. Player prices, balances and rewards shown are illustrative.</p></footer></div><script>
 const toggle=document.getElementById('landingMenu'), menu=document.getElementById('landingNav');
 function setMenu(open){
   toggle.setAttribute('aria-expanded',String(open));
@@ -690,7 +671,7 @@ menu.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>setMenu(fal
 matchMedia('(min-width:800px)').addEventListener('change',e=>{if(e.matches)setMenu(false);});
 </script></body></html>'''
     (ROOT/'index.html').write_text(html,encoding='utf-8')
-    print('built index.html — Fantrade brand & toilet trader hero')
+    print('built index.html — transparent Fantrade character hero')
 
 if __name__=='__main__':
     build_landing()
