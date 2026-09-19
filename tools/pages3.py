@@ -125,86 +125,58 @@ document.querySelectorAll('.oauth button').forEach(function(b){
 
 
 AUTH_PAGE_CSS = """
-html, body{
-  height:100%!important;height:100dvh!important;max-height:100dvh!important;
-  overflow:hidden!important;position:fixed!important;width:100%!important;
+/* Natural page flow keeps both forms reachable on small screens and with a keyboard open. */
+body{--dim:#bbb8ca;--faint:#a3a0b3;background:#08060f}
+.nav-min{top:0;min-height:72px;padding:12px 32px;padding-top:calc(12px + env(safe-area-inset-top));background:#08060f}
+.nav-min a.back{min-height:44px;color:var(--dim)}
+.nav-min .logo,.nav-min a.back,.auth-form .btn{font-family:Archivo,Montserrat,system-ui,sans-serif}
+.auth{min-height:100svh;grid-template-columns:1fr 1fr}
+.auth-brand{padding:120px 48px 56px}
+.auth-brand h1{font-size:clamp(32px,3.6vw,52px)}
+.auth-form{padding:112px 40px 48px;justify-content:flex-start;min-width:0}
+.auth-form .inner{max-width:440px}
+.auth-form h2{font-size:30px;text-transform:none;letter-spacing:-.03em;line-height:1.2}
+.auth-sub{font-size:14px;font-weight:400;margin:12px 0 28px;line-height:1.6}
+.tf{margin-bottom:18px}
+.tf label{font-size:12px;text-transform:none;letter-spacing:0;margin-bottom:8px;color:var(--dim)}
+.tf .lrow{align-items:center;margin-bottom:8px}
+.tf .lrow label{margin:0}
+.tf .lrow a{font-size:12px;color:var(--ink);text-decoration:underline;text-underline-offset:3px}
+.tf .inp{min-height:50px;padding:0 14px;border-radius:12px;background:#14121d;box-shadow:none}
+.tf .inp:focus-within{border-color:#b0a5ff;outline:2px solid rgba(176,165,255,.18)}
+.tf input,.tf select{font-size:16px;min-height:48px;font-weight:400}
+.tf .eye{min-height:44px;min-width:44px;font-size:11px;letter-spacing:0;text-transform:none;color:var(--dim)}
+.tf .hint{font-size:12px;font-weight:400;margin-top:7px}
+.tf .err{font-size:12px}
+.checkrow{font-size:13px;font-weight:400;gap:10px;margin:8px 0 20px}
+.checkrow .box{width:22px;height:22px;border-radius:6px;box-shadow:none}
+.auth-form .btn{min-height:52px;padding:12px 18px;border-radius:12px;font-size:15px;text-transform:none;letter-spacing:0;box-shadow:none}
+.auth-form .btn .cap{box-shadow:none;background:none}
+.auth-alt{margin-top:24px;font-size:13px;color:var(--dim);line-height:1.6}
+.auth-alt a,.checkrow a{color:var(--ink);border:0;text-decoration:underline;text-underline-offset:3px}
+.splitline{margin:24px 0 18px;font-size:10px;letter-spacing:.1em}
+.oauth{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.oauth button{min-height:46px;padding:10px 6px;gap:6px;font-size:12px;border-radius:10px;box-shadow:none}
+.demo-note{margin-top:20px;padding:0;border:0;background:none;font-size:12px;font-weight:400;line-height:1.6;overflow-wrap:anywhere}
+.demo-note b{color:var(--dim);font-weight:600}
+.strength{margin-top:-8px}
+#pwLabel{font-size:12px!important;line-height:1.5;margin:7px 0 18px!important}
+@media (max-width:1024px){
+  .auth{grid-template-columns:1fr;min-height:100svh}
+  .auth-brand{display:none}
+  .auth-form{padding:104px 24px 40px;padding-bottom:calc(40px + env(safe-area-inset-bottom))}
 }
-.auth{
-  height:100%!important;height:100dvh!important;max-height:100dvh!important;
-  overflow:hidden!important;min-height:0!important;display:grid;grid-template-columns:1.05fr 1fr;
-}
-.auth-brand{
-  height:100%!important;height:100dvh!important;max-height:100dvh!important;
-  overflow:hidden!important;padding:max(50px,calc(42px + env(safe-area-inset-top))) 48px 36px!important;
-  justify-content:center!important;
-}
-.auth-brand h1{font-size:clamp(28px,3.2vw,44px)!important;margin-top:14px!important}
-.auth-brand .lede{margin-top:14px!important;font-size:13.5px!important}
-.proof{margin-top:24px!important;gap:12px!important}
-.proof .pr{gap:12px!important;font-size:12px!important}
-.auth-form{
-  height:100%!important;height:100dvh!important;max-height:100dvh!important;
-  overflow:hidden!important;justify-content:center!important;
-  padding:max(50px,calc(42px + env(safe-area-inset-top))) 32px max(16px,env(safe-area-inset-bottom))!important;
-}
-.auth-form .inner{max-width:420px!important;width:100%!important}
-.auth-form h2{font-size:clamp(22px,2.4vw,32px)!important;margin:0 0 2px!important}
-.auth-sub{font-size:12px!important;margin:2px 0 16px!important;line-height:1.45!important}
-.tf{margin-bottom:10px!important}
-.tf label{font-size:9px!important;margin-bottom:4px!important}
-.tf .inp{padding:9px 14px!important;border-radius:12px!important}
-.tf input,.tf select{font-size:13px!important}
-.checkrow{margin:6px 0 14px!important;font-size:11.5px!important}
-.splitline{margin:12px 0!important;font-size:8.5px!important}
-.oauth{gap:8px!important}
-.oauth button{padding:10px 8px!important;font-size:11.5px!important;border-radius:12px!important}
-.auth-alt{margin-top:12px!important;font-size:11.5px!important}
-.nav-min{top:14px!important;padding:0 24px!important}
-@media (max-width:768px){
-  .auth{grid-template-columns:1fr!important}
-  .auth-brand{display:none!important}
-  .auth-form{padding:max(42px,calc(34px + env(safe-area-inset-top))) 20px max(12px,env(safe-area-inset-bottom))!important}
-  .auth-form .inner{max-width:380px!important}
-  .auth-form h2{font-size:21px!important}
-  .auth-sub{font-size:11px!important;margin:2px 0 10px!important}
-  .tf{margin-bottom:7px!important}
-  .tf label{font-size:8.5px!important;margin-bottom:2px!important}
-  .tf .inp{padding:7px 11px!important;border-radius:9px!important}
-  .tf input,.tf select{font-size:12.5px!important}
-  .checkrow{margin:6px 0 10px!important;font-size:10.5px!important;gap:7px!important}
-  .checkrow .box{width:16px!important;height:16px!important;border-radius:5px!important}
-  .btn{min-height:40px!important;padding:9px 16px!important;font-size:12.5px!important;border-radius:10px!important}
-  .splitline{margin:8px 0!important;font-size:8.5px!important}
-  .oauth{display:grid!important;grid-template-columns:repeat(3,1fr)!important;gap:6px!important}
-  .oauth button{padding:7px 4px!important;font-size:10.5px!important;border-radius:9px!important;gap:4px!important}
-  .oauth button .ic{width:12px!important;height:12px!important}
-  .auth-alt{margin-top:8px!important;font-size:11px!important}
-  .demo-note{margin-top:6px!important;padding:6px 8px!important;font-size:9.5px!important;line-height:1.35!important}
-  .nav-min{top:10px!important;padding:0 16px!important}
+@media (max-width:480px){
+  .nav-min{padding-left:20px;padding-right:20px;min-height:68px}
+  .nav-min a.back{min-width:44px;justify-content:center}
+  .nav-min a.back .ic{width:18px;height:18px}
+  .auth-form{padding-top:calc(96px + env(safe-area-inset-top));padding-left:20px;padding-right:20px}
+  .auth-form h2{font-size:28px}
+  .auth-sub{margin:10px 0 24px;font-size:13px}
 }
 """
 
-SIGNUP_PAGE_CSS = AUTH_PAGE_CSS + """
-@media (max-width:768px){
-  .auth-form h2{font-size:19px!important}
-  .auth-sub{font-size:10.5px!important;margin:1px 0 6px!important}
-  .tf{margin-bottom:5px!important}
-  .tf label{font-size:8px!important;margin-bottom:2px!important}
-  .tf .inp{padding:5.5px 10px!important;border-radius:8px!important}
-  .tf input,.tf select{font-size:12px!important}
-  .strength{margin-top:2px!important;gap:3px!important}
-  .strength i{height:2px!important}
-  .hint{margin:1px 0 3px!important;font-size:9px!important}
-  .checkrow{margin:4px 0 6px!important;font-size:10px!important;gap:6px!important;line-height:1.25!important}
-  .checkrow .box{width:14px!important;height:14px!important;border-radius:4px!important}
-  .btn{min-height:36px!important;padding:7px 12px!important;font-size:12px!important;border-radius:9px!important}
-  .splitline{margin:5px 0!important;font-size:8px!important}
-  .oauth{display:grid!important;grid-template-columns:repeat(3,1fr)!important;gap:5px!important}
-  .oauth button{padding:5px 3px!important;font-size:10px!important;border-radius:8px!important;gap:4px!important}
-  .auth-alt{margin-top:5px!important;font-size:10px!important}
-  .nav-min{top:8px!important;padding:0 14px!important}
-}
-"""
+SIGNUP_PAGE_CSS = AUTH_PAGE_CSS
 
 # ══════════════════════════════════════════════════════════════════
 # SIGN IN
@@ -235,9 +207,9 @@ si = [T('<main class="auth">@@<div class="auth-form"><div class="inner" data-rev
 si.append('<h2>Sign in</h2><p class="auth-sub">Use the email on your Fantrade account. '
           'Sessions stay open for 30 days unless you sign out.</p>')
 si.append('<form id="signinForm" novalidate>')
-si.append(tf("Email", "email", "email", "you@example.com", "", "", "Enter a valid email address."))
+si.append(tf("Email", "email", "email", "you@example.com", "", "", "Enter a valid email address.", extra='autocomplete="email" inputmode="email" autocapitalize="none"'))
 si.append(tf("Password", "password", "password", "••••••••••", "lock", "",
-             "Password must be at least 8 characters.", link="Forgot?"))
+             "Password must be at least 8 characters.", extra='autocomplete="current-password"', link="Forgot?"))
 si.append(check("remember", "Keep me signed in on this device", True))
 si.append('<button class="btn btn-lime" type="submit" style="width:100%;justify-content:space-between">'
           'Sign in' + ARROW + '</button>')
@@ -291,8 +263,8 @@ su = [T('<main class="auth">@@<div class="auth-form"><div class="inner" data-rev
 su.append('<h2>Create account</h2><p class="auth-sub">One account covers the exchange, your Dream Club '
           'and every FanPlay round.</p>')
 su.append('<form id="signupForm" novalidate>')
-su.append(tf("Full name", "name", "text", "Alex Morgan", "user", "", "Tell us what to call you."))
-su.append(tf("Email", "email", "email", "you@example.com", "", "", "Enter a valid email address."))
+su.append(tf("Full name", "name", "text", "Alex Morgan", "user", "", "Tell us what to call you.", extra='autocomplete="name"'))
+su.append(tf("Email", "email", "email", "you@example.com", "", "", "Enter a valid email address.", extra='autocomplete="email" inputmode="email" autocapitalize="none"'))
 su.append(tf("Password", "password", "password", "At least 8 characters", "lock", "",
              "Use 8 characters or more, with a number.",
              extra='autocomplete="new-password"'))
