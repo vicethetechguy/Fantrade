@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="theme-color" content="#050505"><meta name="description" content="Trade shares in football players, build your Dream Club and put your football knowledge into play with FanPlay. Welcome to Fantrade."><title>Fantrade — Own the game.</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"><link rel="preload" as="image" href="assets/landing/fantrade-character-2.png"><style>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="theme-color" content="#050505"><meta name="description" content="Trade shares in football players, build your Dream Club and put your football knowledge into play with FanPlay. Welcome to Fantrade."><title>Fantrade — Own the game.</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"><link rel="preload" as="image" href="assets/landing/fantrade-character-market.png"><style>
 :root{
   color-scheme:dark;
   --bg:#050505;
@@ -164,129 +164,15 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-off
 .section-heading p{font-size:clamp(15px,2vw,20px);color:var(--muted);margin-top:14px}
 .eyebrow{display:inline-block;font-size:11.5px;color:var(--accent);font-weight:700;letter-spacing:normal;margin-bottom:14px;text-transform:uppercase}
 
-/* Anywhere Section & Real iPad + iPhone Mockups */
-.anywhere{position:relative;text-align:center;padding:70px 24px 100px}
-.product-preview{position:relative;width:min(1100px,94%);margin:55px auto 0;padding:0 35px 50px 0}
-
-/* Real iPad Mockup (Landscape) */
-.ipad-frame{
-  position:relative;z-index:1;background:linear-gradient(145deg,#1f2228,#121316);
-  border:3px solid #2d3038;border-radius:32px;padding:12px 14px 18px;
-  box-shadow:0 32px 90px rgba(0,0,0,.8),0 0 60px rgba(24,0,173,.10),inset 0 0 2px rgba(255,255,255,.2);
-  margin:0 auto;text-align:left;
-}
-.ipad-cam{
-  position:absolute;top:6px;left:50%;transform:translateX(-50%);
-  width:6px;height:6px;border-radius:50%;background:#040507;border:1px solid #22252c;
-  box-shadow:inset 0 0 2px rgba(24,0,173,.8);z-index:4;
-}
-.ipad-screen{
-  background:#07080a;border:1px solid rgba(255,255,255,.07);border-radius:20px;
-  overflow:hidden;aspect-ratio:1.62;display:flex;flex-direction:column;
-  box-shadow:inset 0 0 20px rgba(0,0,0,.7);
-}
-.ipad-status-bar{
-  height:24px;background:#090a0d;border-bottom:1px solid rgba(255,255,255,.04);
-  display:flex;align-items:center;justify-content:space-between;padding:0 16px;
-  font-size:10px;color:#8c9099;font-weight:500;
-}
-.ipad-status-left{display:flex;align-items:center;gap:6px}
-.ipad-status-right{display:flex;align-items:center;gap:8px;font-size:9.5px}
-.ipad-nav{
-  height:38px;background:#0a0b0e;border-bottom:1px solid var(--line);
-  display:flex;align-items:center;justify-content:space-between;padding:0 16px;font-size:11px;
-}
-.ipad-nav-brand{font-size:15px;color:#fff;display:flex;align-items:center;gap:6px;font-family:Archivo,sans-serif}
-.ipad-nav-links{display:flex;align-items:center;gap:18px;font-size:11px;font-weight:600;color:var(--muted)}
-.ipad-nav-links .active{color:var(--text);position:relative}
-.ipad-nav-links .active:after{content:'';position:absolute;bottom:-10px;left:0;right:0;height:2px;background:var(--accent);border-radius:2px}
-.ipad-nav-wallet{
-  display:flex;align-items:center;gap:6px;background:rgba(24,0,173,.15);
-  border:1px solid rgba(24,0,173,.3);padding:4px 10px;border-radius:999px;
-  font-weight:700;color:#fff;font-size:10.5px;
-}
-.ipad-nav-wallet .dot{width:5px;height:5px;border-radius:50%;background:#00e676;box-shadow:0 0 6px #00e676}
-.ipad-home-bar{width:120px;height:4px;background:rgba(255,255,255,.3);border-radius:999px;margin:6px auto 3px}
-
-.screen-body{display:grid;grid-template-columns:26% 51% 23%;flex:1;min-height:0}
-.market-list{border-right:1px solid var(--line);padding:12px 10px;background:#08090A}
-.micro-label{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:normal;font-weight:700;display:block;margin-bottom:8px}
-.preview-row{display:flex;align-items:center;gap:8px;border-bottom:1px solid rgba(255,255,255,.04);padding:9px 0;font-size:11px}
-.preview-row img{width:26px;height:26px;border-radius:50%;object-fit:cover;object-position:center 20%;border:1px solid var(--line)}
-.preview-row b{font-weight:600}
-.preview-row small{font-size:9px;color:var(--muted);display:block;margin-top:1px}
-.preview-row .quote{margin-left:auto;text-align:right}
+/* Supplied phone artwork with live text over its lower edge. */
+.anywhere{position:relative;text-align:center;padding:36px 24px 40px}
+.product-preview{position:relative;isolation:isolate;display:grid;width:min(960px,100%);margin:0 auto;padding-top:32px;overflow:hidden}
+.phone-mockup{grid-area:1/1;justify-self:center;align-self:start;width:min(560px,90%);height:auto;transform:translateX(-4%) rotate(-8deg);filter:drop-shadow(0 24px 36px rgba(0,0,0,.55))}
+.product-preview::after{content:"";grid-area:1/1;z-index:1;pointer-events:none;background:linear-gradient(to bottom,transparent 42%,rgba(5,5,5,.28) 60%,rgba(5,5,5,.88) 82%,var(--bg) 98%)}
+.anywhere-copy{grid-area:1/1;align-self:end;position:relative;z-index:2;padding:160px 20px 28px;text-shadow:0 2px 20px rgba(0,0,0,.85)}
+.anywhere-copy h2{font-size:clamp(28px,4.2vw,52px);font-variation-settings:'wdth' 100,'wght' 700;text-transform:none;line-height:1.08;letter-spacing:-.035em}
+.anywhere-copy p{max-width:600px;margin:16px auto 0;font-size:18px;line-height:1.5;color:#b9bcb7;text-wrap:balance}
 .green{color:var(--accent);font-weight:600}
-.chart-area{padding:14px;border-right:1px solid var(--line);overflow:hidden;background:#070809}
-.chart-title{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600}
-.chart-title img{width:24px;height:24px;border-radius:50%;object-fit:cover}
-.badge-live{background:rgba(24,0,173,.2);color:var(--accent);font-size:8px;font-weight:700;padding:2px 6px;border-radius:4px;margin-left:6px}
-.chart-price{font-size:26px;font-weight:800;margin:14px 0 4px;font-family:Montserrat,sans-serif}
-.chart-price small{font-size:11px;margin-left:8px;color:var(--accent)}
-.chart-tools{display:flex;gap:14px;font-size:9px;color:var(--muted);margin:10px 0}
-.chart-tools b{color:var(--accent);border-bottom:1.5px solid var(--accent);padding-bottom:2px}
-.price-chart{display:block;width:100%;height:165px;overflow:visible;background-image:linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px);background-size:25% 25%}
-.chart-bottom{display:flex;gap:20px;border-top:1px solid var(--line);margin-top:10px;padding-top:10px;font-size:10px;color:var(--muted)}
-.order-preview{padding:12px 10px;background:#08090A}
-.order-tabs{display:flex;background:#101215;border-radius:8px;font-size:10px;text-align:center;margin-bottom:14px;padding:2px}
-.order-tabs span{padding:6px 0;flex:1;color:var(--muted)}
-.order-tabs b{flex:1;background:var(--accent);color:var(--accent-ink);border-radius:6px;padding:6px 0;font-weight:700}
-.order-field{border:1px solid var(--line);border-radius:8px;margin-top:8px;padding:8px 10px;font-size:11px;background:#0D0E11}
-.order-field small{display:block;color:var(--muted);font-size:8.5px;margin-bottom:4px;text-transform:uppercase}
-.order-note{display:flex;justify-content:space-between;font-size:9px;color:var(--muted);margin:10px 0}
-.order-buy{background:var(--accent);color:var(--accent-ink);font-weight:700;text-align:center;border-radius:8px;padding:9px;font-size:11px;cursor:pointer}
-
-/* Real iPhone 16 Pro Mockup (Portrait) */
-.iphone-frame{
-  position:absolute;right:0;bottom:0;z-index:5;width:245px;
-  background:linear-gradient(145deg,#24272f,#141519);
-  border-radius:44px;padding:10px 10px 14px;border:3px solid #333640;
-  box-shadow:0 30px 80px rgba(0,0,0,.9),0 0 45px rgba(24,0,173,.18),inset 0 0 2px rgba(255,255,255,.25);
-  transform:rotate(6deg);animation:phone-float 6s ease-in-out infinite;text-align:left;
-}
-.iphone-screen{
-  background:#08090c;border-radius:34px;border:1px solid rgba(255,255,255,.07);
-  overflow:hidden;padding:8px 10px 10px;position:relative;
-  box-shadow:inset 0 0 14px rgba(0,0,0,.8);
-}
-.iphone-island{
-  width:74px;height:17px;background:#000;border-radius:20px;
-  margin:0 auto 6px;display:flex;align-items:center;justify-content:space-between;
-  padding:0 6px;box-shadow:0 0 1px rgba(255,255,255,.2);font-size:7px;color:#00e676;font-weight:700;
-}
-.iphone-island-lens{width:6px;height:6px;border-radius:50%;background:#0c0d12;border:1px solid #1a1c22}
-.iphone-status{display:flex;justify-content:space-between;align-items:center;font-size:9px;font-weight:700;padding:0 4px 6px;color:#d2d6d0}
-.iphone-status-icons{display:flex;align-items:center;gap:4px;font-size:8px}
-
-.iphone-user-row{display:flex;align-items:center;justify-content:space-between;padding:4px 0 8px;border-bottom:1px solid rgba(255,255,255,.05)}
-.user-meta{display:flex;align-items:center;gap:6px}
-.user-meta img{width:22px;height:22px;border-radius:50%;border:1px solid var(--accent);object-fit:cover}
-.user-meta small{font-size:7px;color:var(--muted);display:block;text-transform:uppercase}
-.user-meta b{font-size:10px;color:#fff}
-.iphone-bell{position:relative;color:var(--muted);display:flex;align-items:center}
-.bell-dot{position:absolute;top:0;right:0;width:4px;height:4px;border-radius:50%;background:var(--red)}
-
-.iphone-card{
-  background:radial-gradient(ellipse at 80% 20%,rgba(24,0,173,.22),transparent 70%),#0F1116;
-  border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:10px 10px 8px;margin:8px 0;
-}
-.iphone-card-lbl{font-size:7.5px;color:var(--muted);text-transform:uppercase;font-weight:700;letter-spacing:normal}
-.iphone-balance{font-size:22px;letter-spacing:-1px;font-weight:800;font-family:Montserrat,sans-serif;margin:3px 0 2px}
-.iphone-gain{font-size:9px;color:var(--accent);font-weight:600}
-.iphone-actions{display:flex;gap:5px;margin:8px 0 2px}
-.iphone-actions span{background:rgba(255,255,255,.06);flex:1;border-radius:6px;padding:6px 0;text-align:center;font-size:8px;font-weight:600;border:1px solid var(--line)}
-.iphone-actions span:first-child{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
-
-.iphone-market-head{display:flex;justify-content:space-between;font-size:8px;color:var(--muted);font-weight:700;text-transform:uppercase;margin:8px 0 4px}
-.iphone-market-head span:last-child{color:var(--accent);font-weight:600}
-.iphone-frame .preview-row{padding:6px 0;font-size:9px}
-.iphone-frame .preview-row img{width:20px;height:20px}
-
-.iphone-dock{display:flex;justify-content:space-around;margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,.06);color:var(--muted);font-size:8px}
-.iphone-dock-item{display:flex;flex-direction:column;align-items:center;gap:2px}
-.iphone-dock-item.active{color:var(--accent);font-weight:700}
-.iphone-dock-item svg{width:11px;height:11px}
-.iphone-home-bar{width:80px;height:3.5px;background:rgba(255,255,255,.35);border-radius:999px;margin:8px auto 2px}
 
 .features{position:relative;max-width:1440px;margin:0 auto;padding:60px 48px 0}
 .features .section-heading{margin-bottom:44px}
@@ -388,7 +274,6 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-off
 .demo-note{color:#5A605B;font-size:11px;margin-top:6px}
 
 @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
-@keyframes phone-float{0%,100%{transform:rotate(6deg) translateY(0)}50%{transform:rotate(6deg) translateY(-10px)}}
 @keyframes orbit{from{transform:translate(-50%,-50%) rotate(0)}to{transform:translate(-50%,-50%) rotate(360deg)}}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 @keyframes chip-float-1{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
@@ -399,10 +284,6 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-off
   .feature{padding:26px 22px 0;min-height:360px}
   .feature h3{font-size:24px}
   .feature-art{height:210px}
-  .product-preview{width:96%;padding-right:30px}
-  .iphone-frame{width:215px}
-  .screen-body{grid-template-columns:28% 48% 24%}
-  .price-chart{height:120px}
 }
 @media(max-width:799px){
   .masthead{padding:18px 20px}
@@ -422,49 +303,15 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-off
   .hero-media-wrap{width:calc(100% + 30px);margin:18px -15px -10px}
   .character-img{width:100%;max-width:650px}
 
-  .anywhere{padding:50px 18px 60px}
+  .anywhere{padding:24px 12px 0}
   .section-heading h2{font-size:clamp(23px,6.8vw,32px);line-height:1.15}
   .section-heading p{font-size:14px;max-width:340px;margin:10px auto 0;line-height:1.5}
 
-  .product-preview{
-    width:100%;margin-top:28px;padding:0;
-    display:flex;flex-direction:column;align-items:center;gap:22px;
-  }
-  .ipad-frame{
-    width:100%;border-radius:20px;padding:8px 8px 12px;border-width:2.5px;
-  }
-  .ipad-cam{top:4px;width:5px;height:5px}
-  .ipad-screen{border-radius:14px;aspect-ratio:auto}
-  .ipad-status-bar{height:20px;padding:0 10px;font-size:8px}
-  .ipad-nav{height:30px;padding:0 10px;font-size:8.5px}
-  .ipad-nav-brand{font-size:12px}
-  .ipad-nav-links{display:none}
-  .ipad-nav-wallet{font-size:8.5px;padding:2px 8px}
-  .screen-body{height:auto;grid-template-columns:38% 62%}
-  .market-list{padding:6px 4px}
-  .preview-row{font-size:7.5px;padding:4px 0}
-  .preview-row img{width:18px;height:18px}
-  .chart-area{padding:6px;border-right:0}
-  .chart-title{font-size:8.5px}
-  .chart-title img{width:18px;height:18px}
-  .chart-price{font-size:17px;margin:4px 0 2px}
-  .chart-tools{font-size:6.5px;gap:6px;margin:3px 0}
-  .price-chart{height:75px}
-  .chart-bottom,.order-preview{display:none}
-  .ipad-home-bar{width:70px;height:3px;margin:4px auto 1px}
-
-  .iphone-frame{
-    position:relative;right:auto;bottom:auto;transform:none;
-    animation:float 6s ease-in-out infinite;width:min(240px,80%);
-    margin:0 auto;border-radius:36px;padding:8px 8px 12px;border-width:3px;
-  }
-  .iphone-screen{border-radius:28px;padding:7px 9px 8px}
-  .iphone-island{width:64px;height:15px;margin-bottom:4px}
-  .iphone-status{font-size:8px;padding:0 2px 4px}
-  .iphone-balance{font-size:18px}
-  .iphone-dock{font-size:7.5px;padding-top:6px;margin-top:6px}
-  .iphone-dock-item svg{width:11px;height:11px}
-  .iphone-home-bar{width:60px;height:3px;margin:6px auto 1px}
+  .product-preview{width:100%;padding-top:24px}
+  .phone-mockup{width:min(480px,92%)}
+  .anywhere-copy{padding:100px 4px 16px}
+  .anywhere-copy h2{font-size:clamp(25px,6.8vw,40px);line-height:1.1}
+  .anywhere-copy p{max-width:440px;font-size:14px;margin:12px auto 0;line-height:1.5}
 
   .features{padding:40px 18px 0}
   .features .section-heading{text-align:center;margin-bottom:32px}
@@ -481,120 +328,12 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-off
 }
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{animation:none!important;transition:none!important}}
 </style></head><body><a class="skip" href="#main">Skip to content</a><div class="landing"><header class="masthead"><a class="brand" href="index.html" aria-label="Fantrade home"><img class="brand-mark" src="assets/landing/fantrade-logo.png" alt="Fantrade"><span>fantrade<span class="brand-dot">.</span></span></a><nav class="nav-right" aria-label="Main navigation"><a class="nav-link" href="exchange.html">Explore players</a><a class="nav-link" href="how-it-works.html">How it works</a><a class="nav-login" href="signin.html">Log in</a><button class="menu-toggle" id="landingMenu" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="landingNav"><svg class="icon-bars" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M3 6h18M3 12h18M3 18h18" stroke-linecap="round"/></svg><svg class="icon-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M18 6 6 18M6 6l12 12" stroke-linecap="round"/></svg></button></nav></header><nav class="mobile-menu" id="landingNav" aria-label="Mobile navigation" inert><div class="mobile-menu-inner"><a href="exchange.html">Explore Players</a><a href="clubs.html">Dream Clubs</a><a href="fanplay.html">FanPlay</a><a href="how-it-works.html">How It Works</a><a href="signup.html" class="menu-highlight">Create Account <span class="arrow">&rarr;</span></a></div></nav><main id="main"><section class="hero" aria-labelledby="heroTitle"><div class="wordmark" aria-hidden="true">fantrade</div><h1 id="heroTitle">where football fans<br><span>own the game.</span></h1><p class="hero-copy">Trade real fractional shares in world-class footballers. Build your dream club squad. Put your football IQ into play anytime, anywhere.</p><div class="actions"><a class="action primary" href="signup.html">Start trading</a><a class="action" href="fanplay.html">Explore FanPlay<img src="assets/landing/arrow.svg" alt="" width="18" height="18"></a></div><div class="hero-media-wrap" role="img" aria-label="Fantrade character checking the market on a phone">
-      <img class="character-img" src="assets/landing/fantrade-character-2.png" alt="Fantrade character checking player markets on a phone" width="1306" height="1205" fetchpriority="high">
-    </div></section><section class="anywhere" aria-labelledby="anywhereTitle"><div class="section-heading"><span class="eyebrow">YOUR FOOTBALL WORLD, ON WEB</span><h2 id="anywhereTitle">trade from anywhere.<br>stay close to the game.</h2><p>From your phone to your desktop — your players, club and matchday in one place.</p></div><div class="product-preview" role="region" aria-label="Fantrade on iPad and iPhone">
-      <!-- Real iPad Pro Mockup (Landscape) -->
-      <div class="ipad-frame">
-        <div class="ipad-cam" aria-hidden="true"></div>
-        <div class="ipad-screen">
-          <div class="ipad-status-bar">
-            <div class="ipad-status-left"><b>9:41 AM</b> &nbsp; Wed Oct 22</div>
-            <div class="ipad-status-right">
-              <svg width="12" height="9" viewBox="0 0 16 12" fill="currentColor" aria-hidden="true"><path d="M8 2.5a11.9 11.9 0 0 1 7.2 2.5.8.8 0 0 1 .1 1.1l-6.7 7.4a.8.8 0 0 1-1.2 0L.7 6.1a.8.8 0 0 1 .1-1.1A11.9 11.9 0 0 1 8 2.5z"/></svg>
-              <span>5G</span>
-              <svg width="18" height="9" viewBox="0 0 24 12" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="1" y="1" width="19" height="10" rx="3"/><rect x="3" y="3" width="15" height="6" rx="1.5" fill="currentColor"/><path d="M22 4v4" stroke-linecap="round"/></svg>
-            </div>
-          </div>
-          <div class="ipad-nav">
-            <div class="ipad-nav-brand">
-              <img src="assets/landing/fantrade-logo.png" alt="" width="16" height="16">
-              <b>fantrade<span class="brand-dot">.</span></b>
-            </div>
-            <div class="ipad-nav-links">
-              <span class="active">Markets</span>
-              <span>Dream Clubs</span>
-              <span>FanPlay</span>
-              <span>Leaderboard</span>
-            </div>
-            <div class="ipad-nav-wallet">
-              <span class="dot"></span>
-              <span>128,450 $FTR</span>
-            </div>
-          </div>
-          <div class="screen-body">
-            <div class="market-list">
-              <span class="micro-label">Player markets</span><div class="preview-row"><img src="assets/players/saka.webp" alt="" loading="lazy" width="32" height="32"><div><b>Saka</b><small>Arsenal</small></div><div class="quote"><b>48.20</b><small class="green">+6.40%</small></div></div><div class="preview-row"><img src="assets/players/haaland.webp" alt="" loading="lazy" width="32" height="32"><div><b>Haaland</b><small>Manchester City</small></div><div class="quote"><b>71.40</b><small class="green">−1.80%</small></div></div><div class="preview-row"><img src="assets/players/mbappe.webp" alt="" loading="lazy" width="32" height="32"><div><b>Mbappé</b><small>Real Madrid</small></div><div class="quote"><b>78.50</b><small class="green">+4.80%</small></div></div><div class="preview-row"><img src="assets/players/vinicius.webp" alt="" loading="lazy" width="32" height="32"><div><b>Vinícius</b><small>Real Madrid</small></div><div class="quote"><b>63.10</b><small class="green">+0.70%</small></div></div><div class="preview-row"><img src="assets/players/palmer.webp" alt="" loading="lazy" width="32" height="32"><div><b>Palmer</b><small>Chelsea</small></div><div class="quote"><b>52.80</b><small class="green">+8.20%</small></div></div>
-            </div>
-            <div class="chart-area">
-              <div class="chart-title">
-                <img src="assets/players/saka.webp" alt="" loading="lazy">
-                <b>Saka / FTR</b>
-                <span class="badge-live">LIVE</span>
-              </div>
-              <div class="chart-price">48.20 <small class="green">+6.40%</small></div>
-              <div class="chart-tools"><b>1D</b><span>1W</span><span>1M</span><span>1Y</span><span>All time</span></div>
-              <svg class="price-chart" viewBox="0 0 360 175" aria-hidden="true"><path d="M12 123V148" stroke="var(--accent)"/><rect x="8" y="132" width="8" height="7" rx="1" fill="var(--accent)"/><path d="M24 130V149" stroke="var(--red)"/><rect x="20" y="139" width="8" height="3" rx="1" fill="var(--red)"/><path d="M36 115V156" stroke="var(--accent)"/><rect x="32" y="124" width="8" height="23" rx="1" fill="var(--accent)"/><path d="M48 107V140" stroke="var(--accent)"/><rect x="44" y="116" width="8" height="15" rx="1" fill="var(--accent)"/><path d="M60 114V139" stroke="var(--red)"/><rect x="56" y="123" width="8" height="7" rx="1" fill="var(--red)"/><path d="M72 98V146" stroke="var(--accent)"/><rect x="68" y="107" width="8" height="30" rx="1" fill="var(--accent)"/><path d="M84 102V123" stroke="var(--accent)"/><rect x="80" y="111" width="8" height="3" rx="1" fill="var(--accent)"/><path d="M96 81V127" stroke="var(--accent)"/><rect x="92" y="90" width="8" height="28" rx="1" fill="var(--accent)"/><path d="M108 88V110" stroke="var(--red)"/><rect x="104" y="97" width="8" height="4" rx="1" fill="var(--red)"/><path d="M120 76V117" stroke="var(--accent)"/><rect x="116" y="85" width="8" height="23" rx="1" fill="var(--accent)"/><path d="M132 83V105" stroke="var(--red)"/><rect x="128" y="92" width="8" height="4" rx="1" fill="var(--red)"/><path d="M144 67V112" stroke="var(--accent)"/><rect x="140" y="76" width="8" height="27" rx="1" fill="var(--accent)"/><path d="M156 73V92" stroke="var(--accent)"/><rect x="152" y="82" width="8" height="3" rx="1" fill="var(--accent)"/><path d="M168 59V98" stroke="var(--accent)"/><rect x="164" y="68" width="8" height="21" rx="1" fill="var(--accent)"/><path d="M180 66V99" stroke="var(--red)"/><rect x="176" y="75" width="8" height="15" rx="1" fill="var(--red)"/><path d="M192 64V106" stroke="var(--accent)"/><rect x="188" y="73" width="8" height="24" rx="1" fill="var(--accent)"/><path d="M204 56V89" stroke="var(--accent)"/><rect x="200" y="65" width="8" height="15" rx="1" fill="var(--accent)"/><path d="M216 44V81" stroke="var(--accent)"/><rect x="212" y="53" width="8" height="19" rx="1" fill="var(--accent)"/><path d="M228 51V77" stroke="var(--red)"/><rect x="224" y="60" width="8" height="8" rx="1" fill="var(--red)"/><path d="M240 39V84" stroke="var(--accent)"/><rect x="236" y="48" width="8" height="27" rx="1" fill="var(--accent)"/><path d="M252 46V69" stroke="var(--red)"/><rect x="248" y="55" width="8" height="5" rx="1" fill="var(--red)"/><path d="M264 25V76" stroke="var(--accent)"/><rect x="260" y="34" width="8" height="33" rx="1" fill="var(--accent)"/><path d="M276 32V53" stroke="var(--red)"/><rect x="272" y="41" width="8" height="3" rx="1" fill="var(--red)"/><path d="M288 20V60" stroke="var(--accent)"/><rect x="284" y="29" width="8" height="22" rx="1" fill="var(--accent)"/><path d="M300 27V46" stroke="var(--red)"/><rect x="296" y="36" width="8" height="3" rx="1" fill="var(--red)"/><path d="M312 11V53" stroke="var(--accent)"/><rect x="308" y="20" width="8" height="24" rx="1" fill="var(--accent)"/><path d="M324 18V41" stroke="var(--red)"/><rect x="320" y="27" width="8" height="5" rx="1" fill="var(--red)"/><path d="M336 15V48" stroke="var(--accent)"/><rect x="332" y="24" width="8" height="15" rx="1" fill="var(--accent)"/></svg>
-              <div class="chart-bottom"><span>Holdings: 1,250 Saka</span><span>Avg: 42.10</span><span>P&L: <b class="green">+14.4%</b></span></div>
-            </div>
-            <div class="order-preview">
-              <div class="order-tabs"><b>Buy</b><span>Sell</span></div>
-              <span class="micro-label">Market order</span>
-              <div class="order-field"><small>Player share</small>$Saka</div>
-              <div class="order-field"><small>Quantity</small>10 shares</div>
-              <div class="order-note"><span>Price</span><span>48.20 FTR</span></div>
-              <div class="order-note"><span>Subtotal</span><span>482.00 FTR</span></div>
-              <div class="order-buy">Review order</div>
-            </div>
-          </div>
-          <div class="ipad-home-bar" aria-hidden="true"></div>
-        </div>
-      </div>
-
-      <!-- Real iPhone 16 Pro Mockup (Portrait) -->
-      <div class="iphone-frame">
-        <div class="iphone-screen">
-          <div class="iphone-island" aria-hidden="true">
-            <span class="iphone-island-lens"></span>
-            <span>$Saka +6.4%</span>
-            <span style="font-size:9px">⚡</span>
-          </div>
-          <div class="iphone-status">
-            <b>9:41</b>
-            <div class="iphone-status-icons">
-              <svg width="10" height="8" viewBox="0 0 16 12" fill="currentColor" aria-hidden="true"><path d="M8 2.5a11.9 11.9 0 0 1 7.2 2.5.8.8 0 0 1 .1 1.1l-6.7 7.4a.8.8 0 0 1-1.2 0L.7 6.1a.8.8 0 0 1 .1-1.1A11.9 11.9 0 0 1 8 2.5z"/></svg>
-              <svg width="15" height="8" viewBox="0 0 24 12" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="1" y="1" width="19" height="10" rx="3"/><rect x="3" y="3" width="14" height="6" rx="1.5" fill="currentColor"/><path d="M22 4v4" stroke-linecap="round"/></svg>
-            </div>
-          </div>
-          <div class="iphone-user-row">
-            <div class="user-meta">
-              <img src="assets/players/saka.webp" alt="">
-              <div><small>WELCOME BACK</small><b>Alex Morgan</b></div>
-            </div>
-            <div class="iphone-bell">
-              <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-              <span class="bell-dot"></span>
-            </div>
-          </div>
-          <div class="iphone-card">
-            <span class="iphone-card-lbl">Total Portfolio</span>
-            <div class="iphone-balance">128,450 <span style="font-size:.4em;color:var(--muted)">FTR</span></div>
-            <div class="iphone-gain">▲ +6.42% this week</div>
-            <div class="iphone-actions"><span>+ Trade</span><span>⚡ FanPlay</span><span>🛡 Club</span></div>
-          </div>
-          <div class="iphone-market-head">
-            <span>Watchlist</span>
-            <span>Markets &gt;</span>
-          </div><div class="preview-row"><img src="assets/players/saka.webp" alt="" loading="lazy" width="32" height="32"><div><b>Saka</b><small>Arsenal</small></div><div class="quote"><b>48.20</b><small class="green">+6.40%</small></div></div><div class="preview-row"><img src="assets/players/haaland.webp" alt="" loading="lazy" width="32" height="32"><div><b>Haaland</b><small>Manchester City</small></div><div class="quote"><b>71.40</b><small class="green">−1.80%</small></div></div><div class="preview-row"><img src="assets/players/mbappe.webp" alt="" loading="lazy" width="32" height="32"><div><b>Mbappé</b><small>Real Madrid</small></div><div class="quote"><b>78.50</b><small class="green">+4.80%</small></div></div>
-          <div class="iphone-dock">
-            <div class="iphone-dock-item">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 10.5 12 3l9 7.5v9a1.5 1.5 0 0 1-1.5 1.5H15v-6H9v6H4.5A1.5 1.5 0 0 1 3 19.5z"/></svg>
-              <span>Home</span>
-            </div>
-            <div class="iphone-dock-item active">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 4v16M12 4v16M19 4v16M3 8h4M10 14h4M17 10h4"/></svg>
-              <span>Markets</span>
-            </div>
-            <div class="iphone-dock-item">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>
-              <span>FanPlay</span>
-            </div>
-            <div class="iphone-dock-item">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4.5 21a7.5 7.5 0 0 1 15 0"/></svg>
-              <span>Profile</span>
-            </div>
-          </div>
-          <div class="iphone-home-bar" aria-hidden="true"></div>
-        </div>
+      <img class="character-img" src="assets/landing/fantrade-character-market.png" alt="Fantrade character checking player markets on a phone" width="1306" height="1205" fetchpriority="high">
+    </div></section><section class="anywhere" aria-labelledby="anywhereTitle"><div class="product-preview">
+      <img class="phone-mockup" src="assets/landing/fantrade-phone-market.png" alt="Fantrade player markets and portfolio on a phone" width="1038" height="1515" loading="lazy" decoding="async">
+      <div class="anywhere-copy">
+        <h2 id="anywhereTitle">trade from anywhere.<br>stay close to the game.</h2>
+        <p>From your phone to your desktop — your players, club and matchday in one place.</p>
       </div>
     </div></section><section class="features" aria-labelledby="featuresTitle"><div class="bg-deco bg-deco-features" aria-hidden="true"><img src="assets/landing/fantrade-outline-logo.png" alt="" width="560" height="560"></div><div class="section-heading"><span class="eyebrow">THE FOOTBALL ECONOMY</span><h2 id="featuresTitle">more than a spectator.</h2><p>The sports trading ecosystem built around passion, performance and true ownership.</p></div><div class="feature-grid"><div class="feature"><span class="eyebrow">Leaderboard</span><h3>make your name.<br>climb the leaderboard.</h3><div class="feature-art ranking" aria-hidden="true"><div class="rank-row"><span class="medal">🥇</span><img src="assets/players/saka.webp" alt="" loading="lazy"><div>Zero FC<small>Matchday 06</small></div><span class="points">812 FP</span></div><div class="rank-row"><span class="medal">🥈</span><img src="assets/players/haaland.webp" alt="" loading="lazy"><div>North Bank XI<small>Matchday 06</small></div><span class="points">786 FP</span></div><div class="rank-row"><span class="medal">🥉</span><img src="assets/players/mbappe.webp" alt="" loading="lazy"><div>The Galácticos<small>Matchday 06</small></div><span class="points">754 FP</span></div><div class="rank-row"><span class="medal">4</span><img src="assets/players/palmer.webp" alt="" loading="lazy"><div>Blue Revolution<small>Matchday 06</small></div><span class="points">721 FP</span></div></div></div><div class="feature"><span class="eyebrow">Dream Clubs</span><h3>your players.<br>your dream club.</h3><div class="feature-art" aria-hidden="true"><div class="squad-mini"><span>ZERO FC &nbsp; · &nbsp; 4–3–3</span><div class="mini-pitch"><div class="mini-player" style="left:50%;top:8px"><img src="assets/players/haaland.webp" alt="" loading="lazy">Haaland</div><div class="mini-player" style="left:22%;top:70px"><img src="assets/players/saka.webp" alt="" loading="lazy">Saka</div><div class="mini-player" style="left:78%;top:70px"><img src="assets/players/bruno.webp" alt="" loading="lazy">Bruno</div><div class="mini-player" style="left:50%;top:122px"><img src="assets/players/saliba.webp" alt="" loading="lazy">Saliba</div></div></div></div></div><div class="feature"><span class="eyebrow">Alerts</span><h3>every goal. every trade.<br>stay in the know.</h3><div class="feature-art notice-art" aria-hidden="true"><div class="notification"><span class="notification-icon"><img src="assets/landing/fantrade-logo.png" alt="Fantrade" width="22" height="22"></span><div><b>Matchday 06 settled</b><small><span class="green">+6,200 $FTR</span> · Your club made the top 20.</small></div><time>9:41 AM</time></div></div></div><div class="feature"><span class="eyebrow">Easy onboarding</span><h3>your first share<br>is just the beginning.</h3><div class="feature-art signup-art"><a class="signup-option" href="signup.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="m3 6 9 7 9-7"/></svg>Create your Fantrade account</a><a class="signup-option dark" href="exchange.html">Explore the player market <span>→</span></a><svg class="cursor" viewBox="0 0 36 44" aria-hidden="true"><path d="M4 3 29 25l-12 1 5 12-7 3-5-12-9 8Z" fill="#f0efff" stroke="#9e9bc7" stroke-width="2"/></svg></div></div><div class="feature"><span class="eyebrow">Real ownership</span><h3>10 million shares.<br>one football economy.</h3><div class="feature-art coin-art" aria-hidden="true"><div class="token"><span>$FTR</span></div><div class="token small"><span>10M</span></div></div></div><div class="feature"><span class="eyebrow">FanPlay</span><h3>turn football knowledge<br>into matchday points.</h3><div class="feature-art entry-art" aria-hidden="true"><div class="entry-slip"><small>FANPLAY · MATCHDAY 06</small><b>Back your football IQ.</b><div class="entry-line"><span>Entry</span><strong>$Saka · Solo</strong></div><div class="entry-line"><span>Scoring</span><strong>Goals + assists + more</strong></div><div class="entry-confirm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>Ready for matchday</div></div></div></div></div></section><section class="final-cta" aria-labelledby="finalTitle"><img class="legends" src="assets/landing/legends.webp" alt="" loading="lazy" aria-hidden="true"><img class="orbit" src="assets/landing/outer-circle.webp" alt="" loading="lazy" aria-hidden="true"><img class="orbit inner" src="assets/landing/inner-circle.webp" alt="" loading="lazy" aria-hidden="true"><div class="final-copy"><h2 id="finalTitle">a trading platform<br>for the football in us.</h2><p>Start with a share in a player you believe in.<br>Your squad starts right here.</p><div class="actions"><a class="action primary" href="signup.html">Start trading</a><a class="action" href="fanplay.html">Explore FanPlay<img src="assets/landing/arrow.svg" alt="" width="18" height="18"></a></div></div></section></main><footer class="footer"><div class="footer-top"><div class="footer-brand"><a class="brand" href="index.html"><img class="brand-mark" src="assets/landing/fantrade-logo.png" alt="Fantrade"><span>fantrade<span class="brand-dot">.</span></span></a><p>where football fans own the game.</p></div><div class="footer-col"><h2>Platform</h2><a href="exchange.html">Player market</a><a href="clubs.html">Dream Clubs</a><a href="fanplay.html">FanPlay</a><a href="leaderboard.html">Leaderboard</a></div><div class="footer-col"><h2>Get started</h2><a href="how-it-works.html">How it works</a><a href="signup.html">Create account</a><a href="signin.html">Log in</a><a href="ftr.html">$FTR wallet</a></div><div class="footer-col"><h2>Your Fantrade</h2><a href="portfolio.html">Portfolio</a><a href="account.html">Your profile</a><a href="settings-play.html">Responsible play</a><a href="settings-data.html">Data &amp; account</a></div></div><p class="copyright">© 2026 Fantrade.</p><p class="demo-note">Prototype experience. Player prices, balances and rewards shown are illustrative.</p></footer></div><script>
 const toggle=document.getElementById('landingMenu'), menu=document.getElementById('landingNav');
