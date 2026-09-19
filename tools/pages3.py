@@ -327,164 +327,129 @@ print("built signin.html + signup.html")
 # ONBOARDING — four steps from a fresh account to a fielded club
 # ══════════════════════════════════════════════════════════════════
 OB_CSS = """
-.forms{display:flex;gap:8px;flex-wrap:wrap}
-.forms button{flex:1;min-width:92px;border:1px solid var(--hair);background:rgba(255,255,255,.03);color:var(--dim);
-  border-radius:14px;padding:14px 0;font-family:'Montserrat', sans-serif;font-size:14px;cursor:pointer;
-  box-shadow:var(--inset);transition:all .6s var(--ease)}
-.forms button[aria-pressed="true"]{background:var(--lime);border-color:var(--lime);color:#fff}
-.forms button:hover:not([aria-pressed="true"]){color:var(--ink);border-color:var(--hair-2)}
-.swatches{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}
-.sw{width:36px;height:36px;border-radius:12px;border:1px solid var(--hair);cursor:pointer;box-shadow:var(--inset);
-  transition:transform .6s var(--ease)}
-.sw:hover,.sw[aria-pressed="true"]{transform:scale(1.08)}
-.sw[aria-pressed="true"]{border-color:var(--ink)}
-.grant{border:1px solid rgba(24,0,173,.3);border-radius:20px;padding:28px 24px;text-align:center;
-  background:radial-gradient(ellipse at 50% 130%,rgba(24,0,173,.16),rgba(24,0,173,.03) 62%);
-  box-shadow:var(--inset);margin-bottom:20px}
-.grant .k{font-weight:600;font-size:9.5px;letter-spacing:.2em;color:#95ad44;text-transform:uppercase}
-.grant .v{font-family:'Montserrat', sans-serif;font-weight:200;font-size:clamp(34px,4.4vw,50px);
-  color:var(--lime);line-height:1;margin:14px 0 10px;letter-spacing:-.035em}
-.grant p{font-size:12.5px;color:var(--dim);font-weight:300;margin:0 auto;max-width:42ch;line-height:1.6}
-.ob-h4{font-family:Archivo;font-variation-settings:'wdth' 118,'wght' 800;text-transform:uppercase;
-  font-size:19px;margin:0 0 8px}
-.ob-p{font-size:13px;color:var(--dim);font-weight:300;margin:0 0 24px;line-height:1.6;max-width:56ch}
+body{background:#050505;--dim:#b9bcb7;--faint:#979c96;--ink:#f4f6f1;--lime:#1800ad}
+.orb,.grain{display:none}
+.nav-min{top:0;min-height:76px;padding:16px 32px;background:#050505}
+.nav-min .logo{font-family:Archivo,system-ui,sans-serif;font-size:25px;text-transform:lowercase;letter-spacing:-.03em}
+.nav-min .brand-logo-img{width:28px;height:28px}
+.nav-min a.back{min-height:44px;font-family:Montserrat,system-ui,sans-serif;letter-spacing:0;text-transform:none;font-size:12px}
+.onboarding{width:min(660px,100%);margin:auto;padding:116px 24px 64px}
+.ob-intro{text-align:center;margin-bottom:36px}
+.ob-intro h1{font-size:clamp(28px,4.2vw,42px);font-variation-settings:'wdth' 110,'wght' 800;line-height:1.08;text-transform:none;letter-spacing:-.035em}
+.ob-intro p{font-size:14px;color:var(--dim);margin:14px 0 0}
+.ob-progress{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:32px}
+.ob-progress p{margin:0;font-size:12px;color:var(--dim)}
+.prog{gap:8px;margin:0;flex-wrap:nowrap}
+.prog .st{border:0;padding:0;min-width:0;flex:none;width:8px;height:8px;border-radius:50%;background:#353735;opacity:1}
+.prog .st.on{background:var(--lime);width:24px;border-radius:10px}
+.prog .st.done{background:#b9bcb7}
+.ob-h4{font-family:Archivo,system-ui,sans-serif;font-variation-settings:'wdth' 100,'wght' 700;font-size:28px;text-transform:none;letter-spacing:-.025em;line-height:1.15;margin:0 0 10px}
+.ob-p{font-size:14px;color:var(--dim);line-height:1.6;margin:0 0 28px}
+.grant{display:flex;align-items:center;justify-content:space-between;gap:20px;margin:0 0 26px;padding:0;background:none;border:0;box-shadow:none}
+.grant .k{font-size:12px;color:var(--dim)}
+.grant .v{font-size:26px;font-weight:600;color:var(--ink);letter-spacing:-.04em;white-space:nowrap}
+.grant .v span{font-size:12px;color:var(--dim);letter-spacing:0}
+.picks{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:28px}
+.pick{position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;border:0;background:none;padding:16px 8px;border-radius:18px;box-shadow:none;transition:background .2s}
+.pick:hover{background:#111310;transform:none}
+.pick[aria-pressed="true"]{background:#17112f}
+.pick[aria-pressed="true"]::after{content:'✓';position:absolute;right:12px;top:12px;color:#fff;background:var(--lime);width:20px;height:20px;border-radius:50%;font-size:12px}
+.pick img{width:52px;height:52px;object-fit:cover;object-position:center 20%;border-radius:50%;margin-bottom:10px}
+.pick .sym{font-size:14px;font-weight:600}
+.pick .nm{font-size:11px;line-height:1.5}
+.pick .px{font-size:13px;font-weight:500;margin-top:8px}.pick .px small{font-size:10px;color:var(--dim)}
+.field{border:0;box-shadow:none;background:#121411;border-radius:14px;min-height:56px;padding:12px 16px}
+.field label{text-transform:none;letter-spacing:0;font-size:13px;color:var(--dim)}
+.field input{font-size:16px;min-height:32px;width:45%}
+.field:focus-within,.tf .inp:focus-within{outline:2px solid #8875e8;outline-offset:2px}
+.quick{gap:8px;margin:12px 0 24px}
+.quick button{border:0;background:#121411;min-height:44px;font-size:12px}
+.line{border:0;padding:5px 0;font-size:13px}.line b{color:var(--ink);font-weight:500}
+.order-total{font-size:16px;margin-top:8px}
+.ob-primary{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;min-height:52px;border:0;border-radius:999px;padding:14px 24px;background:var(--lime);color:#fff;font:600 14px Montserrat,system-ui,sans-serif;cursor:pointer}
+.ob-primary:hover{background:#3311cc}.ob-primary:disabled{opacity:.6;cursor:wait}
+#obBuy{margin-top:24px}
+.wiz-foot{margin-top:28px;display:flex;flex-wrap:nowrap;gap:16px}
+.ob-back{border:0;background:none;color:var(--dim);padding:12px 8px;min-height:48px;font:500 13px Montserrat,system-ui,sans-serif;cursor:pointer}
+.tf{margin-bottom:24px}.tf label,.k-label{font-size:13px;text-transform:none;letter-spacing:0;color:var(--dim);font-weight:500}
+.tf .inp{border:0;background:#121411;box-shadow:none;border-radius:14px;padding:12px 16px;min-height:54px}
+.tf input,.tf select{font-size:16px;min-height:28px}.tf input::placeholder{color:#858c82}
+.tf-row{gap:16px}.tf .err{font-size:12px}.tf.bad .inp{outline:2px solid #e57575}
+.forms{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:12px 0 28px}
+.forms button{border:0;border-radius:12px;min-height:48px;background:#121411;color:var(--dim);font:500 14px Montserrat,system-ui,sans-serif;cursor:pointer}
+.forms button[aria-pressed="true"]{background:var(--lime);color:#fff}
+.swatches{display:flex;gap:12px;margin-top:12px}.sw{width:44px;height:44px;border:0;border-radius:50%;cursor:pointer}
+.sw[aria-pressed="true"]{outline:2px solid #fff;outline-offset:4px}
+.ob-summary{margin:24px 0 28px;display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.ob-summary div{min-width:0}.ob-summary dt{font-size:12px;color:var(--dim);margin-bottom:6px}.ob-summary dd{margin:0;font-size:15px;overflow-wrap:anywhere}.ob-summary .formation{display:block;white-space:nowrap;font-size:12px;color:var(--dim);margin-top:4px}
+.ob-next-note{font-size:13px;color:var(--dim);line-height:1.7;margin:24px 0 0}
+.ob-success{width:56px;height:56px;border-radius:50%;display:grid;place-items:center;background:var(--lime);color:white;margin-bottom:24px}.ob-success .ic{width:26px;height:26px}
+@media(max-width:600px){
+ .nav-min{min-height:68px;padding:12px 20px}.nav-min .logo{font-size:23px}.nav-min a.back{min-width:44px;justify-content:center}
+ .onboarding{padding:100px 20px 40px;padding-bottom:calc(40px + env(safe-area-inset-bottom))}
+ .ob-intro{text-align:left;margin-bottom:28px}.ob-intro h1{font-size:30px}.ob-intro p{font-size:13px;max-width:30ch}
+ .ob-progress{margin-bottom:28px}.ob-h4{font-size:25px}.ob-p{font-size:13px;margin-bottom:24px}
+ .picks{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.pick{padding:12px 6px}.pick img{width:44px;height:44px}
+ .grant{gap:12px}.grant .v{font-size:24px}.grant .k{max-width:110px;line-height:1.5}
+ .forms{grid-template-columns:repeat(2,1fr)}.tf-row{grid-template-columns:1fr;gap:0}
+}
 """
 
-STARTERS = [("$Saka", "Bukayo Saka", "RW · Arsenal", 48.20, False),
-            ("$Bruno", "Bruno Fernandes", "CAM · Man United", 39.75, False),
-            ("$Haaland", "Erling Haaland", "ST · Man City", 71.40, False),
-            ("$Saliba", "William Saliba", "CB · Arsenal", 33.80, False),
-            ("$Musiala", "Jamal Musiala", "CAM · Bayern", 46.70, False),
-            ("$Arteta", "Mikel Arteta", "Coach · Arsenal", 22.05, True)]
-
-STEPS = [("01", "Buy player shares"), ("02", "Manager profile"),
-         ("03", "Name your club"), ("04", "Matchday ready")]
-
-ob = [T('<main><section class="app-head" style="padding-bottom:0"><div class="wrap">'
-        '<span hidden>@@</span>'
-        '<h1 data-reveal>Set up<br>your desk</h1>'
-        '<p class="lede" data-reveal>Four steps. At the end of them you own shares, you have a club with a name '
-        'and a shape, and you are eligible for the next settlement window.</p>'
-        '</div></section><section style="padding:44px 0 120px"><div class="wrap"><div class="bento">',
-        ic("formation", "ic"))]
-
-# ── wizard column ──
-ob.append('<div class="bezel c8" data-reveal><div class="core pad"><div class="prog" id="obProg">')
-for i, (n, l) in enumerate(STEPS):
-    ob.append(T('<div class="st@@" data-step="@@"><div class="n">Step @@</div><div class="l">@@</div></div>',
-                " on" if i == 0 else "", i, n, l))
-ob.append('</div>')
-
-# step 1: Buy player shares immediately with welcome grant
-ob.append('<div class="step-pane on" data-pane="0">'
-          '<div class="grant" style="margin-bottom:18px"><div class="k">🎉 Welcome Grant · 50,000 $FTR Ready</div>'
-          '<div class="v">50,000<span style="font-size:17px;color:var(--faint);letter-spacing:0"> $FTR</span></div>'
-          '<p>Start trading immediately. Pick a star footballer below to buy your opening fractional shares with 1 tap.</p></div>'
-          '<h4 class="ob-h4">Select your star player</h4>'
-          '<p class="ob-p">Every player has a fixed supply of 10,000,000 shares. Choose which asset to back:</p>'
-          '<div class="picks" id="obPicks">')
+STARTERS = [("$Saka", "Bukayo Saka", "Arsenal · Forward", 48.20, False),
+            ("$Bruno", "Bruno Fernandes", "Man United · Midfielder", 39.75, False),
+            ("$Haaland", "Erling Haaland", "Man City · Forward", 71.40, False),
+            ("$Saliba", "William Saliba", "Arsenal · Defender", 33.80, False),
+            ("$Musiala", "Jamal Musiala", "Bayern · Midfielder", 46.70, False),
+            ("$Arteta", "Mikel Arteta", "Arsenal · Coach", 22.05, True)]
+STEPS = [("01", "Your first shares"), ("02", "Your profile"), ("03", "Your club"), ("04", "Ready to play")]
+ob = ['<main class="onboarding"><header class="ob-intro"><h1>Make the game yours.</h1>'
+      '<p>A few quick steps to your first shares and your own Dream Club.</p></header>'
+      '<div class="ob-progress"><p id="obCount" aria-live="polite">Step 1 of 4 · Your first shares</p>'
+      '<div class="prog" id="obProg" aria-hidden="true">']
+for i, (n, label) in enumerate(STEPS):
+    ob.append('<span class="st%s" data-step="%s"></span>' % (' on' if i == 0 else '', i))
+ob.append('</div></div><div class="step-pane on" data-pane="0">'
+          '<h2 class="ob-h4" tabindex="-1">Start with a player you believe in.</h2>'
+          '<p class="ob-p">Choose your first shares using your demo balance. You can explore more players after setup.</p>'
+          '<div class="grant"><div class="k">Your demo balance</div><div class="v"><b id="obBalance">50,000</b> <span>$FTR</span></div></div>'
+          '<div class="picks" id="obPicks" role="group" aria-label="Choose your first player">')
 for sym, nm, role, px, coach in STARTERS:
-    ob.append(T('<button class="pick" type="button" data-sym="@@" data-nm="@@" data-px="@@" data-coach="@@">'
-                '<span class="coin@@" style="margin-bottom:12px">@@</span>'
-                '<div class="sym">@@</div><div class="nm">@@</div><div class="px">@@ <span '
-                'style="font-size:10px;color:var(--faint)">$FTR</span></div></button>',
-                sym, nm, px, "1" if coach else "0",
-                " am" if coach else "", ic("whistle" if coach else "boot", "ic"),
-                sym, role, "%.2f" % px))
-ob.append('</div>')
-ob.append('<div class="field" style="margin-top:16px"><label>Shares to buy</label>'
-          '<input id="obShares" value="500" inputmode="numeric"></div>'
-          '<div class="quick"><button data-s="100">100</button><button data-s="250">250</button>'
-          '<button data-s="500">500</button><button data-s="1000">1,000</button></div>'
-          '<div class="line"><span>Subtotal</span><b id="obSub">—</b></div>'
-          '<div class="line"><span>Protocol fee (0.4%)</span><b id="obFee">—</b></div>'
-          '<div class="line"><span>Total</span><b id="obTot">—</b></div>')
-ob.append(btn("Buy shares &amp; continue" + ARROW, tag="button", extra='id="obBuy" style="width:100%;justify-content:space-between;margin-top:16px"'))
-ob.append('</div>')
-
-# step 2: Manager profile
-ob.append('<div class="step-pane" data-pane="1">'
-          '<h4 class="ob-h4">Who is managing?</h4>'
-          '<p class="ob-p">Your handle is what the league table shows next to your club. '
-          'It can be changed once per season.</p>')
-ob.append(tf("Manager handle", "handle", "text", "@alex_trader", "user", "",
-             "Handles are 3–20 characters, letters, numbers and underscores."))
-ob.append('<div class="tf-row">')
-ob.append(sel("Region", "region", COUNTRIES, "flag"))
-ob.append(sel("Home league", "league", ["*Premier League", "La Liga", "Serie A", "Bundesliga",
-                                        "Ligue 1", "Nigeria Premier Football League", "Eredivisie", "Primeira Liga"],
-              "stadium"))
-ob.append('</div>')
-ob.append('<div class="hint" style="color:var(--faint);font-size:11px;margin-top:4px">'
-          'Your home league sets the default settlement window and the fixtures shown first on your matchday board.</div>')
-ob.append('</div>')
-
-# step 3: Name your club
-ob.append('<div class="step-pane" data-pane="2">'
-          '<h4 class="ob-h4">Name your club</h4>'
-          '<p class="ob-p">Your Dream Club is the portfolio you field on a matchday. You can rebuild the eleven any '
-          'time — the name and colours are what the league table remembers.</p>')
-ob.append(tf("Club name", "clubName", "text", "Zero FC", "crest", "",
-             "2–24 characters. This appears on the global leaderboard."))
-ob.append('<div class="k-label" style="margin-top:22px">Starting formation</div>'
-          '<div class="forms" id="obForms">'
-          '<button type="button" aria-pressed="true">4-3-3</button>'
-          '<button type="button" aria-pressed="false">4-4-2</button>'
-          '<button type="button" aria-pressed="false">3-5-2</button>'
-          '<button type="button" aria-pressed="false">4-2-3-1</button></div>')
-ob.append('<div class="k-label" style="margin-top:24px">Club colour</div><div class="swatches" id="obSw">'
-          '<button class="sw" type="button" aria-pressed="true" data-c="#1800ad" data-n="Indigo" '
-          'style="background:linear-gradient(160deg,#1800ad,#0f0075)" aria-label="Indigo"></button>'
-          '<button class="sw" type="button" aria-pressed="false" data-c="#FF6A1F" data-n="Amber" '
-          'style="background:linear-gradient(160deg,#FF6A1F,#b33f06)" aria-label="Amber"></button>'
-          '<button class="sw" type="button" aria-pressed="false" data-c="#4DA6FF" data-n="Azure" '
-          'style="background:linear-gradient(160deg,#4DA6FF,#0b5fae)" aria-label="Azure"></button>'
-          '<button class="sw" type="button" aria-pressed="false" data-c="#FF5E8A" data-n="Rose" '
-          'style="background:linear-gradient(160deg,#FF5E8A,#a81f45)" aria-label="Rose"></button>'
-          '<button class="sw" type="button" aria-pressed="false" data-c="#F4F6F1" data-n="Chalk" '
-          'style="background:linear-gradient(160deg,#F4F6F1,#8f938b)" aria-label="Chalk"></button></div>')
-ob.append('</div>')
-
-# step 4: Review & Gameweek Readiness
-ob.append('<div class="step-pane" data-pane="3">'
-          '<h4 class="ob-h4">Ready for Gameweek 28</h4>'
-          '<p class="ob-p">Your starter shares are in your wallet and your club identity is registered. '
-          'You are ready to enter the trading arena.</p>'
-          '<div class="grant" style="background:radial-gradient(ellipse at 50% 120%,rgba(24,0,173,.22),rgba(24,0,173,.04) 70%)">'
-          '<div class="k">Desk Status</div>'
-          '<div class="v" style="font-size:28px">Ready for Matchday</div>'
-          '<p>Gameweek 28 locks in 3 hours. Complete your eleven or stake in syndicates anytime from your desk.</p>'
-          '</div></div>')
-
-ob.append(T('<div class="wiz-foot">@@@@<span class="sp" id="obCount">Step 1 of 4</span></div>',
-            btn("Back", "btn-glass", tag="button", extra='id="obBack" disabled style="opacity:.4"'),
-            btn("Continue", tag="button", extra='id="obNext"')))
-ob.append('</div></div>')
-
-# ── summary column ──
-ob.append(T('<div class="bezel c4" data-reveal><div class="core pad">'
-            '<div class="k-label">Your setup so far</div>'
-            '<div class="b-row"><span>Manager</span><b data-bind="name">Alex Morgan</b></div>'
-            '<div class="b-row"><span>Handle</span><b id="sumHandle">—</b></div>'
-            '<div class="b-row"><span>Region</span><b id="sumRegion">United Kingdom</b></div>'
-            '<div class="b-row"><span>Wallet</span><b id="sumWallet">—</b></div>'
-            '<div class="b-row"><span>First asset</span><b id="sumAsset">—</b></div>'
-            '<div class="b-row"><span>Club</span><b id="sumClub">—</b></div>'
-            '<div class="b-row total"><span>Ready for</span><b>Gameweek 28</b></div>'
-            '<div class="k-label" style="margin-top:30px">What happens next</div>'
-            '<div class="rowlink">@@ Fill the other ten positions</div>'
-            '<div class="rowlink">@@ Slot a coach for the synergy bonus</div>'
-            '<div class="rowlink">@@ Pick a market tier and stake</div>'
-            '<div class="rowlink">@@ Settle on the final whistle</div>'
-            '<p style="font-size:11.5px;color:var(--faint);font-weight:300;margin-top:22px;line-height:1.6">'
-            'Nothing here is final. You can rebuild the club, sell the shares and change the handle from Settings '
-            'at any point before a round locks.</p>'
-            '</div></div>',
-            ic("formation", "ic"), ic("whistle", "ic"), ic("bolt", "ic"), ic("timer", "ic")))
-
-ob.append('</div></div></section></main>')
+    ob.append(f'<button class="pick" type="button" data-sym="{sym}" data-nm="{nm}" data-px="{px}" data-coach="{int(coach)}" aria-pressed="false">'
+              f'<img src="assets/players/{sym[1:].lower()}.webp" alt="" width="52" height="52">'
+              f'<span class="sym">{nm}</span><span class="nm">{role}</span><span class="px">{px:.2f} <small>$FTR / share</small></span></button>')
+ob.append('</div><div class="field"><label for="obShares">Shares to buy</label><input id="obShares" value="500" inputmode="numeric"></div>'
+          '<div class="quick"><button type="button" data-s="100">100</button><button type="button" data-s="250">250</button>'
+          '<button type="button" data-s="500">500</button><button type="button" data-s="1000">1,000</button></div>'
+          '<div class="line"><span>Shares</span><b id="obSub">—</b></div>'
+          '<div class="line"><span>Fee (0.4%)</span><b id="obFee">—</b></div>'
+          '<div class="line order-total"><span>Total</span><b id="obTot">—</b></div>'
+          '<button type="button" class="ob-primary" id="obBuy">Buy shares &amp; continue</button></div>')
+ob.append('<div class="step-pane" data-pane="1"><h2 class="ob-h4" tabindex="-1">What should we call you?</h2>'
+          '<p class="ob-p">Your manager handle appears beside your club on the leaderboard.</p>')
+ob.append(tf('Manager handle','handle','text','@your_name','user','', 'Use 3–20 letters, numbers or underscores.', extra='autocomplete="nickname" autocapitalize="none"'))
+ob.append('<div class="tf-row">'+sel('Region','region',COUNTRIES,'flag')+sel('Home league','league',["*Premier League", "La Liga", "Serie A", "Bundesliga", "Ligue 1", "Nigeria Premier Football League", "Eredivisie", "Primeira Liga"],'stadium')+'</div>'
+          '<p class="ob-next-note">We’ll use your home league to show the fixtures that matter to you first.</p></div>')
+ob.append('<div class="step-pane" data-pane="2"><h2 class="ob-h4" tabindex="-1">Give your club an identity.</h2>'
+          '<p class="ob-p">Pick a name, formation and colour. You can refine your squad after setup.</p>')
+ob.append(tf('Club name','clubName','text','Your Dream Club','crest','','Choose a name between 2 and 24 characters.',extra='maxlength="24"'))
+ob.append('<div class="k-label" id="formationLabel">Starting formation</div><div class="forms" id="obForms" role="group" aria-labelledby="formationLabel">')
+for form in ['4-3-3','4-4-2','3-5-2','4-2-3-1']:
+    ob.append(f'<button type="button" aria-pressed="{str(form == "4-3-3").lower()}">{form}</button>')
+ob.append('</div><div class="k-label" id="colourLabel">Club colour</div><div class="swatches" id="obSw" role="group" aria-labelledby="colourLabel">')
+for color,name in [('#1800ad','Indigo'),('#FF6A1F','Amber'),('#4DA6FF','Azure'),('#FF5E8A','Rose'),('#F4F6F1','Chalk')]:
+    ob.append(f'<button class="sw" type="button" aria-pressed="{str(name == "Indigo").lower()}" data-c="{color}" data-n="{name}" style="background:{color}" aria-label="{name}"></button>')
+ob.append('</div></div><div class="step-pane" data-pane="3"><div class="ob-success">'+ic('check','ic')+'</div>'
+          '<h2 class="ob-h4" tabindex="-1">Your club starts here.</h2><p class="ob-p">Your first shares are in place. Here’s your setup.</p>'
+          '<dl class="ob-summary"><div><dt>Manager</dt><dd data-bind="name">Alex Morgan</dd></div>'
+          '<div><dt>Handle</dt><dd id="sumHandle">—</dd></div><div><dt>Region</dt><dd id="sumRegion">—</dd></div>'
+          '<div><dt>Available balance</dt><dd id="sumWallet">—</dd></div><div><dt>First shares</dt><dd id="sumAsset">—</dd></div>'
+          '<div><dt>Club &amp; formation</dt><dd><span id="sumClub">—</span><span class="formation" id="sumFormation">4-3-3</span></dd></div></dl>'
+          '<p class="ob-next-note">Next, fill your lineup from the players you own and explore FanPlay. Your dashboard will guide you through it.</p></div>'
+          '<div class="wiz-foot"><button class="ob-back" id="obBack" type="button" hidden>Back</button>'
+          '<button class="ob-primary" id="obNext" type="button" hidden>Continue</button></div></main>')
 
 OB_JS = r"""
+document.querySelector('.nav-min .back').setAttribute('aria-label', 'Back to Fantrade');
 var step = 0, PANES = document.querySelectorAll('.step-pane'), STEPS_N = PANES.length;
 var picked = null;
 function el(id){ return document.getElementById(id); }
@@ -507,17 +472,22 @@ function render(){
   });
   el('obBack').disabled = step === 0;
   el('obBack').style.opacity = step === 0 ? '.4' : '1';
-  el('obCount').textContent = 'Step ' + (step + 1) + ' of ' + STEPS_N;
-  el('obNext').childNodes[0].nodeValue = step === STEPS_N - 1 ? 'Enter the arena' : 'Continue';
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  el('obCount').textContent = 'Step ' + (step + 1) + ' of ' + STEPS_N + ' · ' + ['Your first shares','Your profile','Your club','Ready to play'][step];
+  el('obBack').hidden = step === 0;
+  el('obNext').hidden = step === 0;
+  el('obNext').childNodes[0].nodeValue = step === STEPS_N - 1 ? 'Go to my dashboard' : 'Continue';
+  window.scrollTo({ top: 0, behavior: reduce ? 'instant' : 'smooth' });
+  if(step > 0) PANES[step].querySelector('.ob-h4').focus({preventScroll:true});
 }
 function sum(){
   var s = FT.getState();
   el('sumHandle').textContent = el('handle').value.trim() || '—';
   el('sumRegion').textContent = el('region').value;
   el('sumWallet').textContent = s.wallet.balance.toLocaleString('en-US') + ' $FTR';
+  el('obBalance').textContent = s.wallet.balance.toLocaleString('en-US');
   el('sumAsset').textContent = picked ? picked.sym : '—';
-  el('sumClub').textContent = (el('clubName').value.trim() || '—') + ' · ' + formation;
+  el('sumClub').textContent = el('clubName').value.trim() || '—';
+  el('sumFormation').textContent = formation;
 }
 
 // step 1 — first asset
@@ -550,14 +520,16 @@ el('obBuy').addEventListener('click', function(){
   }
   var sh = num(el('obShares').value);
   if(sh < 1){ showToast('Enter how many shares you want.', 'error'); return; }
+  el('obBuy').disabled = true;
   try {
     var r = FT.executeTrade('buy', picked.sym, picked.nm, sh, picked.px, picked.coach);
     showToast('🎉 ' + sh.toLocaleString('en-US') + ' ' + picked.sym + ' shares purchased! You are officially an owner.', 'success');
     sum();
     setTimeout(function(){
       if(step === 0){ step = 1; render(); sum(); }
+      el('obBuy').disabled = false;
     }, 600);
-  } catch(err){ showToast(err.message, 'error'); }
+  } catch(err){ el('obBuy').disabled = false; showToast(err.message, 'error'); }
 });
 
 // step 2 — manager profile
@@ -601,6 +573,7 @@ function validateStep(){
   if(step === 2){
     var cn = el('clubName').value.trim();
     if(cn.length < 2 || cn.length > 24){ wrap('clubName').classList.add('bad'); return false; }
+    wrap('clubName').classList.remove('bad');
     return true;
   }
   return true;
@@ -626,7 +599,7 @@ el('clubName').value = FT.getState().club.name;
 render(); sum(); var firstP = document.querySelector("#obPicks .pick"); if(firstP) firstP.click();
 """
 
-page("onboarding.html", "Onboarding — Fantrade", "".join(ob), OB_JS, OB_CSS)
+page("onboarding.html", "Onboarding — Fantrade", "".join(ob), OB_JS, OB_CSS, chrome=False)
 print("built onboarding.html")
 
 # ══════════════════════════════════════════════════════════════════

@@ -309,15 +309,15 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-off
   .hero-copy{font-size:14.5px;line-height:1.5}
   .actions{gap:10px;margin-top:22px}
   .action{min-width:0;width:100%;font-size:14px;min-height:46px;padding:12px 20px}
-  .hero-media-wrap{width:calc(100% + 30px);margin:18px -15px -10px}
-  .character-img{width:100%;max-width:650px}
+  .hero-media-wrap{width:100%;margin:28px auto 8px}
+  .character-img{width:92%;max-width:570px}
 
   .anywhere{padding:24px 12px 0}
   .section-heading h2{font-size:clamp(23px,6.8vw,32px);line-height:1.15}
   .section-heading p{font-size:14px;max-width:340px;margin:10px auto 0;line-height:1.5}
 
   .product-preview{width:100%;padding-top:24px}
-  .phone-mockup{width:min(480px,92%)}
+  .phone-mockup{width:min(420px,82%)}
   .anywhere-copy{padding:100px 4px 16px}
   .anywhere-copy h2{font-size:clamp(25px,6.8vw,40px);line-height:1.1}
   .anywhere-copy p{max-width:440px;font-size:14px;margin:12px auto 0;line-height:1.5}
