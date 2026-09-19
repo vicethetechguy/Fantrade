@@ -56,7 +56,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-off
 .bg-deco img{width:100%;height:auto;display:block}
 .bg-deco-hero{top:20px;left:50%;transform:translateX(-50%);width:min(860px,94vw);opacity:.10;filter:drop-shadow(0 0 50px rgba(24,0,173,.35))}
 .bg-deco-features{top:40px;right:-120px;width:min(560px,60vw);opacity:.07;transform:rotate(-22deg);filter:drop-shadow(0 0 40px rgba(24,0,173,.25))}
-.masthead{position:absolute;z-index:10;left:0;right:0;top:0;display:flex;justify-content:space-between;align-items:center;padding:24px 36px;gap:24px;max-width:1440px;margin:0 auto}
+.masthead{position:absolute;z-index:100;left:0;right:0;top:0;display:flex;justify-content:space-between;align-items:center;padding:24px 36px;gap:24px;max-width:1440px;margin:0 auto}
 .brand{font-size:28px;letter-spacing:-.02em;color:#fff;display:inline-flex;align-items:center;gap:10px;text-decoration:none}
 .brand-mark{width:30px;height:30px;object-fit:contain;flex-shrink:0;display:block}
 .brand-dot{color:var(--accent)}
@@ -65,12 +65,55 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-off
 .nav-link:hover{color:#fff;background:rgba(255,255,255,.05)}
 .nav-login{background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:999px;padding:9px 24px;font-size:14px;font-weight:600;color:#fff;transition:all .2s}
 .nav-login:hover{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
-.menu-toggle{display:none;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--text);width:42px;height:42px;align-items:center;justify-content:center;cursor:pointer}
-.menu-toggle svg{width:21px;height:21px}
-.mobile-menu{display:none;position:absolute;top:74px;right:20px;left:20px;z-index:20;background:#0A0B0CF8;backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid var(--line);border-radius:18px;padding:12px;box-shadow:0 24px 60px rgba(0,0,0,.8)}
-.mobile-menu.open{display:grid}
-.mobile-menu a{padding:14px 16px;border-radius:10px;font-size:15px;font-weight:500}
-.mobile-menu a:hover{background:rgba(24,0,173,.08);color:var(--accent)}
+.menu-toggle{
+  display:none;border:none;background:transparent;color:var(--text);
+  width:48px;height:48px;align-items:center;justify-content:center;
+  cursor:pointer;padding:0;transition:transform .2s,color .2s;
+  -webkit-tap-highlight-color:transparent;
+}
+.menu-toggle:hover{color:#fff;transform:scale(1.06)}
+.menu-toggle:focus-visible{outline:none}
+.menu-toggle svg{width:32px;height:32px;display:block}
+.menu-toggle[aria-expanded="true"] .icon-bars{display:none}
+.menu-toggle[aria-expanded="true"] .icon-close{display:block}
+.menu-toggle[aria-expanded="false"] .icon-bars{display:block}
+.menu-toggle[aria-expanded="false"] .icon-close{display:none}
+
+.mobile-menu{
+  display:none;position:fixed;inset:0;width:100vw;height:100vh;height:100dvh;
+  z-index:90;background:rgba(5,5,5,.96);
+  backdrop-filter:blur(36px);-webkit-backdrop-filter:blur(36px);
+  padding:120px 32px 48px;flex-direction:column;justify-content:center;
+  align-items:flex-start;text-align:left;overflow-y:auto;
+  box-shadow:0 30px 100px rgba(0,0,0,.95), inset 0 0 80px rgba(24,0,173,.15);
+}
+.mobile-menu.open{display:flex;animation:menu-fade-in .3s ease-out forwards}
+.mobile-menu-inner{width:100%;max-width:440px;display:flex;flex-direction:column;gap:18px}
+.mobile-menu a{
+  font-family:Archivo,sans-serif;font-size:clamp(30px,8.5vw,46px);
+  font-variation-settings:'wdth' 120,'wght' 850;text-transform:uppercase;
+  line-height:1.08;letter-spacing:-.02em;color:#fff;text-decoration:none;
+  padding:6px 0;display:flex;align-items:center;justify-content:space-between;
+  text-shadow:0 4px 24px rgba(0,0,0,.9), 0 0 40px rgba(24,0,173,.25);
+  opacity:0;transform:translateX(-30px);
+  transition:transform .2s, color .2s, text-shadow .2s;
+}
+.mobile-menu.open a{animation:menu-slide-in .4s cubic-bezier(.16,1,.3,1) forwards}
+.mobile-menu.open a:nth-child(1){animation-delay:.05s}
+.mobile-menu.open a:nth-child(2){animation-delay:.10s}
+.mobile-menu.open a:nth-child(3){animation-delay:.15s}
+.mobile-menu.open a:nth-child(4){animation-delay:.20s}
+.mobile-menu.open a:nth-child(5){animation-delay:.25s}
+.mobile-menu a:hover,.mobile-menu a:active{
+  color:var(--accent);transform:translateX(10px);
+  text-shadow:0 4px 30px rgba(24,0,173,.6), 0 0 60px rgba(24,0,173,.4);
+}
+.mobile-menu a.menu-highlight{color:var(--accent);margin-top:12px}
+.mobile-menu a.menu-highlight .arrow{font-size:28px;transition:transform .2s}
+.mobile-menu a.menu-highlight:hover .arrow{transform:translateX(8px)}
+
+@keyframes menu-fade-in{from{opacity:0}to{opacity:1}}
+@keyframes menu-slide-in{from{opacity:0;transform:translateX(-30px)}to{opacity:1;transform:translateX(0)}}
 
 .hero{position:relative;text-align:center;padding:140px 24px 0}
 .wordmark{font-size:clamp(34px,11vw,180px);letter-spacing:-.03em;line-height:.85;color:rgba(255,255,255,.04);user-select:none;margin-bottom:-10px;width:100%;text-align:center;overflow:hidden;white-space:nowrap}
@@ -234,7 +277,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-off
 .feature{position:relative;border:1px solid var(--line);background:var(--card);border-radius:24px;min-height:390px;overflow:hidden;padding:32px 28px 0;display:flex;flex-direction:column;cursor:default;user-select:none;-webkit-tap-highlight-color:transparent}
 .feature:hover,.feature:active,.feature:focus{background:var(--card)!important;border-color:var(--line)!important;transform:none!important;box-shadow:none!important;outline:none!important}
 .feature .eyebrow{font-size:11px;letter-spacing:normal;margin-bottom:10px}
-.feature h3{font-size:28px;line-height:1.08;position:relative;z-index:2;max-width:320px}
+.feature h3{font-size:28px;line-height:1.08;position:relative;z-index:2;max-width:340px;text-wrap:balance}
 .feature-art{height:240px;margin-top:auto;position:relative}
 .feature-art:after{content:'';position:absolute;left:-30px;right:-30px;bottom:0;height:45px;background:linear-gradient(transparent,var(--card));pointer-events:none}
 
@@ -257,17 +300,35 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-off
 
 .notice-art{display:flex;align-items:center;justify-content:center;margin-top:0}
 .notification{display:flex;gap:12px;align-items:center;border:1px solid var(--line-light);background:linear-gradient(130deg,#16181C,#0D0F12);padding:14px 14px;border-radius:20px;box-shadow:0 12px 30px rgba(0,0,0,.6);transform:rotate(-3deg);width:100%}
-.notification-icon{width:36px;height:36px;flex:none;display:grid;place-items:center;background:var(--accent);color:var(--accent-ink);border-radius:10px;font-family:Archivo;font-weight:900;font-size:17px}
+.notification-icon{width:38px;height:38px;flex:none;display:grid;place-items:center;background:var(--accent);border-radius:10px;padding:7px;box-shadow:0 0 16px rgba(24,0,173,.4)}
+.notification-icon img{width:100%;height:100%;object-fit:contain;filter:brightness(0) invert(1)}
 .notification div{font-size:12px;line-height:1.45}
 .notification b{font-weight:600}
 .notification small{display:block;color:var(--muted);font-size:10px;margin-top:2px}
 .notification time{font-size:8.5px;color:var(--muted);align-self:flex-start;margin-left:auto;white-space:nowrap}
 
-.signup-art{display:flex;flex-direction:column;justify-content:center;align-items:center;gap:10px;padding-bottom:24px}
-.signup-option{display:flex;align-items:center;justify-content:center;gap:10px;background:#F4F6F1;color:#050505;border-radius:10px;width:94%;padding:13px 8px;font-size:13px;font-weight:700;box-shadow:0 6px 20px rgba(255,255,255,.1)}
-.signup-option.dark{background:rgba(255,255,255,.07);color:var(--text);border:1px solid var(--line)}
+.signup-art{position:relative;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:10px;padding-bottom:24px}
+.signup-option{
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  background:#F4F6F1;color:#050505;border-radius:10px;width:94%;
+  padding:13px 8px;font-size:13px;font-weight:700;
+  box-shadow:0 6px 20px rgba(255,255,255,.1);
+  cursor:pointer;transition:transform .2s,background .2s,box-shadow .2s;
+  text-decoration:none;
+}
+.signup-option:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(255,255,255,.18)}
+.signup-option.dark{
+  background:rgba(255,255,255,.07);color:var(--text);border:1px solid var(--line);box-shadow:none;
+}
+.signup-option.dark:hover{
+  background:rgba(255,255,255,.12);border-color:var(--line-light);transform:translateY(-2px);
+}
 .signup-option svg{width:16px;height:16px}
-.signup-art .cursor{position:absolute;bottom:30px;left:57%;width:38px;height:45px;filter:drop-shadow(0 4px 7px rgba(0,0,0,.6));transform:rotate(-12deg)}
+.signup-art .cursor{
+  position:absolute;bottom:30px;left:57%;width:38px;height:45px;
+  filter:drop-shadow(0 4px 7px rgba(0,0,0,.6));transform:rotate(-12deg);
+  pointer-events:none;
+}
 
 .coin-art{perspective:700px;display:flex;align-items:center;justify-content:center;gap:0}
 .token{position:relative;display:grid;place-items:center;width:120px;height:138px;flex:none;border-radius:26px;background:linear-gradient(135deg,#4422dd,#1800ad 40%,#FFAE19 75%,#FF6A1F);border:3px solid #5533ee;box-shadow:9px 9px 0 #0a0050,15px 16px 30px rgba(0,0,0,.8),inset 0 0 20px rgba(255,255,255,.5);transform:rotate(-18deg) rotateY(-24deg);color:#fff;font-family:Archivo;font-size:44px;font-weight:900;letter-spacing:-2px}
@@ -297,7 +358,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-off
 .footer-top{display:grid;grid-template-columns:2.5fr repeat(3,1fr);gap:40px}
 .footer-brand .brand{font-size:36px;letter-spacing:-.02em}
 .footer-brand .brand-mark{width:36px;height:36px}
-.footer-brand p{font-size:16px;max-width:280px;color:var(--muted);margin-top:12px;line-height:1.4}
+.footer-brand p{font-size:16px;max-width:none;color:var(--muted);margin-top:12px;line-height:1.4;white-space:nowrap}
 .footer-col h2{font-size:11px;font-weight:700;color:var(--muted);margin:4px 0 16px;text-transform:uppercase;letter-spacing:.14em}
 .footer-col a{display:block;font-size:13.5px;margin:10px 0;color:#c0c4be;transition:color .2s}
 .footer-col a:hover{color:var(--accent)}
@@ -567,21 +628,27 @@ def build_landing():
     for slug,name,left,top in [('haaland','Haaland',50,8),('saka','Saka',22,70),('bruno','Bruno',78,70),('saliba','Saliba',50,122)]:
         squad+=f'<div class="mini-player" style="left:{left}%;top:{top}px"><img src="assets/players/{slug}.webp" alt="" loading="lazy">{name}</div>'
     squad+='</div></div></div>'
-    notice='<div class="feature-art notice-art" aria-hidden="true"><div class="notification"><span class="notification-icon">ft</span><div><b>Matchday 06 settled</b><small><span class="green">+6,200 $FTR</span> · Your club made the top 20.</small></div><time>9:41 AM</time></div></div>'
-    signup='''<div class="feature-art signup-art" aria-hidden="true"><div class="signup-option"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="m3 6 9 7 9-7"/></svg>Create your Fantrade account</div><div class="signup-option dark">Explore the player market <span>→</span></div><svg class="cursor" viewBox="0 0 36 44"><path d="M4 3 29 25l-12 1 5 12-7 3-5-12-9 8Z" fill="#f0efff" stroke="#9e9bc7" stroke-width="2"/></svg></div>'''
+    notice='<div class="feature-art notice-art" aria-hidden="true"><div class="notification"><span class="notification-icon"><img src="assets/landing/fantrade-logo.png" alt="Fantrade" width="22" height="22"></span><div><b>Matchday 06 settled</b><small><span class="green">+6,200 $FTR</span> · Your club made the top 20.</small></div><time>9:41 AM</time></div></div>'
+    signup='''<div class="feature-art signup-art"><a class="signup-option" href="signup.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="m3 6 9 7 9-7"/></svg>Create your Fantrade account</a><a class="signup-option dark" href="exchange.html">Explore the player market <span>→</span></a><svg class="cursor" viewBox="0 0 36 44" aria-hidden="true"><path d="M4 3 29 25l-12 1 5 12-7 3-5-12-9 8Z" fill="#f0efff" stroke="#9e9bc7" stroke-width="2"/></svg></div>'''
     coins='<div class="feature-art coin-art" aria-hidden="true"><div class="token"><span>$FTR</span></div><div class="token small"><span>10M</span></div></div>'
     entry='''<div class="feature-art entry-art" aria-hidden="true"><div class="entry-slip"><small>FANPLAY · MATCHDAY 06</small><b>Back your football IQ.</b><div class="entry-line"><span>Entry</span><strong>$Saka · Solo</strong></div><div class="entry-line"><span>Scoring</span><strong>Goals + assists + more</strong></div><div class="entry-confirm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>Ready for matchday</div></div></div>'''
     features=''.join([
         feature('Leaderboard','make your name.<br>climb the leaderboard.',ranking,'leaderboard.html'),
         feature('Dream Clubs','your players.<br>your dream club.',squad,'clubs.html'),
         feature('Alerts','every goal. every trade.<br>stay in the know.',notice,'notifications.html'),
-        feature('Easy onboarding','your first share is<br>just the beginning.',signup,'signup.html'),
+        feature('Easy onboarding','your first share<br>is just the beginning.',signup,'signup.html'),
         feature('Real ownership','10 million shares.<br>one football economy.',coins,'how-it-works.html'),
         feature('FanPlay','turn football knowledge<br>into matchday points.',entry,'fanplay.html'),
     ])
-    html='''<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="theme-color" content="#050505"><meta name="description" content="Trade shares in football players, build your Dream Club and put your football knowledge into play with FanPlay. Welcome to Fantrade."><title>Fantrade — Own the game.</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"><link rel="preload" as="image" href="assets/landing/toilet-trader.jpg"><style>'''+CSS+'''</style></head><body><a class="skip" href="#main">Skip to content</a><div class="landing"><header class="masthead"><a class="brand" href="index.html" aria-label="Fantrade home"><img class="brand-mark" src="assets/landing/fantrade-logo.png" alt="Fantrade"><span>fantrade<span class="brand-dot">.</span></span></a><nav class="nav-right" aria-label="Main navigation"><a class="nav-link" href="exchange.html">Explore players</a><a class="nav-link" href="how-it-works.html">How it works</a><a class="nav-login" href="signin.html">Log in</a><button class="menu-toggle" id="landingMenu" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="landingNav"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button></nav></header><nav class="mobile-menu" id="landingNav" aria-label="Mobile navigation" inert><a href="exchange.html">Explore players</a><a href="clubs.html">Dream Clubs</a><a href="fanplay.html">FanPlay</a><a href="how-it-works.html">How it works</a><a href="signup.html">Create account</a></nav><main id="main"><section class="hero" aria-labelledby="heroTitle"><div class="bg-deco bg-deco-hero" aria-hidden="true"><img src="assets/landing/fantrade-outline-logo.png" alt="" width="860" height="860"></div><div class="hero-pill"><span class="dot"></span> The Football Player Stock Market</div><div class="wordmark" aria-hidden="true">fantrade</div><h1 id="heroTitle">where football fans<br><span>own the game.</span></h1><p class="hero-copy">Trade real fractional shares in world-class footballers. Build your dream club squad. Put your football IQ into play anytime, anywhere.</p>'''+actions()+hero_media()+'''</section><section class="anywhere" aria-labelledby="anywhereTitle"><div class="section-heading"><span class="eyebrow">YOUR FOOTBALL WORLD, ON WEB</span><h2 id="anywhereTitle">trade from anywhere.<br>stay close to the game.</h2><p>From your phone to your desktop — your players, club and matchday in one place.</p></div>'''+product_preview()+'''</section><section class="features" aria-labelledby="featuresTitle"><div class="bg-deco bg-deco-features" aria-hidden="true"><img src="assets/landing/fantrade-outline-logo.png" alt="" width="560" height="560"></div><div class="section-heading"><span class="eyebrow">THE FOOTBALL ECONOMY</span><h2 id="featuresTitle">more than a spectator.</h2><p>The sports trading ecosystem built around passion, performance and true ownership.</p></div><div class="feature-grid">'''+features+'''</div></section><section class="final-cta" aria-labelledby="finalTitle"><img class="legends" src="assets/landing/legends.webp" alt="" loading="lazy" aria-hidden="true"><img class="orbit" src="assets/landing/outer-circle.webp" alt="" loading="lazy" aria-hidden="true"><img class="orbit inner" src="assets/landing/inner-circle.webp" alt="" loading="lazy" aria-hidden="true"><div class="final-copy"><h2 id="finalTitle">a trading platform<br>for the football in us.</h2><p>Start with a share in a player you believe in.<br>Your squad starts right here.</p>'''+actions()+'''</div></section></main><footer class="footer"><div class="footer-top"><div class="footer-brand"><a class="brand" href="index.html"><img class="brand-mark" src="assets/landing/fantrade-logo.png" alt="Fantrade"><span>fantrade<span class="brand-dot">.</span></span></a><p>where football fans<br>own the game.</p></div><div class="footer-col"><h2>Platform</h2><a href="exchange.html">Player market</a><a href="clubs.html">Dream Clubs</a><a href="fanplay.html">FanPlay</a><a href="leaderboard.html">Leaderboard</a></div><div class="footer-col"><h2>Get started</h2><a href="how-it-works.html">How it works</a><a href="signup.html">Create account</a><a href="signin.html">Log in</a><a href="ftr.html">$FTR wallet</a></div><div class="footer-col"><h2>Your Fantrade</h2><a href="portfolio.html">Portfolio</a><a href="account.html">Your profile</a><a href="settings-play.html">Responsible play</a><a href="settings-data.html">Data &amp; account</a></div></div><p class="copyright">© 2026 Fantrade.</p><p class="demo-note">Prototype experience. Player prices, balances and rewards shown are illustrative.</p></footer></div><script>
+    html='''<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="theme-color" content="#050505"><meta name="description" content="Trade shares in football players, build your Dream Club and put your football knowledge into play with FanPlay. Welcome to Fantrade."><title>Fantrade — Own the game.</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"><link rel="preload" as="image" href="assets/landing/toilet-trader.jpg"><style>'''+CSS+'''</style></head><body><a class="skip" href="#main">Skip to content</a><div class="landing"><header class="masthead"><a class="brand" href="index.html" aria-label="Fantrade home"><img class="brand-mark" src="assets/landing/fantrade-logo.png" alt="Fantrade"><span>fantrade<span class="brand-dot">.</span></span></a><nav class="nav-right" aria-label="Main navigation"><a class="nav-link" href="exchange.html">Explore players</a><a class="nav-link" href="how-it-works.html">How it works</a><a class="nav-login" href="signin.html">Log in</a><button class="menu-toggle" id="landingMenu" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="landingNav"><svg class="icon-bars" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M3 6h18M3 12h18M3 18h18" stroke-linecap="round"/></svg><svg class="icon-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M18 6 6 18M6 6l12 12" stroke-linecap="round"/></svg></button></nav></header><nav class="mobile-menu" id="landingNav" aria-label="Mobile navigation" inert><div class="mobile-menu-inner"><a href="exchange.html">Explore players</a><a href="clubs.html">Dream Clubs</a><a href="fanplay.html">FanPlay</a><a href="how-it-works.html">How it works</a><a href="signup.html" class="menu-highlight">Create account <span class="arrow">&rarr;</span></a></div></nav><main id="main"><section class="hero" aria-labelledby="heroTitle"><div class="hero-pill"><span class="dot"></span> The Football Player Stock Market</div><div class="wordmark" aria-hidden="true">fantrade</div><h1 id="heroTitle">where football fans<br><span>own the game.</span></h1><p class="hero-copy">Trade real fractional shares in world-class footballers. Build your dream club squad. Put your football IQ into play anytime, anywhere.</p>'''+actions()+hero_media()+'''</section><section class="anywhere" aria-labelledby="anywhereTitle"><div class="section-heading"><span class="eyebrow">YOUR FOOTBALL WORLD, ON WEB</span><h2 id="anywhereTitle">trade from anywhere.<br>stay close to the game.</h2><p>From your phone to your desktop — your players, club and matchday in one place.</p></div>'''+product_preview()+'''</section><section class="features" aria-labelledby="featuresTitle"><div class="bg-deco bg-deco-features" aria-hidden="true"><img src="assets/landing/fantrade-outline-logo.png" alt="" width="560" height="560"></div><div class="section-heading"><span class="eyebrow">THE FOOTBALL ECONOMY</span><h2 id="featuresTitle">more than a spectator.</h2><p>The sports trading ecosystem built around passion, performance and true ownership.</p></div><div class="feature-grid">'''+features+'''</div></section><section class="final-cta" aria-labelledby="finalTitle"><img class="legends" src="assets/landing/legends.webp" alt="" loading="lazy" aria-hidden="true"><img class="orbit" src="assets/landing/outer-circle.webp" alt="" loading="lazy" aria-hidden="true"><img class="orbit inner" src="assets/landing/inner-circle.webp" alt="" loading="lazy" aria-hidden="true"><div class="final-copy"><h2 id="finalTitle">a trading platform<br>for the football in us.</h2><p>Start with a share in a player you believe in.<br>Your squad starts right here.</p>'''+actions()+'''</div></section></main><footer class="footer"><div class="footer-top"><div class="footer-brand"><a class="brand" href="index.html"><img class="brand-mark" src="assets/landing/fantrade-logo.png" alt="Fantrade"><span>fantrade<span class="brand-dot">.</span></span></a><p>where football fans own the game.</p></div><div class="footer-col"><h2>Platform</h2><a href="exchange.html">Player market</a><a href="clubs.html">Dream Clubs</a><a href="fanplay.html">FanPlay</a><a href="leaderboard.html">Leaderboard</a></div><div class="footer-col"><h2>Get started</h2><a href="how-it-works.html">How it works</a><a href="signup.html">Create account</a><a href="signin.html">Log in</a><a href="ftr.html">$FTR wallet</a></div><div class="footer-col"><h2>Your Fantrade</h2><a href="portfolio.html">Portfolio</a><a href="account.html">Your profile</a><a href="settings-play.html">Responsible play</a><a href="settings-data.html">Data &amp; account</a></div></div><p class="copyright">© 2026 Fantrade.</p><p class="demo-note">Prototype experience. Player prices, balances and rewards shown are illustrative.</p></footer></div><script>
 const toggle=document.getElementById('landingMenu'), menu=document.getElementById('landingNav');
-function setMenu(open){toggle.setAttribute('aria-expanded',String(open));toggle.setAttribute('aria-label',open?'Close menu':'Open menu');menu.classList.toggle('open',open);menu.inert=!open;}
+function setMenu(open){
+  toggle.setAttribute('aria-expanded',String(open));
+  toggle.setAttribute('aria-label',open?'Close menu':'Open menu');
+  menu.classList.toggle('open',open);
+  menu.inert=!open;
+  document.body.style.overflow=open?'hidden':'';
+}
 toggle.addEventListener('click',()=>setMenu(toggle.getAttribute('aria-expanded')!=='true'));
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&toggle.getAttribute('aria-expanded')==='true'){setMenu(false);toggle.focus();}});
 document.addEventListener('click',e=>{if(!menu.contains(e.target)&&!toggle.contains(e.target))setMenu(false);});
