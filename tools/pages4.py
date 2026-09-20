@@ -5,7 +5,7 @@ list, never a section stacked onto it."""
 import os, sys
 sys.path.insert(0, os.path.dirname(__file__))
 from common import head, atmosphere, nav, footer, ic, JS_SHELL
-from app_design import apply_design
+from app_design import apply_design, intro
 
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
 ARROW = '<span class="cap">' + ic("arrow", "ic") + '</span>'
@@ -71,7 +71,13 @@ function book2(box, side, count, onPick){
       + '<span>' + r.p.toFixed(2) + '</span><span>' + fmt(r.s) + '</span></div>';
   }).join('');
   if(onPick) host.querySelectorAll('.b2row').forEach(function(el){
+    el.tabIndex = 0;
+    el.setAttribute('role', 'button');
+    el.setAttribute('aria-label', 'Set limit price to ' + el.dataset.px + ' FTR');
     el.addEventListener('click', function(){ onPick(parseFloat(el.dataset.px)); });
+    el.addEventListener('keydown', function(event){
+      if(event.key === 'Enter' || event.key === ' '){event.preventDefault();onPick(parseFloat(el.dataset.px));}
+    });
   });
 }
 """
@@ -170,32 +176,28 @@ TRADE_CSS = """
 .bigbtn.neutral{background:rgba(255,255,255,.08);color:var(--ink);border:1px solid rgba(255,255,255,.14)}
 """
 
-trade = [T('<main><div class="kc-trade-wrap">'
+trade = [T('<main><div class="kc-trade-wrap trade-page">' + intro('Trade shares', 'Choose your player. Make your next move.') +
            '<!-- Top Navigation Bar -->'
            '<div class="kc-trade-topbar">'
            '  <div class="kc-trade-top-left">'
-           '    <a href="exchange.html" class="kc-p-back" title="Back to Markets">'
+           '    <a href="exchange.html" id="tBack" class="kc-p-back" aria-label="Back to player details">'
            '      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>'
            '    </a>'
-           '    <div class="kc-trade-pair-title">'
+           '    <span id="tPortrait" class="trade-portrait"></span><div class="trade-player"><p id="tPlayerName"></p><div class="kc-trade-pair-title">'
            '      <span id="tSym">$Saka</span><span class="kc-quote">/FTR</span>'
-           '      <span class="kc-trade-tag">10x</span>'
            '      <span class="kc-trade-delta" id="tDelta">+6.40%</span>'
-           '    </div>'
+           '    </div></div>'
            '  </div>'
            '  <div class="kc-trade-top-right">'
            '    <a href="asset.html" id="tChart" class="kc-icon-btn" title="Candlestick Chart">'
-           '      <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>'
+           '      View chart'
            '    </a>'
-           '    <button type="button" class="kc-icon-btn" title="Options">'
-           '      <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>'
-           '    </button>'
            '  </div>'
            '</div>'
            '<div class="tgrid">')]
 
 # ── the book ──
-trade.append(T('<div data-reveal>'
+trade.append(T('<details class="trade-depth" id="tradeDepth"><summary>Market depth</summary><p class="trade-help">Preview orders. Select a price to use it in your limit order.</p>'
                '<div class="book2"><div class="bh"><span>Price $FTR</span><span>Shares</span></div>'
                '<div id="tAsks"></div>'
                '<div class="last"><b id="tLast">—</b><span id="tLastSub">last traded</span></div>'
@@ -210,10 +212,10 @@ trade.append(T('<div data-reveal>'
                '<option value="10">0.10</option><option value="50">0.50</option></select>'
                '<span class="chev"></span></span>'
                '<a class="bkbtn" href="#tLedger" id="tJump" aria-label="Jump to your orders">@@</a></div>'
-               '</div>', ic("receipt", "ic")))
+               '</details>', ic("receipt", "ic")))
 
 # ── the ticket ──
-trade.append(T('<div data-reveal>'
+trade.append(T('<div class="trade-ticket">'
                '<div class="sideseg" id="tMode">'
                '<button type="button" aria-pressed="true" data-m="buy">Buy</button>'
                '<button type="button" aria-pressed="false" data-m="sell">Sell</button>'
@@ -222,29 +224,29 @@ trade.append(T('<div data-reveal>'
 
                # buy / sell ticket
                '<div class="pane on" data-pane="order">'
-               '<button class="otype" type="button" id="tTypeWrap">@@'
-               '<select id="tType"><option value="limit">Limit</option>'
+               '<label class="trade-field-label" for="tType">Order type</label><div class="otype" id="tTypeWrap">@@'
+               '<select id="tType" aria-describedby="tradeTypeHelp"><option value="limit">Limit</option>'
                '<option value="market">Market</option>'
-               '<option value="stop">Stop-limit</option></select>'
-               '<span class="chev"></span></button>'
+               '</select>'
+               '<span class="chev"></span></div><p class="trade-help" id="tradeTypeHelp"></p>'
 
                '<div class="tfield" id="tStopWrap" hidden><div class="bd">'
-               '<span class="lbl">Stop ($FTR)</span><input id="tStop" inputmode="decimal"></div>'
+               '<label class="lbl" for="tStop">Stop price · FTR</label><input id="tStop" inputmode="decimal"></div>'
                '<span class="pm"><button type="button" data-step="-1" data-for="tStop" '
                'aria-label="Lower the stop">&minus;</button>'
                '<button type="button" data-step="1" data-for="tStop" aria-label="Raise the stop">+</button>'
                '</span></div>'
 
                '<div class="tfield" id="tLimitWrap"><div class="bd">'
-               '<span class="lbl">Limit ($FTR)</span><input id="tLimit" inputmode="decimal"></div>'
+               '<label class="lbl" for="tLimit">Price per share · FTR</label><input id="tLimit" inputmode="decimal"></div>'
                '<span class="pm"><button type="button" data-step="-1" data-for="tLimit" '
                'aria-label="Lower the price">&minus;</button>'
                '<button type="button" data-step="1" data-for="tLimit" aria-label="Raise the price">+</button>'
                '</span></div>'
 
                '<div class="tfield"><div class="bd">'
-               '<span class="lbl">Quantity<span class="unit"> (<span id="tQtyUnit">$Saka</span>)</span></span>'
-               '<input id="tQty" inputmode="numeric" value="1,000"></div>'
+               '<label class="lbl" for="tQty">Shares<span class="unit"> · <span id="tQtyUnit">$Saka</span></span></label>'
+               '<input id="tQty" inputmode="numeric" placeholder="Enter quantity" value=""></div>'
                '<span class="pm"><button type="button" data-step="-1" data-for="tQty" '
                'aria-label="Fewer shares">&minus;</button>'
                '<button type="button" data-step="1" data-for="tQty" aria-label="More shares">+</button>'
@@ -262,7 +264,7 @@ trade.append(T('<div data-reveal>'
                '<span>100%</span></span></div>'
 
                '<div class="tfield" style="margin-top:20px"><div class="bd">'
-               '<span class="lbl">Amount ($FTR)</span><input id="tAmt" readonly></div></div>'
+               '<label class="lbl" for="tAmt">Order value · FTR</label><input id="tAmt" readonly></div></div>'
 
                '<div class="tline"><span>Fee (0.4%)</span><b id="tFee">—</b></div>'
                '<div class="tline"><span id="tTotLabel">Total cost</span><b id="tTot">—</b></div>'
@@ -276,8 +278,8 @@ trade.append(T('<div data-reveal>'
                '<div class="tf" id="f-swFrom"><label for="swFrom">From</label><div class="inp">@@'
                '<select id="swFrom"></select><span class="chev"></span></div>'
                '<div class="hint" id="swHold">—</div></div>'
-               '<div class="tfield"><div class="bd"><span class="lbl">Shares</span>'
-               '<input id="swQty" inputmode="numeric" value="500"></div>'
+               '<div class="tfield"><div class="bd"><label class="lbl" for="swQty">Shares to swap</label>'
+               '<input id="swQty" inputmode="numeric" placeholder="Enter quantity" value=""></div>'
                '<span class="pm"><button type="button" data-step="-1" data-for="swQty" '
                'aria-label="Fewer shares">&minus;</button>'
                '<button type="button" data-step="1" data-for="swQty" aria-label="More shares">+</button>'
@@ -306,7 +308,7 @@ trade.append('<div class="flat-sep" data-reveal>'
              '<span id="tcAssets">(0)</span></button>'
              '</div><div id="tLedger"></div></div>')
 
-trade.append('</div></div></main>')
+trade.append('</div></main>')
 
 TRADE_JS = PICK_JS + r"""
 document.title = 'Trade ' + A.t + ' — Fantrade';
@@ -319,9 +321,15 @@ if(el('tCoin')){
   el('tCoin').innerHTML = '<svg class="ic" aria-hidden="true"><use href="#i-' + (A.c ? 'whistle' : 'boot') + '"/></svg>';
 }
 if(el('tSym')) el('tSym').textContent = A.t;
+el('tPortrait').innerHTML = playerPhoto(A.t,A.n);
+el('tPlayerName').textContent = A.n;
+var tradeDesktop = window.matchMedia('(min-width: 901px)');
+el('tradeDepth').open = tradeDesktop.matches;
+tradeDesktop.addEventListener('change',function(event){el('tradeDepth').open=event.matches;});
 if(el('tQtyUnit')) el('tQtyUnit').textContent = A.t;
 if(el('tChart')) el('tChart').href = 'asset.html?a=' + encodeURIComponent(A.t);
 el('tDelta').textContent = (A.d >= 0 ? '+' : '') + A.d.toFixed(2) + '%';
+el('tDelta').classList.toggle('down', A.d < 0);
 el('tDelta').style.color = A.d >= 0 ? 'var(--lime)' : 'var(--red)';
 el('tLimit').value = A.p.toFixed(2);
 el('tStop').value = (A.p * 0.96).toFixed(2);
@@ -385,7 +393,7 @@ function calc(){
   el('tFee').textContent = fmt(fee) + ' $FTR';
   el('tTotLabel').textContent = mode === 'buy' ? 'Total cost' : 'You receive';
   el('tTot').textContent = fmt(mode === 'buy' ? sub + fee : sub - fee) + ' $FTR';
-  el('tAvailLabel').textContent = 'Avail.';
+  el('tAvailLabel').textContent = 'Available';
   el('tAvail').textContent = mode === 'buy'
     ? fmt(s.wallet.balance) + ' $FTR'
     : (h ? h.shares.toLocaleString('en-US') + ' ' + A.t : '0 ' + A.t);
@@ -394,10 +402,12 @@ function calc(){
     ? Math.floor(s.wallet.balance / (px * 1.004)).toLocaleString('en-US') + ' ' + A.t
     : (h ? h.shares.toLocaleString('en-US') + ' ' + A.t : '0 ' + A.t);
   var go = el('tGo');
-  var verb = otype === 'market' ? (mode === 'buy' ? 'Buy ' : 'Sell ')
-    : (mode === 'buy' ? 'Bid for ' : 'Ask for ');
+  var verb = mode === 'buy' ? 'Buy ' : 'Sell ';
   go.textContent = verb + A.t;
   go.className = 'bigbtn' + (mode === 'buy' ? '' : ' sell');
+  el('tradeTypeHelp').textContent = otype === 'market'
+    ? 'Trade at the available market price. The final price may vary.'
+    : 'Choose your price per share. Limit orders on this preview are kept for this visit only.';
 }
 
 document.querySelectorAll('#tMode button').forEach(function(b){
@@ -416,6 +426,9 @@ el('tType').addEventListener('change', function(){
   el('tLimitWrap').hidden = otype === 'market';
   el('tStopWrap').hidden = otype !== 'stop';
   calc();
+});
+['tQty','tLimit','tStop'].forEach(function(id){
+  el(id).addEventListener('input', calc);
 });
 
 el('tGo').addEventListener('click', function(){
@@ -529,7 +542,7 @@ function renderLedger(){
       var h = s.holdings[k];
       return '<a class="arow" href="asset.html?a=' + encodeURIComponent(k) + '">'
         + '<div class="who"><span class="coin' + (h.c ? ' am' : '') + '">'
-        + '<svg class="ic"><use href="#i-' + (h.c ? 'whistle' : 'boot') + '"/></svg></span>'
+        + playerPhoto(k,h.n) + '</span>'
         + '<div style="min-width:0"><div class="nm">' + k + '</div><div class="qt">' + h.n + '</div></div></div>'
         + '<div></div><div><div class="val">' + fmt(h.shares * h.p) + '</div>'
         + '<div class="chg">' + h.shares.toLocaleString('en-US') + ' shares</div></div></a>';

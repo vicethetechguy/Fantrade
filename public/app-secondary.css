@@ -1,0 +1,86 @@
+/* Focused secondary pages extend the onboarding design system. */
+body.app.calm .trade-page{max-width:980px!important;margin:auto;padding:12px 28px 128px!important}
+body.app.calm .trade-page .kc-trade-topbar{border:0;padding:0 0 32px;margin:0;gap:20px;align-items:center}
+body.app.calm .trade-page .kc-trade-top-left{min-width:0;gap:14px}
+body.app.calm .trade-portrait{width:48px;height:48px;border-radius:50%;background:var(--panel);overflow:hidden;flex:none}
+body.app.calm .trade-portrait img{width:100%;height:100%;object-fit:cover}
+body.app.calm .trade-player{min-width:0}
+body.app.calm .trade-player p{font-size:17px;font-weight:600;margin:0 0 5px}
+body.app.calm .trade-page .kc-trade-pair-title{font-size:12px!important;font-family:Montserrat,system-ui,sans-serif!important;font-weight:400;gap:4px;flex-wrap:wrap}
+body.app.calm .trade-page .kc-trade-pair-title .kc-quote{font-size:11px;font-weight:400}
+body.app.calm .trade-page .kc-trade-delta{font-size:11px;color:var(--positive)!important}
+body.app.calm .trade-page .kc-trade-delta.down{color:var(--red)!important}
+body.app.calm .trade-page #tChart{width:auto!important;min-width:78px!important;min-height:44px;padding:10px 14px;font-size:11px;white-space:nowrap;border-radius:999px!important}
+body.app.calm .trade-page .tgrid{grid-template-columns:minmax(0,1fr) 300px;gap:64px}
+body.app.calm .trade-ticket{grid-column:1;grid-row:1;min-width:0}
+body.app.calm .trade-depth{grid-column:2;grid-row:1;min-width:0}
+body.app.calm .trade-depth>summary{font-family:Archivo,Montserrat,sans-serif;font-size:22px;min-height:48px;cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center}
+body.app.calm .trade-depth>summary::-webkit-details-marker{display:none}
+body.app.calm .trade-depth>summary::after{content:'+';color:var(--dim)}
+body.app.calm .trade-depth[open]>summary::after{content:'−'}
+body.app.calm .trade-page .sideseg{border:0!important;box-shadow:none!important;background:transparent;padding:0;gap:10px;margin-bottom:28px;border-radius:0}
+body.app.calm .trade-page .sideseg button{border-radius:999px;min-height:48px;text-transform:none;letter-spacing:0;font-size:14px;font-weight:500;color:var(--dim)}
+body.app.calm .trade-page .sideseg button[aria-pressed=true]{background:var(--lime);color:white}
+body.app.calm .trade-page .tfield,body.app.calm .trade-page .otype,body.app.calm .trade-page .ticksel{border:0;background:var(--panel);box-shadow:none;border-radius:16px;padding:12px 16px;margin-bottom:16px;min-height:56px}
+body.app.calm .trade-page .otype{gap:12px;margin-bottom:0}
+body.app.calm .trade-field-label,body.app.calm .trade-page .tfield .lbl{font-size:12px;font-weight:400;text-transform:none;letter-spacing:0;color:var(--dim);margin-bottom:7px}
+body.app.calm .trade-field-label{display:block}
+body.app.calm .trade-help{font-size:12px;color:var(--dim);line-height:1.7;margin:14px 0 24px}
+body.app.calm .trade-page select{font-size:14px!important}
+body.app.calm .trade-page .tfield .pm{align-items:center}
+body.app.calm .trade-page .tfield .pm button{width:40px;height:44px;border:0;color:var(--ink);font-size:22px}
+body.app.calm .trade-page .tfield input{padding:0;font-weight:500;color:var(--ink)}
+body.app.calm .trade-page .tfield:has(input[readonly]){background:transparent;margin:0!important;padding:8px 0;min-height:0;border-radius:0}
+body.app.calm .trade-page .tfield:has(input[readonly]) .bd{display:flex;gap:20px;align-items:center}
+body.app.calm .trade-page .tfield:has(input[readonly]) .lbl{margin:0;flex:none}
+body.app.calm .trade-page .tfield input[readonly]{font-size:12px!important;text-align:right}
+body.app.calm .trade-page .tfield:focus-within,body.app.calm .trade-page .otype:focus-within{outline:2px solid #a596ed;outline-offset:3px}
+body.app.calm .trade-page .slider{margin:28px 6px 36px}
+body.app.calm .trade-page .tline{padding:9px 0;font-size:12px;gap:20px;color:var(--dim)}
+body.app.calm .trade-page .tline b{font-size:12px;text-align:right;overflow-wrap:anywhere}
+body.app.calm .trade-page .bigbtn{border-radius:999px;background:var(--lime);color:white;font-family:Montserrat,sans-serif;font-weight:600;text-transform:none;letter-spacing:0;min-height:52px;font-size:14px;margin-top:24px;border:0}
+body.app.calm .trade-page .tf .inp{min-height:56px;padding:12px 16px}
+body.app.calm .trade-page .tf label{font-size:12px;text-transform:none;letter-spacing:0;color:var(--dim)}
+body.app.calm .trade-page .tf .hint{font-size:11px;color:var(--dim);line-height:1.6;margin-top:10px}
+body.app.calm .trade-page .book2{padding:0;border:0;background:transparent}
+body.app.calm .trade-page .book2 .bh{color:var(--dim);font-size:11px;text-transform:none;letter-spacing:0;padding-bottom:14px}
+body.app.calm .trade-page .b2row{font-size:12px;min-height:32px;padding:6px;cursor:pointer}
+body.app.calm .trade-page .b2row.bid{color:var(--positive)}
+body.app.calm .trade-page .b2row i{opacity:.07;background:var(--positive)}
+body.app.calm .trade-page .b2row.ask i{background:var(--red)}
+body.app.calm .trade-page .book2 .last{border:0;padding:18px 0;gap:10px}
+body.app.calm .trade-page .book2 .last b{color:var(--ink)!important;font-size:22px}
+body.app.calm .trade-page .depthbar,body.app.calm .trade-page .depthkey{display:none}
+body.app.calm .trade-page .ticksel{padding:6px 12px;min-height:44px;border-radius:999px;margin:0}
+body.app.calm .trade-page .bkbtn{border:0;background:var(--panel);border-radius:50%;width:44px;height:44px}
+body.app.calm .trade-page .flat-sep{border:0;margin-top:48px;padding:0}
+body.app.calm .trade-page .utabs{border:0;display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding:0 0 20px}
+body.app.calm .trade-page .utabs button{border:0!important;background:transparent!important;box-shadow:none!important;min-height:44px;border-radius:999px!important;padding:10px 16px;font-size:12px;font-weight:500;text-transform:none;letter-spacing:0;white-space:nowrap;flex:none;color:var(--dim)}
+body.app.calm .trade-page .utabs button[aria-pressed=true]{background:var(--lime)!important;color:#fff}
+body.app.calm .trade-page .utabs button::after{display:none}
+body.app.calm .trade-page #tLedger .dh,body.app.calm .trade-page #tLedger .dr{border:0;background:transparent;align-items:center}
+body.app.calm .trade-page #tLedger .tag{border:0;background:transparent;padding:0;text-transform:none;font-size:11px;color:var(--ink)}
+body.app.calm .trade-page #tLedger .tradebtn{border:0!important;background:var(--panel)!important;color:var(--ink)!important;border-radius:999px;min-height:44px;text-transform:none;letter-spacing:0}
+body.app.calm .trade-page #tLedger .arow{border:0;padding:18px 0}
+body.app.calm .trade-page #tLedger .arow .coin{background:var(--panel);border:0;overflow:hidden}
+body.app.calm .trade-page #tLedger .arow .coin img{width:100%;height:100%;object-fit:cover}
+@media(max-width:900px){
+ body.app.calm .trade-page{max-width:680px!important;padding:8px 20px 128px!important}
+ body.app.calm .trade-page .tgrid{grid-template-columns:1fr;gap:36px}
+ body.app.calm .trade-depth{grid-column:1;grid-row:2}
+ body.app.calm .trade-page .book2{max-width:none}
+ body.app.calm .trade-page .kc-trade-topbar{flex-wrap:wrap;gap:16px}
+ body.app.calm .trade-page .kc-trade-top-left{gap:10px;flex:1}
+ body.app.calm .trade-player p{font-size:15px}
+ body.app.calm .trade-page .kc-trade-top-left .kc-p-back{width:36px!important;height:40px!important;min-width:36px;min-height:40px!important}
+ body.app.calm .trade-page .trade-portrait{width:40px;height:40px}
+ body.app.calm .trade-page .flat-sep{margin-top:36px}
+}
+@media(max-width:380px){
+ body.app.calm .trade-page{padding-left:16px!important;padding-right:16px!important}
+ body.app.calm .trade-page .kc-trade-topbar{position:relative;padding-bottom:68px}
+ body.app.calm .trade-page .kc-trade-top-right{position:absolute;left:0;bottom:8px}
+ body.app.calm .trade-page .tfield{padding:12px}
+ body.app.calm .trade-page .tfield .pm button{width:34px}
+ body.app.calm .trade-page #tLedger .dh,body.app.calm .trade-page #tLedger .dr{grid-template-columns:36px 1fr 1fr 64px!important;gap:5px}
+}
