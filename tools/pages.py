@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import os, sys
 sys.path.insert(0, os.path.dirname(__file__))
+from app_design import apply_design, intro
 from common import head, atmosphere, nav, footer, ic, flag, JS_SHELL
 
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
@@ -30,6 +31,7 @@ def page(fname, title, body, js="", css="", app=False):
     tail = footer() if fname == "index.html" else ""
     html = (head(title, css, "app" if app else "") + atmosphere() + nav(fname, app) +
             body + tail + "<script src=\"public/fantrade-api.js\"></script><script>(function(){" + JS_SHELL + js + "})();</script></body></html>")
+    html = apply_design(fname, html)
     with open(os.path.join(OUT, fname), "w", encoding="utf-8") as f:
         f.write(html)
     return len(html)
@@ -159,28 +161,19 @@ EX_CSS = """
 .kc-pill.down{background:#FF3B47;color:#fff}
 """
 
-ex = [T('<main><div class="kc-ex-wrap">'
+ex = [T('<main><div class="kc-ex-wrap">' + intro('Exchange', 'Find the players you believe in.') +
         '<!-- Top Search & Actions -->'
         '<div class="kc-top-bar">'
         '  <div class="kc-search-box">'
         '    @@'
-        '    <input id="q" type="search" class="kc-search-input" placeholder="LSK" autocomplete="off">'
-        '  </div>'
-        '  <div class="kc-search-actions">'
-        '    <button type="button" class="kc-action-btn" id="btnTrend" title="Trends">'
-        '      <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>'
-        '    </button>'
-        '    <a href="notifications.html" class="kc-action-btn" title="Alerts">'
-        '      @@'
-        '      <span class="dot"></span>'
-        '    </a>'
+        '    <input id="q" type="search" class="kc-search-input" placeholder="Search players, clubs or coaches" aria-label="Search player shares" autocomplete="off">'
         '  </div>'
         '</div>'
         '<!-- Primary Category Tabs -->'
         '<div class="kc-cat-tabs" id="kcCatTabs">'
         '  <button type="button" class="kc-cat-tab" data-cat="fav">Favorites</button>'
-        '  <button type="button" class="kc-cat-tab on" data-cat="markets">All Shares</button>'
-        '  <button type="button" class="kc-cat-tab" data-cat="alpha">Top Alpha 🔥</button>'
+        '  <button type="button" class="kc-cat-tab on" data-cat="markets">All shares</button>'
+        '  <button type="button" class="kc-cat-tab" data-cat="alpha">Trending</button>'
         '  <button type="button" class="kc-cat-tab" data-cat="fwd">Forwards</button>'
         '  <button type="button" class="kc-cat-tab" data-cat="mid">Midfielders</button>'
         '  <button type="button" class="kc-cat-tab" data-cat="coaches">Coaches</button>'
@@ -194,22 +187,12 @@ ex = [T('<main><div class="kc-ex-wrap">'
         '    <button type="button" class="kc-sub-tab" data-sub="laliga">La Liga</button>'
         '    <button type="button" class="kc-sub-tab" data-sub="gainers">Top Gainers</button>'
         '  </div>'
-        '  <button type="button" class="kc-edit-btn" id="btnEdit" title="Customize list">'
-        '    <svg class="ic-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>'
-        '  </button>'
-        '</div>'
-        '<!-- Floating Widget Banner -->'
-        '<div class="kc-banner" id="annBanner">'
-        '  <div class="kc-banner-text">Matchday 05 Player Shares Live: Buy &amp; hold player shares to unlock your Dream Club.</div>'
-        '  <div class="kc-banner-actions">'
-        '    <button type="button" class="kc-banner-close" onclick="document.getElementById(\'annBanner\').style.display=\'none\'">✕</button>'
-        '  </div>'
         '</div>'
         '<!-- Table Headers -->'
         '<div class="kc-th">'
-        '  <span data-sort="pair">Player Share ⇅ / Volume ⇅</span>'
+        '  <span data-sort="pair">Player ⇅</span>'
         '  <span data-sort="price" style="justify-content:flex-end">Price ($FTR) ⇅</span>'
-        '  <span data-sort="change" style="justify-content:flex-end">24h Change ⇅</span>'
+        '  <span data-sort="change" style="justify-content:flex-end">24h ⇅</span>'
         '</div>'
         '<!-- Market List -->'
         '<div id="mktList"></div>'
@@ -272,7 +255,7 @@ function renderMarketRows(){
     var quote = a.q || 'FTR';
     var sym = a.t.replace('$', '');
     var up = a.d >= 0;
-    var subPrice = a.club ? a.club : (a.p * 0.9997).toFixed(2) + ' FTR';
+    var subPrice = (a.p * 0.1).toFixed(2) + ' USD';
 
     return "<a class='kc-row' href='" + to + "'>"
       + "<div class='kc-row-left'>"
@@ -283,7 +266,7 @@ function renderMarketRows(){
       + "      <span class='kc-pair-quote'>/" + quote + "</span>"
       + "      <span class='kc-tag'>" + (a.tag || (a.c ? 'COACH' : '10x')) + "</span>"
       + "    </div>"
-      + "    <div class='kc-pair-sub'>" + a.n + " | " + (a.cap || a.vol || '39.24M') + "</div>"
+      + "    <div class='kc-pair-sub'>" + a.n + " · " + (a.club || (a.c ? 'Coach' : 'Player')) + "</div>"
       + "  </div>"
       + "</div>"
       + "<div class='kc-row-mid'>"
@@ -839,17 +822,7 @@ FP_CSS = """
 .fp-btn-next{flex:2;padding:14px 0;background:var(--lime);border:0;color:#fff;border-radius:12px;font-family:Archivo,sans-serif;font-variation-settings:'wdth' 115,'wght' 800;font-size:13.5px;text-transform:uppercase;cursor:pointer;text-align:center;box-shadow:0 0 20px rgba(24,0,173,.3)}
 """
 
-fp = ['<main><div class="kc-home-wrap">']
-
-# Topbar
-fp.append(T('<div class="fp-topbar">'
-            '<div class="fp-title-box">'
-            '  <a class="kc-icon-btn" href="dashboard.html" title="Back to Home" style="width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;color:#8E9AA8;text-decoration:none">@@</a>'
-            '  <div><h2>FanPlay Engine</h2><span>Stake Owned Shares · Match Predictions · $FTR Settlement</span></div>'
-            '</div>'
-            '<a class="kc-icon-btn" href="liveboard.html" title="Live Matchday Board" style="width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;color:#1800ad;text-decoration:none">@@</a>'
-            '</div>',
-            ic("arrow", "ic"), ic("pulse", "ic")))
+fp = ['<main><div class="kc-home-wrap fanplay-layout">', intro('FanPlay', 'Your players. Your predictions. Your matchday.', '<a class="app-text-link" href="liveboard.html">Live board</a>')]
 
 # 4 Key Metrics Dashboard Chips (§80)
 fp.append('<div class="fp-metrics-grid">'
@@ -861,9 +834,9 @@ fp.append('<div class="fp-metrics-grid">'
 
 # Tab Switcher: Wizard vs Active vs History
 fp.append('<div class="fp-view-nav">'
-          '<button type="button" class="fp-view-btn on" id="vbtnWizard" onclick="window.switchFPView(\'wizard\')">New FanPlay Position</button>'
-          '<button type="button" class="fp-view-btn" id="vbtnActive" onclick="window.switchFPView(\'active\')">Active &amp; Live (<span id="tabActiveCount">0</span>)</button>'
-          '<button type="button" class="fp-view-btn" id="vbtnHistory" onclick="window.switchFPView(\'history\')">Settled History</button>'
+          '<button type="button" class="fp-view-btn on" id="vbtnWizard" onclick="window.switchFPView(\'wizard\')">New entry</button>'
+          '<button type="button" class="fp-view-btn" id="vbtnActive" onclick="window.switchFPView(\'active\')">Active (<span id="tabActiveCount">0</span>)</button>'
+          '<button type="button" class="fp-view-btn" id="vbtnHistory" onclick="window.switchFPView(\'history\')">History</button>'
           '</div>')
 
 # ══════════════════════════════════════════════════════════
@@ -883,26 +856,26 @@ fp.append('<div id="fpViewWizard">'
 
 # Step 1: Choose Asset
 fp.append('<div class="fp-panel" id="stepBox1">'
-          '<div class="fp-panel-title">Step 1: Choose Owned Player or Coach</div>'
-          '<div class="fp-panel-sub">Select an asset from your portfolio to stake. You must own available shares.</div>'
+          '<div class="fp-panel-title">Choose your player.</div>'
+          '<div class="fp-panel-sub">Choose a player or coach you own. Only available shares can be entered.</div>'
           '<div class="fp-asset-grid" id="stepAssetGrid"></div>'
           '<div class="fp-nav-btns"><button type="button" class="fp-btn-next" onclick="window.goToStep(2)">Next: Choose Match →</button></div>'
           '</div>')
 
 # Step 2: Choose Match
 fp.append('<div class="fp-panel" id="stepBox2" style="display:none">'
-          '<div class="fp-panel-title">Step 2: Choose Fixture</div>'
-          '<div class="fp-panel-sub">Select an upcoming match before its activation cutoff point.</div>'
+          '<div class="fp-panel-title">Pick a match.</div>'
+          '<div class="fp-panel-sub">Choose an upcoming fixture before entries close.</div>'
           '<div class="fp-match-grid" id="stepMatchGrid"></div>'
           '<div class="fp-nav-btns">'
           '<button type="button" class="fp-btn-back" onclick="window.goToStep(1)">← Back</button>'
           '<button type="button" class="fp-btn-next" onclick="window.goToStep(3)">Next: Choose Market →</button>'
           '</div></div>')
 
-# Step 3: Choose Market Tier (§10, §11, §12)
+# Choose how you want to play. (§10, §11, §12)
 fp.append('<div class="fp-panel" id="stepBox3" style="display:none">'
-          '<div class="fp-panel-title">Step 3: Choose Market Tier</div>'
-          '<div class="fp-panel-sub">All market tiers are open to all fans with zero subscription gating. Tiers determine prediction complexity and exposure depth.</div>'
+          '<div class="fp-panel-title">Choose how you want to play.</div>'
+          '<div class="fp-panel-sub">Compare the number of predictions and potential gains or losses for each tier.</div>'
           '<div class="fp-market-grid" id="stepMarketGrid"></div>'
           '<div class="fp-nav-btns">'
           '<button type="button" class="fp-btn-back" onclick="window.goToStep(2)">← Back</button>'
@@ -911,8 +884,8 @@ fp.append('<div class="fp-panel" id="stepBox3" style="display:none">'
 
 # Step 4: Choose Predictions (§13, §14, §15, §16, §17, §49)
 fp.append('<div class="fp-panel" id="stepBox4" style="display:none">'
-          '<div class="fp-panel-title">Step 4: Select Predictions</div>'
-          '<div class="fp-panel-sub" id="stepPicksSub">Select options satisfying your chosen market tier. Contradictions and group conflicts are enforced automatically.</div>'
+          '<div class="fp-panel-title">Make your predictions.</div>'
+          '<div class="fp-panel-sub" id="stepPicksSub">Choose the predictions for your tier. We’ll help you avoid conflicting picks.</div>'
           '<div class="fp-opt-grid" id="stepOptGrid"></div>'
           '<div class="fp-nav-btns">'
           '<button type="button" class="fp-btn-back" onclick="window.goToStep(3)">← Back</button>'
@@ -921,7 +894,7 @@ fp.append('<div class="fp-panel" id="stepBox4" style="display:none">'
 
 # Step 5: Choose Stake (§5, §6, §50)
 fp.append('<div class="fp-panel" id="stepBox5" style="display:none">'
-          '<div class="fp-panel-title">Step 5: Choose Staked Shares</div>'
+          '<div class="fp-panel-title">Choose your shares.</div>'
           '<div class="fp-panel-sub">You stake player shares, NOT $FTR directly. Staked shares are locked until final match settlement.</div>'
           '<div class="fp-stake-box">'
           '<div class="fp-stake-input-wrap">'
@@ -948,7 +921,7 @@ fp.append('<div class="fp-panel" id="stepBox5" style="display:none">'
 
 # Step 6: Review & Risk Disclosure (§51, §52)
 fp.append('<div class="fp-panel" id="stepBox6" style="display:none">'
-          '<div class="fp-panel-title">Step 6: Review Position &amp; Risk Disclosure</div>'
+          '<div class="fp-panel-title">Review your entry.</div>'
           '<div class="fp-panel-sub">Verify your exact potential FP range and $FTR settlement range before locking shares.</div>'
           '<div class="fp-breakdown" id="reviewBreakdown"></div>'
           '<div class="fp-risk-box">'
@@ -963,7 +936,7 @@ fp.append('<div class="fp-panel" id="stepBox6" style="display:none">'
 fp.append('<div class="fp-panel" id="stepBox7" style="display:none;text-align:center;padding:40px 20px">'
           '<div style="font-size:48px;margin-bottom:12px">🎉</div>'
           '<div class="fp-panel-title" style="color:var(--lime)">FanPlay Position Activated!</div>'
-          '<div class="fp-panel-sub" id="step7Msg">Your shares have been locked in the institutional custody reservation engine.</div>'
+          '<div class="fp-panel-sub" id="step7Msg">Your shares are reserved until the match settles.</div>'
           '<div style="display:flex;gap:12px;justify-content:center;margin-top:24px">'
           '<button type="button" class="fp-btn-next" style="flex:none;padding:12px 28px" onclick="window.switchFPView(\'active\')">View Active Positions</button>'
           '<button type="button" class="fp-btn-back" style="flex:none;padding:12px 28px" onclick="window.resetWizard()">Create Another</button>'
@@ -1069,6 +1042,7 @@ function updateStepUI(){
 }
 
 function loadInitialData(){
+  document.getElementById('stepAssetGrid').innerHTML = '<p class="fp-load-state" role="status">Loading your available shares…</p>';
   // 1. Assets
   if(window.FantradeAPI && FantradeAPI.getFanPlayEligibleAssets){
     FantradeAPI.getFanPlayEligibleAssets().then(function(res){
@@ -1076,7 +1050,9 @@ function loadInitialData(){
         eligibleAssets = res.data;
         renderAssetGrid();
       }
-    }).catch(function(e){ console.warn('Eligible assets load error:', e); });
+    }).catch(function(e){
+      document.getElementById('stepAssetGrid').innerHTML = '<div class="fp-load-state" role="status"><p>Your shares could not be loaded. Please try again.</p><button class="app-primary" type="button" onclick="window.resetWizard()">Try again</button></div>';
+    });
   }
 
   // 2. Matches
@@ -1102,16 +1078,24 @@ function loadInitialData(){
   loadUserFanPlays();
 }
 
+document.querySelectorAll('#stepAssetGrid,#stepMatchGrid,#stepMarketGrid,#stepOptGrid').forEach(function(grid){
+  grid.addEventListener('keydown', function(event){
+    if((event.key === 'Enter' || event.key === ' ') && event.target.matches('[role="button"]')){
+      event.preventDefault();event.target.click();
+    }
+  });
+});
 function renderAssetGrid(){
   var container = document.getElementById('stepAssetGrid');
   if(!container) return;
   if(eligibleAssets.length === 0){
-    container.innerHTML = '<div style="grid-column:1/-1;padding:24px;text-align:center;color:#8E9AA8;background:rgba(255,255,255,.02);border-radius:12px">No eligible player/coach shares owned. Buy shares on the Exchange first.</div>';
+    container.innerHTML = '<div style="grid-column:1/-1;padding:24px;text-align:center;color:#8E9AA8;background:rgba(255,255,255,.02);border-radius:12px">No available shares yet. <a class="app-text-link" href="exchange.html">Explore the exchange</a> to choose your first player.</div>';
     return;
   }
   container.innerHTML = eligibleAssets.map(function(a){
     var isSel = selAsset && selAsset.id === a.id;
-    return '<div class="fp-asset-card' + (isSel ? ' selected' : '') + '" onclick="window.selectAsset(\'' + a.id + '\')">'
+    return '<div role="button" tabindex="0" class="fp-asset-card' + (isSel ? ' selected' : '') + '" onclick="window.selectAsset(\'' + a.id + '\')">'
+      + playerPhoto(a.symbol, a.name, 'fp-player-photo')
       + '<div class="fp-asset-sym">' + a.symbol + '</div>'
       + '<div class="fp-asset-name">' + a.name + ' · ' + (a.team || 'Pro') + '</div>'
       + '<div class="fp-asset-avail">Available: <b>' + (a.availableQuantity || 0).toLocaleString() + '</b> shares</div>'
@@ -1136,7 +1120,7 @@ function renderMatchGrid(){
   container.innerHTML = matchesList.map(function(m){
     var isSel = selMatch && selMatch.id === m.id;
     var dt = new Date(m.scheduledAt).toLocaleDateString(undefined, { weekday:'short', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
-    return '<div class="fp-match-card' + (isSel ? ' selected' : '') + '" onclick="window.selectMatch(\'' + m.id + '\')">'
+    return '<div role="button" tabindex="0" class="fp-match-card' + (isSel ? ' selected' : '') + '" onclick="window.selectMatch(\'' + m.id + '\')">'
       + '<div class="fp-match-comp">' + m.competition + ' · Matchweek ' + (m.matchweek || 1) + '</div>'
       + '<div class="fp-match-teams">' + m.homeTeam + ' vs ' + m.awayTeam + '</div>'
       + '<div class="fp-match-meta"><span>📅 ' + dt + '</span><span style="color:var(--lime)">Status: ' + m.status + '</span></div>'
@@ -1156,11 +1140,11 @@ function renderMarketGrid(){
   if(!container) return;
   container.innerHTML = marketsList.map(function(m){
     var isSel = selMarket && selMarket.id === m.id;
-    return '<div class="fp-market-card' + (isSel ? ' selected' : '') + '" onclick="window.selectMarket(\'' + m.id + '\')">'
+    return '<div role="button" tabindex="0" class="fp-market-card' + (isSel ? ' selected' : '') + '" onclick="window.selectMarket(\'' + m.id + '\')">'
       + '<div class="fp-market-name">' + m.name + '</div>'
       + '<div class="fp-market-limit">Max ' + m.maxSelections + ' ' + (m.maxSelections === 1 ? 'Selection' : 'Selections') + '</div>'
       + '<div class="fp-market-desc">' + (m.description || 'Configurable performance predictions.') + '</div>'
-      + '<div style="font-size:10px;color:#8E9AA8;text-transform:uppercase">Zero subscription gating · 100% accessible</div>'
+
       + '</div>';
   }).join('');
 }
@@ -1198,7 +1182,7 @@ function renderOptionsGrid(){
   }
   container.innerHTML = optionsList.map(function(opt){
     var isSel = selOptionIds.indexOf(opt.id) !== -1;
-    return '<div class="fp-opt-card' + (isSel ? ' selected' : '') + '" onclick="window.toggleOption(\'' + opt.id + '\')">'
+    return '<div role="button" tabindex="0" class="fp-opt-card' + (isSel ? ' selected' : '') + '" onclick="window.toggleOption(\'' + opt.id + '\')">'
       + '<div class="fp-opt-left">'
       + '  <div class="fp-opt-check">' + (isSel ? '✓' : '') + '</div>'
       + '  <div>'
@@ -1408,7 +1392,7 @@ function renderHistoryList(){
   var settled = userFanPlays.filter(function(fp){ return fp.status === 'SETTLED' || fp.status === 'CANCELLED' || fp.status === 'VOID'; });
   if(settled.length === 0){
     container.innerHTML = '<div style="padding:40px 20px;text-align:center;color:#8E9AA8;background:rgba(255,255,255,.02);border-radius:14px">'
-      + '<div style="font-weight:700;color:#fff;margin-bottom:4px">No Settled History</div>'
+      + '<div style="font-weight:700;color:#fff;margin-bottom:4px">No History</div>'
       + '<div style="font-size:12px">Settled matchday positions and $FTR ledger payouts will appear here.</div>'
       + '</div>';
     return;

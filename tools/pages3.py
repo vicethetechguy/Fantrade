@@ -3,6 +3,7 @@
 leaderboard, notifications, settings. Same shell, same tokens as pages 1–6."""
 import os, re, sys
 sys.path.insert(0, os.path.dirname(__file__))
+from app_design import apply_design, intro
 from common import head, atmosphere, nav, nav_min, footer, ic, JS_SHELL
 
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
@@ -26,6 +27,7 @@ def page(fname, title, body, js="", css="", app=True, chrome=True):
     shell = nav(fname, app) if chrome else nav_min()
     html = (head(title, css, "app" if (app and chrome) else "") + atmosphere() + shell + body +
             "<script src=\"public/fantrade-api.js\"></script><script>(function(){" + JS_SHELL + js + "})();</script></body></html>")
+    html = apply_design(fname, html)
     with open(os.path.join(OUT, fname), "w", encoding="utf-8") as f:
         f.write(html)
     return len(html)
@@ -696,154 +698,27 @@ DASH_CSS = """
 .kc-ref-icon-box{width:52px;height:52px;flex-shrink:0;border-radius:14px;overflow:hidden;background:rgba(255,255,255,.05);display:grid;place-items:center}
 """
 
-da = [T('<main><div class="kc-home-wrap">'
-        '<!-- Search & Discovery Bar -->'
-        '<div class="kc-home-searchbar-wrap">'
-        '  <div class="kc-home-search-box">'
-        '    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>'
-        '    <input type="text" id="homeSearchInput" placeholder="Search football player shares, clubs, coaches..." autocomplete="off">'
-        '  </div>'
-        '  <a href="receive.html" class="kc-home-scan-btn" title="QR Scanner">'
-        '    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 8V5a1 1 0 0 1 1-1h3M4 16v3a1 1 0 0 0 1 1h3M16 4h3a1 1 0 0 1 1 1v3M16 20h3a1 1 0 0 0 1-1v-3"/></svg>'
-        '  </a>'
-        '</div>'
-
-        '<!-- Total Equity Hero Card -->'
-        '<div class="kc-home-bal-card">'
-        '  <div class="kc-bal-header">'
-        '    <span>Total Portfolio Equity ($FTR)</span>'
-        '    <button type="button" class="kc-eye-btn" id="balEyeBtn" aria-label="Toggle balance visibility">'
-        '      <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>'
-        '    </button>'
-        '    <span class="kc-bal-delta-tag" id="dashDelta">+18.4% +6,200</span>'
-        '  </div>'
-        '  <div class="kc-bal-val">'
-        '    <span id="homeBalVal" data-bind="net">370,300</span> <small>$FTR</small>'
-        '  </div>'
-        '  <div class="kc-bal-sub" id="homeBalSub">≈ $37,030.00 USD</div>'
-        '  <div class="kc-bal-actions">'
-        '    <a href="buy.html" class="kc-act-circle">'
-        '      <div class="kc-act-ico"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg></div>'
-        '      <span>Deposit</span>'
-        '    </a>'
-        '    <a href="send.html" class="kc-act-circle">'
-        '      <div class="kc-act-ico"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></div>'
-        '      <span>Transfer</span>'
-        '    </a>'
-        '    <a href="fanplay.html" class="kc-act-circle">'
-        '      <div class="kc-act-ico"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="4.93" y1="4.93" x2="9.17" y2="9.17"/><line x1="14.83" y1="14.83" x2="19.07" y2="19.07"/><line x1="14.83" y1="9.17" x2="19.07" y2="4.93"/><line x1="4.93" y1="19.07" x2="9.17" y2="14.83"/></svg></div>'
-        '      <span>FanPlay</span>'
-        '    </a>'
-        '    <a href="clubs.html" class="kc-act-circle">'
-        '      <div class="kc-act-ico"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div>'
-        '      <span>Clubs</span>'
-        '    </a>'
-        '  </div>'
-        '</div>'
-
-        '<!-- Gameweek Live Pulse Ticker -->'
-        '<div class="kc-news">'
-        '  <span class="kc-live-dot"></span>'
-        '  <div class="kc-news-txt">Gameweek 28 locks in <b id="cdH">03</b>h <b id="cdM">14</b>m <b id="cdS">22</b>s · Arsenal vs Chelsea Sat 17:30 · <b>1.25M $FTR</b> pool</div>'
-        '  <button type="button" class="kc-news-close" onclick="this.parentElement.style.display=\'none\'">✕</button>'
-        '</div>'
-
-        '<!-- Trending Spotlight Strip (Horizontal Scroll: 8 cards) -->'
-        '<div class="kc-hot-strip">'
-        '  <a href="asset.html?a=%24Saka" class="kc-hot-card">'
-        '    <div class="kc-hot-top">'
-        '      <span class="kc-hot-ticker">$Saka</span>'
-        '      <span class="kc-hot-badge up">+6.4%</span>'
-        '    </div>'
-        '    <div class="kc-hot-name">Bukayo Saka · Arsenal</div>'
-        '    <div class="kc-hot-price">48.20 <small>FTR</small></div>'
-        '  </a>'
-        '  <a href="asset.html?a=%24Haaland" class="kc-hot-card">'
-        '    <div class="kc-hot-top">'
-        '      <span class="kc-hot-ticker">$Haaland</span>'
-        '      <span class="kc-hot-badge down">-1.8%</span>'
-        '    </div>'
-        '    <div class="kc-hot-name">Erling Haaland · Man City</div>'
-        '    <div class="kc-hot-price">71.40 <small>FTR</small></div>'
-        '  </a>'
-        '  <a href="asset.html?a=%24Palmer" class="kc-hot-card">'
-        '    <div class="kc-hot-top">'
-        '      <span class="kc-hot-ticker">$Palmer</span>'
-        '      <span class="kc-hot-badge up">+8.2%</span>'
-        '    </div>'
-        '    <div class="kc-hot-name">Cole Palmer · Chelsea</div>'
-        '    <div class="kc-hot-price">52.80 <small>FTR</small></div>'
-        '  </a>'
-        '  <a href="asset.html?a=%24Mbappe" class="kc-hot-card">'
-        '    <div class="kc-hot-top">'
-        '      <span class="kc-hot-ticker">$Mbappe</span>'
-        '      <span class="kc-hot-badge up">+4.8%</span>'
-        '    </div>'
-        '    <div class="kc-hot-name">Kylian Mbappé · Real Madrid</div>'
-        '    <div class="kc-hot-price">78.50 <small>FTR</small></div>'
-        '  </a>'
-        '  <a href="asset.html?a=%24Yamal" class="kc-hot-card">'
-        '    <div class="kc-hot-top">'
-        '      <span class="kc-hot-ticker">$Yamal</span>'
-        '      <span class="kc-hot-badge up">+9.4%</span>'
-        '    </div>'
-        '    <div class="kc-hot-name">Lamine Yamal · Barcelona</div>'
-        '    <div class="kc-hot-price">66.20 <small>FTR</small></div>'
-        '  </a>'
-        '  <a href="asset.html?a=%24Bellingham" class="kc-hot-card">'
-        '    <div class="kc-hot-top">'
-        '      <span class="kc-hot-ticker">$Bellingham</span>'
-        '      <span class="kc-hot-badge up">+3.3%</span>'
-        '    </div>'
-        '    <div class="kc-hot-name">Jude Bellingham · Real Madrid</div>'
-        '    <div class="kc-hot-price">58.90 <small>FTR</small></div>'
-        '  </a>'
-        '  <a href="asset.html?a=%24Vinicius" class="kc-hot-card">'
-        '    <div class="kc-hot-top">'
-        '      <span class="kc-hot-ticker">$Vinicius</span>'
-        '      <span class="kc-hot-badge up">+0.7%</span>'
-        '    </div>'
-        '    <div class="kc-hot-name">Vinícius Jr · Real Madrid</div>'
-        '    <div class="kc-hot-price">63.10 <small>FTR</small></div>'
-        '  </a>'
-        '  <a href="asset.html?a=%24Musiala" class="kc-hot-card">'
-        '    <div class="kc-hot-top">'
-        '      <span class="kc-hot-ticker">$Musiala</span>'
-        '      <span class="kc-hot-badge up">+5.1%</span>'
-        '    </div>'
-        '    <div class="kc-hot-name">Jamal Musiala · Bayern</div>'
-        '    <div class="kc-hot-price">46.70 <small>FTR</small></div>'
-        '  </a>'
-        '</div>'
-
-        '<!-- Player Shares Watchlist Section -->'
-        '<div class="kc-group">'
-        '  <div style="display:flex;align-items:center;justify-content:space-between;margin:0 0 10px 4px">'
-        '    <div style="font-family:Archivo,sans-serif;font-variation-settings:\'wdth\' 115,\'wght\' 800;font-size:14px;color:var(--ink);letter-spacing:-.01em">PLAYER SHARES WATCHLIST</div>'
-        '    <a href="exchange.html" style="font-size:11.5px;color:var(--lime);font-weight:600;display:flex;align-items:center;gap:3px">All 18 shares ›</a>'
-        '  </div>'
-        '  <div class="kc-cat-tabs" id="homeTabs" style="margin-bottom:10px">'
-        '    <button type="button" class="kc-cat-tab on" data-f="hot">Hot 🔥</button>'
-        '    <button type="button" class="kc-cat-tab" data-f="gainers">Top Gainers</button>'
-        '    <button type="button" class="kc-cat-tab" data-f="forwards">Forwards</button>'
-        '    <button type="button" class="kc-cat-tab" data-f="midfielders">Midfielders</button>'
-        '    <button type="button" class="kc-cat-tab" data-f="coaches">Coaches</button>'
-        '  </div>'
-        '  <div id="homeMarketRows" class="kc-home-rows"></div>'
-        '</div>'
-
-        '<!-- Dream Club Card -->'
-        '<a href="clubs.html" class="kc-ref-card" style="margin-top:18px">'
-        '  <div class="kc-ref-left">'
-        '    <div class="kc-ref-title">Dream Club: Zero FC · #124</div>'
-        '    <div class="kc-ref-sub">Gameweek 28: 11 of 11 starters owned · +15.0% boost</div>'
-        '  </div>'
-        '  <div class="kc-ref-icon-box">'
-        '    <div style="font-family:Archivo;font-weight:900;color:var(--lime);font-size:18px">ZF</div>'
-        '  </div>'
-        '</a>'
-
-        '</div></main>')]
+da = ['<main><div class="kc-home-wrap home-layout">', intro('Home', 'Your players, your club, your next move.', '<a class="app-text-link" href="ftr.html">Open wallet</a>'),
+      '<section class="kc-home-bal-card" aria-label="Portfolio balance"><div class="kc-bal-header">Your portfolio'
+      '<button type="button" class="kc-eye-btn" id="balEyeBtn" aria-label="Toggle balance visibility">'+'<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="fill:none"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>'+'</button></div>'
+      '<div class="kc-bal-val"><span id="homeBalVal" data-bind="net">—</span> <small>$FTR</small></div>'
+      '<div class="kc-bal-sub" id="homeBalSub">—</div><div class="kc-bal-actions">']
+for label, href, icon in [('Deposit','buy.html','coin'),('Transfer','send.html','send'),('FanPlay','fanplay.html','ball'),('Clubs','clubs.html','formation')]:
+    da.append('<a class="kc-act-circle" href="'+href+'"><div class="kc-act-ico">'+ic(icon,'ic')+'</div><span>'+label+'</span></a>')
+da.append('</div></section><section class="home-next"><h2>Put your football IQ into play.</h2>'
+          '<p>Choose a player you own, pick a match and make your predictions. FanPlay guides you through each step.</p>'
+          '<a class="app-primary" href="fanplay.html">Explore FanPlay '+ic('arrow','ic')+'</a></section>'
+          '<section class="home-market"><div class="app-section-head"><h2>Players to watch</h2><a href="exchange.html">View exchange</a></div>'
+          '<div class="kc-home-searchbar-wrap"><div class="kc-home-search-box">'+ic('search','ic')+
+          '<input type="search" id="homeSearchInput" placeholder="Search players or clubs" aria-label="Search player shares" autocomplete="off"></div></div>'
+          '<div class="kc-cat-tabs" id="homeTabs"><button class="kc-cat-tab on" type="button" data-f="hot">Trending</button>'
+          '<button class="kc-cat-tab" type="button" data-f="gainers">Top gainers</button>'
+          '<button class="kc-cat-tab" type="button" data-f="forwards">Forwards</button>'
+          '<button class="kc-cat-tab" type="button" data-f="midfielders">Midfielders</button>'
+          '<button class="kc-cat-tab" type="button" data-f="coaches">Coaches</button></div>'
+          '<div id="homeMarketRows" class="kc-home-rows"></div></section>'
+          '<a class="home-club" href="clubs.html">'+ic('formation','ic')+'<div><b>Your Dream Club</b>'
+          '<small>Build your lineup from the players you own.</small></div><span style="margin-left:auto">→</span></a></div></main>')
 
 DASH_JS = r"""
 (function(){
@@ -1588,15 +1463,14 @@ LB2_CSS = """
 @media(max-width:360px){.lb2-wrap{padding-left:16px;padding-right:16px}.lb2-clubs{margin-left:-16px;margin-right:-16px;padding-left:16px;padding-right:16px}.lb2-row{grid-template-columns:28px 42px minmax(0,1fr) auto;gap:8px}.lb2-avatar{width:40px;height:40px}.lb2-profit{font-size:13px}}
 """
 
-lb2 = ['<main><div class="lb2-wrap">'
-       '<div class="lb2-tabs"><button type="button">Friends <em>3</em></button><button class="on" type="button">Leaderboard</button></div>'
-       '<div class="lb2-section-head"><h2>Clubs <span>New</span></h2><a href="divisions.html">View all ›</a></div>'
+lb2 = ['<main><div class="lb2-wrap">' + intro('Leaderboard', 'Follow the clubs and managers setting the pace.') +
+       '<div class="lb2-section-head"><h2>Clubs to watch</h2><a href="divisions.html">View all ›</a></div>'
        '<div class="lb2-clubs">'
        '<div class="lb2-club" role="button" tabindex="0" data-club-name="Risk On"><div class="lb2-club-top"><span class="lb2-club-mark">RMO</span></div><b>Risk On</b><small>🏆 4 members</small><strong>+3,497,855 $FTR</strong></div>'
        '<div class="lb2-club" role="button" tabindex="0" data-club-name="Apex Eleven"><div class="lb2-club-top"><span class="lb2-club-mark"><img src="assets/players/mbappe.webp" alt=""></span></div><b>Apex Eleven</b><small>⚽ 20 members</small><strong>+1,853,334 $FTR</strong></div>'
        '<div class="lb2-club" role="button" tabindex="0" data-club-name="North Bank"><div class="lb2-club-top"><span class="lb2-club-mark"><img src="assets/players/saka.webp" alt=""></span></div><b>North Bank</b><small>🔥 23 members</small><strong>+1,800,986 $FTR</strong></div>'
        '</div>'
-       '<div class="lb2-filter"><button class="lb2-select" type="button">All⌄</button><div class="lb2-ranges" id="lb2Ranges"><button class="on" data-m="1" type="button">24h</button><button data-m="3" type="button">7d</button><button data-m="7" type="button">30d</button><button data-m="12" type="button">All</button></div></div>'
+       '<div class="lb2-filter"><span class="lb2-period-label">Performance</span><div class="lb2-ranges" id="lb2Ranges"><button class="on" data-m="1" type="button">24h</button><button data-m="3" type="button">7d</button><button data-m="7" type="button">30d</button><button data-m="12" type="button">All</button></div></div>'
        '<div class="lb2-me"><img class="lb2-me-logo" src="assets/fantrade-outline-logo.png" alt=""><div><span>Your rank</span><b data-bind="rank">#124</b></div><div class="lb2-me-value">245,800<small>$FTR club value</small></div></div>'
        '<div class="lb2-list" id="lb2List">']
 
@@ -1718,6 +1592,7 @@ document.querySelectorAll('[data-club-name]').forEach(function(el){
   el.addEventListener('click', function(){
     openClubModal(el.dataset.clubName);
   });
+  el.addEventListener('keydown',function(event){if(event.key==='Enter'||event.key===' '){event.preventDefault();el.click();}});
 });
 """
 
@@ -2320,194 +2195,28 @@ AC_CSS = """
 .kc-toast.show{opacity:1;transform:translateX(-50%) translateY(0);pointer-events:auto}
 """
 
-ac = [T('<main><div class="kc-profile-wrap">'
-        '<!-- Top Navigation Bar -->'
-        '<div class="kc-p-topbar">'
-        '  <a href="dashboard.html" class="kc-p-back" id="kcBackBtn" title="Back" onclick="if(window.history.length>1){window.history.back();return false;}">'
-        '    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>'
-        '  </a>'
-        '  <div style="font-family:Archivo,sans-serif;font-variation-settings:\'wdth\' 120,\'wght\' 800;font-size:17px;color:var(--ink);letter-spacing:.02em">PROFILE</div>'
-        '  <div class="kc-p-actions">'
-        '    <a href="notifications.html" class="kc-p-action-btn" title="Support &amp; Notifications">'
-        '      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>'
-        '    </a>'
-        '    <a href="receive.html" class="kc-p-action-btn" title="Scan">'
-        '      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 8V5a1 1 0 0 1 1-1h3M4 16v3a1 1 0 0 0 1 1h3M16 4h3a1 1 0 0 1 1 1v3M16 20h3a1 1 0 0 0 1-1v-3"/></svg>'
-        '    </a>'
-        '    <button type="button" class="kc-p-action-btn" id="kcSwitchProfileBtn" title="Add / Switch Profile">'
-        '      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>'
-        '    </button>'
-        '  </div>'
-        '</div>'
-
-        '<!-- Hero Avatar & Identity -->'
-        '<div class="kc-p-hero">'
-        '  <div class="kc-p-avatar-box">'
-        '    <img src="assets/fantrade-outline-logo.png" alt="Fantrade profile" class="kc-p-avatar-img">'
-        '  </div>'
-        '  <div class="kc-p-name-row">'
-        '    <span class="kc-p-username" id="kcUsername">Viceonchain</span>'
-        '    <button type="button" class="kc-p-edit-btn" id="kcEditNameBtn" title="Edit username">'
-        '      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>'
-        '    </button>'
-        '  </div>'
-        '  <div class="kc-p-uid-row">'
-        '    <span>UID: <span id="kcUid">242423082</span></span>'
-        '    <button type="button" class="kc-p-copy-btn" id="kcCopyUidBtn" title="Copy UID">'
-        '      <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>'
-        '    </button>'
-        '  </div>'
-        '  <div class="kc-p-pills">'
-        '    <button type="button" class="kc-p-pill" id="kcVipPill">'
-        '      <span style="font-size:10.5px;border-radius:50%;width:14px;height:14px;display:inline-grid;place-items:center;border:1px solid currentColor">V</span>'
-        '      <span>VIP 0</span>'
-        '      <span class="chev">›</span>'
-        '    </button>'
-        '    <button type="button" class="kc-p-pill safeguard" id="kcSafeguardPill">'
-        '      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>'
-        '      <span>Safeguard</span>'
-        '      <span class="chev">›</span>'
-        '    </button>'
-        '    <button type="button" class="kc-p-pill" id="kcVerifiedPill">'
-        '      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>'
-        '      <span>Verified</span>'
-        '      <span class="chev">›</span>'
-        '    </button>'
-        '  </div>'
-        '</div>'
-
-        '<!-- Manager performance mirrors the public profile view -->'
-        '<section class="profile-performance" aria-label="Manager performance">'
-        '  <div class="profile-social"><span><b>40</b> Following</span><span><b>605.6K</b> Followers</span></div>'
-        '  <div class="profile-value-row">'
-        '    <div><div class="profile-value">1,050,450 <span style="font-size:.42em;color:var(--faint)">$FTR</span></div><div class="profile-change">+18.4% · +162,300 this season</div></div>'
-        '    <div class="profile-range" aria-label="Chart range"><button class="on" type="button">24h</button><button type="button">7d</button><button type="button">30d</button></div>'
-        '  </div>'
-        '  <div class="profile-chart" aria-hidden="true"><svg viewBox="0 0 640 112" preserveAspectRatio="none">'
-        '    <defs><linearGradient id="profileArea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#24c86b" stop-opacity=".22"/><stop offset="1" stop-color="#24c86b" stop-opacity="0"/></linearGradient></defs>'
-        '    <path d="M0 92 C40 90 54 77 88 82 S144 90 170 66 S215 58 235 42 S270 26 296 39 S332 58 354 28 S390 20 410 54 S458 71 488 66 S535 42 566 49 S610 54 640 35 L640 112 L0 112Z" fill="url(#profileArea)"/>'
-        '    <path d="M0 92 C40 90 54 77 88 82 S144 90 170 66 S215 58 235 42 S270 26 296 39 S332 58 354 28 S390 20 410 54 S458 71 488 66 S535 42 566 49 S610 54 640 35" fill="none" stroke="#24c86b" stroke-width="4" stroke-linecap="round"/>'
-        '    <circle cx="640" cy="35" r="6" fill="#24c86b"/>'
-        '  </svg></div>'
-        '  <div class="profile-summary"><div><span>Total cash</span><b>50,794 $FTR</b></div><div><span>Open positions</span><b>8 players</b></div><div><span>Average hold</span><b>11d 21h</b></div></div>'
-        '</section>'
-
-        '<!-- Referral Program Banner Card -->'
-        '<div class="kc-ref-card" id="kcReferralCard" role="button" tabindex="0">'
-        '  <div class="kc-ref-left">'
-        '    <div class="kc-ref-title">Referral Program</div>'
-        '    <div class="kc-ref-sub">Refer friends to earn a 35% commission</div>'
-        '  </div>'
-        '  <div class="kc-ref-icon-box">'
-        '    <img src="assets/referral_icon.jpg" alt="Referral">'
-        '  </div>'
-        '</div>'
-
-        '<!-- Section: Account -->'
-        '<div class="kc-group">'
-        '  <div class="kc-group-title">Account</div>'
-        '  <div class="kc-group-box">'
-        '    <div class="kc-item-row" id="kcLoyaltyRow" role="button" tabindex="0">'
-        '      <div class="kc-item-left">'
-        '        <div class="kc-item-ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 9H4a2 2 0 0 1-2-2V5h4M18 9h2a2 2 0 0 0 2-2V5h-4M6 5h12v6a6 6 0 0 1-12 0V5z"/><line x1="12" y1="17" x2="12" y2="21"/><line x1="8" y1="21" x2="16" y2="21"/></svg></div>'
-        '        <div class="kc-item-text-wrap"><div class="kc-item-title">$FTR Loyalty Level</div></div>'
-        '      </div>'
-        '      <div class="kc-item-right">'
-        '        <span class="kc-badge-k1"><span class="k1-tag">F1</span> To be Unlocked</span>'
-        '        <svg class="kc-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>'
-        '      </div>'
-        '    </div>'
-        '    <div class="kc-item-row" id="kcFeesVipRow" role="button" tabindex="0">'
-        '      <div class="kc-item-left">'
-        '        <div class="kc-item-ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg></div>'
-        '        <div class="kc-item-text-wrap"><div class="kc-item-title">Fees &amp; VIP</div></div>'
-        '      </div>'
-        '      <div class="kc-item-right">'
-        '        <span>VIP 0</span>'
-        '        <svg class="kc-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>'
-        '      </div>'
-        '    </div>'
-        '    <div class="kc-item-row">'
-        '      <div class="kc-item-left">'
-        '        <div class="kc-item-ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M12 6v12M2 12a2 2 0 0 0 2-2V8M22 12a2 2 0 0 1-2-2V8"/></svg></div>'
-        '        <div class="kc-item-text-wrap">'
-        '          <div class="kc-item-title">Pay Fees with $FTR</div>'
-        '          <div class="kc-item-desc">20% off on trading fees</div>'
-        '        </div>'
-        '      </div>'
-        '      <div class="kc-item-right">'
-        '        <button type="button" class="kc-switch on" id="kcFeeSwitch" aria-label="Toggle pay fees with $FTR"><i></i></button>'
-        '      </div>'
-        '    </div>'
-        '    <a href="portfolio.html" class="kc-item-row">'
-        '      <div class="kc-item-left">'
-        '        <div class="kc-item-ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>'
-        '        <div class="kc-item-text-wrap"><div class="kc-item-title">Trade History &amp; Ledger</div></div>'
-        '      </div>'
-        '      <div class="kc-item-right">'
-        '        <svg class="kc-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>'
-        '      </div>'
-        '    </a>'
-        '  </div>'
-        '</div>'
-
-        '<!-- Section: Security & System -->'
-        '<div class="kc-group">'
-        '  <div class="kc-group-title">Security &amp; System</div>'
-        '  <div class="kc-group-box">'
-        '    <a href="settings-security.html" class="kc-item-row">'
-        '      <div class="kc-item-left">'
-        '        <div class="kc-item-ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg></div>'
-        '        <div class="kc-item-text-wrap"><div class="kc-item-title">Security Settings</div></div>'
-        '      </div>'
-        '      <div class="kc-item-right">'
-        '        <span>Change password</span>'
-        '        <svg class="kc-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>'
-        '      </div>'
-        '    </a>'
-        '    <a href="settings.html" class="kc-item-row">'
-        '      <div class="kc-item-left">'
-        '        <div class="kc-item-ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div>'
-        '        <div class="kc-item-text-wrap"><div class="kc-item-title">Profile &amp; App Settings</div><div class="kc-item-desc">Profile, club, alerts, wallet and play limits</div></div>'
-        '      </div>'
-        '      <div class="kc-item-right">'
-        '        <span>7 sections</span>'
-        '        <svg class="kc-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>'
-        '      </div>'
-        '    </a>'
-        '  </div>'
-        '</div>'
-
-        '<!-- Section: Rewards -->'
-        '<div class="kc-group">'
-        '  <div class="kc-group-title">Rewards</div>'
-        '  <div class="kc-group-box">'
-        '    <a href="fanplay.html" class="kc-item-row">'
-        '      <div class="kc-item-left">'
-        '        <div class="kc-item-ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg></div>'
-        '        <div class="kc-item-text-wrap"><div class="kc-item-title">Rewards Hub &amp; Matchday Pool</div></div>'
-        '      </div>'
-        '      <div class="kc-item-right">'
-        '        <svg class="kc-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>'
-        '      </div>'
-        '    </a>'
-        '  </div>'
-        '</div>'
-
-        '<!-- Sign Out Row -->'
-        '<div style="margin-top:20px;text-align:center">'
-        '  <button type="button" class="btn btn-glass" id="kcSignOutBtn" style="width:100%;justify-content:center;padding:12px;border-radius:12px;font-size:13px;color:#FF5E5E;border-color:rgba(255,94,94,.2)">'
-        '    Sign Out'
-        '  </button>'
-        '</div>'
-
-        '<!-- Feedback Toast -->'
-        '<div id="kcToast" class="kc-toast">'
-        '  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--lime)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>'
-        '  <span id="kcToastText">UID copied to clipboard</span>'
-        '</div>'
-
-        '</div></main>')]
+ac = ['<main><div class="kc-profile-wrap">', intro('Your profile', 'Make Fantrade yours.', '<a class="app-text-link" href="settings-profile.html">Edit profile</a>'),
+      '<section class="profile-identity"><img src="assets/fantrade-outline-logo.png" alt="" width="76" height="76">'
+      '<div><h2 id="kcUsername">Your name</h2><p data-bind="handle">Your manager profile</p>'
+      '<button type="button" class="ob-back app-text-link" id="kcEditNameBtn" style="border:0;background:none;padding:8px 0;cursor:pointer">Edit name</button></div></section>'
+      '<dl class="profile-overview"><div><dt>Portfolio value · $FTR</dt><dd id="profileNet">—</dd></div>'
+      '<div><dt>Players owned</dt><dd id="profileHoldings">—</dd></div><div><dt>Your club</dt><dd id="profileClub">—</dd></div></dl>'
+      '<h2 class="app-section-title">Your Fantrade</h2><div class="profile-links">']
+for label, description, href, icon in [
+    ('Wallet','Your balance, shares and transfers','ftr.html','wallet'),
+    ('Dream Club','Manage your team and formation','clubs.html','formation'),
+    ('Activity','Review your transactions','activity.html','receipt'),
+    ('Security','Password and account protection','settings-security.html','shield'),
+    ('Notifications','Choose what you hear from us','settings-alerts.html','bell'),
+    ('Settings','Profile, club and play preferences','settings.html','filter')]:
+    ac.append('<a class="profile-link" href="'+href+'">'+ic(icon,'ic')+'<div><strong>'+label+'</strong><small>'+description+'</small></div><span>›</span></a>')
+ac.append('</div><details class="profile-tools"><summary>Membership &amp; account tools</summary><div class="profile-tools-content">')
+for ident, label in [('kcVipPill','Membership benefits'),('kcSafeguardPill','Account safeguard'),('kcVerifiedPill','Verification'),('kcLoyaltyRow','$FTR loyalty'),('kcReferralCard','Invite friends'),('kcSwitchProfileBtn','Switch profile')]:
+    ac.append('<button class="profile-tool" type="button" id="'+ident+'">'+label+'<span>›</span></button>')
+ac.append('<div class="profile-tool"><span>Pay fees with $FTR</span><button type="button" class="kc-switch on" id="kcFeeSwitch" aria-label="Toggle pay fees with $FTR"><i></i></button></div>'
+          '<button class="profile-tool" type="button" id="kcCopyUidBtn" title="Copy account ID"><span>Account ID</span><span id="kcUid">242423082</span></button>'
+          '</div></details><button type="button" class="btn btn-glass" id="kcSignOutBtn">Sign out</button>'
+          '<div id="kcToast" class="kc-toast" role="status"><span id="kcToastText"></span></div></div></main>')
 
 AC_JS = r"""
 (function(){
@@ -2537,8 +2246,16 @@ AC_JS = r"""
   // Edit username
   var editBtn = document.getElementById('kcEditNameBtn');
   var nameEl = document.getElementById('kcUsername');
-  var storedName = localStorage.getItem('ft_username') || 'Viceonchain';
+  var storedName = localStorage.getItem('ft_username') || FT.getState().user.name;
   if(nameEl) nameEl.textContent = storedName;
+  function updateProfileOverview(){
+    var s=FT.getState();
+    document.getElementById('profileNet').textContent=(FT.holdingsValue()+s.wallet.balance+s.wallet.locked).toLocaleString('en-US');
+    document.getElementById('profileHoldings').textContent=Object.keys(s.holdings).filter(function(key){return !s.holdings[key].c && s.holdings[key].shares>0;}).length;
+    document.getElementById('profileClub').textContent=s.club.name;
+  }
+  updateProfileOverview();
+  window.addEventListener('fantrade:statechange',updateProfileOverview);
 
   if(editBtn && nameEl){
     editBtn.addEventListener('click', function(){
@@ -2729,8 +2446,4 @@ for key, _icon_name, _label in SETNAV:
     page("settings-%s.html" % key, "%s — Fantrade" % title, body, ST_JS, ST_CSS)
     print("built settings-%s.html" % key)
 
-REDIRECT_TO_WALLET = """<!DOCTYPE html><html><head><meta charset="utf-8"><meta http-equiv="refresh" content="0; url=ftr.html"><title>Redirecting to Wallet...</title><script>window.location.replace('ftr.html');</script></head><body style="background:#050505;color:#F4F6F1;font-family:sans-serif;display:grid;place-items:center;height:100vh;margin:0"><div style="text-align:center"><p style="color:#8E9AA8">Redirecting to your Wallet...</p><a href="ftr.html" style="color:#1800ad;font-weight:600">Click here if not redirected</a></div></body></html>"""
-
-with open(os.path.join(OUT, "wallet.html"), "w", encoding="utf-8") as f:
-    f.write(REDIRECT_TO_WALLET)
-print("built wallet.html redirect -> ftr.html")
+# Wallet routes are generated together by pages2.py.

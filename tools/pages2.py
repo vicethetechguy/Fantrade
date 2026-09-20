@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import os, sys
 sys.path.insert(0, os.path.dirname(__file__))
+from app_design import apply_design, intro
 from common import head, atmosphere, nav, footer, ic, JS_SHELL
 
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
@@ -22,6 +23,7 @@ def btn(label, cls="btn-lime", href="#", tag="a", extra=""):
 def page(fname, title, body, js="", css="", app=False):
     html = (head(title, css, "app" if app else "") + atmosphere() + nav(fname, app) +
             body + "<script src=\"public/fantrade-api.js\"></script><script>(function(){" + JS_SHELL + js + "})();</script></body></html>")
+    html = apply_design(fname, html)
     open(os.path.join(OUT, fname), "w", encoding="utf-8").write(html)
 
 
@@ -90,7 +92,7 @@ WALLET_ASSETS = [("$Saka", "Bukayo Saka", "boot", "", 6.4, 0),
                  ("$Bruno", "Bruno Fernandes", "boot", "", 4.2, 2),
                  ("$Arteta", "Mikel Arteta", "whistle", "am", 14.2, 9)]
 
-f = ['<main><div class="kc-assets-wrap">']
+f = ['<main><div class="kc-assets-wrap wallet-layout">', intro('Wallet', 'Your balance and player shares, together.', '<a class="app-text-link" href="activity.html">View activity</a>')]
 
 # Sleek Mobile Topbar
 f.append(T('<div class="kc-topbar">'
@@ -103,13 +105,13 @@ f.append(T('<div class="kc-topbar">'
 # Total Assets Card
 f.append(T('<div class="kc-assets-card">'
            '<div class="kc-card-top">'
-           '<div class="kc-card-lbl">Total Equity Value ($FTR)'
+           '<div class="kc-card-lbl">Available balance'
            '<button type="button" class="kc-eye-btn" id="walEyeBtn" title="Toggle balance visibility">'
-           '<svg class="ic" id="walEyeIcon"><use href="#i-eye"/></svg></button></div>'
+           '<svg class="ic" id="walEyeIcon" viewBox="0 0 24 24" style="fill:none" stroke="currentColor" stroke-width="1.8"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></button></div>'
            '<div class="kc-pnl-pill" id="walDelta">+2.35% (+2,940)</div>'
            '</div>'
            '<div class="kc-card-bal"><span id="walBal">128,450.00</span><small>$FTR</small></div>'
-           '<div class="kc-card-sub"><span id="walGbp">≈ $10,358.80 USD</span> · <span style="color:#1800ad">Protected</span></div>'
+           '<div class="kc-card-sub"><span id="walGbp">≈ $10,358.80 USD</span></div>'
            '<div class="kc-actions-grid">'
            '<a class="kc-act-btn" href="buy.html"><div class="kc-act-icon">@@</div><span class="kc-act-lbl">Deposit</span></a>'
            '<a class="kc-act-btn" href="send.html"><div class="kc-act-icon">@@</div><span class="kc-act-lbl">Withdraw</span></a>'
@@ -135,8 +137,8 @@ f.append('<div class="kc-alloc-card">'
 # Tabs: Holdings / Staking / History
 f.append('<div class="kc-tabs">'
          '<button class="kc-tab-btn on" type="button" data-tab="holdings">Holdings</button>'
-         '<button class="kc-tab-btn" type="button" data-tab="staking" onclick="window.location.href=\'fanplay.html\'">Staking &amp; Futures</button>'
-         '<button class="kc-tab-btn" type="button" data-tab="history" onclick="window.location.href=\'activity.html\'">Ledger</button>'
+         '<button class="kc-tab-btn" type="button" data-tab="staking" onclick="window.location.href=\'fanplay.html\'">FanPlay</button>'
+         '<button class="kc-tab-btn" type="button" data-tab="history" onclick="window.location.href=\'activity.html\'">Activity</button>'
          '</div>')
 
 # Assets List
@@ -186,7 +188,7 @@ function renderAssets(){
 
     rows.push('<a class="kc-asset-row" href="asset.html?a=' + encodeURIComponent(k) + '">'
       + '<div class="kc-asset-left">'
-      + '<div class="kc-asset-icon ' + (meta.c || '') + '"><svg class="ic" aria-hidden="true"><use href="#i-' + meta.i + '"/></svg></div>'
+      + '<div class="kc-asset-icon ' + (meta.c || '') + '">' + playerPhoto(k,h.n) + '</div>'
       + '<div><div class="kc-asset-name">' + k + ' <span style="font-weight:400;color:#8E9AA8;font-size:12px">' + h.n + '</span></div>'
       + '<div class="kc-asset-sub">' + (hidden ? '••••' : h.shares.toLocaleString('en-US') + ' shares') + '</div></div>'
       + '</div>'
@@ -198,6 +200,9 @@ function renderAssets(){
 
   box.innerHTML = rows.join('');
   if(el('walPosCount')) el('walPosCount').textContent = (Object.keys(s.holdings).length + 1) + ' Assets';
+  var allocation = [s.wallet.balance || 0, totalSharesVal, s.wallet.locked || 0];
+  var allocationTotal = allocation.reduce(function(total,value){return total+value;},0);
+  document.querySelectorAll('.kc-alloc-bar-seg').forEach(function(segment,index){segment.style.width=(allocationTotal ? allocation[index]/allocationTotal*100 : 0)+'%';});
   if(el('walSharesAmt')) el('walSharesAmt').textContent = (hidden ? '••••' : money(totalSharesVal) + ' FTR');
   if(el('walLockedAmt')) el('walLockedAmt').textContent = (hidden ? '••••' : money(s.wallet.locked || 0) + ' FTR');
   if(el('walLiquidAmt')) el('walLiquidAmt').textContent = (hidden ? '••••' : money(s.wallet.balance) + ' FTR');
