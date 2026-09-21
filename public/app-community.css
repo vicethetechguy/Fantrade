@@ -1,0 +1,218 @@
+/* Portfolio and competition pages share onboarding's spacing and quiet surfaces. */
+body.app.calm .secondary-page{max-width:980px;margin:auto;padding:12px 28px 128px}
+body.app.calm .secondary-page section{padding:0}
+body.app.calm .secondary-page h2{font-size:24px!important}
+body.app.calm .secondary-page #pfNet{font-size:clamp(32px,4.4vw,48px)!important;font-weight:500}
+body.app.calm .secondary-page .club-heading h2{font-size:32px!important}
+body.app.calm .secondary-page .division-standing h2,body.app.calm .secondary-page .division-guide>h2{font-size:28px!important}
+body.app.calm .secondary-page .competition-group>h2{font-size:21px!important}
+body.app.calm .secondary-page [hidden]{display:none!important}
+body.app.calm .secondary-page .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+body.app.calm .secondary-page .quiet-label{font-size:12px;color:var(--dim);margin:0 0 10px}
+body.app.calm .secondary-page .quiet-note{font-size:12px;color:var(--dim);line-height:1.7;margin:12px 0 22px}
+body.app.calm .secondary-page .positive{color:var(--positive)!important}
+body.app.calm .secondary-page .negative{color:var(--red)!important}
+body.app.calm .secondary-page .quiet-button{display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:10px 18px;min-height:44px;border:0!important;box-shadow:none!important;background:var(--panel);color:var(--ink);border-radius:999px;font:500 12px Montserrat,system-ui,sans-serif;text-decoration:none;cursor:pointer;white-space:nowrap}
+body.app.calm .secondary-page .quiet-button:hover{background:#252a22}
+body.app.calm .secondary-page .quiet-tabs,body.app.calm .secondary-page .quiet-filters{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin-bottom:28px;padding:4px;max-width:100%}
+body.app.calm .secondary-page .quiet-tabs button,body.app.calm .secondary-page .quiet-filters button{border:0;border-radius:999px;background:transparent;color:var(--dim);min-height:44px;white-space:nowrap;padding:10px 18px;font-size:13px;font-weight:500;cursor:pointer;flex:none}
+body.app.calm .secondary-page .quiet-tabs button[aria-pressed=true]{background:var(--lime);color:#fff}
+body.app.calm .secondary-page .quiet-filters button[aria-pressed=true]{background:var(--panel);color:#fff}
+body.app.calm .secondary-page .quiet-filters{margin:0}
+body.app.calm .secondary-page .quiet-filters button{font-size:12px;padding:8px 14px}
+body.app.calm .secondary-page .quiet-search{display:block;min-width:0}
+body.app.calm .secondary-page .quiet-search input{width:100%;background:var(--panel);color:var(--ink);border:0;border-radius:16px;min-height:52px;padding:14px 18px;font-size:14px!important;box-shadow:none}
+body.app.calm .secondary-page input::placeholder{color:var(--faint)}
+body.app.calm .secondary-page .section-heading{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:20px}
+body.app.calm .secondary-page .section-heading h2{font-size:23px;margin:0}
+body.app.calm .secondary-page .section-heading a{font-size:12px;color:var(--dim);text-decoration:underline;text-underline-offset:4px}
+body.app.calm .secondary-page .quiet-empty{padding:40px 0}
+body.app.calm .secondary-page .quiet-empty h2{font-size:24px;margin:0 0 14px}
+body.app.calm .secondary-page .quiet-empty p{font-size:13px;line-height:1.7;color:var(--dim)}
+body.app.calm .portfolio-overview{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:60px;margin:12px 0 40px}
+body.app.calm .portfolio-total h2{font-family:Montserrat,system-ui,sans-serif!important;font-weight:500;font-size:clamp(32px,4.4vw,48px);margin:0;overflow-wrap:anywhere}
+body.app.calm .portfolio-balances{margin:0;padding-top:4px}
+body.app.calm .portfolio-balances>div{display:flex;justify-content:space-between;gap:20px;align-items:baseline;margin-bottom:20px;font-size:13px}
+body.app.calm .portfolio-balances dt{color:var(--dim)}
+body.app.calm .portfolio-balances dd{margin:0;text-align:right;overflow-wrap:anywhere}
+body.app.calm .portfolio-filters{display:flex;justify-content:space-between;gap:24px;align-items:center}
+body.app.calm .portfolio-filters .quiet-search{max-width:280px;flex:1}
+body.app.calm .portfolio-row{display:grid;grid-template-columns:minmax(0,1fr) 130px 175px 76px;gap:24px;align-items:center;padding:22px 0}
+body.app.calm .portfolio-player{display:flex;gap:14px;align-items:center;color:var(--ink);min-width:0}
+body.app.calm .portfolio-player img{width:48px;height:48px;object-fit:cover;border-radius:50%;background:var(--panel);flex:none}
+body.app.calm .portfolio-player>span{min-width:0}
+body.app.calm .portfolio-player b{display:block;font-size:14px;font-weight:500;overflow-wrap:anywhere}
+body.app.calm .portfolio-player small{display:block;font-size:10px;line-height:1.6;color:var(--dim);margin-top:6px}
+body.app.calm .portfolio-cost{font-size:12px}
+body.app.calm .portfolio-cost span{display:block;color:var(--dim);font-size:10px;margin-bottom:6px}
+body.app.calm .portfolio-cost b{font-weight:400}
+body.app.calm .portfolio-value{text-align:right;min-width:0;overflow-wrap:anywhere}
+body.app.calm .portfolio-value b{font-size:14px;font-weight:500}
+body.app.calm .portfolio-value b small{font-size:10px;color:var(--dim)}
+body.app.calm .portfolio-value>span{display:block;font-size:10px;margin-top:6px;line-height:1.6}
+body.app.calm .portfolio-explore{margin-top:28px}
+body.app.calm .secondary-page .activity-row{display:flex;justify-content:space-between;align-items:baseline;gap:20px;padding:20px 0;font-size:13px}
+body.app.calm .secondary-page .activity-row>div{min-width:0}
+body.app.calm .secondary-page .activity-row b{font-weight:500}
+body.app.calm .secondary-page .activity-row p{font-size:11px;color:var(--dim);line-height:1.6;margin:7px 0 0;overflow-wrap:anywhere}
+body.app.calm .secondary-page .activity-row>span{text-align:right;white-space:nowrap;font-size:12px}
+@media(max-width:760px){
+ body.app.calm .secondary-page{padding:8px 20px 128px}
+ body.app.calm .secondary-page .app-intro{align-items:flex-start;gap:20px;flex-wrap:wrap}
+ body.app.calm .portfolio-overview{grid-template-columns:1fr;gap:12px;margin-bottom:28px}
+ body.app.calm .portfolio-balances>div{margin-bottom:16px}
+ body.app.calm .portfolio-filters{flex-direction:column;align-items:stretch;gap:16px}
+ body.app.calm .portfolio-filters .quiet-search{max-width:none}
+ body.app.calm .portfolio-row{grid-template-columns:minmax(0,1fr) auto;gap:14px;padding:20px 0}
+ body.app.calm .portfolio-cost,body.app.calm .portfolio-trade{display:none!important}
+ body.app.calm .portfolio-player img{width:40px;height:40px}
+ body.app.calm .portfolio-player{gap:10px}
+ body.app.calm .portfolio-player b{font-size:13px}
+ body.app.calm .portfolio-player small{font-size:10px}
+ body.app.calm .portfolio-value b{font-size:13px}
+ body.app.calm .portfolio-value b small{display:none}
+ body.app.calm .portfolio-value{max-width:132px}
+ body.app.calm .portfolio-value>span{font-size:10px}
+}
+@media(max-width:360px){body.app.calm .secondary-page{padding-left:16px;padding-right:16px}body.app.calm .portfolio-row{gap:10px}body.app.calm .portfolio-player img{width:34px;height:34px}body.app.calm .portfolio-value{max-width:106px}}
+
+/* Club overview and the identity editor. */
+body.app.calm .club-selector{display:flex;gap:10px;overflow-x:auto;scrollbar-width:none;padding:4px;margin:0 0 32px}
+body.app.calm .club-selector button{border:0;box-shadow:none;min-height:44px;border-radius:999px;padding:10px 20px;background:transparent;color:var(--dim);font-size:13px;white-space:nowrap;cursor:pointer;flex:none}
+body.app.calm .club-selector button[aria-pressed=true]{color:#fff;background:var(--lime)}
+body.app.calm .club-heading{display:flex;align-items:center;gap:20px;margin-bottom:32px}
+body.app.calm .club-heading>div{min-width:0;flex:1}
+body.app.calm .club-heading h2{font-size:32px;overflow-wrap:anywhere;margin:0 0 8px}
+body.app.calm .club-heading p{font-size:13px;color:var(--dim);margin:0;overflow-wrap:anywhere}
+body.app.calm .club-crest{display:grid;place-items:center;width:62px;height:66px;flex:none;clip-path:polygon(0 0,100% 0,100% 67%,50% 100%,0 67%);background:var(--lime);color:#fff;font-size:16px;font-weight:600;letter-spacing:-.03em;text-shadow:0 1px 3px #0009}
+body.app.calm .club-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:24px;margin:0 0 44px}
+body.app.calm .club-stats dt{font-size:12px;color:var(--dim);margin-bottom:10px}
+body.app.calm .club-stats dd{font-size:24px;letter-spacing:-.03em;margin:0;overflow-wrap:anywhere}
+body.app.calm .club-layout{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:40px;align-items:start}
+body.app.calm .club-layout>*,body.app.calm .builder-layout>*{min-width:0}
+body.app.calm .formation-preview{padding:24px 16px;border:0;border-radius:28px;background:#111310;overflow:hidden}
+body.app.calm .formation-row{display:flex;align-items:flex-start;justify-content:center;gap:10px;margin-bottom:24px}
+body.app.calm .formation-row:last-child{margin-bottom:0}
+body.app.calm .formation-player{flex:1;min-width:0;max-width:82px;text-align:center}
+body.app.calm .formation-player>span{display:block;font-size:9px;color:var(--faint);margin-bottom:8px}
+body.app.calm .formation-player>img{display:block;margin:auto;width:44px;height:44px;object-fit:cover;border-radius:50%;background:#252923}
+body.app.calm .formation-player>b{display:block;font-weight:500;font-size:11px;margin-top:8px;overflow-wrap:anywhere}
+body.app.calm .formation-coach{display:flex;align-items:center;gap:12px;margin-top:24px}
+body.app.calm .formation-coach img{width:40px;height:40px;border-radius:50%;object-fit:cover}
+body.app.calm .formation-coach span{display:block;font-size:10px;color:var(--dim);margin-bottom:4px}
+body.app.calm .formation-coach b{font-weight:500;font-size:12px}
+body.app.calm .formation-bench-label{font-size:11px;color:var(--dim);margin:24px 0 16px}
+body.app.calm .formation-bench{display:flex;gap:10px}
+body.app.calm .club-next{padding-top:2px}
+body.app.calm .club-next h2{font-size:25px;margin:0 0 16px}
+body.app.calm .club-next>p{font-size:13px;color:var(--dim);line-height:1.8;margin:0 0 26px}
+body.app.calm .club-next .app-primary{width:100%;justify-content:center}
+body.app.calm .club-links{margin-top:28px}
+body.app.calm .club-links a{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:16px 0;color:var(--dim);font-size:12px;min-height:48px}
+body.app.calm .club-links a:hover{color:var(--ink)}
+body.app.calm .builder-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:64px;align-items:start}
+body.app.calm .club-form h2{font-size:24px;margin:0 0 28px}
+body.app.calm .club-form>label,body.app.calm .club-form legend{display:block;font-size:13px;color:var(--dim);margin-bottom:12px}
+body.app.calm .club-form>label>span{float:right;font-size:11px;color:var(--faint)}
+body.app.calm .club-form>input{width:100%;min-height:56px;border:0;border-radius:16px;padding:14px 18px;background:var(--panel);color:var(--ink);margin:0 0 26px;box-shadow:none;font-size:16px}
+body.app.calm .club-form fieldset{min-width:0;margin:0 0 28px;padding:0;border:0}
+body.app.calm .club-form legend{padding:0}
+body.app.calm .club-swatches{display:flex;gap:12px;flex-wrap:wrap;padding:4px}
+body.app.calm .club-swatches button{width:44px;height:44px;background:var(--swatch);border-radius:50%;border:4px solid #050505;cursor:pointer;box-shadow:none}
+body.app.calm .club-swatches button[aria-pressed=true]{outline:2px solid var(--ink);outline-offset:2px}
+body.app.calm .club-formations{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:4px}
+body.app.calm .club-formations button{min-height:48px;padding:10px 14px;border:0;border-radius:999px;background:var(--panel);color:var(--dim);font-size:14px;cursor:pointer}
+body.app.calm .club-formations button[aria-pressed=true]{background:var(--lime);color:#fff}
+body.app.calm .club-form>.app-primary{width:100%;min-height:52px}
+body.app.calm .club-save-status{font-size:13px;color:var(--ink);line-height:1.7;margin:12px 0}
+body.app.calm .club-save-status:empty{display:none}
+body.app.calm .club-preview-identity{display:flex;align-items:center;gap:16px;margin:0 0 24px}
+body.app.calm .club-preview-identity>div{min-width:0}
+body.app.calm .club-preview-identity b{font-size:20px;font-weight:500;overflow-wrap:anywhere}
+body.app.calm .club-preview-identity p{font-size:12px;color:var(--dim);margin:8px 0 0;overflow-wrap:anywhere}
+body.app.calm .builder-preview{position:sticky;top:104px}
+body.app.calm .builder-preview .club-crest{width:48px;height:52px;font-size:13px}
+
+/* Matchday is a list of fixtures, with filters that operate on the same data. */
+body.app.calm .board-page{max-width:860px}
+body.app.calm .board-toolbar{display:flex;justify-content:space-between;gap:24px;align-items:center}
+body.app.calm .board-toolbar .quiet-tabs{margin:0;flex:none}
+body.app.calm .board-toolbar .quiet-search{flex:1;max-width:280px}
+body.app.calm .board-toolbar+.quiet-note{font-size:11px;margin-top:24px}
+body.app.calm #boardCount{margin-top:0}
+body.app.calm .competition-group{margin-bottom:36px}
+body.app.calm .competition-group>h2{font-size:21px;margin:0 0 18px}
+body.app.calm .match-row{display:grid;grid-template-columns:54px minmax(0,1fr) 44px;gap:20px;align-items:center;padding:22px 0}
+body.app.calm .match-time{font-size:12px;color:var(--dim)}
+body.app.calm .match-teams>div{display:flex;align-items:center;gap:14px;margin-bottom:10px;min-width:0}
+body.app.calm .match-teams>div:last-child{margin-bottom:0}
+body.app.calm .match-teams b{font-size:14px;font-weight:500;flex:1;min-width:0;overflow-wrap:anywhere}
+body.app.calm .match-teams>div>span:last-child{font-size:17px;font-weight:500;min-width:18px;text-align:right}
+body.app.calm .match-crest{width:28px;height:28px;border-radius:50%;background:var(--team);display:grid;place-items:center;font-size:8px;font-weight:600;color:white;flex:none;text-shadow:0 1px 3px #0009}
+body.app.calm .match-follow{width:44px;height:44px;border-radius:50%;border:0;background:transparent;color:var(--faint);display:grid;place-items:center;cursor:pointer}
+body.app.calm .match-follow svg{width:22px;height:22px}
+body.app.calm .match-follow[aria-pressed=true]{color:white;background:var(--lime)}
+body.app.calm .match-follow[aria-pressed=true] svg{fill:currentColor}
+body.app.calm .match-player{color:var(--dim);font-size:11px;margin:12px 0 0 42px}
+
+/* Divisions: current standing, three clear tiers, and the scoring guide. */
+body.app.calm .secondary-page .division-standing{padding:26px 28px;background:var(--panel);border-radius:24px;margin-bottom:28px}
+body.app.calm .division-standing h2{font-size:28px;margin:0 0 10px;overflow-wrap:anywhere}
+body.app.calm .division-standing>p:last-child{color:var(--dim);font-size:13px;margin:0}
+body.app.calm .division-tier{display:grid;grid-template-columns:48px minmax(0,1fr) 100px;gap:24px;align-items:center;padding:28px 0}
+body.app.calm .tier-number{display:grid;place-items:center;width:44px;height:44px;border-radius:50%;background:var(--panel);font-size:13px;color:var(--dim)}
+body.app.calm .division-tier.current .tier-number{background:var(--lime);color:#fff}
+body.app.calm .division-tier h2{font-size:24px;margin:0 0 10px}
+body.app.calm .tier-current{display:inline-flex;vertical-align:middle;font:500 10px Montserrat,sans-serif;padding:6px 10px;border-radius:999px;color:#fff;background:var(--lime);letter-spacing:0;margin-left:10px}
+body.app.calm .division-tier p{color:var(--dim);font-size:12px;line-height:1.7;margin:0}
+body.app.calm .tier-share{text-align:right}
+body.app.calm .tier-share b{font-size:26px;font-weight:500}
+body.app.calm .tier-share span{display:block;font-size:10px;color:var(--dim);margin-top:6px}
+body.app.calm .division-guide{margin-top:40px}
+body.app.calm .division-guide>h2{font-size:28px;margin-bottom:28px}
+body.app.calm .division-steps{display:grid;grid-template-columns:1fr 1fr;gap:28px 48px}
+body.app.calm .division-steps>div>span{font-size:12px;color:var(--faint)}
+body.app.calm .division-steps h3{font-size:19px;margin:12px 0}
+body.app.calm .division-steps p{font-size:13px;color:var(--dim);line-height:1.8;margin:0}
+body.app.calm .division-actions{display:flex;flex-wrap:wrap;gap:16px;margin-top:32px}
+@media(max-width:760px){
+ body.app.calm .club-heading{gap:14px;flex-wrap:wrap}
+ body.app.calm .secondary-page .club-heading h2{font-size:28px!important}
+ body.app.calm .club-crest{width:50px;height:54px}
+ body.app.calm .club-stats{grid-template-columns:1fr 1fr;gap:24px;margin-bottom:36px}
+ body.app.calm .club-stats dd{font-size:22px}
+ body.app.calm .club-layout,body.app.calm .builder-layout{grid-template-columns:1fr;gap:36px}
+ body.app.calm .club-next{padding-top:0}
+ body.app.calm .formation-preview{padding:22px 12px}
+ body.app.calm .formation-row{gap:6px;margin-bottom:22px}
+ body.app.calm .formation-player>img{width:38px;height:38px}
+ body.app.calm .formation-player>b{font-size:10px}
+ body.app.calm .builder-preview{position:static}
+ body.app.calm .board-toolbar{flex-direction:column;align-items:stretch;gap:16px}
+ body.app.calm .board-toolbar .quiet-search{max-width:none}
+ body.app.calm .match-row{grid-template-columns:38px minmax(0,1fr) 44px;gap:12px;padding:18px 0}
+ body.app.calm .match-teams>div{gap:10px}
+ body.app.calm .match-teams b{font-size:13px}
+ body.app.calm .match-player{font-size:10px;margin-left:38px}
+ body.app.calm .secondary-page .division-standing{padding:24px}
+ body.app.calm .division-tier{grid-template-columns:36px minmax(0,1fr) 70px;gap:12px;padding:24px 0;align-items:start}
+ body.app.calm .tier-number{width:34px;height:34px;font-size:11px}
+ body.app.calm .secondary-page .division-tier h2{font-size:20px!important;line-height:1.25}
+ body.app.calm .tier-current{display:table;margin:10px 0 0}
+ body.app.calm .tier-share b{font-size:22px}
+ body.app.calm .tier-share span{font-size:9px}
+ body.app.calm .division-steps{grid-template-columns:1fr;gap:28px}
+}
+@media(max-width:360px){
+ body.app.calm .formation-row{gap:3px}
+ body.app.calm .formation-player>img{width:32px;height:32px}
+ body.app.calm .formation-player>b{font-size:9px}
+ body.app.calm .club-swatches{gap:7px}
+ body.app.calm .club-heading>.quiet-button{margin-left:64px}
+ body.app.calm .match-row{grid-template-columns:32px minmax(0,1fr) 40px;gap:8px}
+ body.app.calm .match-crest{width:24px;height:24px;font-size:7px}
+ body.app.calm .match-teams b{font-size:12px}
+ body.app.calm .match-time{font-size:10px}
+ body.app.calm .match-player{margin-left:34px}
+ body.app.calm .match-follow{width:40px}
+}
