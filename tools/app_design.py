@@ -2,6 +2,8 @@
 PAGES = {'dashboard.html', 'exchange.html', 'fanplay.html', 'leaderboard.html', 'account.html', 'ftr.html', 'wallet.html', 'asset.html', 'trade.html'}
 COMMUNITY_PAGES = {'portfolio.html', 'clubs.html', 'club-builder.html', 'liveboard.html', 'divisions.html'}
 PAGES |= COMMUNITY_PAGES
+UTILITY_PAGES = {'notifications.html', 'send.html', 'receive.html', 'swap.html', 'buy.html', 'activity.html'}
+PAGES |= UTILITY_PAGES
 
 def apply_design(filename, html):
     if filename not in PAGES:
@@ -13,6 +15,8 @@ def apply_design(filename, html):
         styles += '<link rel="stylesheet" href="public/app-secondary.css">'
     if filename in COMMUNITY_PAGES:
         styles += '<link rel="stylesheet" href="public/app-community.css">'
+    if filename in UTILITY_PAGES:
+        styles += '<link rel="stylesheet" href="public/app-wallet.css">'
     return html.replace('</head>', styles + '</head>', 1).replace('<body class="app">', '<body class="app calm">', 1)
 
 def intro(title, description, action=''):
