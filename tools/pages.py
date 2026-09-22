@@ -386,7 +386,7 @@ FP_CSS = """
 .fp-btn-next{flex:2;padding:14px 0;background:var(--lime);border:0;color:#fff;border-radius:12px;font-family:Archivo,sans-serif;font-variation-settings:'wdth' 115,'wght' 800;font-size:13.5px;text-transform:uppercase;cursor:pointer;text-align:center;box-shadow:0 0 20px rgba(24,0,173,.3)}
 """
 
-fp = ['<main><div class="kc-home-wrap fanplay-layout">', tab_intro('FanPlay', '<a class="app-text-link" href="liveboard.html">Live board</a>')]
+fp = ['<main><div class="kc-home-wrap fanplay-layout">', tab_intro('FanPlay')]
 
 # 4 Key Metrics Dashboard Chips (§80)
 fp.append('<div class="fp-metrics-grid">'

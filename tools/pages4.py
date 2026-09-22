@@ -176,13 +176,10 @@ TRADE_CSS = """
 .bigbtn.neutral{background:rgba(255,255,255,.08);color:var(--ink);border:1px solid rgba(255,255,255,.14)}
 """
 
-trade = [T('<main><div class="kc-trade-wrap trade-page">' + intro('Trade shares', 'Choose your player. Make your next move.') +
+trade = [T('<main><div class="kc-trade-wrap trade-page">' + '<a href="exchange.html" id="tBack" class="back-btn" aria-label="Back to player details">Back</a>' + intro('Trade shares', 'Choose your player. Make your next move.') +
            '<!-- Top Navigation Bar -->'
            '<div class="kc-trade-topbar">'
            '  <div class="kc-trade-top-left">'
-           '    <a href="exchange.html" id="tBack" class="kc-p-back" aria-label="Back to player details">'
-           '      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>'
-           '    </a>'
            '    <span id="tPortrait" class="trade-portrait"></span><div class="trade-player"><p id="tPlayerName"></p><div class="kc-trade-pair-title">'
            '      <span id="tSym">$Saka</span><span class="kc-quote">/FTR</span>'
            '      <span class="kc-trade-delta" id="tDelta">+6.40%</span>'

@@ -9,7 +9,7 @@ CLUB_HTML = '<main><div class="secondary-page clubs-page">' + intro('Your clubs'
 <aside class="club-next"><h2>Ready for matchday?</h2><p>Choose eligible shares and build your predictions in FanPlay.</p><a class="app-primary" href="fanplay.html">Play FanPlay</a><div class="club-links"><a href="liveboard.html">Follow the live board <span aria-hidden="true">↗</span></a><a href="leaderboard.html">See the leaderboard <span aria-hidden="true">↗</span></a><a href="divisions.html">Understand divisions <span aria-hidden="true">↗</span></a></div></aside></div>
 </div></main>'''
 
-BUILDER_HTML = '<main><div class="secondary-page builder-page">' + intro('Make it your club.', 'Choose a name, a colour and a shape.', '<a class="quiet-button" href="clubs.html">Back to clubs</a>') + '''
+BUILDER_HTML = '<main><div class="secondary-page builder-page">' + '<a class="back-btn" href="clubs.html" aria-label="Back to your clubs">Back</a>' + intro('Make it your club.', 'Choose a name, a colour and a shape.') + '''
 <div class="builder-layout"><form id="clubForm" class="club-form">
 <h2>Your club identity</h2>
 <label for="clubNameInput">Club name</label><input id="clubNameInput" name="clubName" autocomplete="off" placeholder="Give your club a name" minlength="2" maxlength="40" required>

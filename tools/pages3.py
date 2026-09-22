@@ -1737,7 +1737,7 @@ AC_CSS = """
 .kc-toast.show{opacity:1;transform:translateX(-50%) translateY(0);pointer-events:auto}
 """
 
-ac = ['<main><div class="kc-profile-wrap">', tab_intro('Your profile', '<a class="app-text-link" href="settings-profile.html">Edit profile</a>'),
+ac = ['<main><div class="kc-profile-wrap">', tab_intro('Your profile'),
       '<section class="profile-identity"><img src="assets/fantrade-outline-logo.png" alt="" width="76" height="76">'
       '<div><h2 id="kcUsername">Your name</h2><p data-bind="handle">Your manager profile</p>'
       '<button type="button" class="ob-back app-text-link" id="kcEditNameBtn" style="border:0;background:none;padding:8px 0;cursor:pointer">Edit name</button></div></section>'
@@ -1960,9 +1960,9 @@ def settings_nav(active=""):
     return '<nav class="settings-nav" aria-label="Profile settings">%s</nav>' % "".join(links)
 
 def settings_top(title, subtitle, back=("account.html", "Profile")):
-    return ('<a class="utility-back" href="%s">%s%s</a>'
+    return ('<a class="back-btn" href="%s" aria-label="Back to %s">Back</a>'
             '<header class="app-intro settings-intro"><div><h1>%s</h1><p>%s</p></div></header>'
-            ) % (back[0], ic("arrow", "ic"), back[1], title, subtitle)
+            ) % (back[0], back[1].lower(), title, subtitle)
 
 settings_cards = []
 for key, icon_name, label in SETNAV:

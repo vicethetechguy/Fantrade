@@ -92,15 +92,7 @@ WALLET_ASSETS = [("$Saka", "Bukayo Saka", "boot", "", 6.4, 0),
                  ("$Bruno", "Bruno Fernandes", "boot", "", 4.2, 2),
                  ("$Arteta", "Mikel Arteta", "whistle", "am", 14.2, 9)]
 
-f = ['<main><div class="kc-assets-wrap wallet-layout">', tab_intro('Wallet', '<a class="app-text-link" href="activity.html">View activity</a>')]
-
-# Sleek Mobile Topbar
-f.append(T('<div class="kc-topbar">'
-           '<a class="kc-icon-btn" href="dashboard.html" aria-label="Back to Home">@@</a>'
-           '<div class="kc-top-title">Wallet &amp; Assets</div>'
-           '<a class="kc-icon-btn" href="activity.html" aria-label="Transaction Ledger" title="Transaction Ledger">@@</a>'
-           '</div>',
-           ic("arrow", "ic"), ic("receipt", "ic")))
+f = ['<main><div class="kc-assets-wrap wallet-layout">', tab_intro('Wallet')]
 
 # Total Assets Card
 f.append(T('<div class="kc-assets-card">'
@@ -114,7 +106,7 @@ f.append(T('<div class="kc-assets-card">'
            '<div class="kc-card-sub"><span id="walGbp">≈ $10,358.80 USD</span></div>'
            '<div class="kc-actions-grid">'
            '<a class="kc-act-btn" href="buy.html"><div class="kc-act-icon">@@</div><span class="kc-act-lbl">Deposit</span></a>'
-           '<a class="kc-act-btn" href="send.html"><div class="kc-act-icon">@@</div><span class="kc-act-lbl">Withdraw</span></a>'
+           '<a class="kc-act-btn" href="withdraw.html"><div class="kc-act-icon">@@</div><span class="kc-act-lbl">Withdraw</span></a>'
            '<a class="kc-act-btn" href="send.html"><div class="kc-act-icon">@@</div><span class="kc-act-lbl">Transfer</span></a>'
            '<a class="kc-act-btn" href="swap.html"><div class="kc-act-icon">@@</div><span class="kc-act-lbl">Convert</span></a>'
            '</div></div>',
@@ -134,15 +126,16 @@ f.append('<div class="kc-alloc-card">'
          '<div class="kc-leg-item"><div class="kc-leg-dot" style="background:#FF6A1F"></div>Locked <b id="walLockedAmt">10,000 FTR</b></div>'
          '</div></div>')
 
-# Tabs: Holdings / Staking / History
-f.append('<div class="kc-tabs">'
-         '<button class="kc-tab-btn on" type="button" data-tab="holdings">Holdings</button>'
-         '<button class="kc-tab-btn" type="button" data-tab="staking" onclick="window.location.href=\'fanplay.html\'">FanPlay</button>'
-         '<button class="kc-tab-btn" type="button" data-tab="history" onclick="window.location.href=\'activity.html\'">Activity</button>'
+# Tabs: Holdings / FanPlay / Activity. All three stay on this page.
+f.append('<div class="kc-tabs" role="tablist" aria-label="Wallet views">'
+         '<button class="kc-tab-btn on" type="button" role="tab" aria-selected="true" data-wtab="holdings" aria-controls="walAssets">Holdings</button>'
+         '<button class="kc-tab-btn" type="button" role="tab" aria-selected="false" data-wtab="fanplay" aria-controls="walFanplay">FanPlay</button>'
+         '<button class="kc-tab-btn" type="button" role="tab" aria-selected="false" data-wtab="activity" aria-controls="walActivity">Activity</button>'
          '</div>')
 
-# Assets List
-f.append('<div class="kc-holdings-list" id="walAssets"></div>')
+f.append('<div class="kc-holdings-list" id="walAssets" role="tabpanel"></div>')
+f.append('<div class="kc-holdings-list" id="walFanplay" role="tabpanel" hidden></div>')
+f.append('<div class="kc-holdings-list" id="walActivity" role="tabpanel" hidden></div>')
 
 f.append('</div></main>')
 
@@ -208,7 +201,76 @@ function renderAssets(){
   if(el('walLiquidAmt')) el('walLiquidAmt').textContent = (hidden ? '••••' : money(s.wallet.balance) + ' FTR');
 }
 
+/* FanPlay tab: the entries you have in play right now. */
+function esc(v){ var sp = document.createElement('span'); sp.textContent = String(v == null ? '' : v); return sp.innerHTML; }
+function renderFanplay(){
+  var box = el('walFanplay'); if(!box) return;
+  var entries = (FT.getState().fanplay.activeEntries || []).filter(function(e){
+    return !/settled|cancel/i.test(e.status || '');
+  });
+  if(!entries.length){
+    box.innerHTML = '<div class="wal-empty"><b>No active FanPlay entries</b>'
+      + 'Entries you play appear here with the shares they have locked.'
+      + '<a class="app-primary" href="fanplay.html">Play FanPlay</a></div>';
+    return;
+  }
+  box.innerHTML = entries.map(function(e){
+    var sym = e.target || (e.asset && e.asset.symbol) || 'Entry';
+    var isAsset = /^\$/.test(sym);
+    var tier = (e.market && e.market.name) || e.tier || 'FanPlay';
+    var match = e.match ? (e.match.homeTeam + ' vs ' + e.match.awayTeam) : (e.status || 'Active');
+    var locked = e.stakedShares ? e.stakedShares.toLocaleString('en-US') + ' shares locked'
+      : (e.stake ? e.stake.toLocaleString('en-US') + ' $FTR staked' : '');
+    var fp = e.totalFP != null && e.totalFP !== 0 ? e.totalFP : (e.projectedFP || 0);
+    var icon = isAsset ? playerPhoto(sym, (e.asset && e.asset.name) || sym)
+      : '<svg class="ic" aria-hidden="true"><use href="#i-crest"/></svg>';
+    return '<div class="kc-asset-row">'
+      + '<div class="kc-asset-left"><div class="kc-asset-icon">' + icon + '</div>'
+      + '<div><div class="kc-asset-name">' + esc(sym) + ' <span class="wal-muted">' + esc(e.mode || '') + ' · ' + esc(tier) + '</span></div>'
+      + '<div class="kc-asset-sub">' + esc(match) + (locked ? ' · ' + esc(locked) : '') + '</div></div></div>'
+      + '<div class="kc-asset-right"><div class="kc-asset-val">' + (fp >= 0 ? '+' : '') + fp.toLocaleString('en-US') + ' FP</div>'
+      + '<div class="kc-asset-chg up">Active</div></div></div>';
+  }).join('');
+}
+
+/* Activity tab: every transaction, newest first, as a running history. */
+var TX_LABEL = {BUY:'Bought shares',SELL:'Sold shares',STAKE:'FanPlay entry',PAYOUT:'FanPlay payout',SETTLE:'Settlement',
+  CONVERT:'Added funds',DEPOSIT:'Deposit',SEND:'Transfer sent',WITHDRAW:'Withdrawal to bank',SWAP:'Swapped shares'};
+var TX_ICON = {BUY:'candle',SELL:'candle',STAKE:'ball',PAYOUT:'trophy',SETTLE:'trophy',CONVERT:'coin',DEPOSIT:'coin',SEND:'send',WITHDRAW:'bank',SWAP:'swap'};
+function renderActivity(){
+  var box = el('walActivity'); if(!box) return;
+  var list = FT.getState().transactions || [];
+  if(!list.length){
+    box.innerHTML = '<div class="wal-empty"><b>No activity yet</b>Your trades, transfers and FanPlay results will appear here.</div>';
+    return;
+  }
+  box.innerHTML = list.map(function(t){
+    var out = ['BUY','STAKE','SEND','WITHDRAW'].indexOf(t.type) !== -1, swap = t.type === 'SWAP';
+    var amt = swap ? 'No cash moved' : (hidden ? '••••••' : (out ? '−' : '+') + Math.round(t.total).toLocaleString('en-US') + ' FTR');
+    return '<div class="kc-asset-row">'
+      + '<div class="kc-asset-left"><div class="kc-asset-icon"><svg class="ic" aria-hidden="true"><use href="#i-' + (TX_ICON[t.type] || 'arrow') + '"/></svg></div>'
+      + '<div><div class="kc-asset-name">' + esc(TX_LABEL[t.type] || t.type) + '</div>'
+      + '<div class="kc-asset-sub">' + esc(t.asset) + '</div></div></div>'
+      + '<div class="kc-asset-right"><div class="kc-asset-val' + (out || swap ? '' : ' wal-in') + '">' + amt + '</div>'
+      + '<div class="kc-asset-chg wal-muted">' + esc(t.time) + '</div></div></div>';
+  }).join('');
+}
+
+document.querySelectorAll('[data-wtab]').forEach(function(b){
+  b.addEventListener('click', function(){
+    var tab = b.dataset.wtab;
+    document.querySelectorAll('[data-wtab]').forEach(function(x){
+      var on = x === b; x.classList.toggle('on', on); x.setAttribute('aria-selected', String(on));
+    });
+    el('walAssets').hidden = tab !== 'holdings';
+    el('walFanplay').hidden = tab !== 'fanplay';
+    el('walActivity').hidden = tab !== 'activity';
+  });
+});
+
 function syncWallet(){
+  renderFanplay();
+  renderActivity();
   var s = FT.getState();
   var bal = s.wallet.balance || 0;
   if(el('walBal')){

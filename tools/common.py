@@ -731,6 +731,11 @@ APP_CSS = r"""
 .nav-min a.back{font-weight:600;font-size:10.5px;letter-spacing:.16em;color:var(--faint);text-transform:uppercase;
   display:flex;align-items:center;gap:9px;transition:color .5s var(--ease)}
 .nav-min a.back:hover{color:var(--lime)}
+/* Back: one brand-blue pill that says Back, used on every page that has a way back. */
+.back-btn{display:inline-flex;align-items:center;justify-content:center;min-height:40px;min-width:76px;padding:9px 20px;border:0;border-radius:999px;background:#1800ad;color:#fff!important;font:600 13px/1 Montserrat,system-ui,sans-serif;letter-spacing:0;text-transform:none;text-decoration:none;cursor:pointer;transition:background .2s}
+.back-btn:hover{background:#3311cc}
+.back-btn:focus-visible{outline:2px solid #a596ed;outline-offset:3px}
+main .back-btn{margin-bottom:20px}
 .nav-min a.back .ic{width:13px;height:13px;transform:rotate(180deg)}
 
 /* ── data tables ────────────────────────────────────── */
@@ -1907,7 +1912,7 @@ TAB_OF = {"dashboard.html": "dashboard.html", "clubs.html": "dashboard.html",
           "fanplay.html": "fanplay.html", "liveboard.html": "fanplay.html",
           "leaderboard.html": "leaderboard.html", "divisions.html": "leaderboard.html",
           "ftr.html": "ftr.html", "wallet.html": "ftr.html", "send.html": "ftr.html",
-          "receive.html": "ftr.html", "swap.html": "ftr.html", "buy.html": "ftr.html",
+          "receive.html": "ftr.html", "swap.html": "ftr.html", "buy.html": "ftr.html", "withdraw.html": "ftr.html",
           "activity.html": "ftr.html", "portfolio.html": "",
           # Profile lives on the header avatar, so account pages light no tab.
           "account.html": "", "notifications.html": "dashboard.html",
@@ -1977,8 +1982,8 @@ def nav(current="", app=False):
 def nav_min(back="index.html", label="Back to Fantrade"):
     """Stripped nav for auth screens — logo and one way out."""
     return ('<div class="nav-min"><a class="logo" href="index.html"><img src="assets/fantrade-logo.png" alt="" class="brand-logo-img" width="22" height="22"> Fantrade</a>'
-            '<a class="back" href="%s">%s<span>%s</span></a></div>'
-            % (back, ic("arrow", "ic"), label))
+            '<a class="back-btn" href="%s" aria-label="%s">Back</a></div>'
+            % (back, label))
 
 def footer():
     return ('<footer><div class="wrap"><div class="foot">'

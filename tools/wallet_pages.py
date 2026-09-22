@@ -4,7 +4,7 @@ from common import ic, qr_svg, QR_ADDRESS
 
 
 def intro(title, description):
-    return ('<a class="utility-back" href="ftr.html">' + ic('arrow', 'ic') + 'Wallet</a>'
+    return ('<a class="back-btn" href="ftr.html" aria-label="Back to wallet">Back</a>'
             '<header class="utility-intro"><div><h1>' + title + '</h1><p>' + description + '</p></div></header>')
 
 
@@ -65,20 +65,37 @@ BUY_HTML = workflow('Add funds', 'Try a conversion from pounds to $FTR.', BALANC
 <button class="app-primary wallet-submit" type="submit">Review demo conversion</button></form>''' + STATUS + '''
 <p class="wallet-note">Demo conversion. No card is charged. The amount is added to your preview wallet.</p>''')
 
+WITHDRAW_HTML = workflow('Withdraw to bank', 'Move $FTR out of Fantrade and into your bank account.', BALANCE + '''
+<form id="withdrawForm"><div class="wallet-field"><label for="wdAmount">Amount to withdraw</label><div class="wallet-amount">
+<input id="wdAmount" type="number" min="0.01" step="0.01" inputmode="decimal" placeholder="0" required><span>$FTR</span></div></div>
+<div class="wallet-quick"><button class="wallet-chip" type="button" data-wd="5000">5,000</button>
+<button class="wallet-chip" type="button" data-wd="25000">25,000</button><button class="wallet-chip" type="button" id="wdMax">Max</button></div>
+<h2 class="wallet-section-title">Bank account</h2>
+<div class="wallet-field"><label for="wdCurrency">Currency</label><select id="wdCurrency">
+<option value="GBP">British pound · GBP</option><option value="NGN">Nigerian naira · NGN</option>
+<option value="EUR">Euro · EUR</option><option value="USD">US dollar · USD</option></select></div>
+<div class="wallet-field"><label for="wdName">Account holder name</label><input id="wdName" autocomplete="name" placeholder="As shown on your bank account" required maxlength="80"></div>
+<div class="wallet-field"><label for="wdBank">Bank name</label><input id="wdBank" autocomplete="off" placeholder="e.g. Barclays" required maxlength="60"></div>
+<div class="wallet-row"><div class="wallet-field"><label for="wdSort" id="wdSortLabel">Sort code</label><input id="wdSort" inputmode="numeric" autocomplete="off" placeholder="00-00-00" maxlength="11"></div>
+<div class="wallet-field"><label for="wdAcct">Account number</label><input id="wdAcct" inputmode="numeric" autocomplete="off" placeholder="8 digits" required maxlength="34"></div></div>
+<label class="wallet-check"><input type="checkbox" id="wdSave" checked> Save this bank account for next time</label>
+<dl class="wallet-summary"><div><dt>Withdrawal fee · 0.5%, minimum 50 $FTR</dt><dd id="wdFee">—</dd></div>
+<div><dt>Total deducted</dt><dd id="wdTotal">—</dd></div><div><dt>You receive</dt><dd id="wdReceive">—</dd></div>
+<div><dt>Arrives</dt><dd>1–2 working days</dd></div></dl>
+<button class="app-primary wallet-submit" type="submit">Review withdrawal</button></form>''' + STATUS + '''
+<p class="wallet-note">Demo withdrawal. Your preview balance updates; no real money is sent and no bank details leave this browser.</p>
+<section class="wallet-followup"><h2>Recent withdrawals</h2><div id="wdLog"></div></section>''')
+
 ACTIVITY_HTML = ('<main><div class="utility-page">' + intro('Wallet activity', 'Follow your trades, transfers and FanPlay entries.')
                  + BALANCE + '''<div class="wallet-actions"><a class="app-primary" href="buy.html">Add funds</a>
 <a class="wallet-button" href="send.html">Send</a><a class="wallet-button" href="receive.html">Receive</a>
-<button class="wallet-button" type="button" id="withdrawOpen">Withdraw</button></div>
+<a class="wallet-button" href="withdraw.html">Withdraw</a></div>
 <div class="wallet-field"><label for="activitySearch">Search activity</label><input id="activitySearch" type="search" placeholder="Player, recipient or transaction"></div>
 <div class="wallet-tabs" aria-label="Activity filters"><button class="wallet-chip" data-category="all" aria-pressed="true">All</button>
 <button class="wallet-chip" data-category="trades" aria-pressed="false">Trades</button><button class="wallet-chip" data-category="transfers" aria-pressed="false">Transfers</button>
 <button class="wallet-chip" data-category="fanplay" aria-pressed="false">FanPlay</button></div>
 <p class="wallet-note" id="activityCount" role="status"></p><div id="activityRows"></div>''' + STATUS + '''
-<dialog class="wallet-review" id="withdrawDialog" aria-labelledby="withdrawTitle"><h2 id="withdrawTitle">Demo withdrawal</h2>
-<p>Withdraw to your demo payout account. No real funds move.</p><form id="withdrawForm"><div class="wallet-field"><label for="withdrawAmount">Amount in $FTR</label>
-<input id="withdrawAmount" type="number" min="0.01" step="0.01" inputmode="decimal" placeholder="0" required></div>
-<p id="withdrawCost">Fee: 0.5%, with a minimum of 50 $FTR.</p><p class="wallet-status" id="withdrawError" role="status"></p>
-<div class="wallet-actions"><button class="wallet-button" type="button" id="withdrawCancel">Cancel</button><button class="app-primary" type="submit">Review</button></div></form></dialog>'''
+'''
                  + REVIEW + '</div></main>')
 
 COMMON_JS = r'''
@@ -98,7 +115,7 @@ if(el('walletReview')){
   el('reviewConfirm').onclick=function(){var action=pendingAction;if(!action)return;pendingAction=null;this.disabled=true;
     try{action();}catch(error){status(error.message,true);}finally{el('walletReview').close();}};
 }
-var labels={BUY:'Bought shares',SELL:'Sold shares',STAKE:'FanPlay entry',PAYOUT:'FanPlay payout',SETTLE:'Settlement',CONVERT:'Added funds',DEPOSIT:'Deposit',SEND:'Transfer sent',WITHDRAW:'Withdrawal',SWAP:'Swapped shares'};
+var labels={BUY:'Bought shares',SELL:'Sold shares',STAKE:'FanPlay entry',PAYOUT:'FanPlay payout',SETTLE:'Settlement',CONVERT:'Added funds',DEPOSIT:'Deposit',SEND:'Transfer sent',WITHDRAW:'Withdrawal to bank',SWAP:'Swapped shares'};
 function ledgerRow(t){var down=['BUY','STAKE','SEND','WITHDRAW'].includes(t.type),neutral=t.type==='SWAP';
   return '<div class="wallet-ledger-row"><span class="ledger-icon"><svg class="ic" aria-hidden="true"><use href="#i-'+(neutral?'swap':'arrow')+'"/></svg></span><div><b>'+esc(labels[t.type]||t.type)+'</b><small>'+esc(t.asset)+'</small><small>'+esc(t.time)+'</small></div><div class="ledger-amount '+(neutral?'':down?'':'positive')+'">'+(neutral?'Value ':down?'−':'+')+fmt(t.total)+' $FTR'+(neutral?'<small>No cash transfer</small>':'')+'</div></div>';
 }
@@ -174,14 +191,47 @@ function activity(){var search=el('activitySearch').value.trim().toLowerCase(),l
   el('activityCount').textContent=list.length+' transaction'+(list.length===1?'':'s');el('activityRows').innerHTML=list.map(ledgerRow).join('')||'<div class="wallet-empty"><b>No activity here yet</b>'+(search||category!=='all'?'Try another search or filter.':'Your trades and transfers will appear here.')+'</div>';
 }
 el('activitySearch').addEventListener('input',activity);document.querySelectorAll('[data-category]').forEach(b=>b.onclick=function(){category=b.dataset.category;document.querySelectorAll('[data-category]').forEach(x=>x.setAttribute('aria-pressed',x===b));activity();});
-el('withdrawOpen').onclick=function(){el('withdrawForm').reset();el('withdrawError').textContent='';el('withdrawCost').textContent='Fee: 0.5%, with a minimum of 50 $FTR.';el('withdrawDialog').showModal();};
-el('withdrawCancel').onclick=function(){el('withdrawDialog').close();};
-el('withdrawAmount').oninput=function(){var n=amount('withdrawAmount');el('withdrawCost').textContent=valid(n)?'Fee: '+fmt(Math.max(50,Math.round(n*.005)))+' $FTR. Total: '+fmt(n+Math.max(50,Math.round(n*.005)))+' $FTR.':'Fee: 0.5%, with a minimum of 50 $FTR.';};
-el('withdrawForm').onsubmit=function(e){e.preventDefault();var n=amount('withdrawAmount'),fee=Math.max(50,Math.round(n*.005));
-  if(!valid(n)||n+fee>FT.getState().wallet.balance){el('withdrawError').textContent='Enter an amount your balance can cover, including the withdrawal fee.';return;}
-  el('withdrawDialog').close();review('Review demo withdrawal',fmt(n)+' $FTR to your demo payout account\nFee: '+fmt(fee)+' $FTR\nTotal deducted: '+fmt(n+fee)+' $FTR',function(){FT.sendFtr(n,'Payout account (GBP)','withdraw');status('Demo withdrawal recorded: '+fmt(n)+' $FTR.');});
-};activity();window.addEventListener('fantrade:statechange',activity);
+activity();window.addEventListener('fantrade:statechange',activity);
+'''
+
+WITHDRAW_JS = r'''
+var RATES={GBP:1,NGN:2050,EUR:1.17,USD:1.27},SYMBOL={GBP:'£',NGN:'₦',EUR:'€',USD:'$'};
+function wdQuote(){var n=amount('wdAmount'),fee=valid(n)?Math.max(50,Math.round(n*.005)):0,cur=el('wdCurrency').value,
+  gbp=valid(n)?n/FT.getState().wallet.gbpRate:0;return {n:n,fee:fee,total:n+fee,cur:cur,out:gbp*RATES[cur]};}
+function wdCalc(){var q=wdQuote(),bal=FT.getState().wallet.balance;
+  el('wdFee').textContent=valid(q.n)?fmt(q.fee)+' $FTR':'—';
+  el('wdTotal').textContent=valid(q.n)?(q.total>bal?'More than your balance':fmt(q.total)+' $FTR'):'—';
+  el('wdReceive').textContent=valid(q.n)?'≈ '+SYMBOL[q.cur]+fmt(Math.round(q.out*100)/100):'—';}
+function wdBankFields(){var gb=el('wdCurrency').value==='GBP';el('wdSortLabel').textContent=gb?'Sort code':'Bank code (optional)';
+  el('wdSort').placeholder=gb?'00-00-00':'Optional';el('wdAcct').placeholder=gb?'8 digits':el('wdCurrency').value==='NGN'?'10 digits (NUBAN)':'Account number or IBAN';}
+var saved=(FT.getState().prefs||{}).payoutBank;
+if(saved){['Currency','Name','Bank','Sort','Acct'].forEach(function(k){if(saved[k]!=null)el('wd'+k).value=saved[k];});}
+wdBankFields();
+['wdAmount'].forEach(id=>el(id).addEventListener('input',wdCalc));
+el('wdCurrency').addEventListener('change',function(){wdBankFields();wdCalc();});
+document.querySelectorAll('[data-wd]').forEach(b=>b.onclick=function(){el('wdAmount').value=b.dataset.wd;wdCalc();});
+el('wdMax').onclick=function(){var bal=FT.getState().wallet.balance,n=Math.floor(Math.max(0,bal-Math.max(50,bal*.005))/1.005);el('wdAmount').value=n>0?n:'';wdCalc();};
+function digits(v){return (v||'').replace(/[\s-]/g,'');}
+el('withdrawForm').onsubmit=function(e){e.preventDefault();status('');var q=wdQuote(),cur=q.cur,
+  name=el('wdName').value.trim(),bank=el('wdBank').value.trim(),sort=digits(el('wdSort').value),acct=digits(el('wdAcct').value);
+  if(!valid(q.n)){status('Enter a positive amount with up to two decimal places.',true);return;}
+  if(q.total>FT.getState().wallet.balance){status('Your balance cannot cover this amount plus the withdrawal fee.',true);return;}
+  if(name.length<2){status('Enter the account holder name.',true);return;}
+  if(bank.length<2){status('Enter your bank name.',true);return;}
+  if(cur==='GBP'&&!/^\d{6}$/.test(sort)){status('Enter a 6-digit sort code.',true);return;}
+  if(cur==='GBP'&&!/^\d{8}$/.test(acct)){status('Enter an 8-digit account number.',true);return;}
+  if(cur==='NGN'&&!/^\d{10}$/.test(acct)){status('Enter a 10-digit NUBAN account number.',true);return;}
+  if(cur!=='GBP'&&cur!=='NGN'&&!/^[A-Za-z0-9]{6,34}$/.test(acct)){status('Enter a valid account number or IBAN.',true);return;}
+  var dest=bank+' ••'+acct.slice(-4)+' ('+cur+')';
+  review('Review withdrawal',fmt(q.n)+' $FTR to '+name+', '+dest+'\nFee: '+fmt(q.fee)+' $FTR\nTotal deducted: '+fmt(q.total)+' $FTR\nYou receive about '+SYMBOL[cur]+fmt(Math.round(q.out*100)/100)+' in 1–2 working days.',function(){
+    if(el('wdSave').checked)FT.setPref('payoutBank',{Currency:cur,Name:name,Bank:bank,Sort:el('wdSort').value.trim(),Acct:acct});
+    FT.sendFtr(q.n,dest,'withdraw');el('wdAmount').value='';wdCalc();status('Withdrawal of '+fmt(q.n)+' $FTR requested to '+dest+'.');});
+};
+function wdLog(){var rows=FT.getState().transactions.filter(t=>t.type==='WITHDRAW').slice(0,3);
+  el('wdLog').innerHTML=rows.map(ledgerRow).join('')||'<p class="wallet-note">Your withdrawals will appear here.</p>';wdCalc();}
+wdLog();window.addEventListener('fantrade:statechange',wdLog);
 '''
 
 PAGES = [('send', SEND_HTML, SEND_JS), ('receive', RECEIVE_HTML, RECEIVE_JS),
-         ('swap', SWAP_HTML, SWAP_JS), ('buy', BUY_HTML, BUY_JS), ('activity', ACTIVITY_HTML, ACTIVITY_JS)]
+         ('swap', SWAP_HTML, SWAP_JS), ('buy', BUY_HTML, BUY_JS), ('withdraw', WITHDRAW_HTML, WITHDRAW_JS),
+         ('activity', ACTIVITY_HTML, ACTIVITY_JS)]

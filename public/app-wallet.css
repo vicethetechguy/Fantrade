@@ -80,3 +80,9 @@ body.app.calm .utility-page .inbox-row{display:grid;grid-template-columns:24px m
 @media(max-width:360px){body.app.calm .utility-page{padding-left:16px;padding-right:16px}.wallet-summary>div{gap:12px}.wallet-quick{gap:6px}body.app.calm .utility-page .wallet-chip{padding:8px 12px}}
 @media(max-width:560px){.utility-page:not(.wallet-workflow)>.wallet-actions{display:grid;grid-template-columns:1fr 1fr}.utility-page:not(.wallet-workflow)>.wallet-actions>*{width:100%}}
 @media(max-width:560px){.utility-page:not(.wallet-workflow)>.wallet-actions{display:grid;grid-template-columns:1fr 1fr}.utility-page:not(.wallet-workflow)>.wallet-actions>*{width:100%}}
+/* Bank withdrawal form. */
+body.app.calm .utility-page .wallet-section-title{font-size:18px!important;margin:28px 0 16px}
+.wallet-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.wallet-check{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--dim);margin:4px 0 20px;cursor:pointer}
+body.app.calm .utility-page .wallet-check input{width:20px;min-height:20px;height:20px;padding:0;accent-color:#1800ad}
+@media(max-width:560px){.wallet-row{grid-template-columns:1fr;gap:0}}

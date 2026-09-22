@@ -45,7 +45,7 @@ BOARD_JS = r'''
 })();
 '''
 
-DIVISIONS_HTML = '<main><div class="secondary-page divisions-page">' + intro('Find your division.', 'Follow your club’s place in the competition.', '<a class="quiet-button" href="leaderboard.html">Leaderboard</a>') + '''
+DIVISIONS_HTML = '<main><div class="secondary-page divisions-page">' + '<a class="back-btn" href="leaderboard.html" aria-label="Back to the leaderboard">Back</a>' + intro('Find your division.', 'Follow your club’s place in the competition.') + '''
 <section class="division-standing"><p class="quiet-label">Your club</p><h2 id="divisionClub"></h2><p id="divisionStanding"></p></section>
 <section class="division-tiers" aria-label="Division tiers">
 <article class="division-tier" data-division="Apex"><span class="tier-number">01</span><div><h2>Apex <span class="tier-current" hidden>Your division</span></h2><p>Ranks 1–150 worldwide</p></div><div class="tier-share"><b>50%</b><span>of prize pool</span></div></article>
