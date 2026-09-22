@@ -74,12 +74,15 @@ export class FanPlayService {
     });
 
     return holdings.map((h) => ({
+      id: h.assetId,
       assetId: h.assetId,
       symbol: h.asset.symbol,
       name: h.asset.name,
       type: h.asset.type,
+      team: h.asset.playerProfile?.club || h.asset.coachProfile?.club || 'Club',
       club: h.asset.playerProfile?.club || h.asset.coachProfile?.club || 'Club',
       position: h.asset.playerProfile?.position || 'Coach',
+      totalQuantity: h.quantity,
       ownedQuantity: h.quantity,
       availableQuantity: h.availableQuantity,
       lockedQuantity: h.lockedQuantity,

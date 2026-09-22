@@ -51,7 +51,11 @@ fanplayRouter.get('/matches', async (req, res: Response, next: NextFunction) => 
   try {
     const status = req.query.status as any;
     const matches = await fanPlayService['footballDataProvider'].getFixtures({ status });
-    res.json({ success: true, data: matches });
+    const formatted = matches.map((m: any) => ({
+      ...m,
+      scheduledAt: m.scheduledAt || m.kickoffTime,
+    }));
+    res.json({ success: true, data: formatted });
   } catch (err) {
     next(err);
   }
