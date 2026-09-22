@@ -1,0 +1,119 @@
+/**
+ * Fantrade · Supabase bridge.
+ *
+ * The pages stay exactly as they are: they read and write the in-memory FT
+ * state and never await anything. This file keeps that state and the database
+ * in step around it.
+ *
+ *   · On load it restores the signed-in session and pulls one snapshot
+ *     (profile, wallet, holdings, transactions) into FT.
+ *   · Every money action the app performs is mirrored to a database function
+ *     straight afterwards. The database re-checks the price, the balance and
+ *     the share count, so the browser can never talk it into a bad trade.
+ *   · If the call fails — offline, signed out, or refused — the local state is
+ *     re-synced from the database and the reason is shown, so what you see is
+ *     always what the database actually holds.
+ *
+ * The anon key below is the publishable key. It is meant to ship in the page:
+ * row-level security is what protects the data, and every write goes through a
+ * function that starts from the signed-in user.
+ */
+(function (window) {
+  var CONFIG = {
+    url: 'https://ajjwodnjcnmkzguospay.supabase.co',
+    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFqandvZG5qY25ta3pndW9zcGF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAwOTI3NjMsImV4cCI6MjEwNTY2ODc2M30.7KUEO-9rzcWcvCezLw26WMyDQWvbCCy15zzk-wyTnrg',
+    cdn: 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'
+  };
+
+  var client = null, ready = null, lastError = null, session = null;
+
+  function load() {
+    if (ready) return ready;
+    ready = import(CONFIG.cdn)
+      .then(function (mod) {
+        client = mod.createClient(CONFIG.url, CONFIG.anonKey, {
+          auth: { persistSession: true, autoRefreshToken: true, storageKey: 'fantrade_auth' }
+        });
+        client.auth.onAuthStateChange(function (_event, next) {
+          session = next;
+          window.dispatchEvent(new CustomEvent('fantrade:auth', { detail: next }));
+        });
+        return client.auth.getSession();
+      })
+      .then(function (res) { session = res && res.data ? res.data.session : null; return client; })
+      .catch(function (error) {
+        lastError = error;
+        console.warn('[Fantrade] Database unavailable, working from this browser only:', error && error.message);
+        return null;
+      });
+    return ready;
+  }
+
+  function message(error) {
+    var text = (error && (error.message || error.error_description)) || 'Something went wrong';
+    if (/Invalid login credentials/i.test(text)) return 'That email and password do not match an account.';
+    if (/already registered|already exists/i.test(text)) return 'There is already an account with that email.';
+    if (/Email not confirmed/i.test(text)) return 'Confirm your email address first, then sign in.';
+    if (/Failed to fetch|NetworkError/i.test(text)) return 'Cannot reach the server right now.';
+    return text;
+  }
+
+  var FTDB = {
+    config: CONFIG,
+    ready: load,
+    client: function () { return client; },
+    online: function () { return !!client; },
+    session: function () { return session; },
+    signedIn: function () { return !!(session && session.user); },
+    userId: function () { return session && session.user ? session.user.id : null; },
+
+    /* ── Account ──────────────────────────────────────────────── */
+    signUp: async function (email, password, meta) {
+      await load();
+      if (!client) throw new Error('Cannot reach the server right now.');
+      var res = await client.auth.signUp({ email: email, password: password, options: { data: meta || {} } });
+      if (res.error) throw new Error(message(res.error));
+      session = res.data.session;
+      return { session: session, needsConfirmation: !session };
+    },
+    signIn: async function (email, password) {
+      await load();
+      if (!client) throw new Error('Cannot reach the server right now.');
+      var res = await client.auth.signInWithPassword({ email: email, password: password });
+      if (res.error) throw new Error(message(res.error));
+      session = res.data.session;
+      return session;
+    },
+    signOut: async function () {
+      await load();
+      if (client) { try { await client.auth.signOut(); } catch (e) {} }
+      session = null;
+    },
+
+    /* ── Data ─────────────────────────────────────────────────── */
+    assets: async function () {
+      await load();
+      if (!client) return null;
+      var res = await client.from('assets').select('*').eq('is_active', true).order('price', { ascending: false });
+      return res.error ? null : res.data;
+    },
+    snapshot: async function () {
+      await load();
+      if (!client || !FTDB.signedIn()) return null;
+      var res = await client.rpc('ft_snapshot');
+      if (res.error) { console.warn('[Fantrade] snapshot failed:', res.error.message); return null; }
+      return res.data;
+    },
+    call: async function (fn, args) {
+      await load();
+      if (!client) throw new Error('Cannot reach the server right now.');
+      if (!FTDB.signedIn()) throw new Error('Sign in to save this to your account.');
+      var res = await client.rpc(fn, args || {});
+      if (res.error) throw new Error(message(res.error));
+      return res.data;
+    }
+  };
+
+  window.FTDB = FTDB;
+  load();
+})(window);

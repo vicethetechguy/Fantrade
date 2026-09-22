@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Exchange — Fantrade</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"><style>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Exchange — Fantrade</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"><script src="public/fantrade-supabase.js"></script><style>
 :root{
   --void:#050505;--shell:rgba(255,255,255,.035);--core:#0A0B0C;
   --hair:rgba(255,255,255,.08);--hair-2:rgba(255,255,255,.14);
@@ -2158,8 +2158,86 @@ var FT = (function(){
   }
   var state = load();
 
+
+  /* ── The database, kept in step with this state ──────────────────────
+     The pages never wait on the network. Every action applies here first,
+     then mirrors to Supabase; if the database refuses, we take its answer
+     as the truth and re-sync. */
+  function cloud(){ return window.FTDB && window.FTDB.signedIn && window.FTDB.signedIn() ? window.FTDB : null; }
+  function shortTime(iso){
+    var d = new Date(iso), now = new Date(), mins = Math.round((now - d) / 60000);
+    if(mins < 1) return 'Just now';
+    if(mins < 60) return mins + 'm ago';
+    if(d.toDateString() === now.toDateString()) return 'Today, ' + d.toTimeString().slice(0,5);
+    var y = new Date(now.getTime() - 86400000);
+    if(d.toDateString() === y.toDateString()) return 'Yesterday, ' + d.toTimeString().slice(0,5);
+    return d.toLocaleDateString(undefined, { month:'short', day:'numeric' }) + ', ' + d.toTimeString().slice(0,5);
+  }
+  function applySnapshot(snap){
+    if(!snap) return false;
+    if(snap.profile){
+      state.user.name = snap.profile.display_name || state.user.name;
+      state.user.handle = '@' + snap.profile.handle;
+      state.user.region = snap.profile.region || state.user.region;
+      state.user.league = snap.profile.home_league || state.user.league;
+      state.auth.onboarded = !!snap.profile.onboarded;
+    }
+    if(snap.wallet){
+      state.wallet.balance = Number(snap.wallet.balance) || 0;
+      state.wallet.locked = Number(snap.wallet.locked) || 0;
+      state.wallet.seasonEarned = Number(snap.wallet.season_earned) || 0;
+      state.wallet.gbpRate = Number(snap.wallet.gbp_rate) || state.wallet.gbpRate;
+    }
+    if(snap.holdings){
+      var held = {};
+      snap.holdings.forEach(function(h){
+        var prev = state.holdings[h.asset_id] || {};
+        held[h.asset_id] = { n: h.name, shares: Number(h.shares), avg: Number(h.avg_cost),
+                             p: Number(h.price), c: h.kind === 'COACH', inClub: prev.inClub };
+      });
+      state.holdings = held;
+    }
+    if(snap.transactions){
+      state.transactions = snap.transactions.map(function(t){
+        return { type: t.type, asset: t.asset_id || t.label, shares: Number(t.shares) || 1,
+                 price: Number(t.price) || 0, total: Number(t.total) || 0, time: shortTime(t.created_at) };
+      });
+    }
+    state.auth.signedIn = true;
+    if(window.FTDB && FTDB.session() && FTDB.session().user) state.auth.email = FTDB.session().user.email;
+    save(state);
+    return true;
+  }
+  function announce(){
+    if(typeof FT !== 'undefined' && FT.syncUI) FT.syncUI();
+    window.dispatchEvent(new CustomEvent('fantrade:statechange', { detail: state }));
+  }
+  var pending = 0;
+  function push(fn, args, onResult){
+    var db = cloud(); if(!db) return;
+    pending += 1;
+    db.call(fn, args).then(function(res){
+      if(onResult) onResult(res);
+      return db.snapshot();
+    }).then(function(snap){
+      if(applySnapshot(snap)) announce();
+    }).catch(function(error){
+      if(typeof showToast === 'function') showToast(error.message + ' Your balance has been re-checked.', 'error');
+      return db.snapshot().then(function(snap){ if(applySnapshot(snap)) announce(); });
+    }).finally(function(){ pending -= 1; });
+  }
+
   return {
     getState: function(){ return state; },
+    /* Pull everything this account holds and adopt it as the truth. */
+    syncCloud: function(){
+      var db = window.FTDB; if(!db) return Promise.resolve(false);
+      return db.snapshot().then(function(snap){
+        if(!applySnapshot(snap)) return false;
+        announce(); return true;
+      }).catch(function(){ return false; });
+    },
+    cloudSignedIn: function(){ return !!cloud(); },
     save: function(){ save(state); },
     initials: function(){
       return (state.user.name || 'Manager').trim().split(/\s+/).slice(0,2)
@@ -2238,11 +2316,17 @@ var FT = (function(){
       if(data.formation) state.club.formation = data.formation;
       if(data.colors){ state.club.colors = data.colors; state.club.colorName = data.colorName; }
       state.auth.onboarded = true;
+      push('ft_update_profile', { p_display_name: state.user.name,
+        p_handle: String(state.user.handle || '').replace(/^@/, ''),
+        p_region: state.user.region, p_home_league: state.user.league, p_onboarded: true });
       save(state); FT.syncUI();
       window.dispatchEvent(new CustomEvent('fantrade:statechange', { detail: state }));
     },
     updateProfile: function(patch){
       Object.assign(state.user, patch || {});
+      push('ft_update_profile', { p_display_name: state.user.name,
+        p_handle: String(state.user.handle || '').replace(/^@/, ''),
+        p_region: state.user.region, p_home_league: state.user.league });
       save(state); FT.syncUI();
       window.dispatchEvent(new CustomEvent('fantrade:statechange', { detail: state }));
     },
@@ -2307,6 +2391,7 @@ var FT = (function(){
         time: "Just now"
       });
 
+      push(side === 'buy' ? 'ft_buy_shares' : 'ft_sell_shares', { p_asset: assetSymbol, p_shares: shares });
       save(state);
       FT.syncUI();
       window.dispatchEvent(new CustomEvent('fantrade:statechange', { detail: state }));
@@ -2476,12 +2561,14 @@ var FT = (function(){
         total: netFtr,
         time: "Just now"
       });
+      push('ft_convert_gbp', { p_gbp: gbpAmount });
       save(state);
       FT.syncUI();
       window.dispatchEvent(new CustomEvent('fantrade:statechange', { detail: state }));
       return netFtr;
     },
-    sendFtr: function(amount, dest, kind){
+    /* `meta` carries the bank details for a withdrawal; a transfer routes by handle. */
+    sendFtr: function(amount, dest, kind, meta){
       if(amount <= 0) throw new Error("Enter an amount to send.");
       var fee = kind === 'withdraw' ? Math.max(50, Math.round(amount * 0.005)) : 0;
       if(state.wallet.balance < amount + fee){
@@ -2493,6 +2580,12 @@ var FT = (function(){
         type: kind === 'withdraw' ? "WITHDRAW" : "SEND",
         asset: dest, shares: 1, price: amount, total: amount + fee, time: "Just now"
       });
+      if(kind === 'withdraw' && meta){
+        push('ft_withdraw_to_bank', { p_amount: amount, p_currency: meta.currency || 'GBP',
+          p_holder: meta.holder, p_bank: meta.bank, p_account: meta.account, p_save: meta.save !== false });
+      } else if(kind !== 'withdraw' && /^@/.test(String(dest))){
+        push('ft_transfer_ftr', { p_handle: String(dest), p_amount: amount });
+      }
       save(state); FT.syncUI();
       window.dispatchEvent(new CustomEvent('fantrade:statechange', { detail: state }));
       return { sent: amount, fee: fee, remaining: state.wallet.balance };
@@ -2524,6 +2617,7 @@ var FT = (function(){
         type: "SWAP", asset: fromSym + " → " + toSym, shares: shares,
         price: from.p, total: Math.round(gross), time: "Just now"
       });
+      push('ft_swap_shares', { p_from: fromSym, p_to: toSym, p_shares: shares });
       save(state); FT.syncUI();
       window.dispatchEvent(new CustomEvent('fantrade:statechange', { detail: state }));
       return { spent: shares, received: got, fee: Math.round(fee) };
@@ -2549,6 +2643,16 @@ var FT = (function(){
       window.dispatchEvent(new CustomEvent('fantrade:statechange', { detail: state }));
     }
   };
+})();
+
+/* Signed in? The account is the source of truth, so take its snapshot as soon
+   as the page is up, and again whenever the session changes. */
+(function(){
+  function sync(){ if(window.FT && FT.syncCloud) FT.syncCloud(); }
+  if(window.FTDB){
+    FTDB.ready().then(function(){ if(FTDB.signedIn()) sync(); });
+    window.addEventListener('fantrade:auth', function(e){ if(e.detail) sync(); });
+  }
 })();
 
 // Toast Notification
@@ -2670,7 +2774,8 @@ document.querySelectorAll('[data-signout]').forEach(function(b){
   b.addEventListener('click', function(e){
     e.preventDefault();
     showToast('Signed out. See you at the next matchday.', 'info');
-    setTimeout(function(){ FT.signOut(); }, 700);
+    var done = window.FTDB ? FTDB.signOut().catch(function(){}) : Promise.resolve();
+    setTimeout(function(){ done.then(function(){ FT.signOut(); }); }, 700);
   });
 });
 

@@ -290,7 +290,8 @@ el('withdrawForm').onsubmit=function(e){e.preventDefault();status('');var q=wdQu
     rows:[['Account holder',name],['Bank account',dest],['Amount',fmt(q.n)+' $FTR'],['Withdrawal fee',fmt(q.fee)+' $FTR'],['Total deducted',fmt(q.total)+' $FTR'],['Arrives','1–2 working days'],['Balance after',fmt(bal-q.total)+' $FTR','rv-total']],
     note:'Demo withdrawal. Your preview balance updates; no real money is sent.',confirm:'Withdraw '+fmt(q.n)+' $FTR',action:function(){
     if(el('wdSave').checked)FT.setPref('payoutBank',{Currency:cur,Name:name,Bank:bank,Sort:el('wdSort').value.trim(),Acct:acct});
-    FT.sendFtr(q.n,dest,'withdraw');el('wdAmount').value='';wdCalc();status('Withdrawal of '+fmt(q.n)+' $FTR requested to '+dest+'.');}});
+    FT.sendFtr(q.n,dest,'withdraw',{currency:cur,holder:name,bank:bank,account:acct,save:el('wdSave').checked});
+    el('wdAmount').value='';wdCalc();status('Withdrawal of '+fmt(q.n)+' $FTR requested to '+dest+'.');}});
 };
 function wdLog(){var rows=FT.getState().transactions.filter(t=>t.type==='WITHDRAW').slice(0,3);
   el('wdLog').innerHTML=rows.map(ledgerRow).join('')||'<p class="wallet-note">Your withdrawals will appear here.</p>';wdCalc();}

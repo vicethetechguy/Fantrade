@@ -208,8 +208,9 @@ si.append(T('<div class="oauth"><button type="button" data-provider="Passkey">@@
             '<button type="button" data-provider="Google">@@ Google</button>'
             '<button type="button" data-provider="Wallet">@@ Wallet</button></div>',
             ic("shield", "ic"), ic("crest", "ic"), ic("wallet", "ic")))
-si.append('<div class="demo-note">Prototype build — any valid email and an 8-character password will sign you in. '
-          'Try <b>alex.morgan@fantrade.app</b> with <b>fantrade2026</b>.</div>')
+si.append('<div class="demo-note">Prototype build — accounts are real, balances are play money. '
+          'No account yet? <b>Create one</b> below; if the server is out of reach, '
+          'you are signed in on this device so you can still look around.</div>')
 si.append('<div class="auth-alt">New to Fantrade? <a href="signup.html">Create an account</a></div>')
 si.append('</main>')
 
@@ -220,13 +221,38 @@ if(sf) sf.addEventListener('submit', function(e){
   var em = fld('email').value, pw = fld('password').value;
   var ok = true;
   if(!validEmail(em)) ok = bad('email'); else good('email');
-  if(!pw || pw.length < 8) ok = bad('password'); else good('password');
+  if(!pw || pw.length < 8) ok = bad('password', 'Password must be at least 8 characters.'); else good('password');
   if(!ok){ showToast('Check the highlighted fields and try again.', 'error'); return; }
   var name = FT.getState().auth.email === em.trim() ? null : em.trim().split('@')[0]
       .split(/[._-]+/).map(function(w){ return w.charAt(0).toUpperCase() + w.slice(1); }).join(' ');
-  FT.signIn(em.trim(), name);
-  showToast('Welcome back. Loading your desk…', 'success');
-  setTimeout(function(){ window.location.href = 'dashboard.html'; }, 700);
+  var btn = sf.querySelector('.auth-submit'), label = btn ? btn.textContent : '';
+  function busy(on){ if(!btn) return; btn.disabled = on; btn.textContent = on ? 'Signing in…' : label; }
+  function go(href){ setTimeout(function(){ window.location.href = href; }, 700); }
+
+  /* No account server within reach — the prototype still runs from this
+     browser, so the desk opens rather than the door closing. */
+  function localOnly(reason){
+    console.warn('[Fantrade] Signing in from this browser only:', reason);
+    FT.signIn(em.trim(), name);
+    showToast('Signed in on this device. Your account could not be reached, so this session is local.', 'info');
+    go('dashboard.html');
+  }
+
+  busy(true);
+  if(!window.FTDB){ localOnly('no database bridge on the page'); return; }
+  FTDB.signIn(em.trim(), pw).then(function(){
+    FT.signIn(em.trim(), name);
+    return FT.syncCloud();
+  }).then(function(){
+    showToast('Welcome back. Loading your desk…', 'success');
+    go(FT.getState().auth.onboarded ? 'dashboard.html' : 'onboarding.html');
+  }).catch(function(error){
+    var msg = (error && error.message) || 'Sign in failed.';
+    if(/reach the server|Failed to fetch|NetworkError/i.test(msg)){ localOnly(msg); return; }
+    busy(false);
+    bad('password', msg);
+    showToast(msg, 'error');
+  });
 });
 ['email','password'].forEach(function(id){
   var el = fld(id); if(el) el.addEventListener('input', function(){ clearErr(id); });
@@ -287,9 +313,40 @@ if(uf) uf.addEventListener('submit', function(e){
     showToast('You need to accept the terms before an account can be opened.', 'error');
   }
   if(!ok){ if(fld('terms').checked) showToast('Check the highlighted fields and try again.', 'error'); return; }
-  FT.signUp({ name: nm, email: em.trim(), region: fld('country').value });
-  showToast('Account created. Let us get you set up.', 'success');
-  setTimeout(function(){ window.location.href = 'onboarding.html'; }, 700);
+  var region = fld('country').value;
+  var btn = uf.querySelector('.auth-submit'), label = btn ? btn.textContent : '';
+  function busy(on){ if(!btn) return; btn.disabled = on; btn.textContent = on ? 'Creating account…' : label; }
+  function go(href){ setTimeout(function(){ window.location.href = href; }, 900); }
+
+  /* No account server within reach — the account is kept in this browser so
+     the prototype can still be walked through end to end. */
+  function localOnly(reason){
+    console.warn('[Fantrade] Creating this account in the browser only:', reason);
+    FT.signUp({ name: nm, email: em.trim(), region: region });
+    showToast('Account created on this device. It could not be saved to your Fantrade account.', 'info');
+    go('onboarding.html');
+  }
+
+  busy(true);
+  if(!window.FTDB){ localOnly('no database bridge on the page'); return; }
+  FTDB.signUp(em.trim(), p, { display_name: nm, region: region }).then(function(res){
+    FT.signUp({ name: nm, email: em.trim(), region: region });
+    if(res && res.needsConfirmation){
+      showToast('Check your inbox to confirm ' + em.trim() + ', then sign in.', 'success');
+      go('signin.html');
+      return null;
+    }
+    return FT.syncCloud().then(function(){
+      showToast('Account created. Let us get you set up.', 'success');
+      go('onboarding.html');
+    });
+  }).catch(function(error){
+    var msg = (error && error.message) || 'That account could not be created.';
+    if(/reach the server|Failed to fetch|NetworkError/i.test(msg)){ localOnly(msg); return; }
+    busy(false);
+    bad('email', msg);
+    showToast(msg, 'error');
+  });
 });
 ['name','email'].forEach(function(id){
   var el = fld(id); if(el) el.addEventListener('input', function(){ clearErr(id); });
