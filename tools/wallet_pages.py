@@ -44,16 +44,26 @@ RECEIVE_HTML = workflow('Receive $FTR', 'Your wallet address, ready to share.', 
 <div class="wallet-actions"><a class="wallet-button" href="buy.html">Add demo funds</a><a class="wallet-button" href="activity.html">View activity</a></div>''', review=False)
 
 SWAP_HTML = workflow('Swap players', 'Move between player and coach shares in one step.', '''
-<form id="swapForm"><div class="wallet-field"><label for="swapFrom">From your portfolio</label><select id="swapFrom"></select>
+<form id="swapForm"><div class="wallet-field"><span class="wallet-label" id="swapFromLabel">From your portfolio</span>
+<select id="swapFrom" hidden tabindex="-1" aria-hidden="true"></select>
+<button type="button" class="swap-pick" id="swapFromBtn" data-pick="from" aria-haspopup="dialog" aria-labelledby="swapFromLabel swapFromBtn"></button>
 <div class="swap-preview" id="swapPreview"></div></div>
 <div class="wallet-field"><label for="swapQty">Shares to swap</label><div class="wallet-amount">
 <input id="swapQty" type="number" min="1" step="1" inputmode="numeric" placeholder="0" required><span>shares</span></div></div>
 <div class="wallet-quick"><button class="wallet-chip" type="button" id="swapHalf">Half</button><button class="wallet-chip" type="button" id="swapMax">Max</button></div>
-<div class="wallet-field"><label for="swapTo">Receive</label><select id="swapTo"></select></div>
+<div class="wallet-field"><span class="wallet-label" id="swapToLabel">Receive</span>
+<select id="swapTo" hidden tabindex="-1" aria-hidden="true"></select>
+<button type="button" class="swap-pick" id="swapToBtn" data-pick="to" aria-haspopup="dialog" aria-labelledby="swapToLabel swapToBtn"></button></div>
 <span class="wallet-label">Estimated shares received</span><div class="wallet-estimate" id="swGet">—</div>
 <dl class="wallet-summary"><div><dt>Swap fee · 0.4%</dt><dd id="swFee">—</dd></div><div><dt>Change returned to wallet</dt><dd id="swDust">—</dd></div></dl>
 <button class="app-primary wallet-submit" type="submit" id="swapGo">Review swap</button></form>''' + STATUS + DEMO + '''
-<a class="utility-back" href="portfolio.html">View your portfolio</a>''')
+<a class="utility-back" href="portfolio.html">View your portfolio</a>
+<dialog id="swapPicker" class="asset-picker" aria-labelledby="swapPickerTitle">
+<div class="asset-picker-heading"><h2 id="swapPickerTitle">Choose your shares.</h2><button type="button" id="swapPickerClose" aria-label="Close player search">''' + ic('cross', 'ic') + '''</button></div>
+<label for="swapSearch">Search players, coaches or clubs</label>
+<input id="swapSearch" type="search" placeholder="Try Saka or Arsenal" autocomplete="off">
+<p id="swapSearchStatus" class="asset-search-status" role="status"></p>
+<div id="swapSearchResults" class="asset-search-results"></div></dialog>''')
 
 BUY_HTML = workflow('Add funds', 'Try a conversion from pounds to $FTR.', BALANCE + '''
 <form id="buyForm"><div class="wallet-field"><label for="fiat">Amount in pounds</label><div class="wallet-amount">
@@ -165,7 +175,13 @@ function quote(){var from=el('swapFrom').value,to=el('swapTo').value,q=amount('s
   if(!Number.isFinite(got)||got<1)throw new Error('Increase the amount to receive at least one whole share.');
   return {from:from,to:to,q:q,fee:fee,got:got,change:Math.round(net-got*prices[to])};
 }
-function swapCalc(){var k=el('swapFrom').value,h=FT.getState().holdings[k];el('swapPreview').innerHTML=h?playerPhoto(k,h.n)+'<span>'+fmt(h.shares)+' shares available</span>':'<a class="utility-back" href="exchange.html">Explore players on the exchange</a>';
+function pickCard(k,sub){if(!k||!prices[k+':name'])return '<span class="swap-pick-empty">Choose a player</span><svg class="ic swap-pick-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>';
+  return playerPhoto(k,prices[k+':name'])+'<span class="swap-pick-text"><b>'+esc(prices[k+':name'])+'</b><small>'+esc(sub)+'</small></span><svg class="ic swap-pick-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>';}
+function syncPicks(){var s=FT.getState(),f=el('swapFrom').value,t=el('swapTo').value,h=s.holdings[f];
+  el('swapFromBtn').innerHTML=h?pickCard(f,f+' · '+fmt(h.shares)+' shares available'):'<span class="swap-pick-empty">No shares held yet</span>';
+  el('swapFromBtn').disabled=!h;
+  el('swapToBtn').innerHTML=pickCard(t,t+' · '+(prices[t]?Number(prices[t]).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})+' FTR per share':''));}
+function swapCalc(){var k=el('swapFrom').value,h=FT.getState().holdings[k];syncPicks();el('swapPreview').innerHTML=h?'':'<a class="utility-back" href="exchange.html">Explore players on the exchange</a>';
   try{var q=quote();el('swGet').textContent=fmt(q.got)+' '+q.to;el('swFee').textContent=fmt(q.fee)+' $FTR';el('swDust').textContent=fmt(q.change)+' $FTR';}
   catch(e){['swGet','swFee','swDust'].forEach(id=>el(id).textContent='—');}
 }
@@ -173,6 +189,28 @@ function swapCalc(){var k=el('swapFrom').value,h=FT.getState().holdings[k];el('s
 ['swapHalf','swapMax'].forEach(id=>el(id).onclick=function(){var h=FT.getState().holdings[el('swapFrom').value];if(h){el('swapQty').value=Math.floor(h.shares*(id==='swapHalf'?.5:1));swapCalc();}});
 el('swapForm').onsubmit=function(e){e.preventDefault();status('');try{var q=quote();review('Review swap',fmt(q.q)+' '+q.from+' → '+fmt(q.got)+' '+q.to+'\nFee: '+fmt(q.fee)+' $FTR\nChange to wallet: '+fmt(q.change)+' $FTR',function(){
     var result=FT.swapAssets(q.from,q.to,q.q,prices);el('swapQty').value='';swapCalc();status('Received '+fmt(result.received)+' '+q.to+' shares.');});}catch(error){status(error.message,true);}};
+/* Player picker: the same card as Switch player on the player page. */
+var picking='from',picker=el('swapPicker');
+function clubOf(k){var a=ASSETS.filter(function(x){return x.t===k;})[0];return a&&a.club?a.club:(prices[k+':coach']?'Coach':'');}
+function pickerRows(){var s=FT.getState(),q=el('swapSearch').value.trim().toLowerCase(),rows;
+  if(picking==='from'){rows=Object.keys(s.holdings).filter(k=>s.holdings[k].shares>0).map(k=>({t:k,n:s.holdings[k].n,sub:k+(clubOf(k)?' · '+clubOf(k):''),v:fmt(s.holdings[k].shares),u:'shares'}));}
+  else{var from=el('swapFrom').value;rows=[...new Set(ASSETS.map(a=>a.t).concat(Object.keys(s.holdings)))].filter(k=>k!==from&&prices[k]).map(k=>({t:k,n:prices[k+':name'],sub:k+(clubOf(k)?' · '+clubOf(k):''),v:Number(prices[k]).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}),u:'FTR'}));}
+  rows=rows.filter(r=>(r.n+' '+r.sub).toLowerCase().includes(q));
+  var current=el(picking==='from'?'swapFrom':'swapTo').value;
+  el('swapSearchStatus').textContent=rows.length?rows.length+(picking==='from'?' holdings':' shares'):'No matches. Try another name or club.';
+  el('swapSearchResults').innerHTML=rows.map(r=>'<button type="button" class="asset-search-row" data-sym="'+esc(r.t)+'"'+(r.t===current?' aria-current="true"':'')+'>'+playerPhoto(r.t,r.n)
+    +'<span><b>'+esc(r.n)+'</b><small>'+esc(r.sub)+'</small></span><span class="asset-search-price">'+r.v+'<small>'+r.u+'</small></span></button>').join('');}
+function openPicker(which){picking=which;el('swapPickerTitle').textContent=which==='from'?'Choose shares to swap.':'Choose what to receive.';
+  el('swapSearch').value='';pickerRows();picker.showModal();document.body.classList.add('asset-picker-open');el('swapSearch').focus();}
+document.querySelectorAll('[data-pick]').forEach(b=>b.addEventListener('click',function(){openPicker(b.dataset.pick);}));
+el('swapSearch').addEventListener('input',pickerRows);
+el('swapSearchResults').addEventListener('click',function(e){var row=e.target.closest('[data-sym]');if(!row)return;
+  var sel=el(picking==='from'?'swapFrom':'swapTo');sel.value=row.dataset.sym;
+  if(picking==='from'&&el('swapTo').value===sel.value){var alt=[...el('swapTo').options].map(o=>o.value).filter(v=>v!==sel.value)[0];if(alt)el('swapTo').value=alt;}
+  sel.dispatchEvent(new Event('change'));picker.close();});
+el('swapPickerClose').addEventListener('click',function(){picker.close();});
+picker.addEventListener('close',function(){document.body.classList.remove('asset-picker-open');el(picking==='from'?'swapFromBtn':'swapToBtn').focus();});
+picker.addEventListener('click',function(e){var r=picker.getBoundingClientRect();if(e.target===picker&&(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom))picker.close();});
 fillSwap();window.addEventListener('fantrade:statechange',fillSwap);
 '''
 
