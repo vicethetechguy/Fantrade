@@ -1481,7 +1481,7 @@ SECTIONS["data"] = T('<div class="bezel flat sec-card" data-reveal><div class="c
             btn("Close account", "btn-red", tag="button", extra='id="stClose"'))
 
 ST_JS = r"""
-(function(){var nav=document.querySelector('.settings-nav'),on=nav&&nav.querySelector('a.on');if(on&&nav.scrollWidth>nav.clientWidth)nav.scrollLeft=on.offsetLeft-nav.offsetLeft-20;})();
+window.addEventListener('load',function(){var nav=document.querySelector('.settings-nav'),on=nav&&nav.querySelector('a.on');if(!on||nav.scrollWidth<=nav.clientWidth)return;nav.scrollLeft=0;var d=on.getBoundingClientRect().left-nav.getBoundingClientRect().left-parseFloat(getComputedStyle(nav).paddingLeft);if(d>0)nav.scrollLeft=d;});
 // One script serves every settings screen, so nothing here assumes a field is
 // present — each section has its own page now.
 function el(id){ return document.getElementById(id); }
@@ -1978,10 +1978,18 @@ settings_index = ('<main><div class="kc-settings-wrap">' +
 page("settings.html", "Profile settings — Fantrade", settings_index, ST_JS, ST_CSS)
 print("built settings.html")
 
+def settings_section(key):
+    """The section pill already names the page, so the section keeps only its
+    one-line explanation — no second icon-and-heading repeating the name."""
+    return re.sub(r'<div class="sec-title"><span class="ibox[^"]*">.*?</span><div><h3>.*?</h3><p>(.*?)</p>\s*</div></div>',
+                  r'<p class="sec-lede">\1</p>', SECTIONS[key], count=1, flags=re.S)
+
 for key, _icon_name, _label in SETNAV:
     title, desc = SETTINGS_COPY[key]
-    body = ('<main><div class="kc-settings-wrap">' + settings_top(title, desc, ("settings.html", "Settings")) +
-            settings_nav(key) + SECTIONS[key] + '</div></main>')
+    body = ('<main><div class="kc-settings-wrap">'
+            '<a class="back-btn" href="settings.html" aria-label="Back to settings">Back</a>'
+            '<h1 class="sr-only">' + title + '</h1>' +
+            settings_nav(key) + settings_section(key) + '</div></main>')
     page("settings-%s.html" % key, "%s — Fantrade" % title, body, ST_JS, ST_CSS)
     print("built settings-%s.html" % key)
 

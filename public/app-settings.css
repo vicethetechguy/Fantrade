@@ -103,9 +103,12 @@ body.app.calm .danger-title{font-size:18px!important;color:#ffb3b3;margin:0 0 8p
 @media(max-width:680px){
   body.app.calm .kc-settings-wrap{padding:8px 20px 140px!important}
   body.app.calm .settings-grid{grid-template-columns:1fr}
-  body.app.calm .settings-nav{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin:0 -20px 28px;padding:4px 20px}
+  body.app.calm .settings-nav{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin:0 -20px 28px;padding:4px 20px;scroll-padding-inline:20px}
   body.app.calm .kc-settings-wrap .tf-row{grid-template-columns:1fr;gap:0}
   body.app.calm .kc-settings-wrap .forms{grid-template-columns:repeat(2,1fr)}
   body.app.calm .kc-settings-wrap .mini-grid{grid-template-columns:1fr 1fr!important;gap:16px}
   body.app.calm .sec-title{align-items:flex-start}
 }
+/* Section pages: the active pill names the page; one quiet line explains it. */
+body.app.calm .kc-settings-wrap>.back-btn+h1.sr-only+.settings-nav{margin-top:4px}
+body.app.calm .sec-lede{font-size:14px;color:var(--dim);line-height:1.6;margin:0 0 28px;max-width:60ch}
