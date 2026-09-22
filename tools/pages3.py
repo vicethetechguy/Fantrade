@@ -107,8 +107,7 @@ document.querySelectorAll('[data-forgot]').forEach(function(a){
       + '<div class="tf" id="f-resetEmail"><label for="resetEmail">Email</label><div class="inp">'
       + '<input id="resetEmail" type="email" placeholder="you@example.com"></div>'
       + '<div class="err">Enter a valid email address.</div></div>'
-      + '<button class="btn btn-lime" id="resetGo" type="button" style="width:100%;justify-content:space-between;margin-top:8px">'
-      + 'Send reset link<span class="cap"><svg class="ic" aria-hidden="true"><use href="#i-arrow"/></svg></span></button>');
+      + '<button class="auth-submit" id="resetGo" type="button" style="margin-top:8px">Send reset link</button>');
     var go = document.getElementById('resetGo');
     if(go) go.addEventListener('click', function(){
       var v = document.getElementById('resetEmail').value;
@@ -127,54 +126,66 @@ document.querySelectorAll('.oauth button').forEach(function(b){
 
 
 AUTH_PAGE_CSS = """
-/* Natural page flow keeps both forms reachable on small screens and with a keyboard open. */
-body{--dim:#bbb8ca;--faint:#a3a0b3;background:#08060f}
-.nav-min{top:0;min-height:72px;padding:12px 32px;padding-top:calc(12px + env(safe-area-inset-top));background:#08060f}
-.nav-min a.back{min-height:44px;color:var(--dim)}
-.nav-min .logo,.nav-min a.back,.auth-form .btn{font-family:Archivo,Montserrat,system-ui,sans-serif}
-.auth{min-height:100svh;grid-template-columns:1fr 1fr}
-.auth-brand{padding:120px 48px 56px}
-.auth-brand h1{font-size:clamp(32px,3.6vw,52px)}
-.auth-form{padding:112px 40px 48px;justify-content:flex-start;min-width:0}
-.auth-form .inner{max-width:440px}
-.auth-form h2{font-size:30px;text-transform:none;letter-spacing:-.03em;line-height:1.2}
-.auth-sub{font-size:14px;font-weight:400;margin:12px 0 28px;line-height:1.6}
-.tf{margin-bottom:18px}
-.tf label{font-size:12px;text-transform:none;letter-spacing:0;margin-bottom:8px;color:var(--dim)}
+/* Sign in and sign up share the onboarding look: black canvas, lowercase
+   wordmark, one centred column, filled fields and an indigo pill action. */
+body{background:#050505;--dim:#b9bcb7;--faint:#979c96;--ink:#f4f6f1;--lime:#1800ad}
+.orb,.grain{display:none}
+.nav-min{top:0;min-height:76px;padding:16px 32px;padding-top:calc(16px + env(safe-area-inset-top));background:#050505}
+.nav-min .logo{font-family:Archivo,system-ui,sans-serif;font-size:25px;text-transform:lowercase;letter-spacing:-.03em}
+.nav-min .brand-logo-img{width:28px;height:28px}
+.nav-min a.back{min-height:44px;font-family:Montserrat,system-ui,sans-serif;letter-spacing:0;text-transform:none;font-size:12px;color:var(--dim)}
+.auth-page{width:min(460px,100%);margin:auto;padding:128px 24px 64px}
+.auth-intro{text-align:center;margin-bottom:36px}
+.auth-intro h1{font-family:Archivo,system-ui,sans-serif;font-size:clamp(28px,4.2vw,42px);font-variation-settings:'wdth' 110,'wght' 800;line-height:1.08;text-transform:none;letter-spacing:-.035em;margin:0}
+.auth-intro p{font-size:14px;color:var(--dim);line-height:1.6;margin:14px auto 0;max-width:36ch}
+.tf{margin-bottom:20px}
+.tf label{font-size:13px;text-transform:none;letter-spacing:0;color:var(--dim);font-weight:500;margin-bottom:8px}
 .tf .lrow{align-items:center;margin-bottom:8px}
 .tf .lrow label{margin:0}
-.tf .lrow a{font-size:12px;color:var(--ink);text-decoration:underline;text-underline-offset:3px}
-.tf .inp{min-height:50px;padding:0 14px;border-radius:12px;background:#14121d;box-shadow:none}
-.tf .inp:focus-within{border-color:#b0a5ff;outline:2px solid rgba(176,165,255,.18)}
-.tf input,.tf select{font-size:16px;min-height:48px;font-weight:400}
-.tf .eye{min-height:44px;min-width:44px;font-size:11px;letter-spacing:0;text-transform:none;color:var(--dim)}
-.tf .hint{font-size:12px;font-weight:400;margin-top:7px}
+.tf .lrow a{font-size:13px;color:var(--ink);text-decoration:underline;text-underline-offset:3px}
+.tf .lrow a:hover{color:#fff}
+.tf .inp{border:0;background:#121411;box-shadow:none;border-radius:14px;padding:0 16px;min-height:54px}
+.tf .inp:focus-within{outline:2px solid #8875e8;outline-offset:2px;background:#121411}
+.tf .inp>.ic{color:#858c82}
+.tf input,.tf select{font-size:16px;min-height:52px;font-weight:400}
+.tf input::placeholder{color:#858c82}
+.tf .eye{min-height:44px;min-width:44px;font-size:12px;letter-spacing:0;text-transform:none;color:var(--dim);font-family:Montserrat,system-ui,sans-serif}
+.tf .eye:hover{color:var(--ink)}
+.tf .hint{font-size:12px;color:var(--dim);font-weight:400;margin-top:8px}
 .tf .err{font-size:12px}
-.checkrow{font-size:13px;font-weight:400;gap:10px;margin:8px 0 20px}
-.checkrow .box{width:22px;height:22px;border-radius:6px;box-shadow:none}
-.auth-form .btn{min-height:52px;padding:12px 18px;border-radius:12px;font-size:15px;text-transform:none;letter-spacing:0;box-shadow:none}
-.auth-form .btn .cap{box-shadow:none;background:none}
-.auth-alt{margin-top:24px;font-size:13px;color:var(--dim);line-height:1.6}
-.auth-alt a,.checkrow a{color:var(--ink);border:0;text-decoration:underline;text-underline-offset:3px}
-.splitline{margin:24px 0 18px;font-size:10px;letter-spacing:.1em}
-.oauth{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
-.oauth button{min-height:46px;padding:10px 6px;gap:6px;font-size:12px;border-radius:10px;box-shadow:none}
-.demo-note{margin-top:20px;padding:0;border:0;background:none;font-size:12px;font-weight:400;line-height:1.6;overflow-wrap:anywhere}
-.demo-note b{color:var(--dim);font-weight:600}
+.tf.bad .inp{outline:2px solid #e57575;background:#121411}
+.tf.ok .inp{border:0}
 .strength{margin-top:-8px}
-#pwLabel{font-size:12px!important;line-height:1.5;margin:7px 0 18px!important}
-@media (max-width:1024px){
-  .auth{grid-template-columns:1fr;min-height:100svh}
-  .auth-brand{display:none}
-  .auth-form{padding:104px 24px 40px;padding-bottom:calc(40px + env(safe-area-inset-bottom))}
-}
-@media (max-width:480px){
-  .nav-min{padding-left:20px;padding-right:20px;min-height:68px}
+.strength i{height:4px;background:#1d201c}
+#pwLabel{font-size:12px!important;line-height:1.5;margin:8px 0 22px!important;color:var(--dim)!important}
+.checkrow{font-size:13px;font-weight:400;color:var(--dim);gap:12px;margin:4px 0 24px;line-height:1.6}
+.checkrow .box{width:22px;height:22px;border-radius:7px;border:0;background:#121411;box-shadow:none}
+.checkrow a,.auth-alt a{color:var(--ink);border:0;padding:0;text-decoration:underline;text-underline-offset:3px}
+.auth-submit{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;min-height:52px;border:0;border-radius:999px;padding:14px 24px;background:var(--lime);color:#fff;font:600 14px Montserrat,system-ui,sans-serif;cursor:pointer;transition:background .2s}
+.auth-submit:hover{background:#3311cc}
+.auth-submit:focus-visible{outline:2px solid #8875e8;outline-offset:3px}
+.splitline{margin:28px 0 16px;font-size:12px;font-weight:500;letter-spacing:0;text-transform:none;color:var(--dim)}
+.splitline::before,.splitline::after{background:#1d201c}
+.oauth{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.oauth button{min-height:48px;padding:10px 8px;gap:8px;border:0;border-radius:999px;background:#121411;color:var(--ink);font:500 13px Montserrat,system-ui,sans-serif;box-shadow:none}
+.oauth button:hover{background:#1a1d19;color:#fff;border:0}
+.oauth button .ic{color:var(--dim)}
+.demo-note{margin-top:24px;padding:0;border:0;background:none;font-size:12px;font-weight:400;color:var(--dim);line-height:1.7;text-align:center;overflow-wrap:anywhere}
+.demo-note b{color:var(--ink);font-weight:500;font-family:Montserrat,system-ui,sans-serif}
+.auth-alt{margin-top:20px;font-size:13px;color:var(--dim);line-height:1.6}
+.ft-modal-title{font-family:Archivo,system-ui,sans-serif;font-variation-settings:'wdth' 100,'wght' 700;font-size:24px;text-transform:none;letter-spacing:-.025em}
+.ft-modal-desc{color:var(--dim);line-height:1.6}
+@media (max-width:600px){
+  .nav-min{min-height:68px;padding:12px 20px;padding-top:calc(12px + env(safe-area-inset-top))}
+  .nav-min .logo{font-size:23px}
   .nav-min a.back{min-width:44px;justify-content:center}
   .nav-min a.back .ic{width:18px;height:18px}
-  .auth-form{padding-top:calc(96px + env(safe-area-inset-top));padding-left:20px;padding-right:20px}
-  .auth-form h2{font-size:28px}
-  .auth-sub{margin:10px 0 24px;font-size:13px}
+  .auth-page{padding:100px 20px 40px;padding-bottom:calc(40px + env(safe-area-inset-bottom))}
+  .auth-intro{text-align:left;margin-bottom:28px}
+  .auth-intro h1{font-size:30px}
+  .auth-intro p{font-size:13px;margin-left:0}
+  .oauth button{font-size:12px;gap:6px;padding:10px 4px}
+  .demo-note,.auth-alt{text-align:left}
 }
 """
 
@@ -183,38 +194,14 @@ SIGNUP_PAGE_CSS = AUTH_PAGE_CSS
 # ══════════════════════════════════════════════════════════════════
 # SIGN IN
 # ══════════════════════════════════════════════════════════════════
-PROOF = [("shield", "Your shares never leave your wallet",
-          "Ownership is validated on every club lock. Nothing is lent, shorted or synthesised behind you."),
-         ("clock", "Settlement on the final whistle",
-          "Rounds close on a published clock. Points convert to $FTR and land in the same balance you staked from."),
-         ("rank", "One club, one league table",
-          "Every Dream Club is ranked against the same 1,420 syndicates. No hidden lobbies, no private pools.")]
-
-
-def brand_panel(pill, title, lede, rows=PROOF):
-    out = [T('<div class="auth-brand"><div><span class="pill" data-reveal>@@ @@</span>'
-             '<h1 data-reveal>@@</h1><p class="lede" data-reveal>@@</p><div class="proof" data-reveal>',
-             ic("ball", "ic"), pill, title, lede)]
-    for icon, t, d in rows:
-        out.append(T('<div class="pr"><span class="ibox">@@</span><div><b>@@</b>@@</div></div>',
-                     ic(icon, "ic"), t, d))
-    out.append('</div></div></div>')
-    return "".join(out)
-
-
-si = [T('<main class="auth">@@<div class="auth-form"><div class="inner" data-reveal>',
-        brand_panel("Manager access", "Back to<br>the desk",
-                    "Your balance, your holdings and your teamsheet are exactly where you left them. "
-                    "Gameweek 28 locks in three hours."))]
-si.append('<h2>Sign in</h2><p class="auth-sub">Use the email on your Fantrade account. '
-          'Sessions stay open for 30 days unless you sign out.</p>')
+si = ['<main class="auth-page"><header class="auth-intro"><h1>Welcome back.</h1>'
+      '<p>Sign in to your players, your club and your next matchday.</p></header>']
 si.append('<form id="signinForm" novalidate>')
 si.append(tf("Email", "email", "email", "you@example.com", "", "", "Enter a valid email address.", extra='autocomplete="email" inputmode="email" autocapitalize="none"'))
 si.append(tf("Password", "password", "password", "••••••••••", "lock", "",
              "Password must be at least 8 characters.", extra='autocomplete="current-password"', link="Forgot?"))
 si.append(check("remember", "Keep me signed in on this device", True))
-si.append('<button class="btn btn-lime" type="submit" style="width:100%;justify-content:space-between">'
-          'Sign in' + ARROW + '</button>')
+si.append('<button class="auth-submit" type="submit">Sign in</button>')
 si.append('</form>')
 si.append('<div class="splitline">Or continue with</div>')
 si.append(T('<div class="oauth"><button type="button" data-provider="Passkey">@@ Passkey</button>'
@@ -224,7 +211,7 @@ si.append(T('<div class="oauth"><button type="button" data-provider="Passkey">@@
 si.append('<div class="demo-note">Prototype build — any valid email and an 8-character password will sign you in. '
           'Try <b>alex.morgan@fantrade.app</b> with <b>fantrade2026</b>.</div>')
 si.append('<div class="auth-alt">New to Fantrade? <a href="signup.html">Create an account</a></div>')
-si.append('</div></div></main>')
+si.append('</main>')
 
 SIGNIN_JS = AUTH_JS + r"""
 var sf = document.getElementById('signinForm');
@@ -251,19 +238,8 @@ page("signin.html", "Sign in — Fantrade", "".join(si), SIGNIN_JS, css=AUTH_PAG
 # ══════════════════════════════════════════════════════════════════
 # SIGN UP
 # ══════════════════════════════════════════════════════════════════
-SU_PROOF = [("coin", "Start with 50,000 $FTR",
-             "Every new manager gets a prototype balance to buy their first shares with. No card, no deposit."),
-            ("formation", "Build a club in eight steps",
-             "Name it, pick a shape, fill eleven positions from assets you actually own, then put it on the pitch."),
-            ("trophy", "Play your first matchday free",
-             "Your opening FanPlay entry is covered. After that, stakes come out of the same wallet as everything else.")]
-
-su = [T('<main class="auth">@@<div class="auth-form"><div class="inner" data-reveal>',
-        brand_panel("Open an account", "Own your<br>first player",
-                    "Three minutes to an account, a funded wallet and eleven names on a teamsheet.",
-                    SU_PROOF))]
-su.append('<h2>Create account</h2><p class="auth-sub">One account covers the exchange, your Dream Club '
-          'and every FanPlay round.</p>')
+su = ['<main class="auth-page"><header class="auth-intro"><h1>Create your account.</h1>'
+      '<p>One account for the exchange, your Dream Club and every FanPlay round.</p></header>']
 su.append('<form id="signupForm" novalidate>')
 su.append(tf("Full name", "name", "text", "Alex Morgan", "user", "", "Tell us what to call you.", extra='autocomplete="name"'))
 su.append(tf("Email", "email", "email", "you@example.com", "", "", "Enter a valid email address.", extra='autocomplete="email" inputmode="email" autocapitalize="none"'))
@@ -277,8 +253,7 @@ su.append(sel("Country of residence", "country", COUNTRIES, "flag",
               "Sets your tax export format and which leagues settle in your local window."))
 su.append(check("terms", 'I accept the <a href="#">Terms</a> and <a href="#">Responsible play</a> policy, '
                          'and I am 18 or over.'))
-su.append('<button class="btn btn-lime" type="submit" style="width:100%;justify-content:space-between">'
-          'Create account' + ARROW + '</button>')
+su.append('<button class="auth-submit" type="submit">Create account</button>')
 su.append('</form>')
 su.append('<div class="splitline">Or continue with</div>')
 su.append(T('<div class="oauth"><button type="button" data-provider="Passkey">@@ Passkey</button>'
@@ -286,7 +261,7 @@ su.append(T('<div class="oauth"><button type="button" data-provider="Passkey">@@
             '<button type="button" data-provider="Wallet">@@ Wallet</button></div>',
             ic("shield", "ic"), ic("crest", "ic"), ic("wallet", "ic")))
 su.append('<div class="auth-alt">Already have an account? <a href="signin.html">Sign in</a></div>')
-su.append('</div></div></main>')
+su.append('</main>')
 
 SIGNUP_JS = AUTH_JS + r"""
 var pw = fld('password'), meter = document.getElementById('pwMeter'), plab = document.getElementById('pwLabel');
