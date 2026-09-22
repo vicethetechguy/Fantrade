@@ -2190,11 +2190,49 @@ var FT = (function(){
     if(snap.holdings){
       var held = {};
       snap.holdings.forEach(function(h){
-        var prev = state.holdings[h.asset_id] || {};
+        var coach = h.kind === 'COACH';
         held[h.asset_id] = { n: h.name, shares: Number(h.shares), avg: Number(h.avg_cost),
-                             p: Number(h.price), c: h.kind === 'COACH', inClub: prev.inClub };
+                             p: Number(h.price), c: coach,
+                             // The slot travels with the account, so the side
+                             // you set on one device is the side on the next.
+                             inClub: h.slot || (coach ? 'COACH' : 'SUB') };
       });
       state.holdings = held;
+    }
+    if(snap.clubs && snap.clubs.length){
+      state.clubs = snap.clubs.map(function(c){
+        var prev = state.clubs.filter(function(x){ return x.id === c.id; })[0] || {};
+        return { id: c.id, name: c.name, stadium: c.stadium,
+                 colors: Array.isArray(c.colors) ? c.colors : (prev.colors || ['#1800ad', '#0f0075']),
+                 colorName: c.color_name, formation: c.formation,
+                 coach: c.coach || prev.coach || '$Arteta',
+                 division: c.division, fp: Number(c.season_fp) || 0,
+                 boost: Number(c.boost) || 0,
+                 // Rank and value are worked out from the whole field, not
+                 // from this row, so the board fills them in.
+                 rank: prev.rank || 0, value: prev.value || 0 };
+      });
+      var fielding = snap.clubs.filter(function(c){ return c.is_active; })[0];
+      state.activeClub = (fielding || snap.clubs[0]).id;
+      link(state);
+    }
+    if(snap.entries){
+      // Two kinds of entry read this list — a $FTR stake on a Dream Club and
+      // shares locked against a market — so a row carries both vocabularies.
+      state.fanplay.activeEntries = snap.entries.map(function(e){
+        var held = state.holdings[e.asset_id] || {};
+        return { id: e.id, mode: e.mode, clubId: e.club_id || '', target: e.target,
+                 tier: e.tier || '', mult: Number(e.multiplier) || 1,
+                 stake: Number(e.stake) || 0,
+                 stakedShares: Number(e.staked_shares) || 0,
+                 asset: e.asset_id ? { symbol: e.asset_id, name: held.n || e.asset_id } : null,
+                 match: e.match || null, market: e.market || null,
+                 selections: e.selections || [],
+                 totalFP: Number(e.scored_fp) || 0,
+                 projectedFP: Number(e.projected_fp) || 0,
+                 createdAt: e.created_at,
+                 status: 'Active in MD ' + ('0' + e.matchday).slice(-2) };
+      });
     }
     if(snap.transactions){
       state.transactions = snap.transactions.map(function(t){
@@ -2210,6 +2248,13 @@ var FT = (function(){
   function announce(){
     if(typeof FT !== 'undefined' && FT.syncUI) FT.syncUI();
     window.dispatchEvent(new CustomEvent('fantrade:statechange', { detail: state }));
+  }
+  /* Clubs made while offline carry a local id like 'c-1'; only a uuid means
+     the database has seen this one. */
+  function serverId(id){ return /^[0-9a-f]{8}-[0-9a-f]{4}-/i.test(String(id || '')) ? id : null; }
+  function clubArgs(c){
+    return { p_name: c.name, p_stadium: c.stadium, p_formation: c.formation,
+             p_colors: c.colors, p_color_name: c.colorName, p_coach: c.coach };
   }
   var pending = 0;
   function push(fn, args, onResult){
@@ -2442,10 +2487,49 @@ var FT = (function(){
         : state.club;
       if(!target) throw new Error("That club no longer exists.");
       Object.assign(target, clubData);
+      push('ft_save_club', Object.assign({ p_club: serverId(target.id) }, clubArgs(target)));
       save(state);
       FT.syncUI();
       window.dispatchEvent(new CustomEvent('fantrade:statechange', { detail: state }));
       return target;
+    },
+    /* FanPlay's other entry: shares locked against a market on one fixture.
+       The page keeps the detail in its own state; this is the part that moves
+       something, so it is the part the account has to know about. */
+    stakeShares: function(o){
+      push('ft_enter_fanplay_shares', { p_asset: o.asset, p_shares: o.shares,
+        p_match: o.match || null, p_market: o.market || null,
+        p_selections: o.selections || null, p_action_key: o.key || null });
+    },
+    /* Pulling out before the whistle: the shares come straight back. */
+    cancelEntry: function(id){
+      if(serverId(id)) push('ft_cancel_fanplay', { p_entry: id });
+    },
+    /* Where a holding lines up. 'SUB' benches it. */
+    setSlot: function(symbol, slot){
+      var h = state.holdings[symbol];
+      if(!h) throw new Error("You do not hold any " + symbol + ".");
+      h.inClub = slot;
+      push('ft_set_slot', { p_asset: symbol, p_slot: slot });
+      save(state);
+      FT.syncUI();
+      window.dispatchEvent(new CustomEvent('fantrade:statechange', { detail: state }));
+      return h;
+    },
+    /* The board, ranked across every manager. Resolves to null when the
+       account cannot be reached, and the page keeps its sample field. */
+    leaderboard: function(limit){
+      var db = window.FTDB; if(!db || !db.board) return Promise.resolve(null);
+      return db.board(limit || 50).then(function(board){
+        if(!board || !board.rows) return null;
+        // Your own rank comes back with it, so the strip agrees with the table.
+        (board.you || []).forEach(function(mine){
+          var club = state.clubs.filter(function(c){ return c.id === mine.id; })[0];
+          if(club){ club.rank = mine.position; club.value = Math.round(Number(mine.value) || 0); }
+        });
+        if((board.you || []).length){ save(state); FT.syncUI(); }
+        return board;
+      }).catch(function(){ return null; });
     },
     clubs: function(){ return state.clubs; },
     activeClubId: function(){ return state.activeClub; },
@@ -2476,6 +2560,7 @@ var FT = (function(){
       }, clubData, { name: name });
       state.clubs.push(club);
       state.activeClub = club.id;
+      push('ft_create_club', Object.assign(clubArgs(club), { p_division: club.division }));
       link(state);
       save(state);
       FT.syncUI();
@@ -2487,6 +2572,7 @@ var FT = (function(){
         throw new Error("That club no longer exists.");
       }
       state.activeClub = id;
+      if(serverId(id)) push('ft_switch_club', { p_club: id });
       link(state);
       save(state);
       FT.syncUI();
@@ -2499,6 +2585,7 @@ var FT = (function(){
       if(staked.length){ throw new Error("That club has a live entry. It settles before you can delete it."); }
       state.clubs = state.clubs.filter(function(c){ return c.id !== id; });
       if(state.activeClub === id) state.activeClub = state.clubs[0].id;
+      if(serverId(id)) push('ft_delete_club', { p_club: id });
       link(state);
       save(state);
       FT.syncUI();
@@ -2522,9 +2609,12 @@ var FT = (function(){
           throw new Error(entryData.target + " already has a live entry this round.");
         }
       }
+      // The pages call these 'club' and 'solo'; the account calls them what
+      // the manager sees, so one vocabulary reaches the database.
+      var mode = /club/i.test(entryData.mode) ? 'Dream Club' : 'Individual';
       var newEntry = {
         id: "e-" + Date.now(),
-        mode: entryData.mode,
+        mode: mode,
         clubId: entryData.clubId || "",
         target: entryData.target,
         tier: entryData.tier,
@@ -2534,6 +2624,9 @@ var FT = (function(){
         status: "Active in MD 07"
       };
       state.fanplay.activeEntries.unshift(newEntry);
+      push('ft_enter_fanplay', { p_mode: mode, p_target: entryData.target,
+        p_tier: entryData.tier, p_multiplier: entryData.mult, p_stake: stake,
+        p_projected_fp: entryData.projectedFP, p_club: serverId(entryData.clubId) });
       state.transactions.unshift({
         type: "STAKE",
         asset: "FanPlay MD 07 (" + entryData.tier + ")",
@@ -2647,7 +2740,15 @@ var FT = (function(){
 /* Signed in? The account is the source of truth, so take its snapshot as soon
    as the page is up, and again whenever the session changes. */
 (function(){
-  function sync(){ if(window.FT && FT.syncCloud) FT.syncCloud(); }
+  function sync(){
+    /* FT is a binding inside this page's own script, not a global — checking
+       window.FT here would silently never sync. */
+    if(typeof FT === 'undefined' || !FT.syncCloud) return;
+    FT.syncCloud();
+    // Rank and club value are the field's answer, not this account's, so they
+    // come from the board — which any page showing a rank is displaying.
+    if(FT.leaderboard && document.querySelector('[data-bind="rank"],[data-bind="clubvalue"]')) FT.leaderboard(50);
+  }
   if(window.FTDB){
     FTDB.ready().then(function(){ if(FTDB.signedIn()) sync(); });
     window.addEventListener('fantrade:auth', function(e){ if(e.detail) sync(); });

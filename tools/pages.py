@@ -565,7 +565,7 @@ function getFallbackOptions(asset, match, market){
 }
 
 function getLocalEligibleAssets(){
-  var s = (window.FT && typeof FT.getState === 'function') ? FT.getState() : null;
+  var s = (typeof FT !== 'undefined' && typeof FT.getState === 'function') ? FT.getState() : null;
   var teamMap = {
     '$Saka': 'Arsenal', '$Bruno': 'Manchester United', '$Haaland': 'Manchester City',
     '$Arteta': 'Arsenal', '$Mbappe': 'Real Madrid', '$Yamal': 'Barcelona',
@@ -1055,7 +1055,7 @@ function submitActivation(){
 
   function completeLocalActivation(id){
     var entryId = id || ('fp-' + Date.now());
-    var s = (window.FT && typeof FT.getState === 'function') ? FT.getState() : null;
+    var s = (typeof FT !== 'undefined' && typeof FT.getState === 'function') ? FT.getState() : null;
     if(s){
       s.fanplay = s.fanplay || { activeEntries: [] };
       s.fanplay.activeEntries = s.fanplay.activeEntries || [];
@@ -1077,6 +1077,19 @@ function submitActivation(){
       if(typeof FT.save === 'function') FT.save();
       if(typeof FT.syncUI === 'function') FT.syncUI();
       window.dispatchEvent(new CustomEvent('fantrade:statechange', { detail: s }));
+      // Lock the shares on the account too, keyed so a resubmit cannot lock
+      // a second set. Signed out or offline, this is simply a no-op.
+      if(typeof FT.stakeShares === 'function'){
+        FT.stakeShares({ asset: selAsset.symbol, shares: stakeShares,
+          match: { homeTeam: selMatch.homeTeam, awayTeam: selMatch.awayTeam,
+                   status: selMatch.status || 'SCHEDULED' },
+          market: { name: selMarket.name, tier: selMarket.tier || selMarket.id },
+          selections: selectedOpts.map(function(o){
+            return { optionLabel: o.label, evaluationResult: 'PENDING',
+                     successFP: o.successFP, failureFP: o.failureFP };
+          }),
+          key: idempotencyKey });
+      }
     }
     showToast('FanPlay position successfully activated! Shares locked.', 'success');
     document.getElementById('step7Msg').textContent = 'Successfully locked ' + stakeShares.toLocaleString() + ' ' + selAsset.symbol + ' shares. ID: ' + entryId;
@@ -1103,7 +1116,7 @@ window.submitActivation = submitActivation;
 
 function loadUserFanPlays(){
   function getLocalEntries(){
-    var s = (window.FT && typeof FT.getState === 'function') ? FT.getState() : null;
+    var s = (typeof FT !== 'undefined' && typeof FT.getState === 'function') ? FT.getState() : null;
     if(s && s.fanplay && s.fanplay.activeEntries){
       return s.fanplay.activeEntries.map(function(e){
         return {
@@ -1262,9 +1275,10 @@ function renderHistoryList(){
 
 function cancelFanPlay(id){
   if(!confirm('Are you sure you want to cancel this FanPlay position and unlock your shares?')) return;
-  var s = (window.FT && typeof FT.getState === 'function') ? FT.getState() : null;
+  var s = (typeof FT !== 'undefined' && typeof FT.getState === 'function') ? FT.getState() : null;
   if(s && s.fanplay && s.fanplay.activeEntries){
     s.fanplay.activeEntries = s.fanplay.activeEntries.filter(function(e){ return e.id !== id; });
+    if(typeof FT.cancelEntry === 'function') FT.cancelEntry(id);
     if(typeof FT.save === 'function') FT.save();
     if(typeof FT.syncUI === 'function') FT.syncUI();
     window.dispatchEvent(new CustomEvent('fantrade:statechange', { detail: s }));
@@ -1284,7 +1298,7 @@ function cancelFanPlay(id){
 }
 
 function settleFanPlay(id){
-  var s = (window.FT && typeof FT.getState === 'function') ? FT.getState() : null;
+  var s = (typeof FT !== 'undefined' && typeof FT.getState === 'function') ? FT.getState() : null;
   if(s && s.fanplay && s.fanplay.activeEntries){
     var idx = s.fanplay.activeEntries.findIndex(function(e){ return e.id === id; });
     if(idx !== -1){

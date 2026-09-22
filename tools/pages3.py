@@ -483,7 +483,10 @@ ob.append('</div></div><div class="step-pane" data-pane="3"><div class="ob-succe
           '<button class="ob-primary" id="obNext" type="button" hidden>Continue</button></div></main>')
 
 OB_JS = r"""
-document.querySelector('.nav-min .back').setAttribute('aria-label', 'Back to Fantrade');
+// The back link became a pill button; missing it used to throw here and stop
+// the rest of onboarding from ever running.
+var backBtn = document.querySelector('.nav-min .back-btn, .nav-min .back');
+if(backBtn) backBtn.setAttribute('aria-label', 'Back to Fantrade');
 var step = 0, PANES = document.querySelectorAll('.step-pane'), STEPS_N = PANES.length;
 var picked = null;
 function el(id){ return document.getElementById(id); }
@@ -1216,7 +1219,7 @@ LB2_CSS = """
 .lb2-list{display:flex;flex-direction:column}.lb2-row{display:grid;grid-template-columns:34px 48px minmax(0,1fr) auto;gap:10px;align-items:center;padding:13px 8px;border-bottom:1px solid rgba(255,255,255,.045);cursor:pointer;transition:background .2s,border-radius .2s;border-radius:12px}
 .lb2-row:hover{background:rgba(255,255,255,.04)}
 .lb2-rank{font-size:14px;color:var(--dim);text-align:center}.lb2-rank.medal{width:26px;height:31px;clip-path:polygon(0 0,100% 0,100% 72%,50% 100%,0 72%);display:grid;place-items:center;color:#160d02;font-weight:800;background:#f6c94c}.lb2-rank.silver{background:#c6cad2}.lb2-rank.bronze{background:#c17d48}
-.lb2-avatar{width:44px;height:44px;border-radius:50%;object-fit:cover;background:var(--panel-2)}.lb2-name{min-width:0}.lb2-name b{display:block;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.lb2-name span{display:block;color:var(--faint);font-size:11px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lb2-avatar{width:44px;height:44px;border-radius:50%;object-fit:cover;background:var(--panel-2)}.lb2-crest{display:grid;place-items:center;font:700 14px Montserrat,system-ui,sans-serif;color:#fff;letter-spacing:.02em}.lb2-row.you{background:rgba(24,0,173,.18)}.lb2-row.you .lb2-name b::after{content:'You';font-size:10px;font-weight:600;color:#fff;background:var(--lime);border-radius:5px;padding:2px 6px;margin-left:7px;vertical-align:2px}.lb2-name{min-width:0}.lb2-name b{display:block;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.lb2-name span{display:block;color:var(--faint);font-size:11px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .lb2-profit{text-align:right;color:var(--positive);font-size:15px;font-weight:600}.lb2-profit small{display:flex;justify-content:flex-end;margin-top:6px}.lb2-profit small img{width:20px;height:20px;border-radius:50%;object-fit:cover;margin-left:-5px;border:2px solid #05030d}
 @media(min-width:900px){.lb2-wrap{padding-top:10px}.lb2-club{flex-basis:200px}.lb2-tabs button{font-size:18px}}
 @media(max-width:360px){.lb2-wrap{padding-left:16px;padding-right:16px}.lb2-clubs{margin-left:-16px;margin-right:-16px;padding-left:16px;padding-right:16px}.lb2-row{grid-template-columns:28px 42px minmax(0,1fr) auto;gap:8px}.lb2-avatar{width:40px;height:40px}.lb2-profit{font-size:13px}}
@@ -1252,6 +1255,37 @@ for i, row in enumerate(BOARD):
 lb2.append('</div></div></main>')
 
 LB2_JS = ("var BOARD_DATA=[" + LB_ROWS + "];") + r"""
+/* The real field, when the account can be reached.
+
+   Every club that actually exists is listed here, ranked on season FP, with
+   your own row marked. The designed rows below it are a sample field: while
+   Fantrade is new they keep the board looking like a board, and they are
+   labelled as what they are rather than passed off as managers. */
+(function(){
+  var list = document.getElementById('lb2List');
+  if(!list || typeof FT === 'undefined' || !FT.leaderboard) return;
+  function esc(v){ return String(v == null ? '' : v).replace(/[&<>"]/g, function(ch){
+    return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[ch]; }); }
+  FT.leaderboard(50).then(function(board){
+    if(!board || !board.rows || !board.rows.length) return;
+    var html = board.rows.map(function(r){
+      var pos = r.position;
+      var medal = pos <= 3
+        ? '<span class="lb2-rank medal' + (pos === 2 ? ' silver' : (pos === 3 ? ' bronze' : '')) + '">' + pos + '</span>'
+        : '<span class="lb2-rank">' + pos + '.</span>';
+      var tint = (r.colors && r.colors[0]) || '#1800ad';
+      return '<div class="lb2-row' + (r.you ? ' you' : '') + '" role="button" tabindex="0" data-club-name="'
+        + esc(r.name) + '">' + medal
+        + '<span class="lb2-avatar lb2-crest" style="background:linear-gradient(160deg,' + esc(tint) + ',#050505)">'
+        + esc(initials(r.name)) + '</span>'
+        + '<div class="lb2-name"><b>' + esc(r.name) + '</b><span>' + esc(r.display_name)
+        + ' · @' + esc(r.handle) + '</span></div>'
+        + '<div class="lb2-profit">' + money(Math.round(r.season_fp)) + '<small>FP</small></div></div>';
+    }).join('');
+    list.insertAdjacentHTML('afterbegin', html
+      + '<div class="lb2-section-head" style="margin:22px 0 13px"><h2>Sample field</h2></div>');
+  });
+})();
 document.querySelectorAll('#lb2Ranges button').forEach(function(button){
   button.addEventListener('click', function(){
     document.querySelectorAll('#lb2Ranges button').forEach(function(item){ item.classList.remove('on'); });

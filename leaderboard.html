@@ -1618,7 +1618,7 @@ body.app .kc-item-row:hover{box-shadow:inset 3px 0 0 rgba(24,0,173,.42)}
 .lb2-list{display:flex;flex-direction:column}.lb2-row{display:grid;grid-template-columns:34px 48px minmax(0,1fr) auto;gap:10px;align-items:center;padding:13px 8px;border-bottom:1px solid rgba(255,255,255,.045);cursor:pointer;transition:background .2s,border-radius .2s;border-radius:12px}
 .lb2-row:hover{background:rgba(255,255,255,.04)}
 .lb2-rank{font-size:14px;color:var(--dim);text-align:center}.lb2-rank.medal{width:26px;height:31px;clip-path:polygon(0 0,100% 0,100% 72%,50% 100%,0 72%);display:grid;place-items:center;color:#160d02;font-weight:800;background:#f6c94c}.lb2-rank.silver{background:#c6cad2}.lb2-rank.bronze{background:#c17d48}
-.lb2-avatar{width:44px;height:44px;border-radius:50%;object-fit:cover;background:var(--panel-2)}.lb2-name{min-width:0}.lb2-name b{display:block;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.lb2-name span{display:block;color:var(--faint);font-size:11px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lb2-avatar{width:44px;height:44px;border-radius:50%;object-fit:cover;background:var(--panel-2)}.lb2-crest{display:grid;place-items:center;font:700 14px Montserrat,system-ui,sans-serif;color:#fff;letter-spacing:.02em}.lb2-row.you{background:rgba(24,0,173,.18)}.lb2-row.you .lb2-name b::after{content:'You';font-size:10px;font-weight:600;color:#fff;background:var(--lime);border-radius:5px;padding:2px 6px;margin-left:7px;vertical-align:2px}.lb2-name{min-width:0}.lb2-name b{display:block;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.lb2-name span{display:block;color:var(--faint);font-size:11px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .lb2-profit{text-align:right;color:var(--positive);font-size:15px;font-weight:600}.lb2-profit small{display:flex;justify-content:flex-end;margin-top:6px}.lb2-profit small img{width:20px;height:20px;border-radius:50%;object-fit:cover;margin-left:-5px;border:2px solid #05030d}
 @media(min-width:900px){.lb2-wrap{padding-top:10px}.lb2-club{flex-basis:200px}.lb2-tabs button{font-size:18px}}
 @media(max-width:360px){.lb2-wrap{padding-left:16px;padding-right:16px}.lb2-clubs{margin-left:-16px;margin-right:-16px;padding-left:16px;padding-right:16px}.lb2-row{grid-template-columns:28px 42px minmax(0,1fr) auto;gap:8px}.lb2-avatar{width:40px;height:40px}.lb2-profit{font-size:13px}}
@@ -2157,11 +2157,49 @@ var FT = (function(){
     if(snap.holdings){
       var held = {};
       snap.holdings.forEach(function(h){
-        var prev = state.holdings[h.asset_id] || {};
+        var coach = h.kind === 'COACH';
         held[h.asset_id] = { n: h.name, shares: Number(h.shares), avg: Number(h.avg_cost),
-                             p: Number(h.price), c: h.kind === 'COACH', inClub: prev.inClub };
+                             p: Number(h.price), c: coach,
+                             // The slot travels with the account, so the side
+                             // you set on one device is the side on the next.
+                             inClub: h.slot || (coach ? 'COACH' : 'SUB') };
       });
       state.holdings = held;
+    }
+    if(snap.clubs && snap.clubs.length){
+      state.clubs = snap.clubs.map(function(c){
+        var prev = state.clubs.filter(function(x){ return x.id === c.id; })[0] || {};
+        return { id: c.id, name: c.name, stadium: c.stadium,
+                 colors: Array.isArray(c.colors) ? c.colors : (prev.colors || ['#1800ad', '#0f0075']),
+                 colorName: c.color_name, formation: c.formation,
+                 coach: c.coach || prev.coach || '$Arteta',
+                 division: c.division, fp: Number(c.season_fp) || 0,
+                 boost: Number(c.boost) || 0,
+                 // Rank and value are worked out from the whole field, not
+                 // from this row, so the board fills them in.
+                 rank: prev.rank || 0, value: prev.value || 0 };
+      });
+      var fielding = snap.clubs.filter(function(c){ return c.is_active; })[0];
+      state.activeClub = (fielding || snap.clubs[0]).id;
+      link(state);
+    }
+    if(snap.entries){
+      // Two kinds of entry read this list — a $FTR stake on a Dream Club and
+      // shares locked against a market — so a row carries both vocabularies.
+      state.fanplay.activeEntries = snap.entries.map(function(e){
+        var held = state.holdings[e.asset_id] || {};
+        return { id: e.id, mode: e.mode, clubId: e.club_id || '', target: e.target,
+                 tier: e.tier || '', mult: Number(e.multiplier) || 1,
+                 stake: Number(e.stake) || 0,
+                 stakedShares: Number(e.staked_shares) || 0,
+                 asset: e.asset_id ? { symbol: e.asset_id, name: held.n || e.asset_id } : null,
+                 match: e.match || null, market: e.market || null,
+                 selections: e.selections || [],
+                 totalFP: Number(e.scored_fp) || 0,
+                 projectedFP: Number(e.projected_fp) || 0,
+                 createdAt: e.created_at,
+                 status: 'Active in MD ' + ('0' + e.matchday).slice(-2) };
+      });
     }
     if(snap.transactions){
       state.transactions = snap.transactions.map(function(t){
@@ -2177,6 +2215,13 @@ var FT = (function(){
   function announce(){
     if(typeof FT !== 'undefined' && FT.syncUI) FT.syncUI();
     window.dispatchEvent(new CustomEvent('fantrade:statechange', { detail: state }));
+  }
+  /* Clubs made while offline carry a local id like 'c-1'; only a uuid means
+     the database has seen this one. */
+  function serverId(id){ return /^[0-9a-f]{8}-[0-9a-f]{4}-/i.test(String(id || '')) ? id : null; }
+  function clubArgs(c){
+    return { p_name: c.name, p_stadium: c.stadium, p_formation: c.formation,
+             p_colors: c.colors, p_color_name: c.colorName, p_coach: c.coach };
   }
   var pending = 0;
   function push(fn, args, onResult){
@@ -2409,10 +2454,49 @@ var FT = (function(){
         : state.club;
       if(!target) throw new Error("That club no longer exists.");
       Object.assign(target, clubData);
+      push('ft_save_club', Object.assign({ p_club: serverId(target.id) }, clubArgs(target)));
       save(state);
       FT.syncUI();
       window.dispatchEvent(new CustomEvent('fantrade:statechange', { detail: state }));
       return target;
+    },
+    /* FanPlay's other entry: shares locked against a market on one fixture.
+       The page keeps the detail in its own state; this is the part that moves
+       something, so it is the part the account has to know about. */
+    stakeShares: function(o){
+      push('ft_enter_fanplay_shares', { p_asset: o.asset, p_shares: o.shares,
+        p_match: o.match || null, p_market: o.market || null,
+        p_selections: o.selections || null, p_action_key: o.key || null });
+    },
+    /* Pulling out before the whistle: the shares come straight back. */
+    cancelEntry: function(id){
+      if(serverId(id)) push('ft_cancel_fanplay', { p_entry: id });
+    },
+    /* Where a holding lines up. 'SUB' benches it. */
+    setSlot: function(symbol, slot){
+      var h = state.holdings[symbol];
+      if(!h) throw new Error("You do not hold any " + symbol + ".");
+      h.inClub = slot;
+      push('ft_set_slot', { p_asset: symbol, p_slot: slot });
+      save(state);
+      FT.syncUI();
+      window.dispatchEvent(new CustomEvent('fantrade:statechange', { detail: state }));
+      return h;
+    },
+    /* The board, ranked across every manager. Resolves to null when the
+       account cannot be reached, and the page keeps its sample field. */
+    leaderboard: function(limit){
+      var db = window.FTDB; if(!db || !db.board) return Promise.resolve(null);
+      return db.board(limit || 50).then(function(board){
+        if(!board || !board.rows) return null;
+        // Your own rank comes back with it, so the strip agrees with the table.
+        (board.you || []).forEach(function(mine){
+          var club = state.clubs.filter(function(c){ return c.id === mine.id; })[0];
+          if(club){ club.rank = mine.position; club.value = Math.round(Number(mine.value) || 0); }
+        });
+        if((board.you || []).length){ save(state); FT.syncUI(); }
+        return board;
+      }).catch(function(){ return null; });
     },
     clubs: function(){ return state.clubs; },
     activeClubId: function(){ return state.activeClub; },
@@ -2443,6 +2527,7 @@ var FT = (function(){
       }, clubData, { name: name });
       state.clubs.push(club);
       state.activeClub = club.id;
+      push('ft_create_club', Object.assign(clubArgs(club), { p_division: club.division }));
       link(state);
       save(state);
       FT.syncUI();
@@ -2454,6 +2539,7 @@ var FT = (function(){
         throw new Error("That club no longer exists.");
       }
       state.activeClub = id;
+      if(serverId(id)) push('ft_switch_club', { p_club: id });
       link(state);
       save(state);
       FT.syncUI();
@@ -2466,6 +2552,7 @@ var FT = (function(){
       if(staked.length){ throw new Error("That club has a live entry. It settles before you can delete it."); }
       state.clubs = state.clubs.filter(function(c){ return c.id !== id; });
       if(state.activeClub === id) state.activeClub = state.clubs[0].id;
+      if(serverId(id)) push('ft_delete_club', { p_club: id });
       link(state);
       save(state);
       FT.syncUI();
@@ -2489,9 +2576,12 @@ var FT = (function(){
           throw new Error(entryData.target + " already has a live entry this round.");
         }
       }
+      // The pages call these 'club' and 'solo'; the account calls them what
+      // the manager sees, so one vocabulary reaches the database.
+      var mode = /club/i.test(entryData.mode) ? 'Dream Club' : 'Individual';
       var newEntry = {
         id: "e-" + Date.now(),
-        mode: entryData.mode,
+        mode: mode,
         clubId: entryData.clubId || "",
         target: entryData.target,
         tier: entryData.tier,
@@ -2501,6 +2591,9 @@ var FT = (function(){
         status: "Active in MD 07"
       };
       state.fanplay.activeEntries.unshift(newEntry);
+      push('ft_enter_fanplay', { p_mode: mode, p_target: entryData.target,
+        p_tier: entryData.tier, p_multiplier: entryData.mult, p_stake: stake,
+        p_projected_fp: entryData.projectedFP, p_club: serverId(entryData.clubId) });
       state.transactions.unshift({
         type: "STAKE",
         asset: "FanPlay MD 07 (" + entryData.tier + ")",
@@ -2614,7 +2707,15 @@ var FT = (function(){
 /* Signed in? The account is the source of truth, so take its snapshot as soon
    as the page is up, and again whenever the session changes. */
 (function(){
-  function sync(){ if(window.FT && FT.syncCloud) FT.syncCloud(); }
+  function sync(){
+    /* FT is a binding inside this page's own script, not a global — checking
+       window.FT here would silently never sync. */
+    if(typeof FT === 'undefined' || !FT.syncCloud) return;
+    FT.syncCloud();
+    // Rank and club value are the field's answer, not this account's, so they
+    // come from the board — which any page showing a rank is displaying.
+    if(FT.leaderboard && document.querySelector('[data-bind="rank"],[data-bind="clubvalue"]')) FT.leaderboard(50);
+  }
   if(window.FTDB){
     FTDB.ready().then(function(){ if(FTDB.signedIn()) sync(); });
     window.addEventListener('fantrade:auth', function(e){ if(e.detail) sync(); });
@@ -2759,6 +2860,37 @@ document.querySelectorAll('.tgl[data-pref]').forEach(function(t){
 
 FT.syncUI();
 var BOARD_DATA=[{r:1,c:"Apex Titans FC",m:"@TacticalKlopp",h:48,v:612400,d:7.2,xi:["Mbappé 98","Haaland 97","Vinícius 95"],co:"$Pep · 4-3-3 Tiki-taka",b:18.5,fp:14890,y:34200,dv:"apex",cl:"#1800ad",you:false},{r:2,c:"Galactico Syndicate",m:"@ZidaneTactics",h:32,v:540100,d:5.6,xi:["Bellingham 96","Kane 95","Rodri 94"],co:"$DonCarlo · 4-3-1-2 Fluid",b:17.0,fp:13920,y:29800,dv:"apex",cl:"#F4F6F1",you:false},{r:3,c:"Arsenal Elite FC",m:"@GoonerBoss",h:112,v:495200,d:6.9,xi:["Saka 95","Ødegaard 94","Saliba 93"],co:"$Arteta · 4-3-3 Inverted",b:16.5,fp:13450,y:27100,dv:"apex",cl:"#FF5E8A",you:false},{r:4,c:"Bavarian Meta XI",m:"@KaiserTactics",h:19,v:462800,d:2.5,xi:["Musiala 94","Sané 91","Kimmich 93"],co:"$Alonso · 3-4-2-1 Dominance",b:14.0,fp:12890,y:23500,dv:"apex",cl:"#4DA6FF",you:false},{r:5,c:"Lombardia Capital",m:"@MilanoWhale",h:61,v:420500,d:-0.9,xi:["Lautaro 93","Barella 92","Bastoni 91"],co:"$Inzaghi · 3-5-2 Direct",b:13.5,fp:12110,y:21200,dv:"apex",cl:"#FF6A1F",you:false},{r:6,c:"Anfield Collective",m:"@KopLedger",h:88,v:398400,d:3.1,xi:["Salah 94","Van Dijk 92","Szoboszlai 89"],co:"$Slot · 4-3-3 High press",b:13.0,fp:11740,y:19900,dv:"apex",cl:"#FF5E5E",you:false},{r:7,c:"Seleção Futures",m:"@SambaStake",h:27,v:371900,d:4.4,xi:["Vinícius 95","Rodrygo 90","Éder 88"],co:"$Dorival · 4-2-3-1 Counter",b:12.5,fp:11020,y:18300,dv:"apex",cl:"#1800ad",you:false},{r:124,c:"Zero FC",m:"You · single-owner",h:1,v:245800,d:7.9,xi:["Bruno 90","Saka 95","Haaland 97"],co:"$Arteta · 4-3-3 High press",b:15.0,fp:8420,y:18400,dv:"apex",cl:"#1800ad",you:true},{r:151,c:"Rioja Rising",m:"@TempranilloFC",h:12,v:198200,d:1.4,xi:["Yamal 92","Pedri 91","Cubarsí 87"],co:"$Flick · 4-3-3 Youth",b:11.0,fp:7180,y:9400,dv:"contender",cl:"#FF6A1F",you:false},{r:188,c:"Naija Nine",m:"@LagosLedger",h:34,v:176500,d:9.8,xi:["Osimhen 91","Lookman 88","Iwobi 84"],co:"$Peseiro · 4-4-2 Wide",b:10.5,fp:6640,y:8800,dv:"contender",cl:"#4DA6FF",you:false},{r:214,c:"Porto Alegre XI",m:"@GauchoGains",h:8,v:154300,d:-2.2,xi:["Diogo 89","Vitinha 88","Pepê 85"],co:"$Amorim · 3-4-3 Press",b:9.5,fp:6020,y:7100,dv:"contender",cl:"#F4F6F1",you:false},{r:503,c:"Academy Origins",m:"@FirstTeamFund",h:5,v:84600,d:12.6,xi:["Yıldız 84","Endrick 83","Zaïre 82"],co:"$Motta · 4-2-3-1 Raw",b:7.0,fp:3910,y:3200,dv:"challenger",cl:"#FF5E8A",you:false},{r:612,c:"Sunday League Ltd",m:"@ParkPitchDAO",h:3,v:61200,d:5.5,xi:["Elanga 81","Mainoo 83","Hato 80"],co:"$Dyche · 4-4-2 Honest",b:6.5,fp:3140,y:2400,dv:"challenger",cl:"#1800ad",you:false}];
+/* The real field, when the account can be reached.
+
+   Every club that actually exists is listed here, ranked on season FP, with
+   your own row marked. The designed rows below it are a sample field: while
+   Fantrade is new they keep the board looking like a board, and they are
+   labelled as what they are rather than passed off as managers. */
+(function(){
+  var list = document.getElementById('lb2List');
+  if(!list || typeof FT === 'undefined' || !FT.leaderboard) return;
+  function esc(v){ return String(v == null ? '' : v).replace(/[&<>"]/g, function(ch){
+    return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[ch]; }); }
+  FT.leaderboard(50).then(function(board){
+    if(!board || !board.rows || !board.rows.length) return;
+    var html = board.rows.map(function(r){
+      var pos = r.position;
+      var medal = pos <= 3
+        ? '<span class="lb2-rank medal' + (pos === 2 ? ' silver' : (pos === 3 ? ' bronze' : '')) + '">' + pos + '</span>'
+        : '<span class="lb2-rank">' + pos + '.</span>';
+      var tint = (r.colors && r.colors[0]) || '#1800ad';
+      return '<div class="lb2-row' + (r.you ? ' you' : '') + '" role="button" tabindex="0" data-club-name="'
+        + esc(r.name) + '">' + medal
+        + '<span class="lb2-avatar lb2-crest" style="background:linear-gradient(160deg,' + esc(tint) + ',#050505)">'
+        + esc(initials(r.name)) + '</span>'
+        + '<div class="lb2-name"><b>' + esc(r.name) + '</b><span>' + esc(r.display_name)
+        + ' · @' + esc(r.handle) + '</span></div>'
+        + '<div class="lb2-profit">' + money(Math.round(r.season_fp)) + '<small>FP</small></div></div>';
+    }).join('');
+    list.insertAdjacentHTML('afterbegin', html
+      + '<div class="lb2-section-head" style="margin:22px 0 13px"><h2>Sample field</h2></div>');
+  });
+})();
 document.querySelectorAll('#lb2Ranges button').forEach(function(button){
   button.addEventListener('click', function(){
     document.querySelectorAll('#lb2Ranges button').forEach(function(item){ item.classList.remove('on'); });

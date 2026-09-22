@@ -104,6 +104,14 @@
       if (res.error) { console.warn('[Fantrade] snapshot failed:', res.error.message); return null; }
       return res.data;
     },
+    /* The board is the one thing a signed-out visitor may read. */
+    board: async function (limit) {
+      await load();
+      if (!client) return null;
+      var res = await client.rpc('ft_leaderboard', { p_limit: limit || 50 });
+      if (res.error) { console.warn('[Fantrade] leaderboard failed:', res.error.message); return null; }
+      return res.data;
+    },
     call: async function (fn, args) {
       await load();
       if (!client) throw new Error('Cannot reach the server right now.');

@@ -10,7 +10,7 @@ Project: `https://ajjwodnjcnmkzguospay.supabase.co`
 
 ## Run this once
 
-In the Supabase dashboard, open **SQL Editor** and run these three files in
+In the Supabase dashboard, open **SQL Editor** and run these four files in
 order, each in its own query:
 
 | # | File | What it does |
@@ -18,13 +18,16 @@ order, each in its own query:
 | 1 | `01_schema.sql` | Tables, row-level security, and the trigger that gives every new account a profile, a wallet and 50,000 $FTR |
 | 2 | `02_functions.sql` | The money functions (buy, sell, swap, convert, transfer, withdraw, profile) and who is allowed to call them |
 | 3 | `03_seed_assets.sql` | The 18 players and coaches the exchange lists |
+| 4 | `04_fanplay_clubs.sql` | Dream Clubs, FanPlay entries and the leaderboard |
 
 They are safe to re-run: the tables use `if not exists`, the functions are
-`create or replace`, and the seed upserts on the asset id.
+`create or replace`, and the seed upserts on the asset id. Re-run them in
+order, though, and re-run all four rather than one on its own — file 2 resets
+who may call what, and file 4 hands those rights back out.
 
 Check it worked: **Table Editor** should show `profiles`, `wallets`, `assets`,
-`holdings`, `transactions` and `payout_accounts`, with 18 rows in `assets` and
-a green **RLS enabled** badge on all six.
+`holdings`, `transactions`, `payout_accounts`, `clubs` and `fanplay_entries`,
+with 18 rows in `assets` and a green **RLS enabled** badge on all eight.
 
 ## Then turn on auth
 
@@ -58,12 +61,24 @@ any page. Nothing here needs it.
 
 ## What lives in the database, and what does not
 
-In the database now: accounts and profiles, the $FTR wallet, holdings, the
-transaction history, saved payout details (only the last four digits of an
-account number are ever stored) and the asset catalogue.
+In the database now: accounts and profiles, the $FTR wallet, holdings and the
+slot each one lines up in, the transaction history, saved payout details (only
+the last four digits of an account number are ever stored), the asset
+catalogue, Dream Clubs and live FanPlay entries.
 
-Still in the browser's own storage: FanPlay entries, Dream Clubs, the
-leaderboard and notification preferences. Those are the next slice.
+Still in the browser's own storage: notifications and the preference toggles.
+
+**Settlement is deliberately not in here.** Paying out a FanPlay entry decides
+who gets money, so a function the browser can call must never be able to do it.
+When matchdays start settling, that belongs in a scheduled job running as the
+service role and reading the result from outside. `04_fanplay_clubs.sql` grants
+nothing that could stand in for one.
+
+Clubs are readable only by their own manager, so the leaderboard cannot work by
+querying the table. It goes through `ft_leaderboard()`, which returns a fixed
+public set of columns — club name, manager handle, formation, season FP, club
+value — and no balance, holding or email. Until real clubs fill the board, the
+leaderboard page shows them above a clearly labelled sample field.
 
 ## When the database cannot be reached
 

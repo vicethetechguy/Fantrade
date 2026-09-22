@@ -39,7 +39,7 @@ begin
     'wallet', (select row_to_json(w) from (
         select balance, locked, season_earned, gbp_rate from public.wallets where user_id = uid) w),
     'holdings', coalesce((select json_agg(h) from (
-        select h.asset_id, h.shares, h.locked, h.avg_cost, a.name, a.kind, a.club, a.price
+        select h.asset_id, h.shares, h.locked, h.avg_cost, h.slot, a.name, a.kind, a.club, a.price
         from public.holdings h join public.assets a on a.id = h.asset_id
         where h.user_id = uid and h.shares > 0 order by h.shares * a.price desc) h), '[]'::json),
     'transactions', coalesce((select json_agg(t) from (
@@ -47,7 +47,17 @@ begin
         from public.transactions where user_id = uid
         order by created_at desc, id desc limit 60) t), '[]'::json),
     'payout', (select row_to_json(b) from (
-        select currency, holder, bank, account_last4 from public.payout_accounts where user_id = uid) b)
+        select currency, holder, bank, account_last4 from public.payout_accounts where user_id = uid) b),
+    'clubs', coalesce((select json_agg(c) from (
+        select id, name, stadium, colors, color_name, formation, coach,
+               division, season_fp, boost, is_active, created_at
+        from public.clubs where user_id = uid order by created_at) c), '[]'::json),
+    'entries', coalesce((select json_agg(e) from (
+        select id, club_id, mode, target, tier, multiplier, stake, asset_id,
+               staked_shares, match, market, selections,
+               projected_fp, matchday, status, scored_fp, payout, created_at
+        from public.fanplay_entries where user_id = uid and status = 'ACTIVE'
+        order by created_at desc) e), '[]'::json)
   );
 end;
 $$;
@@ -61,7 +71,9 @@ declare
   uid uuid := public.ft_require_user();
   a   public.assets%rowtype;
   gross numeric(20,2); fee numeric(20,2); total numeric(20,2);
-  bal numeric(20,2); held bigint; avg_cost numeric(12,4);
+  -- Named apart from the holdings columns: a plpgsql variable sharing a column
+  -- name makes `returning shares, avg_cost` ambiguous, and Postgres refuses it.
+  bal numeric(20,2); new_held bigint; new_avg numeric(12,4);
 begin
   if p_shares is null or p_shares <= 0 then raise exception 'Enter a whole number of shares, one or more'; end if;
   select * into a from public.assets where id = p_asset and is_active for update;
@@ -83,7 +95,7 @@ begin
                          / (public.holdings.shares + p_shares), 4),
         shares = public.holdings.shares + p_shares,
         updated_at = now()
-  returning shares, avg_cost into held, avg_cost;
+  returning public.holdings.shares, public.holdings.avg_cost into new_held, new_avg;
 
   update public.assets set circulating = least(total_shares, circulating + p_shares), updated_at = now() where id = p_asset;
 
@@ -91,7 +103,7 @@ begin
   values (uid, 'BUY', p_asset, 'Bought shares', p_shares, a.price, total, fee, bal);
 
   return json_build_object('asset', p_asset, 'shares', p_shares, 'price', a.price,
-                           'fee', fee, 'total', total, 'balance', bal, 'held', held, 'avg_cost', avg_cost);
+                           'fee', fee, 'total', total, 'balance', bal, 'held', new_held, 'avg_cost', new_avg);
 end;
 $$;
 
