@@ -23,8 +23,8 @@ body.app.calm .nav-island.topbar .logo .brand-logo-img{width:28px!important;heig
 body.app.calm .nav-island.topbar #navBell,body.app.calm .nav-profile-btn{border:0!important;background:#121411!important;border-radius:50%!important;min-width:40px;min-height:40px}
 body.app.calm .nav-profile-btn .nav-avatar-img{background:var(--lime)!important}
 body.app.calm .taskbar{border:0!important;background:rgba(24,26,23,.96)!important;box-shadow:0 8px 28px rgba(0,0,0,.25)!important}
-body.app.calm .taskbar a{color:var(--faint)!important}
-body.app.calm .taskbar a.on{background:#2c3029!important;color:white!important}
+body.app.calm .taskbar a{color:#d8d6e0!important}
+body.app.calm .taskbar a.on{background:var(--lime)!important;color:#fff!important}
 /* No nested card outlines: sections are separated by space. */
 body.app.calm .kc-home-bal-card,body.app.calm .kc-assets-card,body.app.calm .kc-alloc-card,body.app.calm .kc-group-box,body.app.calm .fp-panel,body.app.calm .profile-performance,body.app.calm .profile-summary div{border:0!important;background:transparent!important;border-radius:0!important;box-shadow:none!important;padding:0!important}
 body.app.calm .kc-assets-card::before{display:none}
@@ -216,7 +216,7 @@ body.app.calm .btn{border:0!important;box-shadow:none!important;border-radius:99
  body.app.calm .profile-identity h2{font-size:22px}
 }
 
-body.app.calm .taskbar a[data-tab="fanplay"].on .tb-icon-box{background:var(--lime)!important;outline:2px solid #fff;outline-offset:2px}
+body.app.calm .taskbar a[data-tab="fanplay"].on .tb-icon-box{background:var(--lime)!important}
 body.app.calm .fp-load-state{grid-column:1/-1;padding:28px 0;color:var(--dim);font-size:13px;line-height:1.7}
 body.app.calm .fp-load-state p{margin:0 0 20px}
 body.app.calm .fp-breakdown-row b{text-align:right;min-width:0;overflow-wrap:anywhere}
@@ -257,3 +257,10 @@ body.app.calm .wal-empty{display:flex;flex-direction:column;align-items:center;g
 body.app.calm .wal-empty b{color:var(--ink);font-size:17px}
 body.app.calm .wal-empty .app-primary{margin-top:16px}
 body.app.calm .kc-holdings-list[hidden]{display:none!important}
+/* Taskbar: plain white icons; the page you are on turns brand blue. The FanPlay
+   logo sits bare, and gets its blue circle only when FanPlay is open. */
+body.app.calm .taskbar a:hover:not(.on){background:rgba(255,255,255,.06)!important;color:#fff!important}
+body.app.calm .taskbar a[data-tab="fanplay"] .tb-icon-box{background:transparent!important}
+body.app.calm .taskbar a[data-tab="fanplay"].on{background:transparent!important}
+body.app.calm .taskbar a[data-tab="fanplay"]:hover:not(.on){background:transparent!important}
+body.app.calm .taskbar a[data-tab="fanplay"]:hover:not(.on) .tb-icon-box{background:rgba(255,255,255,.08)!important}
