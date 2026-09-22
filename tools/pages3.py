@@ -680,9 +680,49 @@ da = ['<main><div class="kc-home-wrap home-layout">', tab_intro('Home'),
       '<div class="kc-bal-sub" id="homeBalSub">—</div><div class="kc-bal-actions">']
 for label, href, icon in [('Deposit','buy.html','coin'),('Transfer','send.html','send'),('FanPlay','fanplay.html','ball'),('Clubs','clubs.html','formation')]:
     da.append('<a class="kc-act-circle" href="'+href+'"><div class="kc-act-ico">'+ic(icon,'ic')+'</div><span>'+label+'</span></a>')
-da.append('</div></section><section class="home-next"><h2>Put your football IQ into play.</h2>'
-          '<p>Choose a player you own, pick a match and make your predictions. FanPlay guides you through each step.</p>'
-          '<a class="cta-elevated" href="fanplay.html">Explore FanPlay</a></section>'
+HOME_CARDS = [
+    # (icon, eyebrow, title, copy, stats [(label, value html)], cta label, href)
+    ("ball", "FanPlay", "Put your football IQ into play.",
+     "Choose a player you own, pick a match and make your predictions. FanPlay guides you through each step.",
+     [("Active entries", '<span data-home="entries">0</span>'), ("Matchday", "MD 07")],
+     "Explore FanPlay", "fanplay.html"),
+    ("formation", "Dream Club", "Build a squad worth backing.",
+     "Pick a shape, field eleven players you own and send the whole club into FanPlay for a boost.",
+     [("Your club", '<span data-bind="club">Zero FC</span>'), ("Formation", '<span data-bind="formation">4-3-3</span>')],
+     "Manage your club", "clubs.html"),
+    ("pulse", "Live board", "Follow every fixture live.",
+     "Scores, your players' involvement and FP as it lands, across every league you play in.",
+     [("Leagues", "4"), ("Fixtures today", "9")],
+     "Open live board", "liveboard.html"),
+    ("trophy", "Leaderboard", "Climb the table this season.",
+     "Every Dream Club is ranked on the same data. See who is setting the pace and where you stand.",
+     [("Your rank", '<span data-bind="rank">#124</span>'), ("Season FP", '<span data-bind="fp">8,420</span>')],
+     "See the leaderboard", "leaderboard.html"),
+    ("swap", "Swap", "Move between players in one step.",
+     "Trade shares in one player straight into another without selling to your wallet first.",
+     [("Swap fee", "0.4%"), ("Settles", "Instantly")],
+     "Swap players", "swap.html"),
+    ("coin", "Wallet", "Top up and keep playing.",
+     "Add $FTR to buy your next player or enter another round. Your balance is ready the moment it lands.",
+     [("Available", '<span data-bind="balance">128,450</span> $FTR'), ("Conversion", "£1 = 12.40 $FTR")],
+     "Add funds", "buy.html"),
+]
+
+def home_card(i, card):
+    icon, eyebrow, title, copy, stats, cta, href = card
+    stat_html = ''.join('<div><dt>%s</dt><dd>%s</dd></div>' % (k, v) for k, v in stats)
+    return ('<article class="home-card" id="homeCard%d" aria-roledescription="slide" aria-label="%d of %d: %s">'
+            '<div class="home-card-top"><span class="home-card-icon">%s</span><span class="home-card-eyebrow">%s</span></div>'
+            '<h2>%s</h2><p>%s</p><dl class="home-card-stats">%s</dl>'
+            '<a class="app-primary" href="%s">%s %s</a></article>'
+            % (i, i + 1, len(HOME_CARDS), eyebrow, ic(icon, 'ic'), eyebrow, title, copy, stat_html, href, cta, ic('arrow', 'ic')))
+
+da.append('</div></section><section class="home-next" aria-roledescription="carousel" aria-label="Things to do">'
+          '<div class="home-cards" id="homeCards" tabindex="0">' + ''.join(home_card(i, c) for i, c in enumerate(HOME_CARDS)) + '</div>'
+          '<div class="home-cards-nav"><div class="home-dots" id="homeDots">'
+          + ''.join('<button type="button" aria-label="Show card %d"%s></button>' % (i + 1, ' aria-current="true"' if i == 0 else '') for i in range(len(HOME_CARDS)))
+          + '</div><div class="home-arrows"><button type="button" id="homePrev" aria-label="Previous card">' + ic('arrow', 'ic') + '</button>'
+          '<button type="button" id="homeNext" aria-label="Next card">' + ic('arrow', 'ic') + '</button></div></div></section>'
           '<section class="home-market"><div class="app-section-head"><h2>Players to watch</h2><a href="exchange.html">View exchange</a></div>'
           '<div class="kc-home-searchbar-wrap"><div class="kc-home-search-box">'+ic('search','ic')+
           '<input type="search" id="homeSearchInput" placeholder="Search players or clubs" aria-label="Search player shares" autocomplete="off"></div></div>'
@@ -696,6 +736,25 @@ da.append('</div></section><section class="home-next"><h2>Put your football IQ i
           '<small>Build your lineup from the players you own.</small></div><span style="margin-left:auto">→</span></a></div></main>')
 
 DASH_JS = r"""
+/* Home cards: native scroll-snap for the swipe, smooth scrollTo for dots and arrows. */
+(function(){
+  var track = document.getElementById('homeCards'); if(!track) return;
+  var cards = [].slice.call(track.children), dots = [].slice.call(document.querySelectorAll('#homeDots button'));
+  function current(){ var best = 0, dist = Infinity, left = track.getBoundingClientRect().left;
+    cards.forEach(function(c, i){ var d = Math.abs(c.getBoundingClientRect().left - left); if(d < dist){ dist = d; best = i; } }); return best; }
+  function go(i){ i = Math.max(0, Math.min(cards.length - 1, i));
+    track.scrollTo({ left: cards[i].offsetLeft - cards[0].offsetLeft, behavior: 'smooth' }); }
+  function sync(){ var i = current(); dots.forEach(function(d, k){ if(k === i) d.setAttribute('aria-current', 'true'); else d.removeAttribute('aria-current'); });
+    document.getElementById('homePrev').disabled = i === 0; document.getElementById('homeNext').disabled = i === cards.length - 1; }
+  var t; track.addEventListener('scroll', function(){ clearTimeout(t); t = setTimeout(sync, 60); }, { passive: true });
+  dots.forEach(function(d, k){ d.addEventListener('click', function(){ go(k); }); });
+  document.getElementById('homePrev').addEventListener('click', function(){ go(current() - 1); });
+  document.getElementById('homeNext').addEventListener('click', function(){ go(current() + 1); });
+  track.addEventListener('keydown', function(e){ if(e.key === 'ArrowRight'){ e.preventDefault(); go(current() + 1); } if(e.key === 'ArrowLeft'){ e.preventDefault(); go(current() - 1); } });
+  function entries(){ var n = (FT.getState().fanplay.activeEntries || []).length; document.querySelectorAll('[data-home="entries"]').forEach(function(el){ el.textContent = n; }); }
+  entries(); window.addEventListener('fantrade:statechange', entries); sync();
+})();
+
 (function(){
   // Countdown to Gameweek 28 lock
   var end = Date.now() + (3 * 3600 + 14 * 60 + 22) * 1000;

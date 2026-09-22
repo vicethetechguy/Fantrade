@@ -1798,9 +1798,14 @@ body.app .settings-card:hover{transform:none!important;border-color:rgba(24,0,17
 <button class="app-primary wallet-submit" type="submit">Review transfer</button></form><p class="wallet-status" id="walletStatus" role="status" aria-live="polite"></p><p class="wallet-note">Demo wallet. Transactions update your preview balance; no real funds move.</p>
 <section class="wallet-followup"><h2>Recent transfers</h2><div id="sendLog"></div>
 <a class="utility-back" href="activity.html">View all activity</a></section><dialog class="wallet-review" id="walletReview" aria-labelledby="reviewTitle">
-<h2 id="reviewTitle">Review transfer</h2><p id="reviewText"></p>
-<div class="wallet-actions"><button class="wallet-button" id="reviewCancel" type="button">Go back</button>
-<button class="app-primary" id="reviewConfirm" type="button">Confirm</button></div></dialog></div></div></main><script src="public/fantrade-api.js"></script><script>(function(){
+<div class="rv-head"><span class="rv-badge" id="reviewIcon" aria-hidden="true"></span>
+<div><p class="rv-eyebrow" id="reviewKind">Review</p><h2 id="reviewTitle">Review transfer</h2></div></div>
+<div class="rv-hero"><span class="rv-hero-label" id="reviewHeroLabel"></span>
+<div class="rv-amount"><b id="reviewAmount"></b> <small id="reviewUnit"></small></div><p class="rv-sub" id="reviewSub"></p></div>
+<dl class="rv-rows" id="reviewRows"></dl>
+<p class="rv-note" id="reviewText"></p>
+<div class="rv-actions"><button class="app-primary" id="reviewConfirm" type="button">Confirm</button>
+<button class="wallet-button" id="reviewCancel" type="button">Go back</button></div></dialog></div></div></main><script src="public/fantrade-api.js"></script><script>(function(){
 // ── candlesticks ─────────────────────────────────────────────
 // Builds OHLC bars from a deterministic walk so a given asset always
 // draws the same chart, then renders wicks + bodies + a volume strip.
@@ -2651,7 +2656,18 @@ function status(message,error){el('walletStatus').textContent=message;el('wallet
 function syncBal(){if(el('wBal'))el('wBal').textContent=fmt(FT.getState().wallet.balance);}
 syncBal();window.addEventListener('fantrade:statechange',syncBal);
 var pendingAction=null;
-function review(title,text,action){el('reviewTitle').textContent=title;el('reviewText').textContent=text;pendingAction=action;el('reviewConfirm').disabled=false;el('walletReview').showModal();el('reviewCancel').focus();}
+/* One premium review card for every wallet action: what it is, the headline
+   amount, every line that makes it up, and what happens next. */
+function review(o,text,action){
+  if(typeof o!=='object')o={title:o,rows:String(text).split('\n').map(function(l){var i=l.indexOf(':');return i>0?[l.slice(0,i),l.slice(i+1).trim()]:[l,''];}),action:action};
+  el('reviewKind').textContent=o.kind||'Review';el('reviewTitle').textContent=o.title;
+  el('reviewIcon').innerHTML='<svg class="ic" aria-hidden="true"><use href="#i-'+(o.icon||'receipt')+'"/></svg>';
+  el('reviewHeroLabel').textContent=o.heroLabel||'';el('reviewAmount').textContent=o.amount||'';el('reviewUnit').textContent=o.unit||'';
+  el('reviewSub').textContent=o.sub||'';el('reviewAmount').parentNode.parentNode.hidden=!o.amount;
+  el('reviewRows').innerHTML=(o.rows||[]).map(function(r){return '<div'+(r[2]?' class="'+r[2]+'"':'')+'><dt>'+esc(r[0])+'</dt><dd>'+esc(r[1])+'</dd></div>';}).join('');
+  el('reviewText').textContent=o.note||'';el('reviewText').hidden=!o.note;
+  el('reviewConfirm').textContent=o.confirm||'Confirm';
+  pendingAction=o.action;el('reviewConfirm').disabled=false;el('walletReview').showModal();el('reviewCancel').focus();}
 if(el('walletReview')){
   el('reviewCancel').onclick=function(){pendingAction=null;el('walletReview').close();};
   el('walletReview').addEventListener('close',function(){pendingAction=null;});
@@ -2671,8 +2687,11 @@ el('sendForm').onsubmit=function(e){e.preventDefault();var to=el('sendTo').value
   if(to.length<3){status('Enter a recipient with at least 3 characters.',true);return;}
   if(!valid(n)){status('Enter a positive amount with up to two decimal places.',true);return;}
   if(n>FT.getState().wallet.balance){status('This amount is more than your available balance.',true);return;}
-  review('Review transfer',fmt(n)+' $FTR to '+to+'\nTransfer fee: free\nBalance after: '+fmt(FT.getState().wallet.balance-n)+' $FTR',function(){
-    FT.sendFtr(n,to,'send');el('sendAmt').value='';sendCalc();status('Sent '+fmt(n)+' $FTR to '+to+'.');});
+  var bal=FT.getState().wallet.balance;
+  review({kind:'Transfer',icon:'send',title:'Review transfer',heroLabel:'You send',amount:fmt(n),unit:'$FTR',sub:'to '+to,
+    rows:[['Recipient',to],['Transfer fee','Free'],['Arrives','Instantly'],['Balance now',fmt(bal)+' $FTR'],['Balance after',fmt(bal-n)+' $FTR','rv-total']],
+    note:'Transfers between managers can’t be reversed. Check the recipient before you confirm.',confirm:'Send '+fmt(n)+' $FTR',action:function(){
+    FT.sendFtr(n,to,'send');el('sendAmt').value='';sendCalc();status('Sent '+fmt(n)+' $FTR to '+to+'.');}});
 };
 function sendLog(){var rows=FT.getState().transactions.filter(t=>t.type==='SEND').slice(0,3);el('sendLog').innerHTML=rows.map(ledgerRow).join('')||'<p class="wallet-note">Your transfers will appear here after you send $FTR.</p>';sendCalc();}
 sendLog();window.addEventListener('fantrade:statechange',sendLog);

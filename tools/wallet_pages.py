@@ -9,9 +9,14 @@ def intro(title, description):
 
 
 REVIEW = '''<dialog class="wallet-review" id="walletReview" aria-labelledby="reviewTitle">
-<h2 id="reviewTitle">Review transfer</h2><p id="reviewText"></p>
-<div class="wallet-actions"><button class="wallet-button" id="reviewCancel" type="button">Go back</button>
-<button class="app-primary" id="reviewConfirm" type="button">Confirm</button></div></dialog>'''
+<div class="rv-head"><span class="rv-badge" id="reviewIcon" aria-hidden="true"></span>
+<div><p class="rv-eyebrow" id="reviewKind">Review</p><h2 id="reviewTitle">Review transfer</h2></div></div>
+<div class="rv-hero"><span class="rv-hero-label" id="reviewHeroLabel"></span>
+<div class="rv-amount"><b id="reviewAmount"></b> <small id="reviewUnit"></small></div><p class="rv-sub" id="reviewSub"></p></div>
+<dl class="rv-rows" id="reviewRows"></dl>
+<p class="rv-note" id="reviewText"></p>
+<div class="rv-actions"><button class="app-primary" id="reviewConfirm" type="button">Confirm</button>
+<button class="wallet-button" id="reviewCancel" type="button">Go back</button></div></dialog>'''
 
 
 def workflow(title, description, content, review=True):
@@ -118,7 +123,18 @@ function status(message,error){el('walletStatus').textContent=message;el('wallet
 function syncBal(){if(el('wBal'))el('wBal').textContent=fmt(FT.getState().wallet.balance);}
 syncBal();window.addEventListener('fantrade:statechange',syncBal);
 var pendingAction=null;
-function review(title,text,action){el('reviewTitle').textContent=title;el('reviewText').textContent=text;pendingAction=action;el('reviewConfirm').disabled=false;el('walletReview').showModal();el('reviewCancel').focus();}
+/* One premium review card for every wallet action: what it is, the headline
+   amount, every line that makes it up, and what happens next. */
+function review(o,text,action){
+  if(typeof o!=='object')o={title:o,rows:String(text).split('\n').map(function(l){var i=l.indexOf(':');return i>0?[l.slice(0,i),l.slice(i+1).trim()]:[l,''];}),action:action};
+  el('reviewKind').textContent=o.kind||'Review';el('reviewTitle').textContent=o.title;
+  el('reviewIcon').innerHTML='<svg class="ic" aria-hidden="true"><use href="#i-'+(o.icon||'receipt')+'"/></svg>';
+  el('reviewHeroLabel').textContent=o.heroLabel||'';el('reviewAmount').textContent=o.amount||'';el('reviewUnit').textContent=o.unit||'';
+  el('reviewSub').textContent=o.sub||'';el('reviewAmount').parentNode.parentNode.hidden=!o.amount;
+  el('reviewRows').innerHTML=(o.rows||[]).map(function(r){return '<div'+(r[2]?' class="'+r[2]+'"':'')+'><dt>'+esc(r[0])+'</dt><dd>'+esc(r[1])+'</dd></div>';}).join('');
+  el('reviewText').textContent=o.note||'';el('reviewText').hidden=!o.note;
+  el('reviewConfirm').textContent=o.confirm||'Confirm';
+  pendingAction=o.action;el('reviewConfirm').disabled=false;el('walletReview').showModal();el('reviewCancel').focus();}
 if(el('walletReview')){
   el('reviewCancel').onclick=function(){pendingAction=null;el('walletReview').close();};
   el('walletReview').addEventListener('close',function(){pendingAction=null;});
@@ -140,8 +156,11 @@ el('sendForm').onsubmit=function(e){e.preventDefault();var to=el('sendTo').value
   if(to.length<3){status('Enter a recipient with at least 3 characters.',true);return;}
   if(!valid(n)){status('Enter a positive amount with up to two decimal places.',true);return;}
   if(n>FT.getState().wallet.balance){status('This amount is more than your available balance.',true);return;}
-  review('Review transfer',fmt(n)+' $FTR to '+to+'\nTransfer fee: free\nBalance after: '+fmt(FT.getState().wallet.balance-n)+' $FTR',function(){
-    FT.sendFtr(n,to,'send');el('sendAmt').value='';sendCalc();status('Sent '+fmt(n)+' $FTR to '+to+'.');});
+  var bal=FT.getState().wallet.balance;
+  review({kind:'Transfer',icon:'send',title:'Review transfer',heroLabel:'You send',amount:fmt(n),unit:'$FTR',sub:'to '+to,
+    rows:[['Recipient',to],['Transfer fee','Free'],['Arrives','Instantly'],['Balance now',fmt(bal)+' $FTR'],['Balance after',fmt(bal-n)+' $FTR','rv-total']],
+    note:'Transfers between managers can’t be reversed. Check the recipient before you confirm.',confirm:'Send '+fmt(n)+' $FTR',action:function(){
+    FT.sendFtr(n,to,'send');el('sendAmt').value='';sendCalc();status('Sent '+fmt(n)+' $FTR to '+to+'.');}});
 };
 function sendLog(){var rows=FT.getState().transactions.filter(t=>t.type==='SEND').slice(0,3);el('sendLog').innerHTML=rows.map(ledgerRow).join('')||'<p class="wallet-note">Your transfers will appear here after you send $FTR.</p>';sendCalc();}
 sendLog();window.addEventListener('fantrade:statechange',sendLog);
@@ -187,8 +206,10 @@ function swapCalc(){var k=el('swapFrom').value,h=FT.getState().holdings[k];syncP
 }
 ['swapFrom','swapTo'].forEach(id=>el(id).addEventListener('change',swapCalc));el('swapQty').addEventListener('input',swapCalc);
 ['swapHalf','swapMax'].forEach(id=>el(id).onclick=function(){var h=FT.getState().holdings[el('swapFrom').value];if(h){el('swapQty').value=Math.floor(h.shares*(id==='swapHalf'?.5:1));swapCalc();}});
-el('swapForm').onsubmit=function(e){e.preventDefault();status('');try{var q=quote();review('Review swap',fmt(q.q)+' '+q.from+' → '+fmt(q.got)+' '+q.to+'\nFee: '+fmt(q.fee)+' $FTR\nChange to wallet: '+fmt(q.change)+' $FTR',function(){
-    var result=FT.swapAssets(q.from,q.to,q.q,prices);el('swapQty').value='';swapCalc();status('Received '+fmt(result.received)+' '+q.to+' shares.');});}catch(error){status(error.message,true);}};
+el('swapForm').onsubmit=function(e){e.preventDefault();status('');try{var q=quote(),worth=q.q*FT.getState().holdings[q.from].p;review({kind:'Swap',icon:'swap',title:'Review swap',heroLabel:'You receive',amount:fmt(q.got),unit:q.to+' shares',sub:'for '+fmt(q.q)+' '+q.from+' shares',
+    rows:[['You give',fmt(q.q)+' '+q.from],['Value of shares given',fmt(worth)+' $FTR'],['You receive',fmt(q.got)+' '+q.to],['Price per '+q.to+' share',fmt(prices[q.to])+' $FTR'],['Swap fee · 0.4%',fmt(q.fee)+' $FTR'],['Change returned to wallet',fmt(q.change)+' $FTR','rv-total']],
+    note:'Both sides settle together. If either side can’t complete, nothing changes.',confirm:'Swap shares',action:function(){
+    var result=FT.swapAssets(q.from,q.to,q.q,prices);el('swapQty').value='';swapCalc();status('Received '+fmt(result.received)+' '+q.to+' shares.');}});}catch(error){status(error.message,true);}};
 /* Player picker: the same card as Switch player on the player page. */
 var picking='from',picker=el('swapPicker');
 function clubOf(k){var a=ASSETS.filter(function(x){return x.t===k;})[0];return a&&a.club?a.club:(prices[k+':coach']?'Coach':'');}
@@ -219,7 +240,10 @@ function buyQuote(){var n=amount('fiat'),rate=FT.getState().wallet.gbpRate,gross
 function buyCalc(){var q=buyQuote();el('buyRate').textContent='£1 = '+fmt(FT.getState().wallet.gbpRate)+' $FTR';el('buyNet').textContent=valid(q.amount)?fmt(q.net):'—';el('buyFee').textContent=valid(q.amount)?fmt(q.fee)+' $FTR':'—';}
 el('fiat').addEventListener('input',buyCalc);document.querySelectorAll('[data-gbp]').forEach(b=>b.onclick=function(){el('fiat').value=b.dataset.gbp;buyCalc();});
 el('buyForm').onsubmit=function(e){e.preventDefault();status('');var q=buyQuote();if(!valid(q.amount)||!Number.isSafeInteger(q.net)||q.net<1){status('Enter an amount that converts to at least 1 $FTR.',true);return;}
-  review('Review demo conversion','£'+fmt(q.amount)+' → '+fmt(q.net)+' $FTR\nIncludes a '+fmt(q.fee)+' $FTR fee.\nNo card will be charged.',function(){var got=FT.convertGbp(q.amount);el('fiat').value='';buyCalc();status('Added '+fmt(got)+' $FTR to your demo wallet.');});
+  var bal=FT.getState().wallet.balance;
+  review({kind:'Add funds',icon:'coin',title:'Review conversion',heroLabel:'You receive',amount:fmt(q.net),unit:'$FTR',sub:'for £'+fmt(q.amount),
+    rows:[['You pay','£'+fmt(q.amount)],['Rate','£1 = '+fmt(FT.getState().wallet.gbpRate)+' $FTR'],['Conversion fee · 0.5%',fmt(q.fee)+' $FTR'],['Arrives','Instantly'],['Balance after',fmt(bal+q.net)+' $FTR','rv-total']],
+    note:'Demo conversion. No card is charged and no real money moves.',confirm:'Add '+fmt(q.net)+' $FTR',action:function(){var got=FT.convertGbp(q.amount);el('fiat').value='';buyCalc();status('Added '+fmt(got)+' $FTR to your demo wallet.');}});
 };buyCalc();
 '''
 
@@ -261,9 +285,12 @@ el('withdrawForm').onsubmit=function(e){e.preventDefault();status('');var q=wdQu
   if(cur==='NGN'&&!/^\d{10}$/.test(acct)){status('Enter a 10-digit NUBAN account number.',true);return;}
   if(cur!=='GBP'&&cur!=='NGN'&&!/^[A-Za-z0-9]{6,34}$/.test(acct)){status('Enter a valid account number or IBAN.',true);return;}
   var dest=bank+' ••'+acct.slice(-4)+' ('+cur+')';
-  review('Review withdrawal',fmt(q.n)+' $FTR to '+name+', '+dest+'\nFee: '+fmt(q.fee)+' $FTR\nTotal deducted: '+fmt(q.total)+' $FTR\nYou receive about '+SYMBOL[cur]+fmt(Math.round(q.out*100)/100)+' in 1–2 working days.',function(){
+  var bal=FT.getState().wallet.balance;
+  review({kind:'Withdrawal',icon:'bank',title:'Review withdrawal',heroLabel:'You receive about',amount:SYMBOL[cur]+fmt(Math.round(q.out*100)/100),unit:cur,sub:'to '+name+' · '+dest,
+    rows:[['Account holder',name],['Bank account',dest],['Amount',fmt(q.n)+' $FTR'],['Withdrawal fee',fmt(q.fee)+' $FTR'],['Total deducted',fmt(q.total)+' $FTR'],['Arrives','1–2 working days'],['Balance after',fmt(bal-q.total)+' $FTR','rv-total']],
+    note:'Demo withdrawal. Your preview balance updates; no real money is sent.',confirm:'Withdraw '+fmt(q.n)+' $FTR',action:function(){
     if(el('wdSave').checked)FT.setPref('payoutBank',{Currency:cur,Name:name,Bank:bank,Sort:el('wdSort').value.trim(),Acct:acct});
-    FT.sendFtr(q.n,dest,'withdraw');el('wdAmount').value='';wdCalc();status('Withdrawal of '+fmt(q.n)+' $FTR requested to '+dest+'.');});
+    FT.sendFtr(q.n,dest,'withdraw');el('wdAmount').value='';wdCalc();status('Withdrawal of '+fmt(q.n)+' $FTR requested to '+dest+'.');}});
 };
 function wdLog(){var rows=FT.getState().transactions.filter(t=>t.type==='WITHDRAW').slice(0,3);
   el('wdLog').innerHTML=rows.map(ledgerRow).join('')||'<p class="wallet-note">Your withdrawals will appear here.</p>';wdCalc();}

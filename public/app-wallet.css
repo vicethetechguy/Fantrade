@@ -131,3 +131,28 @@ body.app.calm .asset-search-row[aria-current=true]{background:#242821}
 .swap-pick-empty{flex:1;color:var(--dim);font-size:14px}
 .swap-pick-chev{width:20px;height:20px;color:var(--dim);flex:none}
 .swap-preview:empty{display:none}
+/* Review card: a premium summary before any wallet action is confirmed. */
+body.app.calm .wallet-review{width:min(520px,calc(100vw - 32px));padding:28px;border-radius:28px;background:radial-gradient(120% 60% at 50% 0%,rgba(24,0,173,.22),transparent 60%),#121411;box-shadow:0 30px 90px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.05)}
+.rv-head{display:flex;align-items:center;gap:14px;margin-bottom:24px}
+.rv-badge{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;background:#1800ad;color:#fff;flex:none;box-shadow:0 10px 24px rgba(24,0,173,.35)}
+.rv-badge .ic{width:22px;height:22px}
+.rv-eyebrow{margin:0 0 2px;font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#a596ed;white-space:normal}
+body.app.calm .wallet-review .rv-head h2{font-size:24px!important;margin:0}
+.rv-hero{padding:22px 20px;border-radius:20px;background:#0b0c0b;text-align:center;margin-bottom:20px}
+.rv-hero[hidden]{display:none}
+.rv-hero-label{display:block;font-size:12px;color:var(--dim);margin-bottom:8px}
+.rv-amount b{font-size:clamp(32px,9vw,40px);font-weight:700;letter-spacing:-.03em;color:#fff;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.rv-amount small{font-size:14px;color:var(--dim);font-weight:500;margin-left:4px}
+body.app.calm .wallet-review .rv-sub{margin:8px 0 0;font-size:13px;white-space:normal}
+.rv-rows{margin:0 0 18px;padding:0}
+.rv-rows>div{display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding:12px 2px;border-bottom:1px solid rgba(255,255,255,.06);font-size:14px}
+.rv-rows dt{color:var(--dim)}
+.rv-rows dd{margin:0;text-align:right;color:var(--ink);font-weight:500;font-variant-numeric:tabular-nums;overflow-wrap:anywhere;min-width:0}
+.rv-rows>.rv-total{border-bottom:0;padding-top:16px;font-size:15px}
+.rv-rows>.rv-total dt{color:var(--ink);font-weight:600}
+.rv-rows>.rv-total dd{font-weight:700;color:#fff}
+body.app.calm .wallet-review .rv-note{display:flex;gap:10px;margin:0 0 22px;padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.04);font-size:12.5px;line-height:1.6;white-space:normal}
+body.app.calm .wallet-review .rv-note[hidden]{display:none}
+.rv-actions{display:grid;gap:10px}
+body.app.calm .wallet-review .rv-actions .app-primary,body.app.calm .wallet-review .rv-actions .wallet-button{width:100%;min-height:52px;font-size:14px}
+.rv-rows>.rv-total dd{white-space:nowrap}

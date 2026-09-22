@@ -1806,9 +1806,14 @@ body.app .settings-card:hover{transform:none!important;border-color:rgba(24,0,17
 <button class="app-primary wallet-submit" type="submit">Review withdrawal</button></form><p class="wallet-status" id="walletStatus" role="status" aria-live="polite"></p>
 <p class="wallet-note">Demo withdrawal. Your preview balance updates; no real money is sent and no bank details leave this browser.</p>
 <section class="wallet-followup"><h2>Recent withdrawals</h2><div id="wdLog"></div></section><dialog class="wallet-review" id="walletReview" aria-labelledby="reviewTitle">
-<h2 id="reviewTitle">Review transfer</h2><p id="reviewText"></p>
-<div class="wallet-actions"><button class="wallet-button" id="reviewCancel" type="button">Go back</button>
-<button class="app-primary" id="reviewConfirm" type="button">Confirm</button></div></dialog></div></div></main><script src="public/fantrade-api.js"></script><script>(function(){
+<div class="rv-head"><span class="rv-badge" id="reviewIcon" aria-hidden="true"></span>
+<div><p class="rv-eyebrow" id="reviewKind">Review</p><h2 id="reviewTitle">Review transfer</h2></div></div>
+<div class="rv-hero"><span class="rv-hero-label" id="reviewHeroLabel"></span>
+<div class="rv-amount"><b id="reviewAmount"></b> <small id="reviewUnit"></small></div><p class="rv-sub" id="reviewSub"></p></div>
+<dl class="rv-rows" id="reviewRows"></dl>
+<p class="rv-note" id="reviewText"></p>
+<div class="rv-actions"><button class="app-primary" id="reviewConfirm" type="button">Confirm</button>
+<button class="wallet-button" id="reviewCancel" type="button">Go back</button></div></dialog></div></div></main><script src="public/fantrade-api.js"></script><script>(function(){
 // ── candlesticks ─────────────────────────────────────────────
 // Builds OHLC bars from a deterministic walk so a given asset always
 // draws the same chart, then renders wicks + bodies + a volume strip.
@@ -2659,7 +2664,18 @@ function status(message,error){el('walletStatus').textContent=message;el('wallet
 function syncBal(){if(el('wBal'))el('wBal').textContent=fmt(FT.getState().wallet.balance);}
 syncBal();window.addEventListener('fantrade:statechange',syncBal);
 var pendingAction=null;
-function review(title,text,action){el('reviewTitle').textContent=title;el('reviewText').textContent=text;pendingAction=action;el('reviewConfirm').disabled=false;el('walletReview').showModal();el('reviewCancel').focus();}
+/* One premium review card for every wallet action: what it is, the headline
+   amount, every line that makes it up, and what happens next. */
+function review(o,text,action){
+  if(typeof o!=='object')o={title:o,rows:String(text).split('\n').map(function(l){var i=l.indexOf(':');return i>0?[l.slice(0,i),l.slice(i+1).trim()]:[l,''];}),action:action};
+  el('reviewKind').textContent=o.kind||'Review';el('reviewTitle').textContent=o.title;
+  el('reviewIcon').innerHTML='<svg class="ic" aria-hidden="true"><use href="#i-'+(o.icon||'receipt')+'"/></svg>';
+  el('reviewHeroLabel').textContent=o.heroLabel||'';el('reviewAmount').textContent=o.amount||'';el('reviewUnit').textContent=o.unit||'';
+  el('reviewSub').textContent=o.sub||'';el('reviewAmount').parentNode.parentNode.hidden=!o.amount;
+  el('reviewRows').innerHTML=(o.rows||[]).map(function(r){return '<div'+(r[2]?' class="'+r[2]+'"':'')+'><dt>'+esc(r[0])+'</dt><dd>'+esc(r[1])+'</dd></div>';}).join('');
+  el('reviewText').textContent=o.note||'';el('reviewText').hidden=!o.note;
+  el('reviewConfirm').textContent=o.confirm||'Confirm';
+  pendingAction=o.action;el('reviewConfirm').disabled=false;el('walletReview').showModal();el('reviewCancel').focus();}
 if(el('walletReview')){
   el('reviewCancel').onclick=function(){pendingAction=null;el('walletReview').close();};
   el('walletReview').addEventListener('close',function(){pendingAction=null;});
@@ -2699,9 +2715,12 @@ el('withdrawForm').onsubmit=function(e){e.preventDefault();status('');var q=wdQu
   if(cur==='NGN'&&!/^\d{10}$/.test(acct)){status('Enter a 10-digit NUBAN account number.',true);return;}
   if(cur!=='GBP'&&cur!=='NGN'&&!/^[A-Za-z0-9]{6,34}$/.test(acct)){status('Enter a valid account number or IBAN.',true);return;}
   var dest=bank+' ••'+acct.slice(-4)+' ('+cur+')';
-  review('Review withdrawal',fmt(q.n)+' $FTR to '+name+', '+dest+'\nFee: '+fmt(q.fee)+' $FTR\nTotal deducted: '+fmt(q.total)+' $FTR\nYou receive about '+SYMBOL[cur]+fmt(Math.round(q.out*100)/100)+' in 1–2 working days.',function(){
+  var bal=FT.getState().wallet.balance;
+  review({kind:'Withdrawal',icon:'bank',title:'Review withdrawal',heroLabel:'You receive about',amount:SYMBOL[cur]+fmt(Math.round(q.out*100)/100),unit:cur,sub:'to '+name+' · '+dest,
+    rows:[['Account holder',name],['Bank account',dest],['Amount',fmt(q.n)+' $FTR'],['Withdrawal fee',fmt(q.fee)+' $FTR'],['Total deducted',fmt(q.total)+' $FTR'],['Arrives','1–2 working days'],['Balance after',fmt(bal-q.total)+' $FTR','rv-total']],
+    note:'Demo withdrawal. Your preview balance updates; no real money is sent.',confirm:'Withdraw '+fmt(q.n)+' $FTR',action:function(){
     if(el('wdSave').checked)FT.setPref('payoutBank',{Currency:cur,Name:name,Bank:bank,Sort:el('wdSort').value.trim(),Acct:acct});
-    FT.sendFtr(q.n,dest,'withdraw');el('wdAmount').value='';wdCalc();status('Withdrawal of '+fmt(q.n)+' $FTR requested to '+dest+'.');});
+    FT.sendFtr(q.n,dest,'withdraw');el('wdAmount').value='';wdCalc();status('Withdrawal of '+fmt(q.n)+' $FTR requested to '+dest+'.');}});
 };
 function wdLog(){var rows=FT.getState().transactions.filter(t=>t.type==='WITHDRAW').slice(0,3);
   el('wdLog').innerHTML=rows.map(ledgerRow).join('')||'<p class="wallet-note">Your withdrawals will appear here.</p>';wdCalc();}

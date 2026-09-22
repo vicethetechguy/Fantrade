@@ -1006,16 +1006,32 @@ function renderReview(){
   var maxSucFTR = (maxSucFP / 1000).toFixed(2);
   var maxFailFTR = (maxFailFP / 1000).toFixed(2);
 
-  container.innerHTML = '<div class="fp-breakdown-row"><span>Player / Coach Asset</span><b>' + selAsset.symbol + ' (' + selAsset.name + ')</b></div>'
-    + '<div class="fp-breakdown-row"><span>Fixture</span><b>' + selMatch.homeTeam + ' vs ' + selMatch.awayTeam + '</b></div>'
-    + '<div class="fp-breakdown-row"><span>Market Tier</span><b>' + selMarket.name + '</b></div>'
-    + '<div class="fp-breakdown-row"><span>Staked Player Shares</span><b style="color:var(--lime)">' + stakeShares.toLocaleString() + ' shares locked</b></div>'
-    + '<div class="fp-breakdown-row" style="border-top:1px solid rgba(255,255,255,.06);padding-top:8px"><span>Selected Predictions</span><b>' + selectedOpts.length + ' options</b></div>'
+  function signed(n, dp){ var v = dp ? Math.abs(n).toFixed(dp) : Math.abs(n).toLocaleString('en-US'); return (n > 0 ? '+' : n < 0 ? '−' : '') + v; }
+  var avail = selAsset.availableQuantity || 0;
+  var when = new Date(selMatch.scheduledAt || Date.now()).toLocaleDateString(undefined, { weekday:'short', day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' });
+  container.innerHTML = '<div class="fp-rv-card">'
+    + '<div class="fp-rv-top">' + playerPhoto(selAsset.symbol, selAsset.name, 'fp-rv-photo')
+    + '<div class="fp-rv-who"><b>' + selAsset.name + '</b><span>' + selAsset.symbol + ' · ' + (selAsset.team || selAsset.club || 'Pro') + '</span></div>'
+    + '<span class="fp-rv-tier">' + selMarket.name + '</span></div>'
+    + '<div class="fp-rv-fixture"><span>' + selMatch.competition + ' · Matchweek ' + (selMatch.matchweek || 1) + '</span>'
+    + '<b>' + selMatch.homeTeam + ' <i>vs</i> ' + selMatch.awayTeam + '</b><span>' + when + '</span></div>'
+    + '<div class="fp-rv-stats">'
+    + '<div><span>Shares locked</span><b>' + stakeShares.toLocaleString('en-US') + '</b><small>' + selAsset.symbol + '</small></div>'
+    + '<div><span>Fans Point range</span><b>' + signed(maxFailFP) + ' to ' + signed(maxSucFP) + '</b><small>FP</small></div>'
+    + '<div><span>Settles as</span><b>' + signed(maxFailFP / 1000, 2) + ' to ' + signed(maxSucFP / 1000, 2) + '</b><small>$FTR</small></div>'
+    + '</div>'
+    + '<div class="fp-rv-picks"><div class="fp-rv-label">Your predictions · ' + selectedOpts.length + '</div>'
     + selectedOpts.map(function(o){
-        return '<div style="display:flex;justify-content:space-between;font-size:11.5px;color:#CAD2C5;padding-left:10px">• ' + o.label + ' <span style="color:var(--lime)">+' + o.successFP + '</span> / <span style="color:#FF5E5E">' + o.failureFP + ' FP</span></div>';
+        return '<div class="fp-rv-pick"><span>' + o.label + '<small>' + (o.category || 'Performance') + ' · ' + (o.difficulty || 'Standard') + '</small></span>'
+          + '<span class="fp-rv-fp"><b class="up">+' + o.successFP + '</b><b class="down">' + o.failureFP + '</b><small>FP per share</small></span></div>';
       }).join('')
-    + '<div class="fp-breakdown-row" style="border-top:1px solid rgba(255,255,255,.06);padding-top:8px"><span>Potential Fans Point (FP) Range</span><b>' + maxFailFP.toLocaleString() + ' FP to +' + maxSucFP.toLocaleString() + ' FP</b></div>'
-    + '<div class="fp-breakdown-row"><span>Potential $FTR Settlement (1,000 FP = 1 $FTR)</span><b style="color:var(--amber)">' + (maxFailFTR > 0 ? '+' : '') + maxFailFTR + ' $FTR to +' + maxSucFTR + ' $FTR</b></div>';
+    + '</div>'
+    + '<dl class="fp-rv-rows">'
+    + '<div><dt>Available before lock</dt><dd>' + avail.toLocaleString('en-US') + ' shares</dd></div>'
+    + '<div><dt>Available after lock</dt><dd>' + Math.max(0, avail - stakeShares).toLocaleString('en-US') + ' shares</dd></div>'
+    + '<div><dt>Shares unlock</dt><dd>After final settlement</dd></div>'
+    + '<div><dt>Conversion</dt><dd>1,000 FP = 1 $FTR</dd></div>'
+    + '</dl></div>';
 }
 
 function submitActivation(){

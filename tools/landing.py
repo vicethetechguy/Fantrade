@@ -156,6 +156,21 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-off
   transform:translateY(-2px);color:#fff;
 }
 .action img{width:16px;height:16px}
+/* Explore FanPlay: a premium dark elevated panel — deep charcoal, polished, floating. */
+.action.action-premium{
+  width:280px;max-width:100%;height:72px;min-height:72px;padding:0 28px;border-radius:15px;
+  border:1px solid rgba(255,255,255,.08);
+  background:radial-gradient(120% 90% at 50% 0%,rgba(255,255,255,.06),rgba(255,255,255,0) 62%),linear-gradient(180deg,#312d39 0%,#292631 52%,#221f29 100%);
+  backdrop-filter:none;-webkit-backdrop-filter:none;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 28px 56px -14px rgba(0,0,0,.6),0 10px 24px -8px rgba(0,0,0,.35);
+  color:#fff;font-size:22px;font-weight:700;letter-spacing:-.01em;line-height:1;
+}
+.action.action-premium:hover{
+  transform:translateY(-2px);filter:brightness(1.06);border-color:rgba(255,255,255,.1);
+  background:radial-gradient(120% 90% at 50% 0%,rgba(255,255,255,.07),rgba(255,255,255,0) 62%),linear-gradient(180deg,#35313d 0%,#2c2934 52%,#25212c 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 34px 64px -14px rgba(0,0,0,.65),0 12px 28px -8px rgba(0,0,0,.4);
+}
+.action.action-premium:active{transform:translateY(0);filter:none}
 
 /* Transparent hero character — placed directly on the page background. */
 .hero-media-wrap{position:relative;width:min(920px,100%);margin:18px auto -18px;display:flex;justify-content:center;align-items:flex-end;isolation:isolate}
@@ -309,6 +324,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-off
   .hero-copy{font-size:14.5px;line-height:1.5}
   .actions{gap:10px;margin-top:22px}
   .action{min-width:0;width:100%;font-size:14px;min-height:46px;padding:12px 20px}
+  .action.action-premium{width:100%;height:64px;min-height:64px;font-size:20px}
   .hero-media-wrap{width:100%;margin:28px auto 8px}
   .character-img{width:92%;max-width:570px}
 
@@ -339,7 +355,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-off
 """
 
 def actions(primary='Start trading',secondary='Explore FanPlay'):
-    return f'<div class="actions"><a class="action primary" href="signup.html">{primary}</a><a class="action" href="fanplay.html">{secondary}<img src="assets/landing/arrow.svg" alt="" width="18" height="18"></a></div>'
+    return f'<div class="actions"><a class="action primary" href="signup.html">{primary}</a><a class="action action-premium" href="fanplay.html">{secondary}</a></div>'
 
 def hero_media():
     return '''<div class="hero-media-wrap" role="img" aria-label="Fantrade character checking the market on a phone">

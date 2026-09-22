@@ -2641,7 +2641,18 @@ function status(message,error){el('walletStatus').textContent=message;el('wallet
 function syncBal(){if(el('wBal'))el('wBal').textContent=fmt(FT.getState().wallet.balance);}
 syncBal();window.addEventListener('fantrade:statechange',syncBal);
 var pendingAction=null;
-function review(title,text,action){el('reviewTitle').textContent=title;el('reviewText').textContent=text;pendingAction=action;el('reviewConfirm').disabled=false;el('walletReview').showModal();el('reviewCancel').focus();}
+/* One premium review card for every wallet action: what it is, the headline
+   amount, every line that makes it up, and what happens next. */
+function review(o,text,action){
+  if(typeof o!=='object')o={title:o,rows:String(text).split('\n').map(function(l){var i=l.indexOf(':');return i>0?[l.slice(0,i),l.slice(i+1).trim()]:[l,''];}),action:action};
+  el('reviewKind').textContent=o.kind||'Review';el('reviewTitle').textContent=o.title;
+  el('reviewIcon').innerHTML='<svg class="ic" aria-hidden="true"><use href="#i-'+(o.icon||'receipt')+'"/></svg>';
+  el('reviewHeroLabel').textContent=o.heroLabel||'';el('reviewAmount').textContent=o.amount||'';el('reviewUnit').textContent=o.unit||'';
+  el('reviewSub').textContent=o.sub||'';el('reviewAmount').parentNode.parentNode.hidden=!o.amount;
+  el('reviewRows').innerHTML=(o.rows||[]).map(function(r){return '<div'+(r[2]?' class="'+r[2]+'"':'')+'><dt>'+esc(r[0])+'</dt><dd>'+esc(r[1])+'</dd></div>';}).join('');
+  el('reviewText').textContent=o.note||'';el('reviewText').hidden=!o.note;
+  el('reviewConfirm').textContent=o.confirm||'Confirm';
+  pendingAction=o.action;el('reviewConfirm').disabled=false;el('walletReview').showModal();el('reviewCancel').focus();}
 if(el('walletReview')){
   el('reviewCancel').onclick=function(){pendingAction=null;el('walletReview').close();};
   el('walletReview').addEventListener('close',function(){pendingAction=null;});
