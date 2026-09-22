@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import os, sys
 sys.path.insert(0, os.path.dirname(__file__))
-from app_design import apply_design, intro
+from app_design import apply_design, intro, tab_intro
 from common import head, atmosphere, nav, footer, ic, flag, JS_SHELL
 
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
@@ -111,7 +111,7 @@ EX_CSS = """
 .kc-pill.down{background:#FF3B47;color:#fff}
 """
 
-ex = [T('<main><div class="kc-ex-wrap">' + intro('Exchange', 'Find the players you believe in.') +
+ex = [T('<main><div class="kc-ex-wrap">' + tab_intro('Exchange') +
         '<!-- Top Search & Actions -->'
         '<div class="kc-top-bar">'
         '  <div class="kc-search-box">'
@@ -386,7 +386,7 @@ FP_CSS = """
 .fp-btn-next{flex:2;padding:14px 0;background:var(--lime);border:0;color:#fff;border-radius:12px;font-family:Archivo,sans-serif;font-variation-settings:'wdth' 115,'wght' 800;font-size:13.5px;text-transform:uppercase;cursor:pointer;text-align:center;box-shadow:0 0 20px rgba(24,0,173,.3)}
 """
 
-fp = ['<main><div class="kc-home-wrap fanplay-layout">', intro('FanPlay', 'Your players. Your predictions. Your matchday.', '<a class="app-text-link" href="liveboard.html">Live board</a>')]
+fp = ['<main><div class="kc-home-wrap fanplay-layout">', tab_intro('FanPlay', '<a class="app-text-link" href="liveboard.html">Live board</a>')]
 
 # 4 Key Metrics Dashboard Chips (§80)
 fp.append('<div class="fp-metrics-grid">'

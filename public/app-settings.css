@@ -1,0 +1,111 @@
+/* Settings follow the onboarding surfaces: open layout, filled fields, pill actions. */
+body.app.calm .kc-settings-wrap{width:100%;max-width:800px!important;margin:auto;padding:12px 28px 140px!important;box-sizing:border-box}
+body.app.calm .utility-back{display:inline-flex;align-items:center;gap:8px;color:var(--dim);font-size:13px;min-height:40px;margin-bottom:16px;text-decoration:none}
+body.app.calm .utility-back:hover{color:var(--ink)}
+body.app.calm .utility-back svg{transform:rotate(180deg);width:17px;height:17px}
+body.app.calm .settings-intro{margin-bottom:28px}
+
+/* Section switcher: the same pill tabs used across the app. */
+body.app.calm .settings-nav{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 36px;padding:4px 2px}
+body.app.calm .settings-nav::-webkit-scrollbar{display:none}
+body.app.calm .settings-nav a{flex:none;flex-direction:row;gap:8px;min-height:44px;padding:10px 16px;border:0;border-radius:999px;background:transparent;color:var(--dim);font-size:13px;font-weight:500;white-space:nowrap;box-shadow:none}
+body.app.calm .settings-nav a:hover{background:#111310;color:var(--ink)}
+body.app.calm .settings-nav a.on{background:var(--lime);color:#fff;box-shadow:none}
+body.app.calm .settings-nav a .ic{width:16px;height:16px}
+
+/* Settings index: plain rows, like the profile page. */
+body.app.calm .settings-hero{padding:0 0 12px}
+body.app.calm .settings-hero h2{font-size:21px!important;margin:0 0 6px}
+body.app.calm .settings-hero p{font-size:14px;color:var(--dim);margin:0}
+body.app.calm .settings-grid{grid-template-columns:1fr 1fr;gap:12px}
+body.app.calm .settings-card{gap:16px;padding:18px 16px;margin:0;border:0;border-radius:18px;background:#121411;box-shadow:none}
+body.app.calm .settings-card:hover{transform:none;background:#1a1d19}
+body.app.calm .settings-card b{font-size:15px;font-weight:600}
+body.app.calm .settings-card p{font-size:13px;color:var(--dim);line-height:1.5}
+body.app.calm .settings-card>.ic{width:16px;height:16px;color:var(--dim)}
+
+/* Icons sit on the same quiet circle everywhere. */
+body.app.calm .kc-settings-wrap .ibox{width:44px;height:44px;border:0;border-radius:50%;background:#121411;color:var(--ink)}
+body.app.calm .settings-card .ibox{background:#1b1e1a}
+body.app.calm .kc-settings-wrap .ibox.sm{width:40px;height:40px}
+body.app.calm .kc-settings-wrap .ibox.am{background:#121411;color:var(--ink)}
+
+/* Section content. */
+body.app.calm .sec-card>.core,body.app.calm .sec-card .core{background:transparent!important;border:0!important;padding:0!important;box-shadow:none!important}
+body.app.calm .sec-title{gap:16px;margin-bottom:28px}
+body.app.calm .sec-title h3{font-size:22px;margin:0;text-transform:none}
+body.app.calm .sec-title p{font-size:14px;color:var(--dim);font-weight:400;margin:6px 0 0;max-width:52ch}
+body.app.calm .kc-settings-wrap .tf{margin-bottom:22px}
+body.app.calm .kc-settings-wrap .tf label,body.app.calm .kc-settings-wrap .k-label{display:block;font-size:13px;font-weight:500;letter-spacing:0;text-transform:none;color:var(--dim);margin-bottom:8px}
+body.app.calm .kc-settings-wrap .tf .inp{padding:0 16px;min-height:54px}
+body.app.calm .kc-settings-wrap .tf .inp:focus-within{outline:2px solid #8875e8;outline-offset:2px}
+body.app.calm .kc-settings-wrap .tf .inp>.ic{color:#858c82}
+body.app.calm .kc-settings-wrap .tf input,body.app.calm .kc-settings-wrap .tf select{min-height:52px;color:var(--ink)}
+body.app.calm .kc-settings-wrap .tf input::placeholder{color:#858c82}
+body.app.calm .kc-settings-wrap .tf .hint{font-size:12px;color:var(--dim)}
+body.app.calm .kc-settings-wrap .tf .err{font-size:12px}
+body.app.calm .kc-settings-wrap .tf.bad .inp{outline:2px solid #e57575}
+body.app.calm .kc-settings-wrap .tf-row{gap:16px}
+
+/* Actions: indigo pill for the main one, dark pill for the rest. */
+body.app.calm .kc-settings-wrap .btn{min-height:48px;padding:12px 24px!important;font:600 13px Montserrat,system-ui,sans-serif;letter-spacing:0;text-transform:none;gap:0}
+body.app.calm .kc-settings-wrap .btn .cap{display:none}
+body.app.calm .kc-settings-wrap .btn-lime{background:var(--lime);color:#fff}
+body.app.calm .kc-settings-wrap .btn-lime:hover{background:#3311cc}
+body.app.calm .kc-settings-wrap .btn-glass{background:#121411;color:var(--ink)}
+body.app.calm .kc-settings-wrap .btn-glass:hover{background:#1a1d19}
+body.app.calm .kc-settings-wrap .btn-red{background:rgba(229,117,117,.14);color:#ffb3b3}
+body.app.calm .kc-settings-wrap .btn-red:hover{background:rgba(229,117,117,.22)}
+
+/* Toggles, formation and colour pickers. */
+body.app.calm .sw-row{gap:24px;padding:18px 0;border-bottom:0}
+body.app.calm .sw-row .t{font-size:15px;font-weight:500;color:var(--ink)}
+body.app.calm .sw-row .d{font-size:13px;color:var(--dim);font-weight:400;line-height:1.6;margin-top:4px}
+body.app.calm .tgl{width:52px;height:30px;border:0;background:#2a2e28}
+body.app.calm .tgl i{top:4px;left:4px;width:22px;height:22px;background:#b9bcb7;box-shadow:none}
+body.app.calm .tgl[aria-pressed="true"]{background:var(--lime);border:0}
+body.app.calm .tgl[aria-pressed="true"] i{left:26px;background:#fff;box-shadow:none}
+body.app.calm .kc-settings-wrap .forms{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:0 0 8px}
+body.app.calm .kc-settings-wrap .forms button{min-height:48px;border:0;border-radius:12px;background:#121411;color:var(--dim);font:500 14px Montserrat,system-ui,sans-serif;cursor:pointer}
+body.app.calm .kc-settings-wrap .forms button:hover{color:var(--ink)}
+body.app.calm .kc-settings-wrap .forms button[aria-pressed="true"]{background:var(--lime);color:#fff}
+body.app.calm .kc-settings-wrap .swatches{display:flex;gap:12px;margin-top:4px}
+body.app.calm .kc-settings-wrap .sw{width:44px;height:44px;border:0;border-radius:50%;cursor:pointer}
+body.app.calm .kc-settings-wrap .sw[aria-pressed="true"]{outline:2px solid #fff;outline-offset:4px}
+
+/* Security, wallet, limits and data rows. */
+body.app.calm .warn{border:0;border-radius:14px;background:rgba(255,106,31,.08);padding:14px 16px;margin-top:8px}
+body.app.calm .warn p{font-size:13px;font-weight:400}
+body.app.calm .sess{gap:16px;padding:14px 0;border-bottom:0}
+body.app.calm .sess .t{font-size:14px;font-weight:500}
+body.app.calm .sess .d{font-size:12px;color:var(--dim)}
+body.app.calm .sess .kill{border:0;background:#121411;color:var(--ink);border-radius:999px;padding:10px 16px;min-height:40px;font:500 12px Montserrat,system-ui,sans-serif;letter-spacing:0;text-transform:none}
+body.app.calm .sess .kill:hover{background:rgba(229,117,117,.14);color:#ffb3b3}
+body.app.calm .kc-settings-wrap .tag.lime{border:0;border-radius:999px;background:var(--lime);color:#fff;padding:6px 12px;font:500 12px Montserrat,system-ui,sans-serif;letter-spacing:0;text-transform:none}
+body.app.calm .kc-settings-wrap .mini-grid{gap:24px;margin-bottom:8px}
+body.app.calm .kc-settings-wrap .mini{border:0;background:transparent;padding:0;box-shadow:none}
+body.app.calm .kc-settings-wrap .mini .k{font-size:13px;font-weight:400;letter-spacing:0;text-transform:none;color:var(--dim)}
+body.app.calm .kc-settings-wrap .mini .v{font-size:24px;font-weight:500;color:var(--ink)}
+body.app.calm .kc-settings-wrap .mini .v.lime{color:var(--ink)}
+body.app.calm .kc-settings-wrap .b-row,body.app.calm .kc-settings-wrap .line{font-size:14px;color:var(--dim);padding:10px 0;border:0}
+body.app.calm .kc-settings-wrap .b-row b,body.app.calm .kc-settings-wrap .line b{color:var(--ink);font-weight:500}
+body.app.calm .kc-settings-wrap .b-row.total{border-top:0;margin-top:0;padding-top:10px}
+body.app.calm .kc-settings-wrap .settings-ok{color:#4ade80!important}
+body.app.calm .kc-settings-wrap .supply{height:6px;background:#1d201c;margin:8px 0 12px}
+body.app.calm .kc-settings-wrap .supply i{background:var(--lime);box-shadow:none}
+body.app.calm .rowlink{gap:14px;padding:16px 0;border-bottom:0;font-size:14px;color:var(--ink)}
+body.app.calm .rowlink .ic{color:var(--dim)}
+body.app.calm .rowlink b{font-weight:500}
+body.app.calm .settings-note{font-size:13px;color:var(--dim);font-weight:400;line-height:1.7;margin:20px 0 0}
+body.app.calm .danger-zone{border:0;border-radius:18px;background:#160d0d;padding:24px}
+body.app.calm .danger-title{font-size:18px!important;color:#ffb3b3;margin:0 0 8px}
+
+@media(max-width:680px){
+  body.app.calm .kc-settings-wrap{padding:8px 20px 140px!important}
+  body.app.calm .settings-grid{grid-template-columns:1fr}
+  body.app.calm .settings-nav{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin:0 -20px 28px;padding:4px 20px}
+  body.app.calm .kc-settings-wrap .tf-row{grid-template-columns:1fr;gap:0}
+  body.app.calm .kc-settings-wrap .forms{grid-template-columns:repeat(2,1fr)}
+  body.app.calm .kc-settings-wrap .mini-grid{grid-template-columns:1fr 1fr!important;gap:16px}
+  body.app.calm .sec-title{align-items:flex-start}
+}

@@ -3,7 +3,7 @@
 leaderboard, notifications, settings. Same shell, same tokens as pages 1–6."""
 import os, re, sys
 sys.path.insert(0, os.path.dirname(__file__))
-from app_design import apply_design, intro
+from app_design import apply_design, intro, tab_intro
 from common import head, atmosphere, nav, nav_min, footer, ic, JS_SHELL
 
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
@@ -673,7 +673,7 @@ DASH_CSS = """
 .kc-ref-icon-box{width:52px;height:52px;flex-shrink:0;border-radius:14px;overflow:hidden;background:rgba(255,255,255,.05);display:grid;place-items:center}
 """
 
-da = ['<main><div class="kc-home-wrap home-layout">', intro('Home', 'Your players, your club, your next move.', '<a class="app-text-link" href="ftr.html">Open wallet</a>'),
+da = ['<main><div class="kc-home-wrap home-layout">', tab_intro('Home'),
       '<section class="kc-home-bal-card" aria-label="Portfolio balance"><div class="kc-bal-header">Your portfolio'
       '<button type="button" class="kc-eye-btn" id="balEyeBtn" aria-label="Toggle balance visibility">'+'<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="fill:none"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>'+'</button></div>'
       '<div class="kc-bal-val"><span id="homeBalVal" data-bind="net">—</span> <small>$FTR</small></div>'
@@ -682,7 +682,7 @@ for label, href, icon in [('Deposit','buy.html','coin'),('Transfer','send.html',
     da.append('<a class="kc-act-circle" href="'+href+'"><div class="kc-act-ico">'+ic(icon,'ic')+'</div><span>'+label+'</span></a>')
 da.append('</div></section><section class="home-next"><h2>Put your football IQ into play.</h2>'
           '<p>Choose a player you own, pick a match and make your predictions. FanPlay guides you through each step.</p>'
-          '<a class="app-primary" href="fanplay.html">Explore FanPlay '+ic('arrow','ic')+'</a></section>'
+          '<a class="cta-elevated" href="fanplay.html">Explore FanPlay</a></section>'
           '<section class="home-market"><div class="app-section-head"><h2>Players to watch</h2><a href="exchange.html">View exchange</a></div>'
           '<div class="kc-home-searchbar-wrap"><div class="kc-home-search-box">'+ic('search','ic')+
           '<input type="search" id="homeSearchInput" placeholder="Search players or clubs" aria-label="Search player shares" autocomplete="off"></div></div>'
@@ -1106,7 +1106,7 @@ LB2_CSS = """
 @media(max-width:360px){.lb2-wrap{padding-left:16px;padding-right:16px}.lb2-clubs{margin-left:-16px;margin-right:-16px;padding-left:16px;padding-right:16px}.lb2-row{grid-template-columns:28px 42px minmax(0,1fr) auto;gap:8px}.lb2-avatar{width:40px;height:40px}.lb2-profit{font-size:13px}}
 """
 
-lb2 = ['<main><div class="lb2-wrap">' + intro('Leaderboard', 'Follow the clubs and managers setting the pace.') +
+lb2 = ['<main><div class="lb2-wrap">' + tab_intro('Leaderboard') +
        '<div class="lb2-section-head"><h2>Clubs to watch</h2><a href="divisions.html">View all ›</a></div>'
        '<div class="lb2-clubs">'
        '<div class="lb2-club" role="button" tabindex="0" data-club-name="Risk On"><div class="lb2-club-top"><span class="lb2-club-mark">RMO</span></div><b>Risk On</b><small>🏆 4 members</small><strong>+3,497,855 $FTR</strong></div>'
@@ -1423,7 +1423,7 @@ SECTIONS["wallet"] = T('<div class="bezel flat sec-card" data-reveal><div class=
             '<div class="b-row"><span>Withdrawal fee</span><b>0.5% · minimum 50 $FTR</b></div>'
             '<div class="b-row"><span>Settlement window</span><b>1–2 working days</b></div>'
             '<div class="b-row total"><span>Verification status</span>'
-            '<b style="color:var(--lime)">Verified</b></div>'
+            '<b class="settings-ok">Verified</b></div>'
             '<div style="display:flex;gap:10px;margin-top:18px;flex-wrap:wrap">@@@@</div>'
             '</div></div>',
             ic("wallet", "ic-lg"),
@@ -1447,7 +1447,7 @@ SECTIONS["play"] = T('<div class="bezel flat sec-card" data-reveal><div class="c
             '<div class="d">Suspend new entries and purchases for a fixed period. Your holdings and club stay '
             'exactly as they are, and settled rounds still pay out.</div></div>'
             '<button class="btn btn-glass btn-sm" type="button" id="stBreak">Set a break@@</button></div>'
-            '<p style="font-size:11.5px;color:var(--faint);font-weight:300;margin-top:16px;line-height:1.6">'
+            '<p class="settings-note">'
             'If matchday staking has stopped being fun, that is a good reason to stop. '
             'Support organisations are listed in the Responsible play policy.</p>'
             '</div></div>',
@@ -1464,15 +1464,14 @@ SECTIONS["data"] = T('<div class="bezel flat sec-card" data-reveal><div class="c
             '<div class="sec-title"><span class="ibox">@@</span><div><h3>Data &amp; account</h3>'
             '<p>Take your records with you, or close the account entirely.</p></div></div>'
             '<div class="rowlink">@@ Full ledger export (CSV)<b><a href="portfolio.html" '
-            'style="color:var(--lime)">Download</a></b></div>'
+            'class="app-text-link">Download</a></b></div>'
             '<div class="rowlink">@@ Gains summary for this tax year<b><a href="portfolio.html" '
-            'style="color:var(--lime)">Download</a></b></div>'
+            'class="app-text-link">Download</a></b></div>'
             '<div class="rowlink">@@ Account data request (GDPR)<b><a href="#" id="stGdpr" '
-            'style="color:var(--lime)">Request</a></b></div>'
+            'class="app-text-link">Request</a></b></div>'
             '<div class="danger-zone" style="margin-top:26px">'
-            '<div style="font-family:Archivo;font-variation-settings:\'wdth\' 118,\'wght\' 800;'
-            'text-transform:uppercase;font-size:14px;color:#ff9a9a;margin-bottom:8px">Danger zone</div>'
-            '<p style="font-size:12.5px;color:var(--dim);font-weight:300;margin:0 0 18px;line-height:1.6">'
+            '<h3 class="danger-title">Danger zone</h3>'
+            '<p class="settings-note" style="margin:0 0 18px">'
             'Resetting returns this prototype to its opening state — wallet, holdings, club and activity. '
             'Closing an account sells every position at market and pays the balance out.</p>'
             '<div style="display:flex;gap:10px;flex-wrap:wrap">@@@@</div></div>'
@@ -1482,6 +1481,7 @@ SECTIONS["data"] = T('<div class="bezel flat sec-card" data-reveal><div class="c
             btn("Close account", "btn-red", tag="button", extra='id="stClose"'))
 
 ST_JS = r"""
+(function(){var nav=document.querySelector('.settings-nav'),on=nav&&nav.querySelector('a.on');if(on&&nav.scrollWidth>nav.clientWidth)nav.scrollLeft=on.offsetLeft-nav.offsetLeft-20;})();
 // One script serves every settings screen, so nothing here assumes a field is
 // present — each section has its own page now.
 function el(id){ return document.getElementById(id); }
@@ -1737,7 +1737,7 @@ AC_CSS = """
 .kc-toast.show{opacity:1;transform:translateX(-50%) translateY(0);pointer-events:auto}
 """
 
-ac = ['<main><div class="kc-profile-wrap">', intro('Your profile', 'Make Fantrade yours.', '<a class="app-text-link" href="settings-profile.html">Edit profile</a>'),
+ac = ['<main><div class="kc-profile-wrap">', tab_intro('Your profile', '<a class="app-text-link" href="settings-profile.html">Edit profile</a>'),
       '<section class="profile-identity"><img src="assets/fantrade-outline-logo.png" alt="" width="76" height="76">'
       '<div><h2 id="kcUsername">Your name</h2><p data-bind="handle">Your manager profile</p>'
       '<button type="button" class="ob-back app-text-link" id="kcEditNameBtn" style="border:0;background:none;padding:8px 0;cursor:pointer">Edit name</button></div></section>'
@@ -1959,13 +1959,10 @@ def settings_nav(active=""):
                      (key, "on" if key == active else "", ic(icon_name, "ic"), label))
     return '<nav class="settings-nav" aria-label="Profile settings">%s</nav>' % "".join(links)
 
-def settings_top(title, subtitle):
-    return ('<div class="settings-head">'
-            '<a href="account.html" class="kc-p-back" title="Back to profile">'
-            '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></a>'
-            '<div class="settings-head-copy"><h1>%s</h1><p>%s</p></div>'
-            '<a href="notifications.html" class="kc-p-action-btn" title="Notifications">%s</a>'
-            '</div>') % (title, subtitle, ic("pulse", "ic"))
+def settings_top(title, subtitle, back=("account.html", "Profile")):
+    return ('<a class="utility-back" href="%s">%s%s</a>'
+            '<header class="app-intro settings-intro"><div><h1>%s</h1><p>%s</p></div></header>'
+            ) % (back[0], ic("arrow", "ic"), back[1], title, subtitle)
 
 settings_cards = []
 for key, icon_name, label in SETNAV:
@@ -1975,7 +1972,7 @@ for key, icon_name, label in SETNAV:
                           (key, ic(icon_name, "ic-lg"), title, desc, ic("arrow", "ic")))
 
 settings_index = ('<main><div class="kc-settings-wrap">' +
-                  settings_top("Profile settings", "Everything personal, in one place") +
+                  settings_top("Settings", "Everything personal, in one place.") +
                   '<div class="settings-hero"><h2>Choose what to update</h2><p>Changes save to your Fantrade profile and follow you across devices.</p></div>' +
                   '<div class="settings-grid">' + "".join(settings_cards) + '</div></div></main>')
 page("settings.html", "Profile settings — Fantrade", settings_index, ST_JS, ST_CSS)
@@ -1983,7 +1980,7 @@ print("built settings.html")
 
 for key, _icon_name, _label in SETNAV:
     title, desc = SETTINGS_COPY[key]
-    body = ('<main><div class="kc-settings-wrap">' + settings_top(title, desc) +
+    body = ('<main><div class="kc-settings-wrap">' + settings_top(title, desc, ("settings.html", "Settings")) +
             settings_nav(key) + SECTIONS[key] + '</div></main>')
     page("settings-%s.html" % key, "%s — Fantrade" % title, body, ST_JS, ST_CSS)
     print("built settings-%s.html" % key)

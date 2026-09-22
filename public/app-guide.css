@@ -1,0 +1,75 @@
+/* The guide reads like the rest of the app: open sections, quiet panels, sentence-case headings. */
+body.app.calm [data-reveal]{opacity:1!important;transform:none!important;filter:none!important}
+body.app.calm .orb,body.app.calm .grain{display:none}
+body.app.calm .phead{padding:120px 0 12px}
+body.app.calm .phead .wrap,body.app.calm main .wrap{width:100%!important;max-width:980px!important;margin:auto!important;padding:0 28px!important;box-sizing:border-box}
+body.app.calm main{padding-top:24px!important;padding-bottom:140px}
+body.app.calm .phead h1{font-size:clamp(32px,4.2vw,46px)!important;margin:0 0 14px}
+body.app.calm .phead .lede,body.app.calm .sec-head .lede{font-size:15px;color:var(--dim);font-weight:400;line-height:1.6;max-width:56ch;margin:0}
+body.app.calm .phead .btn{margin-top:4px}
+body.app.calm .pill{display:inline-flex;align-items:center;gap:8px;border:0;background:none;padding:0;margin:0 0 12px;color:var(--dim);font:500 13px Montserrat,system-ui,sans-serif;letter-spacing:0;text-transform:none;box-shadow:none}
+body.app.calm .pill .ic{width:15px;height:15px;color:var(--dim)}
+body.app.calm main section{padding:40px 0}
+body.app.calm .sec-head{margin-bottom:28px}
+body.app.calm .sec-head h2{font-size:clamp(26px,3vw,34px)!important;margin:0 0 12px}
+
+/* Panels: the onboarding surface, no outlines or glows. */
+body.app.calm .bezel,body.app.calm .bezel.tight{border:0;background:transparent;box-shadow:none;padding:0}
+body.app.calm .bezel>.core{background:#121411;border:0;border-radius:20px;box-shadow:none}
+body.app.calm .bezel.tight>.core{border-radius:18px}
+body.app.calm .ibox{width:44px;height:44px;border:0;border-radius:50%;background:#1b1e1a;color:var(--ink)}
+body.app.calm .ibox.am{background:#1b1e1a;color:var(--ink)}
+body.app.calm .bento{gap:12px}
+body.app.calm .core.f h4{font-size:18px;margin:18px 0 8px}
+body.app.calm .core.f p,body.app.calm .tier p{font-size:14px;color:var(--dim);font-weight:400;line-height:1.6}
+
+/* The six steps. */
+body.app.calm .walk{gap:12px;margin-bottom:12px;align-items:stretch}
+body.app.calm .walk>.bezel{height:100%}
+body.app.calm .walk .body{padding:36px}
+body.app.calm .walk .n{font-family:Montserrat,system-ui,sans-serif!important;font-variation-settings:normal!important;font-size:13px;font-weight:600;color:var(--dim);-webkit-text-stroke:0;line-height:1}
+body.app.calm .walk h3{font-size:clamp(24px,2.8vw,30px);margin:14px 0 12px}
+body.app.calm .walk p{font-size:15px;font-weight:400}
+body.app.calm .walk ul{margin-top:20px;font-size:14px}
+body.app.calm .walk li{border-top:0;padding:8px 0}
+body.app.calm .walk li .ic{color:#8875e8}
+body.app.calm .art{background:#121411!important}
+body.app.calm .art .ring{border-color:rgba(255,255,255,.05)}
+body.app.calm .art .glyph{color:#3a2bd1;filter:none}
+body.app.calm .art.am .glyph{color:#3a2bd1;filter:none}
+
+/* Timeline, comparison, scoring and FAQ rows. */
+body.app.calm .tl div{border-left:0;padding:24px}
+body.app.calm .tl .k,body.app.calm .cmp.h,body.app.calm .rule.h,body.app.calm .risk-k{font:500 13px Montserrat,system-ui,sans-serif;letter-spacing:0;text-transform:none;color:var(--dim)}
+body.app.calm .tl .v{font-size:18px;font-weight:600}
+body.app.calm .tl .d{font-size:13px;font-weight:400}
+body.app.calm .cmp,body.app.calm .rule{border-bottom:0;font-size:14px}
+body.app.calm .cmp.h,body.app.calm .rule.h{border-bottom:0;padding-top:20px}
+body.app.calm .cmp .y{color:var(--ink)}
+body.app.calm .cmp .y .ic{color:#4ade80}
+body.app.calm .cmp .n{color:var(--dim)}
+body.app.calm .tier h4{font-size:18px;margin:0}
+body.app.calm .tier .x{color:var(--ink);font-weight:600;font-size:18px}
+body.app.calm .risk{height:6px;background:#1d201c}
+body.app.calm .risk i{background:var(--lime)}
+body.app.calm details{border-bottom:0}
+body.app.calm details summary{font:600 16px Montserrat,system-ui,sans-serif;font-variation-settings:normal;text-transform:none;letter-spacing:0;padding:20px 0}
+body.app.calm details summary .pm{border:0;background:#1b1e1a}
+body.app.calm details[open] summary .pm{background:var(--lime);color:#fff}
+body.app.calm details p{font-size:14px;font-weight:400}
+
+/* Pill actions, like everywhere else. */
+body.app.calm main .btn,body.app.calm .phead .btn{min-height:48px;padding:12px 24px!important;font:600 13px Montserrat,system-ui,sans-serif;letter-spacing:0;text-transform:none;gap:0}
+body.app.calm main .btn .cap,body.app.calm .phead .btn .cap{display:none}
+body.app.calm .btn-lime{background:var(--lime);color:#fff}
+body.app.calm .btn-lime:hover{background:#3311cc}
+body.app.calm .btn-glass{background:#121411;color:var(--ink)}
+
+@media(max-width:900px){
+  body.app.calm .phead{padding-top:100px}
+  body.app.calm .phead .wrap,body.app.calm main .wrap{padding:0 20px!important}
+  body.app.calm .walk .body{padding:28px 24px}
+  body.app.calm .walk>.bezel:has(>.art){display:none}
+  body.app.calm main section{padding:28px 0}
+}
+body.app.calm main section>.wrap>h2{font-size:clamp(26px,3vw,34px)!important;margin:0}

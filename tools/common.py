@@ -1897,7 +1897,7 @@ TASKBAR = [("dashboard.html", "Home", "home"),
            ("exchange.html", "Markets", "market"),
            ("fanplay.html", "FanPlay", "ball"),
            ("leaderboard.html", "Leaderboard", "podium"),
-           ("account.html", "Profile", "profile")]
+           ("ftr.html", "Wallet", "wallet")]
 
 # Every app page lights up one of the five tabs.
 TAB_OF = {"dashboard.html": "dashboard.html", "clubs.html": "dashboard.html",
@@ -1906,14 +1906,15 @@ TAB_OF = {"dashboard.html": "dashboard.html", "clubs.html": "dashboard.html",
           "trade.html": "exchange.html",
           "fanplay.html": "fanplay.html", "liveboard.html": "fanplay.html",
           "leaderboard.html": "leaderboard.html", "divisions.html": "leaderboard.html",
-          "ftr.html": "", "wallet.html": "", "send.html": "",
-          "receive.html": "", "swap.html": "", "buy.html": "",
-          "activity.html": "", "portfolio.html": "",
-          "account.html": "account.html", "notifications.html": "dashboard.html",
-          "settings.html": "account.html", "settings-profile.html": "account.html",
-          "settings-club.html": "account.html", "settings-security.html": "account.html",
-          "settings-alerts.html": "account.html", "settings-wallet.html": "account.html",
-          "settings-play.html": "account.html", "settings-data.html": "account.html"}
+          "ftr.html": "ftr.html", "wallet.html": "ftr.html", "send.html": "ftr.html",
+          "receive.html": "ftr.html", "swap.html": "ftr.html", "buy.html": "ftr.html",
+          "activity.html": "ftr.html", "portfolio.html": "",
+          # Profile lives on the header avatar, so account pages light no tab.
+          "account.html": "", "notifications.html": "dashboard.html",
+          "settings.html": "", "settings-profile.html": "",
+          "settings-club.html": "", "settings-security.html": "",
+          "settings-alerts.html": "", "settings-wallet.html": "",
+          "settings-play.html": "", "settings-data.html": ""}
 
 
 def taskbar(current=""):
@@ -1925,7 +1926,7 @@ def taskbar(current=""):
         "home": '<svg class="tb-line-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5v9a1.5 1.5 0 0 1-1.5 1.5H15v-6H9v6H4.5A1.5 1.5 0 0 1 3 19.5z"/></svg>',
         "market": '<svg class="tb-line-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4v16M12 4v16M19 4v16M3 8h4M10 14h4M17 10h4"/></svg>',
         "podium": '<svg class="tb-line-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20v-6h5v6M9 20V8h6v12M15 20v-9h5v9M2 20h20M12 3l.7 1.4 1.6.2-1.2 1.1.3 1.6L12 6.5l-1.4.8.3-1.6-1.2-1.1 1.6-.2z"/></svg>',
-        "profile": '<svg class="tb-line-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4.5 21a7.5 7.5 0 0 1 15 0"/></svg>'
+        "wallet": '<svg class="tb-line-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M17 7V5.5A1.5 1.5 0 0 0 15.5 4H5.5A2.5 2.5 0 0 0 3 6.5v11A2.5 2.5 0 0 0 5.5 20h13a1.5 1.5 0 0 0 1.5-1.5v-10A1.5 1.5 0 0 0 18.5 7H5.5A2.5 2.5 0 0 1 3 4.5"/><path d="M16 13.5h.01"/></svg>'
     }
     out = []
     for href, label, icon in TASKBAR:

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import os, sys
 sys.path.insert(0, os.path.dirname(__file__))
-from app_design import apply_design, intro
+from app_design import apply_design, intro, tab_intro
 from common import head, atmosphere, nav, footer, ic, JS_SHELL
 
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
@@ -92,7 +92,7 @@ WALLET_ASSETS = [("$Saka", "Bukayo Saka", "boot", "", 6.4, 0),
                  ("$Bruno", "Bruno Fernandes", "boot", "", 4.2, 2),
                  ("$Arteta", "Mikel Arteta", "whistle", "am", 14.2, 9)]
 
-f = ['<main><div class="kc-assets-wrap wallet-layout">', intro('Wallet', 'Your balance and player shares, together.', '<a class="app-text-link" href="activity.html">View activity</a>')]
+f = ['<main><div class="kc-assets-wrap wallet-layout">', tab_intro('Wallet', '<a class="app-text-link" href="activity.html">View activity</a>')]
 
 # Sleek Mobile Topbar
 f.append(T('<div class="kc-topbar">'
@@ -315,7 +315,7 @@ WALK = [
 
 h = []
 h.append(T('<header class="phead"><div class="wrap">'
-           '<span class="pill" data-reveal>@@ The whole loop</span><h1 data-reveal>How Fantrade<br>works</h1>'
+           '<span class="pill" data-reveal>@@ The whole loop</span><h1 data-reveal>How Fantrade works</h1>'
            '<p class="lede" data-reveal>Six steps, one balance, and a rule that holds all of it together: you can only '
            'play what you actually own.</p><div style="margin-top:34px" data-reveal>@@</div></div></header>',
            ic("swap", "ic"), btn("Start with the exchange", href="exchange.html")))
@@ -334,7 +334,7 @@ h.append('</div></section>')
 
 # settlement timeline
 h.append(T('<section><div class="wrap"><div class="sec-head" data-reveal>'
-           '<span class="pill">@@ Settlement</span><h2>One clock,<br>not one fixture</h2>'
+           '<span class="pill">@@ Settlement</span><h2>One clock, not one fixture</h2>'
            '<p class="lede">A round is a window, not a match. It opens, it locks, the fixtures play out, and everyone '
            'is scored on the same data at the same moment.</p></div>'
            '<div class="bezel" data-reveal><div class="core"><div class="tl">'
@@ -353,7 +353,7 @@ CMP = [("Requires ownership", 1, 1), ("Number of assets scored", "1", "up to 16"
        ("Captain multiplier", 0, 1), ("Bench auto-substitution", 0, 1),
        ("Simplest to enter", 1, 0)]
 h.append(T('<section><div class="wrap"><div class="sec-head" data-reveal>'
-           '<span class="pill amber">@@ Choosing a mode</span><h2>Individual<br>or club</h2></div>'
+           '<span class="pill amber">@@ Choosing a mode</span><h2>Individual or club</h2></div>'
            '<div class="bezel" data-reveal><div class="core">'
            '<div class="cmp h"><span></span><span>Individual</span><span>Dream Club</span></div>', ic("scales", "ic")))
 for label, a, b in CMP:
@@ -383,7 +383,7 @@ FAQ = [("Do I need all eleven players in the same match?",
        ("Are Dream Clubs tradable?",
         "Not at launch. A club is a portfolio and a FanPlay identity. Club-to-club competition and rankings come first.")]
 h.append(T('<section><div class="wrap"><div class="sec-head" data-reveal>'
-           '<span class="pill">@@ Questions</span><h2>Before you<br>start</h2></div>'
+           '<span class="pill">@@ Questions</span><h2>Before you start</h2></div>'
            '<div class="bezel" data-reveal><div class="core" style="padding:10px 34px 20px">', ic("list", "ic") if False else ic("check", "ic")))
 for q, a in FAQ:
     h.append(T('<details><summary>@@<span class="pm">@@</span></summary><p>@@</p></details>',
@@ -392,7 +392,7 @@ h.append('</div></div></div></section>')
 
 # ── rehomed from the in-app pages ──────────────────────────────
 h.append(T('<section id="mechanics"><div class="wrap"><div class="sec-head" data-reveal>'
-           '<span class="pill">@@ Order mechanics</span><h2>How a trade<br>settles here</h2>'
+           '<span class="pill">@@ Order mechanics</span><h2>How a trade settles here</h2>'
            '<p class="lede">Every order on the exchange clears the same way, whether it is your first '
            'fifty shares or a full squad rebuild.</p></div><div class="bento">', ic("swap", "ic")))
 for icon, t, d in [("wallet", "Fund in $FTR",
@@ -419,7 +419,7 @@ TIERS = [("Simple", 1, "Lowest variance. Goals, assists and clean sheets only �
          ("Viynx Max", 7, "Maximum exposure. The largest payouts on Fantrade and the shortest odds of "
           "reaching them.", 100, "trophy")]
 h.append(T('<section id="tiers"><div class="wrap"><div class="sec-head" data-reveal>'
-           '<span class="pill">@@ Market tiers</span><h2>Six ways to<br>take the round</h2>'
+           '<span class="pill">@@ Market tiers</span><h2>Six ways to take the round</h2>'
            '<p class="lede">Every tier scores the same match from a different data set. Higher tiers pay '
            'more because they count more of what can go wrong.</p></div><div class="bento">',
            ic("candle", "ic")))
@@ -436,7 +436,7 @@ RULES = [("Goal", "6", "4", "9"), ("Assist", "4", "3", "6"), ("Clean sheet", "5"
          ("Key pass", "—", "1", "2"), ("Duel won", "—", "0.5", "1"), ("Yellow card", "−1", "−1", "−3"),
          ("Big chance missed", "—", "−2", "−4")]
 h.append(T('<section id="rules"><div class="wrap"><div class="sec-head" data-reveal>'
-           '<span class="pill amber">@@ Scoring</span><h2>What counts,<br>and for how much</h2>'
+           '<span class="pill amber">@@ Scoring</span><h2>What counts, and for how much</h2>'
            '<p class="lede">Values shown for an outfield player. Goalkeepers and defenders carry their own '
            'weighting, and the coach scores on team outcomes rather than individual events.</p></div>'
            '<div class="bezel" data-reveal><div class="core">'
@@ -448,7 +448,7 @@ for ev, a, b, c in RULES:
 h.append('</div></div></div></section>')
 
 h.append(T('<section id="chem"><div class="wrap"><div class="sec-head" data-reveal>'
-           '<span class="pill amber">@@ Club chemistry</span><h2>Why one squad<br>boosts harder</h2>'
+           '<span class="pill amber">@@ Club chemistry</span><h2>Why one squad boosts harder</h2>'
            '<p class="lede">Two managers can own the same eleven players and score differently. Chemistry '
            'rewards the club that is actually coherent, not just expensive.</p></div><div class="bento">',
            ic("target", "ic")))
@@ -472,11 +472,11 @@ for icon, t, d, c, am in [("whistle", "Coach compatibility",
 h.append('</div></div></section>')
 
 h.append(T('<section style="padding-top:60px"><div class="wrap" style="text-align:center">'
-           '<h2 data-reveal>Ready to own<br>your first player?</h2>'
+           '<h2 data-reveal>Ready to own your first player?</h2>'
            '<div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:34px" data-reveal>'
            '@@@@</div></div></section></main>',
            btn("Browse the exchange", href="exchange.html"),
            btn("See a Dream Club", "btn-glass", "clubs.html")))
 
-page("how-it-works.html", "How it works — Fantrade", "".join(h), "", HIW_CSS)
+page("how-it-works.html", "How it works — Fantrade", "".join(h), "", HIW_CSS, app=True)
 print("built ftr.html + how-it-works.html")
