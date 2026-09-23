@@ -3040,7 +3040,13 @@ FT.syncUI();
         if(!row || row.claimed) return;
         button.disabled = true; setStatus('Claiming listed shares...');
         var cloud = window.FTDB && FTDB.signedIn && FTDB.signedIn() && FTDB.claim;
-        (cloud ? FTDB.claim(row.id).then(function(res){ return FT.syncCloud().then(function(){ return res; }); }) : Promise.resolve(FT.claimListing(row)))
+        (cloud ? FTDB.claim(row.id).then(function(res){ return FT.syncCloud().then(function(){ return res; }); }).catch(function(err){
+          if(/schema cache|ft_claim_listing/i.test((err && err.message) || '')){
+            console.warn('[Fantrade] ft_claim_listing not in schema cache, claiming on this device:', err.message);
+            return FT.claimListing(row);
+          }
+          throw err;
+        }) : Promise.resolve(FT.claimListing(row)))
           .then(function(res){ loadClaims(); setStatus('Claimed ' + Number(res.shares || row.shares).toLocaleString('en-US') + ' shares in ' + (res.name || assetFor(row).n) + '.'); })
           .catch(function(error){ button.disabled = false; setStatus(error.message || 'Claim could not be completed.'); });
       });
