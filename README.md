@@ -13,10 +13,10 @@ self-contained HTML file with no build step and no runtime dependencies beyond G
 | File | What it covers |
 | --- | --- |
 | `index.html` | Landing page — the three layers (Own / Build / Play), live exchange console, Dream Club preview, the Fantrade loop, house rules |
-| `exchange.html` | Market list — player/coach filtering, search, movers and the coach index. Rows open the asset's own page |
-| `asset.html` | One asset's market page (`?a=$Saka`) — candlestick chart with five timeframes and a volume strip, 24h stats, and Order book / Trade history / Coin info / Your position tabs |
-| `trade.html` | Trade terminal (`?a=$Saka`) — order book you can tap to load a price, Buy / Sell / Swap on one ticket, market, limit and stop-limit types, steppers, a percentage slider, resting bids and asks, fills and holdings |
-| `clubs.html` | Zero FC with Line-ups / League position / Form tabs, live position ladder and form pills, club value chart |
+| `exchange.html` | Market list — player/coach filtering, search and the coach index. Rows open the asset's own page |
+| `asset.html` | One asset's market page (`?a=$Saka`) — price and change, a previous-close-to-now chart, share stats, bids and asks, and Your position. The book holds real orders only |
+| `trade.html` | Trade terminal (`?a=$Saka`) — Buy / Sell / Swap on one ticket, market, limit and stop-limit types, steppers, a percentage slider, the manager's own resting orders, fills and holdings. The book is empty until an order really rests on it |
+| `clubs.html` | The club's line-up, with the live position ladder and form pills |
 | `club-builder.html` | The eight-step builder with live formation switching (4-3-3 / 4-4-2 / 3-5-2 / 4-2-3-1) and its own pitch |
 | `fanplay.html` | Individual vs Dream Club entry, live scores board — date strip, featured match with ticking minute, fixtures grouped by competition with follow stars — settlement countdown |
 | `ftr.html` | $FTR wallet — gradient balance card with Send / Receive / Swap / Buy inside it, quick-send row, scannable receive QR, balance history, asset list, transaction history |
@@ -24,7 +24,7 @@ self-contained HTML file with no build step and no runtime dependencies beyond G
 | `signin.html` | Split-screen sign in — validation, password reveal, passkey/social stubs, reset-link modal |
 | `signup.html` | Account creation — password strength meter, region select, terms gate, hands off to onboarding |
 | `onboarding.html` | Four-step setup wizard — manager profile, opening grant, first share purchase, club identity |
-| `dashboard.html` | **Home** — net worth with range-switched chart, club summary, live lock countdown, matchday board, movers, activity, entries |
+| `dashboard.html` | **Home** — net worth, club summary, live lock countdown, matchday board, activity, entries |
 | `account.html` | Account hub — identity card, and the way in to the wallet, portfolio, club, league table, notifications and settings |
 | `portfolio.html` | Portfolio & ledger — holdings table with filters and live P&L, allocation split, settlement ledger, yield, CSV export |
 | `leaderboard.html` | The table and nothing else — a rank strip, then division filters, search, sort and club inspection |
@@ -96,9 +96,9 @@ prototype stays consistent as you move between pages. Settings → Danger zone r
 - **Surface** — OLED black `#050505`, fixed mesh orbs, 4% film grain, hairlines at `rgba(255,255,255,.08)`
 - **Accents** — lime `#C4F82A` (players, actions), amber `#FF6A1F` (coaches, high-risk tiers), red `#FF3B47` reserved for live match states only
 - **Structure** — double-bezel containers (outer shell `p-8` at `2rem` radius, inner core at `calc(2rem - .5rem)`)
-- **Wallet components** — shared across wallet, dashboard and portfolio: balance hero (`.bal-big` / `.bal-delta` / `.bal-chart`), range pills (`.range`), four-up action tiles (`.acts4`), asset rows with circular marks and sparklines (`.arow` / `.coin`), receive panel (`.netsel` / `.qr` / `.addr`), amber warning strips (`.warn`)
+- **Wallet components** — shared across wallet, dashboard and portfolio: balance hero (`.bal-big` / `.bal-delta` / `.bal-chart`), range pills (`.range`), four-up action tiles (`.acts4`), asset rows with circular marks (`.arow` / `.coin`), receive panel (`.netsel` / `.qr` / `.addr`), amber warning strips (`.warn`)
 - **Shell** — floating top bar (`.topbar`) and floating taskbar (`.taskbar`); the taskbar reserves footer space through `.taskbar ~ footer` so nothing is covered
-- **Exchange components** — underline tabs (`.utabs`), dense market rows with a change pill (`.mkrow` / `.pct`), steppers (`.stp`), percentage slider (`.slider`), candlesticks (`drawCandles` / `candleData`), centred order book (`.book2`), buy/sell bar (`.stickybar`)
+- **Exchange components** — underline tabs (`.utabs`), dense market rows with a change pill (`.mkrow` / `.pct`), steppers (`.stp`), percentage slider (`.slider`), centred order book (`.book2`), buy/sell bar (`.stickybar`)
 - **Matchday components** — shared across FanPlay and Dream Clubs: date strip (`.dates` / `.livetgl`), featured match card (`.feat` / `.minute` / `.tcrest`), competition groups and fixture rows (`.comp` / `.fixt` / `.star`), tab strip (`.tabstrip`), form pills (`.form5`), live position ladder (`.gauge` / `.ladder` / `.rung`)
 - **Motion** — `cubic-bezier(.32,.72,0,1)` throughout; scroll entry via `IntersectionObserver`; `prefers-reduced-motion` respected
 - **Layout** — asymmetrical bento grids, collapsing to single column below 768px
@@ -108,11 +108,16 @@ fourteen pages can't drift apart.
 
 ## Bidding
 
-A limit order that doesn't fill immediately rests on the book as your bid (buy) or ask (sell) until
+A limit order that doesn't fill immediately rests as your bid (buy) or ask (sell) until
 someone trades into it — that's what "bid" means here, not a timed auction. Market orders settle
 against `FT.executeTrade` straight away; limit and stop-limit orders go onto the open-orders list and
 can be cancelled. Swap is the third tab on the same ticket and settles both legs at once through
 `FT.swapAssets`, so you're never uncovered between them.
+
+The book shows real orders and nothing else. It starts empty and the page says so, rather than
+drawing preview depth to fill the gap — the same rule that keeps the price chart to the previous
+close against the price now, drops quoted volumes and candlesticks, and leaves the tables without
+sample managers.
 
 ## The receive QR
 
@@ -129,5 +134,8 @@ inline SVG sprite per page. No CDN dependency at runtime.
 
 ## Status
 
-Prototype. All figures, prices, fixtures and balances shown are illustrative. Nothing here is connected
-to a backend, a data provider, or a payment rail.
+Prototype. Fixtures, the demo £→$FTR rate and everything outside the seeded catalogue are still
+illustrative. The signed-in pages do talk to Supabase (see `supabase/README.md`): the asset
+catalogue, wallets, holdings, Dream Clubs, live FanPlay entries and the leaderboard live there, and
+every action that moves money or shares goes through a database function that re-checks it. There is
+still no football-data provider and no payment rail.

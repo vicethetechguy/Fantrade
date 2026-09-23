@@ -17,7 +17,7 @@ order, each in its own query:
 |---|------|--------------|
 | 1 | `01_schema.sql` | Tables, row-level security, and the trigger that gives every new account a profile, a wallet and 50,000 $FTR |
 | 2 | `02_functions.sql` | The money functions (buy, sell, swap, convert, transfer, withdraw, profile) and who is allowed to call them |
-| 3 | `03_seed_assets.sql` | The 18 players and coaches the exchange lists |
+| 3 | `03_seed_assets.sql` | The 18 players and coaches the exchange lists, each with its immutable F-ticker and its reference value |
 | 4 | `04_fanplay_clubs.sql` | Dream Clubs, FanPlay entries and the leaderboard |
 
 They are safe to re-run: the tables use `if not exists`, the functions are
@@ -27,7 +27,8 @@ who may call what, and file 4 hands those rights back out.
 
 Check it worked: **Table Editor** should show `profiles`, `wallets`, `assets`,
 `holdings`, `transactions`, `payout_accounts`, `clubs` and `fanplay_entries`,
-with 18 rows in `assets` and a green **RLS enabled** badge on all eight.
+with 18 rows in `assets`, every one carrying a `ticker`, and a green **RLS
+enabled** badge on all eight.
 
 ## Then turn on auth
 
@@ -63,8 +64,9 @@ any page. Nothing here needs it.
 
 In the database now: accounts and profiles, the $FTR wallet, holdings and the
 slot each one lines up in, the transaction history, saved payout details (only
-the last four digits of an account number are ever stored), the asset
-catalogue, Dream Clubs and live FanPlay entries.
+the last four digits of an account number are ever stored), the asset catalogue
+with each row's immutable F-ticker and reference value, Dream Clubs and live
+FanPlay entries.
 
 Still in the browser's own storage: notifications and the preference toggles.
 
@@ -77,8 +79,38 @@ nothing that could stand in for one.
 Clubs are readable only by their own manager, so the leaderboard cannot work by
 querying the table. It goes through `ft_leaderboard()`, which returns a fixed
 public set of columns — club name, manager handle, formation, season FP, club
-value — and no balance, holding or email. Until real clubs fill the board, the
-leaderboard page shows them above a clearly labelled sample field.
+value — and no balance, holding or email. The board lists only clubs that
+really exist; until managers build theirs, the page says the table is empty
+rather than padding it with invented managers.
+
+## Where the white paper's model lives in the schema
+
+The four files follow the white paper, so the parts of it that are data rules
+are enforced here rather than in the pages:
+
+| White paper | In the database |
+|---|---|
+| Activity Assets and the two types (4) | `assets.kind` — `PLAYER` / `COACH`, the paper's PLAYER_ACTIVITY and COACH_ACTIVITY in short form |
+| The F-ticker, immutable after issuance (5) | `assets.ticker`, shaped `^F[A-Z0-9]{1,7}$` and unique, with `ft_ticker_is_fixed()` refusing to change one once it is set |
+| Ten million shares per asset (4.1) | `assets_shares_fixed` on `total_shares` |
+| Reference Valuation, which is not the trading price (6) | `assets.reference_value` and `reference_at`, seeded with the opening figure; `assets.price` stays the price a trade executes at |
+| Listing fees and lister economics (7, 8) | the ledger types `LIST`, `BURN` and `FEE_SHARE` are reserved in `transactions_type_check` |
+| Fan Points converted at 1,000 FP = 1 $FTR (14.3) | `ft_fp_rate()` |
+| The FanPlay lifecycle (14.6) | `fanplay_entries_status_check` holds all nine states; the browser only ever writes ACTIVE, and a cancel lands as VOID |
+| Dream Clubs built from real holdings, with a team boost (19) | `holdings.slot`, `clubs.season_fp` and `clubs.boost` |
+
+Deliberately not here yet, because the pages do not have them and the paper
+puts them at a later phase: claiming and listing an asset, what it costs and
+how the allocation vests (7–9, phase 6), the $FTR allocation, presale and
+airdrop (11–13, phase 7), and the order book with resting orders, matching and
+fills (15.1–15.3, phase 2). Trades today execute at the catalogue price, which
+is what `assets.price` holds until that engine arrives.
+
+Nothing here invents a market either. The seed sets a reference value and
+leaves `prev_close`, `day_change`, `day_high` and `day_low` empty, because 15.4
+wants those to come from recorded executions; the pages fall back to the
+reference value until the first real trade exists. The same rule is what keeps
+the pages free of generated charts, quoted volumes and sample manager tables.
 
 ## When the database cannot be reached
 

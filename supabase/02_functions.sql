@@ -16,6 +16,14 @@ returns numeric language sql immutable as $$
     else 0 end;
 $$;
 
+-- Fan Points to $FTR, in one place (14.3: 1,000 FP = 1 $FTR). Settlement itself
+-- is deliberately absent - see the note at the head of 04 - and when it lands a
+-- payout is scored_fp / ft_fp_rate(), which may come out negative (14.3).
+create or replace function public.ft_fp_rate()
+returns numeric language sql immutable as $$
+  select 1000::numeric;
+$$;
+
 create or replace function public.ft_require_user()
 returns uuid language plpgsql stable as $$
 declare uid uuid := auth.uid();

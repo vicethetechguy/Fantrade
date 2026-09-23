@@ -35,14 +35,28 @@ create table if not exists public.wallets (
 );
 
 -- ── Catalogue: players and coaches everyone trades ────────────────────
+-- One row per Activity Asset (white paper 4). `kind` holds the two asset types
+-- in the app's short form: PLAYER is the paper's PLAYER_ACTIVITY and COACH is
+-- its COACH_ACTIVITY. `ticker` is the F-ticker of 5 (FSAKA, FHLND, ...) and is
+-- immutable once issued. `price` is the market price a trade executes at, and
+-- `reference_value` is the Fantrade Reference Valuation of 6 - the indicative
+-- figure an asset is discovered at, which is what the catalogue is seeded
+-- with. Conceptually there are always ten million shares of an asset (4.1),
+-- so `total_shares` is not a free parameter.
 create table if not exists public.assets (
   id            text primary key,                    -- '$Saka'
+  ticker        text not null,                       -- 'FSAKA', the F-ticker
   name          text not null,
   kind          text not null default 'PLAYER' check (kind in ('PLAYER','COACH')),
   club          text,
   league        text,
   position      text,
   price         numeric(12,2) not null check (price > 0),
+  reference_value numeric(12,2) check (reference_value > 0),
+  reference_at  timestamptz,
+  -- Left empty on purpose: 15.4 wants day and history figures to come from
+  -- recorded executions, and there are none until the exchange engine of 15
+  -- is in place. The pages fall back to the reference value meanwhile.
   prev_close    numeric(12,2),
   day_change    numeric(6,2) not null default 0,
   day_high      numeric(12,2),
@@ -53,6 +67,41 @@ create table if not exists public.assets (
   updated_at    timestamptz not null default now()
 );
 create index if not exists assets_kind_idx on public.assets (kind) where is_active;
+
+-- An install from before the F-ticker arrived adds the columns here, then holds
+-- the ticker to the shape of 5. 03_seed_assets.sql fills every listed asset in
+-- and makes the column not-null once it has.
+alter table public.assets add column if not exists ticker text;
+alter table public.assets add column if not exists reference_value numeric(12,2);
+alter table public.assets add column if not exists reference_at timestamptz;
+create unique index if not exists assets_ticker_idx on public.assets (ticker);
+alter table public.assets drop constraint if exists assets_ticker_check;
+alter table public.assets drop constraint if exists assets_ticker_shape;
+alter table public.assets add constraint assets_ticker_shape
+  check (ticker is null or ticker ~ '^F[A-Z0-9]{1,7}$');
+alter table public.assets drop constraint if exists assets_total_shares_check;
+alter table public.assets drop constraint if exists assets_shares_fixed;
+alter table public.assets add constraint assets_shares_fixed check (total_shares = 10000000);
+
+-- 5: a ticker is immutable after issuance. Filling an empty one in is the one
+-- change allowed, which is how an earlier install picks its tickers up.
+create or replace function public.ft_ticker_is_fixed()
+returns trigger
+language plpgsql
+as $$
+begin
+  if old.ticker is not null and old.ticker is distinct from new.ticker then
+    raise exception 'A ticker cannot be changed once issued (%)', old.ticker
+      using errcode = '23514';
+  end if;
+  return new;
+end;
+$$;
+
+drop trigger if exists assets_ticker_fixed on public.assets;
+create trigger assets_ticker_fixed
+  before update on public.assets
+  for each row execute function public.ft_ticker_is_fixed();
 
 -- ── What each manager owns ────────────────────────────────────────────
 create table if not exists public.holdings (
@@ -74,8 +123,7 @@ alter table public.holdings add column if not exists slot text;
 create table if not exists public.transactions (
   id          bigint generated always as identity primary key,
   user_id     uuid not null references auth.users(id) on delete cascade,
-  type        text not null check (type in
-                ('GRANT','BUY','SELL','SWAP','CONVERT','SEND','RECEIVE','WITHDRAW','STAKE','PAYOUT','SETTLE','ADJUST')),
+  type        text not null,                         -- constrained below
   asset_id    text references public.assets(id),
   label       text not null default '',              -- what the row reads as in the app
   shares      bigint not null default 0,
@@ -87,9 +135,25 @@ create table if not exists public.transactions (
 );
 create index if not exists transactions_user_idx on public.transactions (user_id, created_at desc);
 
+-- The ledger's allowed types, in one place. The first twelve are what the app
+-- books today; the last three are flows the white paper defines and the pages
+-- do not have yet, kept here so the ledger can carry them the day they arrive:
+--   LIST       a lister's listing/claim payment in $FTR (7)
+--   BURN       the 2% of that payment burnt for good (7, 17)
+--   FEE_SHARE  a lister's 30% cut of the asset's eligible trading fees (8.3)
+alter table public.transactions drop constraint if exists transactions_type_check;
+alter table public.transactions add constraint transactions_type_check check (type in
+  ('GRANT','BUY','SELL','SWAP','CONVERT','SEND','RECEIVE','WITHDRAW','STAKE','PAYOUT','SETTLE','ADJUST',
+   'LIST','BURN','FEE_SHARE'));
+
 -- ── Dream Clubs ───────────────────────────────────────────────────────
 -- A manager fields up to six. One is active at a time; the shares that make
 -- up the side are the holdings above, each carrying the slot it lines up in.
+-- The side is eleven plus a bench chosen from shares actually held, a coach
+-- included (19), so a club's FanPlay exposure comes from real holdings and
+-- never from fictional ownership. `season_fp` is the Accumulated FP its
+-- individual players and coach have scored; `boost` is the team boost applied
+-- on top, whose formula 27 still lists as an open parameter.
 create table if not exists public.clubs (
   id          uuid primary key default gen_random_uuid(),
   user_id     uuid not null references auth.users(id) on delete cascade,
@@ -136,13 +200,13 @@ create table if not exists public.fanplay_entries (
   asset_id     text references public.assets(id),                        -- shares staked, if any
   staked_shares bigint not null default 0 check (staked_shares >= 0),
   match        jsonb,                                 -- fixture the entry rides on
-  market       jsonb,                                 -- the market and its tier
-  selections   jsonb,                                 -- the picks, with their FP either way
+  market       jsonb,                                 -- the market and its tier, 14.4
+  selections   jsonb,                                 -- the picks, each with its FP either way, 14.5
   projected_fp numeric(12,2) not null default 0,
   matchday     integer not null default 7,
-  status       text not null default 'ACTIVE' check (status in ('ACTIVE','SETTLED','VOID')),
+  status       text not null default 'ACTIVE',       -- the lifecycle, constraint below
   scored_fp    numeric(12,2),
-  payout       numeric(20,2),
+  payout       numeric(20,2),                        -- $FTR out; negative when it loses, 14.3
   settled_at   timestamptz,
   -- The page's idempotency key: a resubmitted entry finds itself rather than
   -- locking a second set of shares.
@@ -157,6 +221,14 @@ create unique index if not exists entries_one_live_idx
   on public.fanplay_entries (club_id, matchday) where status = 'ACTIVE' and club_id is not null;
 create unique index if not exists entries_action_idx
   on public.fanplay_entries (user_id, action_key) where action_key is not null;
+
+-- The lifecycle of 14.6, in one place. The pages only ever open an entry as
+-- ACTIVE and can cancel it, which lands as VOID; the live and settlement
+-- states belong to the service-role job that settles a matchday, so nothing
+-- the browser is allowed to call writes them.
+alter table public.fanplay_entries drop constraint if exists fanplay_entries_status_check;
+alter table public.fanplay_entries add constraint fanplay_entries_status_check check (status in
+  ('DRAFT','ACTIVE','LIVE','PENDING_SETTLEMENT','SETTLED','VOID','CANCELLED','SUSPENDED','DISPUTED'));
 -- These arrived with the share-staking entry; this keeps an earlier install current.
 alter table public.fanplay_entries add column if not exists asset_id text references public.assets(id);
 alter table public.fanplay_entries add column if not exists staked_shares bigint not null default 0;
