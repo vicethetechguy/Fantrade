@@ -2298,17 +2298,12 @@ var FT = (function(){
       'FHLND': { n: 'Erling Haaland', shares: 3000, avg: 68.50, p: 71.40, c: false, inClub: 'ST' },
       'FARTA': { n: 'Mikel Arteta', shares: 1000, avg: 20.50, p: 22.05, c: true, inClub: 'COACH' }
     },
-    clubs: [
-      { id: "c-1", name: "Zero FC", stadium: "Emirates of the North",
-        colors: ["#1800ad", "#0f0075"], colorName: "Indigo", formation: "4-3-3",
-        coach: "FARTA", rank: 124, fp: 8420, boost: 15.0, value: 245800,
-        division: "Apex" },
-      { id: "c-2", name: "North Bank XI", stadium: "The Reserve",
-        colors: ["#4DA6FF", "#0b5fae"], colorName: "Azure", formation: "4-2-3-1",
-        coach: "FPEP", rank: 412, fp: 5140, boost: 9.5, value: 132400,
-        division: "Contender" }
-    ],
-    activeClub: "c-1",
+    club: {
+      id: "c-1", name: "Zero FC", stadium: "Emirates of the North",
+      colors: ["#1800ad", "#0f0075"], colorName: "Indigo", formation: "4-3-3",
+      coach: "FARTA", rank: 124, fp: 8420, boost: 15.0, value: 245800,
+      division: "Apex"
+    },
     fanplay: {
       activeEntries: [
         { id: "e-1", mode: "Dream Club", clubId: "c-1", target: "Zero FC", tier: "Elite", mult: 2.0, stake: 2500, projectedFP: 230, status: "Active in MD 07" },
@@ -2323,18 +2318,16 @@ var FT = (function(){
     ]
   };
 
-  // `state.club` is a live reference into `state.clubs`, so every page that
-  // already reads s.club keeps working while the manager owns several.
+  /* A manager has exactly one club. This makes sure it exists and carries
+     an id, including for a state saved before that was true. */
   function link(st){
-    if(!st.clubs || !st.clubs.length){
-      st.clubs = [Object.assign({ id: 'c-1', division: 'Apex' },
-                                st.club || defaultState.clubs[0])];
+    if(!st.club){
+      st.club = Object.assign({}, defaultState.club,
+                              (st.clubs && st.clubs[0]) || {});
     }
-    st.clubs.forEach(function(c, i){ if(!c.id) c.id = 'c-' + (i + 1); });
-    if(!st.activeClub || !st.clubs.filter(function(c){ return c.id === st.activeClub; }).length){
-      st.activeClub = st.clubs[0].id;
-    }
-    st.club = st.clubs.filter(function(c){ return c.id === st.activeClub; })[0];
+    if(!st.club.id) st.club.id = 'c-1';
+    delete st.clubs;
+    delete st.activeClub;
     return st;
   }
   function load(){
@@ -2397,8 +2390,9 @@ var FT = (function(){
       state.holdings = held;
     }
     if(snap.clubs && snap.clubs.length){
-      state.clubs = snap.clubs.map(function(c){
-        var prev = state.clubs.filter(function(x){ return x.id === c.id; })[0] || {};
+      var mine = snap.clubs.filter(function(c){ return c.is_active; })[0] || snap.clubs[0];
+      state.club = (function(c){
+        var prev = (state.club && state.club.id === c.id) ? state.club : {};
         return { id: c.id, name: c.name, stadium: c.stadium,
                  colors: Array.isArray(c.colors) ? c.colors : (prev.colors || ['#1800ad', '#0f0075']),
                  colorName: c.color_name, formation: c.formation,
@@ -2408,9 +2402,7 @@ var FT = (function(){
                  // Rank and value are worked out from the whole field, not
                  // from this row, so the board fills them in.
                  rank: prev.rank || 0, value: prev.value || 0 };
-      });
-      var fielding = snap.clubs.filter(function(c){ return c.is_active; })[0];
-      state.activeClub = (fielding || snap.clubs[0]).id;
+      })(mine);
       link(state);
     }
     if(snap.entries){
@@ -2813,10 +2805,8 @@ var FT = (function(){
 
       return { total: total, remainingBalance: state.wallet.balance, shares: shares };
     },
-    saveClub: function(clubData, id){
-      var target = id
-        ? state.clubs.filter(function(c){ return c.id === id; })[0]
-        : state.club;
+    saveClub: function(clubData){
+      var target = state.club;
       if(!target) throw new Error("That club no longer exists.");
       Object.assign(target, clubData);
       push('ft_save_club', Object.assign({ p_club: serverId(target.id) }, clubArgs(target)));
@@ -2856,73 +2846,18 @@ var FT = (function(){
         if(!board || !board.rows) return null;
         // Your own rank comes back with it, so the strip agrees with the table.
         (board.you || []).forEach(function(mine){
-          var club = state.clubs.filter(function(c){ return c.id === mine.id; })[0];
-          if(club){ club.rank = mine.position; club.value = Math.round(Number(mine.value) || 0); }
+          if(state.club && state.club.id === mine.id){
+            state.club.rank = mine.position;
+            state.club.value = Math.round(Number(mine.value) || 0);
+          }
         });
         if((board.you || []).length){ save(state); FT.syncUI(); }
         return board;
       }).catch(function(){ return null; });
     },
-    clubs: function(){ return state.clubs; },
-    activeClubId: function(){ return state.activeClub; },
-    getClub: function(id){
-      return state.clubs.filter(function(c){ return c.id === id; })[0] || state.club;
-    },
-    createClub: function(clubData){
-      if(state.clubs.length >= 6){
-        throw new Error("Six clubs is the limit for one manager.");
-      }
-      var name = (clubData.name || '').trim();
-      if(name.length < 2){ throw new Error("Give the club a name first."); }
-      if(state.clubs.filter(function(c){ return c.name.toLowerCase() === name.toLowerCase(); }).length){
-        throw new Error("You already have a club called " + name + ".");
-      }
-      var club = Object.assign({
-        id: 'c-' + Date.now(),
-        stadium: "Unnamed ground",
-        colors: ["#1800ad", "#0f0075"],
-        colorName: "Indigo",
-        formation: "4-3-3",
-        coach: "FARTA",
-        rank: 900 + state.clubs.length,
-        fp: 0,
-        boost: 0,
-        value: 0,
-        division: "Challenger"
-      }, clubData, { name: name });
-      state.clubs.push(club);
-      state.activeClub = club.id;
-      push('ft_create_club', Object.assign(clubArgs(club), { p_division: club.division }));
-      link(state);
-      save(state);
-      FT.syncUI();
-      window.dispatchEvent(new CustomEvent('fantrade:statechange', { detail: state }));
-      return club;
-    },
-    switchClub: function(id){
-      if(!state.clubs.filter(function(c){ return c.id === id; }).length){
-        throw new Error("That club no longer exists.");
-      }
-      state.activeClub = id;
-      if(serverId(id)) push('ft_switch_club', { p_club: id });
-      link(state);
-      save(state);
-      FT.syncUI();
-      window.dispatchEvent(new CustomEvent('fantrade:statechange', { detail: state }));
-      return state.club;
-    },
-    deleteClub: function(id){
-      if(state.clubs.length < 2){ throw new Error("Your last club cannot be deleted."); }
-      var staked = (state.fanplay.activeEntries || []).filter(function(e){ return e.clubId === id; });
-      if(staked.length){ throw new Error("That club has a live entry. It settles before you can delete it."); }
-      state.clubs = state.clubs.filter(function(c){ return c.id !== id; });
-      if(state.activeClub === id) state.activeClub = state.clubs[0].id;
-      if(serverId(id)) push('ft_delete_club', { p_club: id });
-      link(state);
-      save(state);
-      FT.syncUI();
-      window.dispatchEvent(new CustomEvent('fantrade:statechange', { detail: state }));
-    },
+    /* A manager has one club. It is made during onboarding and edited in
+       place after that, so there is nothing to create, switch or delete. */
+    club: function(){ return state.club; },
     activateFanPlayEntry: function(entryData){
       var stake = entryData.stake || 2500;
       if(state.wallet.balance < stake){

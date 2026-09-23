@@ -1,9 +1,8 @@
 """Club overview and editor, sharing an accessible formation preview."""
 from app_design import intro
 
-CLUB_HTML = '<main><div class="secondary-page clubs-page">' + intro('Your clubs', 'A team to call your own.', '<a class="app-primary" href="club-builder.html?new=1">Create club</a>') + '''
-<div class="club-selector" id="clubRail" role="group" aria-label="Choose your club"></div>
-<header class="club-heading"><span class="club-crest" id="clubCrest" aria-hidden="true"></span><div><h2 id="clName"></h2><p id="clubStadium"></p></div><a class="quiet-button" href="club-builder.html">Edit club</a></header>
+CLUB_HTML = '<main><div class="secondary-page clubs-page">' + intro('Your club', 'A team to call your own.') + '''
+<header class="club-heading" id="clubHeading"><span class="club-crest" id="clubCrest" aria-hidden="true"></span><div><h2 id="clName"></h2><p id="clubStadium"></p></div><a class="quiet-button" href="club-builder.html">Edit club</a></header>
 <dl class="club-stats"><div><dt>Season points</dt><dd id="clFp"></dd></div><div><dt>Global rank</dt><dd id="clRank"></dd></div><div><dt>Division</dt><dd id="clDivision"></dd></div><div><dt>Club boost</dt><dd id="clBoost"></dd></div></dl>
 <div class="club-layout"><section><div class="section-heading"><h2>Line-up</h2><span class="quiet-label" id="clubShape"></span></div><div class="formation-preview" id="clubPitch"></div><p class="quiet-note" id="clubOwnership"></p></section>
 <aside class="club-next"><h2>Ready for matchday?</h2><p>Choose eligible shares and build your predictions in FanPlay.</p><a class="app-primary" href="fanplay.html">Play FanPlay</a><div class="club-links"><a href="liveboard.html">Follow the live board <span aria-hidden="true">↗</span></a><a href="leaderboard.html">See the leaderboard <span aria-hidden="true">↗</span></a><a href="divisions.html">Understand divisions <span aria-hidden="true">↗</span></a></div></aside></div>
@@ -69,7 +68,7 @@ JS = r'''
   function pitch(shape){
     var pool=ownedPlayers(),used={},rows=forms[shape]||forms['4-3-3'];
     var html=rows.map(function(row){return '<div class="formation-row">'+row.map(function(p){return playerSlot(p[0],pickPlayer(p[0],pool,used));}).join('')+'</div>';}).join('');
-    var state=FT.getState(),coachSymbol=(fresh?'FARTA':state.club.coach)||'FARTA',coach=state.holdings[coachSymbol];
+    var state=FT.getState(),coachSymbol=state.club.coach||'FARTA',coach=state.holdings[coachSymbol];
     if(coach&&coach.shares>0){html+='<div class="formation-coach">'+playerPhoto(coachSymbol,coach.n||coachSymbol.slice(1))+'<div><span>Coach</span><b>'+esc(coach.n||coachSymbol)+'</b></div></div>';}
     else{html+='<div class="formation-coach empty"><span class="empty-coach">Coach</span><div><span>Coach</span><b>Own a coach share</b></div></div>';}
     var bench=pool.filter(function(p){return !used[p.symbol];}).slice(0,4);
@@ -79,8 +78,6 @@ JS = r'''
   }
   function renderClub(){
     var state=FT.getState(),club=state.club;
-    el('clubRail').innerHTML=state.clubs.map(function(c){return '<button type="button" data-club="'+esc(c.id)+'" aria-pressed="'+(c.id===state.activeClub)+'">'+esc(c.name)+'</button>';}).join('');
-    el('clubRail').querySelectorAll('button').forEach(function(button){button.addEventListener('click',function(){FT.switchClub(button.dataset.club);var active=el('clubRail').querySelector('[aria-pressed=true]');if(active)active.focus();});});
     el('clName').textContent=club.name;el('clubStadium').textContent=club.stadium||'Your home ground';
     el('clubCrest').textContent=initials(club.name);el('clubCrest').style.background=colour(club);
     el('clubCrest').style.color=colour(club).toLowerCase()==='#e8e8e8'?'#050505':'#fff';
@@ -91,10 +88,11 @@ JS = r'''
     var held=Math.min(starterSlots,ownedPlayers().length);
     el('clubOwnership').textContent=held+' of '+starterSlots+' line-up slots filled from owned Activity Shares. Empty slots need a claimed or bought player share.';
   }
-  if(el('clubRail')){renderClub();window.addEventListener('fantrade:statechange',renderClub);return;}
-  var fresh=new URLSearchParams(location.search).get('new')==='1',club=FT.getState().club;
-  var shape=fresh?'4-3-3':club.formation,hex=fresh?'#1800ad':colour(club),colourName=fresh?'Indigo':club.colorName||'Indigo';
-  el('clubNameInput').value=fresh?'':club.name;el('clubStadiumInput').value=fresh?'':club.stadium||'';
+  if(el('clubHeading')){renderClub();window.addEventListener('fantrade:statechange',renderClub);return;}
+  // A manager has one club, made at onboarding, so the builder only ever edits.
+  var club=FT.getState().club;
+  var shape=club.formation,hex=colour(club),colourName=club.colorName||'Indigo';
+  el('clubNameInput').value=club.name;el('clubStadiumInput').value=club.stadium||'';
   function preview(){
     var name=el('clubNameInput').value.trim()||'Your club';
     el('previewName').textContent=name;el('previewStadium').textContent=el('clubStadiumInput').value.trim()||'Your home ground';
@@ -103,7 +101,7 @@ JS = r'''
     el('previewShape').textContent=shape;el('builderPitch').innerHTML=pitch(shape);
     el('clubForms').querySelectorAll('button').forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.shape===shape));});
     el('clubColours').querySelectorAll('button').forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.hex.toLowerCase()===hex.toLowerCase()));});
-    el('saveClubBtn').textContent=fresh?'Create club':'Save changes';
+    el('saveClubBtn').textContent='Save changes';
   }
   ['clubNameInput','clubStadiumInput'].forEach(function(id){el(id).addEventListener('input',function(){el('clubSaveStatus').textContent='';preview();});});
   el('clubForms').querySelectorAll('button').forEach(function(b){b.addEventListener('click',function(){shape=b.dataset.shape;el('clubSaveStatus').textContent='';preview();});});
@@ -112,7 +110,7 @@ JS = r'''
     event.preventDefault();var name=el('clubNameInput').value.trim();
     if(name.length<2){el('clubSaveStatus').textContent='Enter a club name with at least two letters.';el('clubNameInput').focus();return;}
     var data={name:name,stadium:el('clubStadiumInput').value.trim()||'Unnamed ground',formation:shape,color:hex,colors:[hex,'#111310'],colorName:colourName};
-    try{if(fresh){FT.createClub(data);fresh=false;history.replaceState(null,'','club-builder.html');}else{FT.saveClub(data);}el('clubSaveStatus').textContent='Saved. Your club is ready to view.';preview();}catch(error){el('clubSaveStatus').textContent=error.message;}
+    try{FT.saveClub(data);el('clubSaveStatus').textContent='Saved. Your club is ready to view.';preview();}catch(error){el('clubSaveStatus').textContent=error.message;}
   });
   preview();
 })();

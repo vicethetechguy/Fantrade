@@ -691,9 +691,9 @@ DASH_CSS = """
   display:grid;gap:18px}
 .home-claim-head{display:grid;gap:10px}
 .home-claim-top{display:flex;align-items:center;gap:10px}
-.home-claim-icon{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;
-  background:rgba(255,255,255,.16);color:#fff;flex-shrink:0}
-.home-claim-icon .ic{width:19px;height:19px}
+/* The mark sits straight on the blue with nothing behind it. brightness(0)
+   takes the logo to solid black while keeping its shape. */
+.home-claim-mark{width:34px;height:34px;object-fit:contain;flex-shrink:0;filter:brightness(0)}
 .home-claim-eyebrow{font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
   color:rgba(255,255,255,.72)}
 .home-claim-card h2{font-size:25px!important;margin:0 0 8px;color:#fff;letter-spacing:-.022em}
@@ -919,8 +919,9 @@ da = ['<main><div class="kc-home-wrap home-layout">', tab_intro('Home'),
       '<div class="kc-bal-val"><span id="homeBalVal" data-bind="net">—</span> <small>$FTR</small></div>'
       '<div class="kc-bal-sub" id="homeBalSub">—</div>',
       '<div class="home-claim-card" aria-labelledby="homeClaimTitle"><div class="home-claim-head">'
-      '<div class="home-claim-top"><span class="home-claim-icon">' + ic('bolt', 'ic')
-      + '</span><span class="home-claim-eyebrow">Open to claim</span></div>'
+      '<div class="home-claim-top">'
+      '<img class="home-claim-mark" src="assets/fantrade-logo.png" alt="" width="34" height="34">'
+      '<span class="home-claim-eyebrow">Open to claim</span></div>'
         '<div><h2 id="homeClaimTitle">Launch &amp; Claim Activity Shares</h2>'
         '<p>Fantrade clears who is eligible. You claim one, pay the listing fee, '
         'and launch their Activity Shares for the exchange and FanPlay.</p></div></div>',
@@ -2305,28 +2306,58 @@ AC_CSS = """
 """
 
 ac = ['<main><div class="kc-profile-wrap">', tab_intro('Your profile'),
-      '<section class="profile-identity"><div class="profile-avatar-wrap"><button type="button" class="profile-avatar-button" id="kcAvatarBtn" aria-label="Upload profile picture">'
-      '<img src="assets/fantrade-outline-logo.png" alt="Profile photo" width="76" height="76" id="kcProfileAvatar" data-avatar-img></button>'
-      '<input type="file" id="kcAvatarInput" accept="image/png,image/jpeg,image/webp" hidden><button type="button" class="app-text-link profile-avatar-remove" id="kcAvatarRemove">Remove</button></div>'
-      '<div><h2 id="kcUsername">Your name</h2><p data-bind="handle">Your manager profile</p>'
-      '<button type="button" class="app-text-link" id="kcEditNameBtn">Edit name</button></div></section>'
-      '<dl class="profile-overview"><div><dt>Portfolio value · $FTR</dt><dd id="profileNet">—</dd></div>'
-      '<div><dt>Players owned</dt><dd id="profileHoldings">—</dd></div><div><dt>Your club</dt><dd id="profileClub">—</dd></div></dl>'
+      # One card carries who you are: the picture, the name, the handle and
+      # the two facts that never change — when you joined and where you play.
+      '<section class="profile-card">'
+      '<div class="profile-card-top">'
+      '<div class="profile-avatar-wrap">'
+      '<button type="button" class="profile-avatar-button" id="kcAvatarBtn" aria-label="Change profile picture">'
+      '<img src="assets/fantrade-outline-logo.png" alt="" width="84" height="84" id="kcProfileAvatar" data-avatar-img>'
+      '<span class="profile-avatar-edit" aria-hidden="true">' + ic('camera', 'ic') + '</span>'
+      '</button>'
+      '<input type="file" id="kcAvatarInput" accept="image/png,image/jpeg,image/webp" hidden>'
+      '</div>'
+      '<div class="profile-who">'
+      '<h2 id="kcUsername">Your name</h2>'
+      '<p class="profile-handle" data-bind="handle">@manager</p>'
+      '</div></div>'
+      # Their own row: side by side they would not fit beside the picture at
+      # phone width, and wrapping there pushed the avatar out of line.
+      '<div class="profile-who-actions">'
+      '<button type="button" class="profile-chip-btn" id="kcEditNameBtn">Edit name</button>'
+      '<button type="button" class="profile-chip-btn subtle" id="kcAvatarRemove">Remove photo</button>'
+      '</div>'
+      '<dl class="profile-meta">'
+      '<div><dt>Manager since</dt><dd id="profileSince">—</dd></div>'
+      '<div><dt>Home league</dt><dd id="profileLeague">—</dd></div>'
+      '<div><dt>Account ID</dt><dd><button type="button" class="profile-uid" id="kcCopyUidBtn" '
+      'title="Copy account ID"><span id="kcUid">242423082</span>' + ic('copy', 'ic') + '</button></dd></div>'
+      '</dl></section>',
+      # What the account is worth, as one panel rather than three loose lines.
+      '<dl class="profile-overview">'
+      '<div class="lead"><dt>Portfolio value</dt><dd><span id="profileNet">—</span> <small>$FTR</small></dd></div>'
+      '<div><dt>Activity Assets held</dt><dd id="profileHoldings">—</dd></div>'
+      '<div><dt>Your club</dt><dd id="profileClub">—</dd></div>'
+      '</dl>',
       '<h2 class="app-section-title">Your Fantrade</h2><div class="profile-links">']
 for label, description, href, icon in [
     ('Wallet','Your balance, shares and transfers','ftr.html','wallet'),
-    ('Dream Club','Manage your team and formation','clubs.html','formation'),
-    ('Activity','Review your transactions','activity.html','receipt'),
+    ('Dream Club','Your team, formation and colours','clubs.html','formation'),
     ('Security','Password and account protection','settings-security.html','shield'),
     ('Notifications','Choose what you hear from us','settings-alerts.html','bell'),
     ('Settings','Profile, club and play preferences','settings.html','filter')]:
-    ac.append('<a class="profile-link" href="'+href+'">'+ic(icon,'ic')+'<div><strong>'+label+'</strong><small>'+description+'</small></div><span>›</span></a>')
-ac.append('</div><details class="profile-tools"><summary>Membership &amp; account tools</summary><div class="profile-tools-content">')
-for ident, label in [('kcVipPill','Membership benefits'),('kcSafeguardPill','Account safeguard'),('kcVerifiedPill','Verification'),('kcLoyaltyRow','$FTR loyalty'),('kcReferralCard','Invite friends'),('kcSwitchProfileBtn','Switch profile')]:
-    ac.append('<button class="profile-tool" type="button" id="'+ident+'">'+label+'<span>›</span></button>')
-ac.append('<div class="profile-tool"><span>Pay fees with $FTR</span><button type="button" class="kc-switch on" id="kcFeeSwitch" aria-label="Toggle pay fees with $FTR"><i></i></button></div>'
-          '<button class="profile-tool" type="button" id="kcCopyUidBtn" title="Copy account ID"><span>Account ID</span><span id="kcUid">242423082</span></button>'
-          '</div></details><button type="button" class="btn btn-glass" id="kcSignOutBtn">Sign out</button>'
+    ac.append('<a class="profile-link" href="'+href+'"><span class="profile-link-icon">'+ic(icon,'ic')+'</span>'
+              '<div><strong>'+label+'</strong><small>'+description+'</small></div>'+ic('arrow','ic')+'</a>')
+ac.append('</div><details class="profile-tools"><summary><span>Membership &amp; account tools</span>'
+          + ic('arrow', 'ic') + '</summary><div class="profile-tools-content">')
+for ident, label in [('kcVipPill','Membership benefits'),('kcSafeguardPill','Account safeguard'),
+                     ('kcVerifiedPill','Verification'),('kcLoyaltyRow','$FTR loyalty'),
+                     ('kcReferralCard','Invite friends')]:
+    ac.append('<button class="profile-tool" type="button" id="'+ident+'"><span>'+label+'</span>'+ic('arrow','ic')+'</button>')
+ac.append('<div class="profile-tool as-row"><span>Pay fees with $FTR</span>'
+          '<button type="button" class="kc-switch on" id="kcFeeSwitch" aria-label="Toggle pay fees with $FTR"><i></i></button></div>'
+          '</div></details>'
+          '<button type="button" class="profile-signout" id="kcSignOutBtn">Sign out</button>'
           '<div id="kcToast" class="kc-toast" role="status"><span id="kcToastText"></span></div></div></main>')
 
 AC_JS = r"""
@@ -2407,10 +2438,14 @@ AC_JS = r"""
   var storedName = localStorage.getItem('ft_username') || FT.getState().user.name;
   if(nameEl) nameEl.textContent = storedName;
   function updateProfileOverview(){
-    var s=FT.getState();
-    document.getElementById('profileNet').textContent=(FT.holdingsValue()+s.wallet.balance+s.wallet.locked).toLocaleString('en-US');
-    document.getElementById('profileHoldings').textContent=Object.keys(s.holdings).filter(function(key){return !s.holdings[key].c && s.holdings[key].shares>0;}).length;
-    document.getElementById('profileClub').textContent=s.club.name;
+    var s = FT.getState();
+    function set(id, text){ var el = document.getElementById(id); if(el) el.textContent = text; }
+    set('profileNet', Math.round(FT.holdingsValue() + s.wallet.balance + s.wallet.locked).toLocaleString('en-US'));
+    set('profileHoldings', Object.keys(s.holdings).filter(function(key){
+      return s.holdings[key].shares > 0; }).length);
+    set('profileClub', s.club.name);
+    set('profileSince', (s.auth && s.auth.since) || '—');
+    set('profileLeague', s.user.league || '—');
   }
   updateProfileOverview();
   window.addEventListener('fantrade:statechange',updateProfileOverview);
@@ -2538,14 +2573,6 @@ AC_JS = r"""
       + '</div>');
   });
 
-  on('kcSwitchProfileBtn', function(){
-    modal('Switch Profile',
-      '<div class="ft-modal-card">'
-      + '<div class="m-row" style="background:rgba(24,0,173,.08)"><span>Viceonchain (Active)</span><b style="color:var(--lime)">Primary Manager</b></div>'
-      + '<div class="m-row"><span>NorthBank_Scout</span><b>Secondary Scout</b></div>'
-      + '</div>'
-      + '<p style="font-size:11.5px;color:#767c82;margin-top:10px">You can manage multiple football identities or club divisions under one wallet.</p>');
-  });
 
   on('kcSignOutBtn', function(){
     showToast('Signed out of session. Redirecting to sign in...');
@@ -2580,17 +2607,32 @@ def settings_top(title, subtitle, back=("account.html", "Profile")):
             '<header class="app-intro settings-intro"><div><h1>%s</h1><p>%s</p></div></header>'
             ) % (back[0], back[1].lower(), title, subtitle)
 
-settings_cards = []
-for key, icon_name, label in SETNAV:
-    title, desc = SETTINGS_COPY[key]
-    settings_cards.append('<a class="settings-card" href="settings-%s.html"><span class="ibox">%s</span>'
-                          '<div class="bd"><b>%s</b><p>%s</p></div>%s</a>' %
-                          (key, ic(icon_name, "ic-lg"), title, desc, ic("arrow", "ic")))
+# Settings reads as two groups rather than one undifferentiated wall: the
+# things you set up, and the things that end or export the account.
+SETTINGS_GROUPS = [
+    ("Your account", ["profile", "club", "security", "alerts"]),
+    ("Money and play", ["wallet", "play"]),
+    ("Leaving", ["data"]),
+]
+SETNAV_BY_KEY = {key: (icon_name, label) for key, icon_name, label in SETNAV}
+
+settings_sections = []
+for group_title, keys in SETTINGS_GROUPS:
+    rows = []
+    for key in keys:
+        icon_name, _ = SETNAV_BY_KEY[key]
+        title, desc = SETTINGS_COPY[key]
+        rows.append('<a class="settings-row%s" href="settings-%s.html">'
+                    '<span class="settings-row-icon">%s</span>'
+                    '<span class="settings-row-text"><b>%s</b><small>%s</small></span>%s</a>' %
+                    (" danger" if key == "data" else "", key,
+                     ic(icon_name, "ic"), title, desc, ic("arrow", "ic")))
+    settings_sections.append('<h2 class="settings-group-title">%s</h2><div class="settings-group">%s</div>'
+                             % (group_title, "".join(rows)))
 
 settings_index = ('<main><div class="kc-settings-wrap">' +
-                  settings_top("Settings", "Everything personal, in one place.") +
-                  '<div class="settings-hero"><h2>Choose what to update</h2><p>Changes save to your Fantrade profile and follow you across devices.</p></div>' +
-                  '<div class="settings-grid">' + "".join(settings_cards) + '</div></div></main>')
+                  settings_top("Settings", "Changes save to your Fantrade profile and follow you across devices.") +
+                  "".join(settings_sections) + '</div></main>')
 page("settings.html", "Profile settings — Fantrade", settings_index, ST_JS, ST_CSS)
 print("built settings.html")
 
