@@ -131,12 +131,12 @@ AUTH_PAGE_CSS = """
 body{background:#050505;--dim:#b9bcb7;--faint:#979c96;--ink:#f4f6f1;--lime:#1800ad}
 .orb,.grain{display:none}
 .nav-min{top:0;min-height:76px;padding:16px 32px;padding-top:calc(16px + env(safe-area-inset-top));background:#050505}
-.nav-min .logo{font-family:Archivo,system-ui,sans-serif;font-size:25px;text-transform:lowercase;letter-spacing:-.03em}
+.nav-min .logo{font-family:Space Grotesk,system-ui,sans-serif;font-size:25px;text-transform:lowercase;letter-spacing:-.03em}
 .nav-min .brand-logo-img{width:28px;height:28px}
 .nav-min a.back{min-height:44px;font-family:Montserrat,system-ui,sans-serif;letter-spacing:0;text-transform:none;font-size:12px;color:var(--dim)}
 .auth-page{width:min(460px,100%);margin:auto;padding:128px 24px 64px}
 .auth-intro{text-align:center;margin-bottom:36px}
-.auth-intro h1{font-family:Archivo,system-ui,sans-serif;font-size:clamp(28px,4.2vw,42px);font-variation-settings:'wdth' 110,'wght' 800;line-height:1.08;text-transform:none;letter-spacing:-.035em;margin:0}
+.auth-intro h1{font-family:Space Grotesk,system-ui,sans-serif;font-size:clamp(28px,4.2vw,42px);font-weight:700;line-height:1.08;text-transform:none;letter-spacing:-.035em;margin:0}
 .auth-intro p{font-size:14px;color:var(--dim);line-height:1.6;margin:14px auto 0;max-width:36ch}
 .tf{margin-bottom:20px}
 .tf label{font-size:13px;text-transform:none;letter-spacing:0;color:var(--dim);font-weight:500;margin-bottom:8px}
@@ -173,7 +173,7 @@ body{background:#050505;--dim:#b9bcb7;--faint:#979c96;--ink:#f4f6f1;--lime:#1800
 .demo-note{margin-top:24px;padding:0;border:0;background:none;font-size:12px;font-weight:400;color:var(--dim);line-height:1.7;text-align:center;overflow-wrap:anywhere}
 .demo-note b{color:var(--ink);font-weight:500;font-family:Montserrat,system-ui,sans-serif}
 .auth-alt{margin-top:20px;font-size:13px;color:var(--dim);line-height:1.6}
-.ft-modal-title{font-family:Archivo,system-ui,sans-serif;font-variation-settings:'wdth' 100,'wght' 700;font-size:24px;text-transform:none;letter-spacing:-.025em}
+.ft-modal-title{font-family:Space Grotesk,system-ui,sans-serif;font-weight:700;font-size:24px;text-transform:none;letter-spacing:-.025em}
 .ft-modal-desc{color:var(--dim);line-height:1.6}
 @media (max-width:600px){
   .nav-min{min-height:68px;padding:12px 20px;padding-top:calc(12px + env(safe-area-inset-top))}
@@ -380,12 +380,12 @@ OB_CSS = """
 body{background:#050505;--dim:#b9bcb7;--faint:#979c96;--ink:#f4f6f1;--lime:#1800ad}
 .orb,.grain{display:none}
 .nav-min{top:0;min-height:76px;padding:16px 32px;background:#050505}
-.nav-min .logo{font-family:Archivo,system-ui,sans-serif;font-size:25px;text-transform:lowercase;letter-spacing:-.03em}
+.nav-min .logo{font-family:Space Grotesk,system-ui,sans-serif;font-size:25px;text-transform:lowercase;letter-spacing:-.03em}
 .nav-min .brand-logo-img{width:28px;height:28px}
 .nav-min a.back{min-height:44px;font-family:Montserrat,system-ui,sans-serif;letter-spacing:0;text-transform:none;font-size:12px}
 .onboarding{width:min(660px,100%);margin:auto;padding:116px 24px 64px}
 .ob-intro{text-align:center;margin-bottom:36px}
-.ob-intro h1{font-size:clamp(28px,4.2vw,42px);font-variation-settings:'wdth' 110,'wght' 800;line-height:1.08;text-transform:none;letter-spacing:-.035em}
+.ob-intro h1{font-size:clamp(28px,4.2vw,42px);font-weight:700;line-height:1.08;text-transform:none;letter-spacing:-.035em}
 .ob-intro p{font-size:14px;color:var(--dim);margin:14px 0 0}
 .ob-progress{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:32px}
 .ob-progress p{margin:0;font-size:12px;color:var(--dim)}
@@ -393,7 +393,7 @@ body{background:#050505;--dim:#b9bcb7;--faint:#979c96;--ink:#f4f6f1;--lime:#1800
 .prog .st{border:0;padding:0;min-width:0;flex:none;width:8px;height:8px;border-radius:50%;background:#353735;opacity:1}
 .prog .st.on{background:var(--lime);width:24px;border-radius:10px}
 .prog .st.done{background:#b9bcb7}
-.ob-h4{font-family:Archivo,system-ui,sans-serif;font-variation-settings:'wdth' 100,'wght' 700;font-size:28px;text-transform:none;letter-spacing:-.025em;line-height:1.15;margin:0 0 10px}
+.ob-h4{font-family:Space Grotesk,system-ui,sans-serif;font-weight:700;font-size:28px;text-transform:none;letter-spacing:-.025em;line-height:1.15;margin:0 0 10px}
 .ob-p{font-size:14px;color:var(--dim);line-height:1.6;margin:0 0 28px}
 .grant{display:flex;align-items:center;justify-content:space-between;gap:20px;margin:0 0 26px;padding:0;background:none;border:0;box-shadow:none}
 .grant .k{font-size:12px;color:var(--dim)}
@@ -681,51 +681,170 @@ DASH_CSS = """
 .kc-bal-val{font-family:'Montserrat', sans-serif;font-size:34px;font-weight:700;letter-spacing:-.02em;color:var(--ink);margin:8px 0 2px}
 .kc-bal-val small{font-size:16px;color:var(--lime);font-weight:600}
 .kc-bal-sub{font-size:12px;color:#767c82;font-family:'Montserrat', sans-serif}
-.home-claim-card{margin-top:18px;padding:20px;border-radius:20px;background:linear-gradient(135deg,rgba(24,0,173,.35) 0%,rgba(18,20,17,.92) 100%);border:1px solid rgba(165,150,237,.25);color:#fff;box-shadow:0 16px 36px rgba(0,0,0,.35);display:grid;gap:14px}
-.home-claim-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
-.home-claim-card h2{font-size:18px;margin:0 0 4px;color:#fff;font-family:Archivo,sans-serif;font-variation-settings:'wdth' 115,'wght' 800;letter-spacing:-.01em}
-.home-claim-card p{margin:0;color:rgba(255,255,255,.74);font-size:12px;line-height:1.55}
-.home-claim-badge{display:inline-flex;align-items:center;justify-content:center;min-height:28px;padding:4px 12px;border-radius:999px;background:rgba(24,0,173,.4);border:1px solid rgba(165,150,237,.35);color:#a596ed;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
+/* Launch & Claim — built from the same parts as the scrolling home cards
+   (24px radius, 26px padding, a light source top-right, no border line), but
+   filled with the brand blue so it reads as the one thing on the page that
+   asks you to act. */
+.home-claim-card{margin-top:20px;padding:26px;border-radius:24px;border:0;color:#fff;
+  background:radial-gradient(120% 78% at 100% 0%,rgba(255,255,255,.18),transparent 58%),var(--lime);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.16),0 20px 44px rgba(24,0,173,.34);
+  display:grid;gap:18px}
+.home-claim-head{display:grid;gap:10px}
+.home-claim-top{display:flex;align-items:center;gap:10px}
+.home-claim-icon{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;
+  background:rgba(255,255,255,.16);color:#fff;flex-shrink:0}
+.home-claim-icon .ic{width:19px;height:19px}
+.home-claim-eyebrow{font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
+  color:rgba(255,255,255,.72)}
+.home-claim-card h2{font-size:25px!important;margin:0 0 8px;color:#fff;letter-spacing:-.022em}
+.home-claim-card p{margin:0;color:rgba(255,255,255,.76);font-size:13.5px;line-height:1.65}
 .home-claim-list{display:grid;gap:10px}
-.home-claim-row{display:grid;grid-template-columns:44px minmax(0,1fr) auto;align-items:center;gap:12px;padding:12px 14px;border:1px solid rgba(255,255,255,.07);border-radius:14px;background:rgba(255,255,255,.04);color:#fff;text-align:left;width:100%;font:inherit;cursor:pointer;transition:all .2s ease}
-.home-claim-row:hover:not([disabled]){border-color:rgba(165,150,237,.45);background:rgba(24,0,173,.18);transform:translateY(-1px)}
-.home-claim-row[disabled]{cursor:default;opacity:.65;border-color:rgba(255,255,255,.04)}
-.home-claim-row .player-photo{width:44px;height:44px;border-radius:50%;object-fit:cover;object-position:50% 18%;background:#050505;border:1px solid rgba(255,255,255,.1)}
-.home-claim-row b{display:block;font-size:13.5px;font-family:Archivo,sans-serif;font-variation-settings:'wdth' 115,'wght' 800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.home-claim-row small{display:block;margin-top:3px;color:rgba(255,255,255,.65);font-size:11px;line-height:1.4}
-.home-claim-action{display:inline-flex;align-items:center;justify-content:center;min-height:34px;padding:8px 14px;border-radius:999px;background:var(--lime);color:#fff;font-size:11.5px;font-weight:800;letter-spacing:.02em;white-space:nowrap;box-shadow:0 6px 14px rgba(24,0,173,.35);transition:transform .15s ease}
-.home-claim-row[disabled] .home-claim-action{background:rgba(255,255,255,.12);color:rgba(255,255,255,.5);box-shadow:none}
-.home-claim-status{min-height:18px;font-size:11.5px;color:rgba(255,255,255,.8);margin:0}
+/* The rows sit in a well rather than behind a border, the way the stats block
+   does on the scrolling cards. */
+.home-claim-row{display:grid;grid-template-columns:44px minmax(0,1fr) auto;align-items:center;gap:13px;
+  padding:12px 14px;border:0;border-radius:16px;background:rgba(0,0,0,.26);color:#fff;
+  text-align:left;width:100%;font:inherit;cursor:pointer;transition:background .2s ease,transform .2s ease}
+.home-claim-who{min-width:0}
+.home-claim-row:hover:not([disabled]){background:rgba(0,0,0,.4);transform:translateY(-1px)}
+.home-claim-row[disabled]{cursor:default;opacity:.55}
+.home-claim-row .player-photo{width:44px;height:44px;border-radius:50%;object-fit:cover;
+  object-position:50% 18%;background:rgba(0,0,0,.4);border:0}
+.home-claim-row b{display:block;font-family:Space Grotesk,sans-serif;font-weight:700;font-size:14.5px;
+  letter-spacing:-.015em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.home-claim-row small{display:flex;align-items:center;gap:7px;margin-top:4px;
+  color:rgba(255,255,255,.66);font-size:11.5px;line-height:1.3;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* The F-ticker is a market symbol, so it gets a symbol's treatment. */
+.home-claim-row small i{font-style:normal;font-family:Space Grotesk,sans-serif;font-weight:700;
+  font-size:10.5px;letter-spacing:.04em;color:#fff;background:rgba(255,255,255,.16);
+  border-radius:6px;padding:2px 6px;flex-shrink:0}
+/* White on blue: the pill has to out-contrast the card it sits on. */
+.home-claim-action{display:grid;justify-items:center;align-content:center;gap:1px;min-height:38px;
+  padding:7px 15px;border-radius:999px;background:#fff;color:var(--lime);font-size:12px;
+  font-weight:700;letter-spacing:.01em;white-space:nowrap;transition:transform .15s ease}
+.home-claim-action em{font-style:normal;font-size:9.5px;font-weight:600;letter-spacing:.02em;
+  color:rgba(24,0,173,.62)}
+.home-claim-action em:empty{display:none}
+.home-claim-row[disabled] .home-claim-action{background:rgba(255,255,255,.16);color:rgba(255,255,255,.62)}
+@media(max-width:600px){
+  .home-claim-card{padding:22px}
+  /* At this width the fee line cannot earn its place beside the name. */
+  .home-claim-action em{display:none}
+  .home-claim-action{min-height:34px;padding:8px 14px}
+}
+.home-claim-status{min-height:18px;font-size:12px;color:rgba(255,255,255,.82);margin:0}
 
 /* Claim Modal Dialog */
-.claim-modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.78);backdrop-filter:blur(6px);z-index:9999;display:none;place-items:center;padding:16px}
+.claim-modal-backdrop{position:fixed;inset:0;background:rgba(3,2,8,.82);backdrop-filter:blur(8px);
+  z-index:9999;display:none;place-items:center;padding:16px;overflow-y:auto}
 .claim-modal-backdrop.open{display:grid}
-.claim-modal-dialog{background:#121411;border:1px solid rgba(165,150,237,.3);border-radius:24px;width:100%;max-width:460px;padding:24px;color:#fff;box-shadow:0 24px 60px rgba(0,0,0,.6);position:relative;animation:kcPop .2s cubic-bezier(.16,1,.3,1)}
-@keyframes kcPop{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
-.claim-modal-close{position:absolute;top:18px;right:18px;background:rgba(255,255,255,.08);border:0;color:#fff;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:16px;display:grid;place-items:center}
-.claim-modal-head{display:flex;align-items:center;gap:14px;margin-bottom:18px;padding-bottom:16px;border-bottom:1px solid rgba(255,255,255,.08)}
-.claim-modal-head .player-photo{width:56px;height:56px;border-radius:50%;object-fit:cover;object-position:50% 18%;border:2px solid var(--lime)}
-.claim-modal-title{margin:0;font-size:18px;font-family:Archivo,sans-serif;font-variation-settings:'wdth' 115,'wght' 800}
-.claim-modal-sub{font-size:12px;color:rgba(255,255,255,.65);margin-top:2px}
-.claim-section-lbl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.6);margin:14px 0 8px}
+/* No border: depth comes from the fill and the shadow, like every other
+   surface in the app. */
+.claim-modal-dialog{background:#12101a;border:0;border-radius:28px;width:100%;max-width:470px;
+  padding:26px;color:#fff;box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 28px 70px rgba(0,0,0,.66);
+  position:relative;animation:kcPop .22s cubic-bezier(.16,1,.3,1);margin:auto;
+  max-height:calc(100dvh - 32px);overflow-y:auto;scrollbar-width:thin}
+.claim-modal-dialog::-webkit-scrollbar{width:6px}
+.claim-modal-dialog::-webkit-scrollbar-thumb{background:rgba(255,255,255,.14);border-radius:999px}
+@keyframes kcPop{from{opacity:0;transform:scale(.96) translateY(8px)}to{opacity:1;transform:none}}
+.claim-modal-close{position:absolute;top:20px;right:20px;background:rgba(255,255,255,.08);border:0;
+  color:#fff;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:17px;
+  display:grid;place-items:center;transition:background .15s ease}
+.claim-modal-close:hover{background:rgba(255,255,255,.16)}
+.claim-modal-head{display:flex;align-items:center;gap:14px;margin-bottom:22px;padding:0;border:0}
+.claim-modal-head .player-photo{width:56px;height:56px;border-radius:50%;object-fit:cover;
+  object-position:50% 18%;border:0;box-shadow:0 0 0 2px var(--lime)}
+.claim-modal-title{margin:0;font-family:Space Grotesk,sans-serif;font-weight:700;font-size:20px;
+  letter-spacing:-.022em}
+.claim-modal-sub{font-size:12px;color:var(--dim);margin-top:3px}
+.claim-modal-sub b{color:#fff;font-weight:600}
+.claim-section-lbl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;
+  color:var(--faint);margin:0 0 10px}
+.claim-step{margin-bottom:18px}
+
+/* Allocation: the choice is what share of 10,000,000 you take, so each option
+   shows that share rather than making you read it off a number. */
 .claim-opt-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.claim-opt-btn{border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:12px;background:rgba(255,255,255,.04);color:#fff;text-align:left;cursor:pointer;font:inherit;transition:all .15s ease}
-.claim-opt-btn.on{border-color:var(--lime);background:rgba(24,0,173,.22);box-shadow:0 0 0 1px var(--lime)}
-.claim-opt-btn b{display:block;font-size:13px;font-family:Archivo,sans-serif}
-.claim-opt-btn small{display:block;margin-top:4px;font-size:10.5px;color:rgba(255,255,255,.65);line-height:1.3}
+.claim-opt-btn{position:relative;border:0;border-radius:18px;padding:14px 13px 13px;
+  background:rgba(255,255,255,.05);color:#fff;text-align:left;cursor:pointer;font:inherit;
+  display:grid;gap:7px;align-content:start;transition:background .18s ease,transform .18s ease}
+.claim-opt-btn:hover:not(.on){background:rgba(255,255,255,.09);transform:translateY(-1px)}
+.claim-opt-btn.on{background:var(--lime);box-shadow:0 10px 26px rgba(24,0,173,.42)}
+.claim-opt-lvl{display:flex;align-items:baseline;gap:7px}
+.claim-opt-lvl b{font-family:Space Grotesk,sans-serif;font-weight:700;font-size:14px;letter-spacing:-.01em}
+.claim-opt-pct{font-family:Space Grotesk,sans-serif;font-weight:700;font-size:26px;line-height:1;
+  letter-spacing:-.035em}
+.claim-opt-btn small{display:block;font-size:11px;color:rgba(255,255,255,.62);line-height:1.45}
+.claim-opt-btn.on small{color:rgba(255,255,255,.82)}
+.claim-opt-fee{font-size:11.5px;font-weight:600;color:var(--dim)}
+.claim-opt-btn.on .claim-opt-fee{color:#fff}
+
+/* Where the 10,000,000 goes. One bar beats three numbers. */
+.claim-split{margin-top:12px;padding:14px 16px;border-radius:18px;background:rgba(0,0,0,.3)}
+.claim-split-bar{display:flex;height:10px;border-radius:999px;overflow:hidden;gap:2px;margin-bottom:12px}
+.claim-split-bar i{display:block;transition:flex-basis .25s ease}
+.claim-split-bar i.cs-ft{background:#a596ed}
+.claim-split-bar i.cs-you{background:var(--lime);box-shadow:inset 0 0 0 1px rgba(255,255,255,.22)}
+.claim-split-bar i.cs-mkt{background:rgba(255,255,255,.14)}
+.claim-split-keys{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.claim-split-key{display:grid;gap:3px}
+.claim-split-key span{display:flex;align-items:center;gap:6px;font-size:10.5px;color:var(--faint);
+  text-transform:uppercase;letter-spacing:.05em}
+.claim-split-key span::before{content:'';width:8px;height:8px;border-radius:3px;flex-shrink:0}
+.claim-split-key.cs-ft span::before{background:#a596ed}
+.claim-split-key.cs-you span::before{background:var(--lime);box-shadow:inset 0 0 0 1px rgba(255,255,255,.3)}
+.claim-split-key.cs-mkt span::before{background:rgba(255,255,255,.2)}
+.claim-split-key b{font-family:Space Grotesk,sans-serif;font-weight:700;font-size:12.5px;
+  color:#fff;letter-spacing:-.01em;white-space:nowrap}
+
+/* Vesting */
 .claim-vest-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.claim-vest-btn{border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:10px 8px;background:rgba(255,255,255,.04);color:#fff;text-align:center;cursor:pointer;font:inherit;transition:all .15s ease}
-.claim-vest-btn.on{border-color:var(--lime);background:rgba(24,0,173,.22);box-shadow:0 0 0 1px var(--lime)}
-.claim-vest-btn b{display:block;font-size:12.5px}
-.claim-vest-btn small{display:block;font-size:10px;color:rgba(255,255,255,.6);margin-top:2px}
-.claim-rule-box{margin-top:14px;background:rgba(24,0,173,.14);border:1px solid rgba(165,150,237,.25);border-radius:14px;padding:12px 14px;font-size:11px;color:rgba(255,255,255,.8);line-height:1.55}
-.claim-rule-box b{color:#a596ed}
-.claim-fee-breakdown{margin-top:14px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:12px 14px;display:grid;gap:6px;font-size:11.5px}
-.claim-fee-row{display:flex;justify-content:space-between;align-items:center;color:rgba(255,255,255,.7)}
-.claim-fee-row.total{border-top:1px solid rgba(255,255,255,.08);padding-top:6px;margin-top:2px;font-weight:700;color:#fff;font-size:13px}
-.claim-submit-btn{margin-top:16px;width:100%;min-height:46px;border-radius:999px;background:var(--lime);border:0;color:#fff;font-family:Archivo,sans-serif;font-variation-settings:'wdth' 115,'wght' 800;font-size:14px;cursor:pointer;display:grid;place-items:center;transition:all .2s ease;box-shadow:0 8px 20px rgba(24,0,173,.4)}
-.claim-submit-btn:hover:not([disabled]){transform:translateY(-1px);filter:brightness(1.1)}
-.claim-submit-btn[disabled]{opacity:.5;cursor:not-allowed}
+.claim-vest-btn{border:0;border-radius:14px;padding:13px 8px;background:rgba(255,255,255,.05);
+  color:#fff;text-align:center;cursor:pointer;font:inherit;transition:background .18s ease,transform .18s ease}
+.claim-vest-btn:hover:not(.on){background:rgba(255,255,255,.09);transform:translateY(-1px)}
+.claim-vest-btn.on{background:var(--lime);box-shadow:0 8px 20px rgba(24,0,173,.38)}
+.claim-vest-btn b{display:block;font-family:Space Grotesk,sans-serif;font-weight:700;font-size:14px;
+  letter-spacing:-.01em}
+.claim-vest-btn small{display:block;font-size:10.5px;color:rgba(255,255,255,.58);margin-top:3px}
+.claim-vest-btn.on small{color:rgba(255,255,255,.8)}
+
+/* The terms, as three readable facts rather than a paragraph of bold text. */
+.claim-terms{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;margin-top:12px;
+  border-radius:16px;overflow:hidden;background:rgba(255,255,255,.06)}
+.claim-term{background:#15131f;padding:12px 11px;display:grid;gap:3px}
+.claim-term dt{font-size:10.5px;color:var(--faint);text-transform:uppercase;letter-spacing:.05em}
+.claim-term dd{margin:0;font-family:Space Grotesk,sans-serif;font-weight:700;font-size:14px;
+  color:#fff;letter-spacing:-.01em}
+.claim-term dd small{display:block;font-family:Montserrat,sans-serif;font-weight:400;font-size:10.5px;
+  color:var(--dim);margin-top:2px;letter-spacing:0}
+
+/* What you pay */
+.claim-fee-breakdown{margin-top:20px;background:rgba(0,0,0,.3);border:0;border-radius:18px;
+  padding:16px 18px;display:grid;gap:9px;font-size:12.5px}
+.claim-fee-row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;color:var(--dim)}
+.claim-fee-row b{color:#fff;font-weight:600}
+.claim-fee-row.burn span:last-child{color:#a596ed}
+.claim-fee-row.total{margin-top:3px;padding-top:11px;border-top:1px solid rgba(255,255,255,.09);
+  color:#fff;font-size:13px}
+.claim-fee-row.total span:last-child{font-family:Space Grotesk,sans-serif;font-weight:700;font-size:19px;
+  letter-spacing:-.02em}
+.claim-submit-btn{margin-top:18px;width:100%;min-height:50px;border-radius:999px;background:var(--lime);
+  border:0;color:#fff;font-family:Space Grotesk,sans-serif;font-weight:700;font-size:14.5px;
+  letter-spacing:-.01em;cursor:pointer;display:grid;place-items:center;
+  transition:transform .18s ease,filter .18s ease;box-shadow:0 12px 28px rgba(24,0,173,.44)}
+.claim-submit-btn:hover:not([disabled]){transform:translateY(-1px);filter:brightness(1.12)}
+.claim-submit-btn[disabled]{opacity:.45;cursor:not-allowed;box-shadow:none}
+@media(max-width:420px){
+  .claim-modal-dialog{padding:20px;border-radius:24px}
+  .claim-opt-btn{padding:13px 11px 12px}
+  .claim-opt-pct{font-size:23px}
+  .claim-opt-btn small{font-size:10.5px}
+  .claim-opt-fee{font-size:11px}
+  .claim-split-key span{font-size:9.5px}
+  .claim-term{padding:11px 9px}
+  .claim-term dt{font-size:9.5px}
+  .claim-term dd{font-size:13px}
+}
 
 /* Quick Action Circles */
 .kc-bal-actions{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:18px;padding-top:16px;border-top:1px solid rgba(255,255,255,.06)}
@@ -749,7 +868,7 @@ DASH_CSS = """
 .kc-hot-card{flex:0 0 142px;width:142px;min-width:142px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:12px 14px;text-decoration:none;color:inherit;transition:border-color .2s,transform .2s;box-sizing:border-box}
 .kc-hot-card:hover{border-color:rgba(24,0,173,.3);transform:translateY(-2px)}
 .kc-hot-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
-.kc-hot-ticker{font-family:Archivo,sans-serif;font-variation-settings:'wdth' 120,'wght' 800;font-size:13px;color:var(--ink)}
+.kc-hot-ticker{font-family:Space Grotesk,sans-serif;font-weight:700;font-size:13px;color:var(--ink)}
 .kc-hot-badge{font-family:'Montserrat', sans-serif;font-size:10px;font-weight:700;padding:1px 5px;border-radius:4px}
 .kc-hot-badge.up{background:rgba(24,0,173,.15);color:var(--lime)}
 .kc-hot-badge.down{background:rgba(255,94,94,.15);color:#FF5E5E}
@@ -770,10 +889,10 @@ DASH_CSS = """
 .kc-row{display:grid;grid-template-columns:1fr 110px 92px;align-items:center;padding:12px 10px;border-radius:12px;border-bottom:1px solid rgba(255,255,255,.04);text-decoration:none;color:inherit;transition:background .2s ease}
 .kc-row:hover{background:rgba(255,255,255,.03)}
 .kc-row-left{display:flex;align-items:center;gap:12px;min-width:0}
-.kc-avatar{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);display:grid;place-items:center;flex:none;color:var(--lime);font-family:Archivo,sans-serif;font-size:11px;font-weight:800;overflow:hidden}
+.kc-avatar{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);display:grid;place-items:center;flex:none;color:var(--lime);font-family:Space Grotesk,sans-serif;font-size:11px;font-weight:800;overflow:hidden}
 .kc-avatar .player-photo{width:100%;height:100%;object-fit:cover;object-position:50% 18%;display:block}
 .kc-avatar.coach{color:var(--amber);border-color:rgba(255,106,31,.25);background:rgba(255,106,31,.08)}
-.kc-pair-title{display:flex;align-items:center;gap:5px;font-family:Archivo,sans-serif;font-variation-settings:'wdth' 115,'wght' 800;font-size:14px;line-height:1.1;color:var(--ink)}
+.kc-pair-title{display:flex;align-items:center;gap:5px;font-family:Space Grotesk,sans-serif;font-weight:700;font-size:14px;line-height:1.1;color:var(--ink)}
 .kc-pair-quote{font-size:11.5px;color:#767c82;font-weight:600}
 .kc-tag{font-family:'Montserrat', sans-serif;font-size:9px;font-weight:600;color:#767c82;background:rgba(255,255,255,.08);border-radius:4px;padding:1px 4px;margin-left:2px}
 .kc-tag.coach-tag{color:var(--amber);background:rgba(255,106,31,.12)}
@@ -789,7 +908,7 @@ DASH_CSS = """
 .kc-ref-card{display:flex;align-items:center;justify-content:space-between;gap:16px;background:linear-gradient(135deg,rgba(255,255,255,.04) 0%,rgba(255,255,255,.02) 100%);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:16px 20px;text-decoration:none;transition:border-color .2s,transform .2s}
 .kc-ref-card:hover{border-color:rgba(24,0,173,.3);transform:translateY(-1px)}
 .kc-ref-left{flex:1}
-.kc-ref-title{font-family:Archivo,sans-serif;font-variation-settings:'wdth' 115,'wght' 700;font-size:15px;color:var(--ink);margin-bottom:4px}
+.kc-ref-title{font-family:Space Grotesk,sans-serif;font-weight:700;font-size:15px;color:var(--ink);margin-bottom:4px}
 .kc-ref-sub{font-size:12px;color:#767c82}
 .kc-ref-icon-box{width:52px;height:52px;flex-shrink:0;border-radius:14px;overflow:hidden;background:rgba(255,255,255,.05);display:grid;place-items:center}
 """
@@ -798,33 +917,57 @@ da = ['<main><div class="kc-home-wrap home-layout">', tab_intro('Home'),
       '<section class="kc-home-bal-card" aria-label="Portfolio balance"><div class="kc-bal-header">Your portfolio'
       '<button type="button" class="kc-eye-btn" id="balEyeBtn" aria-label="Toggle balance visibility">'+'<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="fill:none"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>'+'</button></div>'
       '<div class="kc-bal-val"><span id="homeBalVal" data-bind="net">—</span> <small>$FTR</small></div>'
-      '<div class="kc-bal-sub" id="homeBalSub">—</div>'
-      '<div class="home-claim-card" aria-labelledby="homeClaimTitle"><div class="home-claim-head"><div><h2 id="homeClaimTitle">Launch & Claim Activity Shares</h2>'
-      '<p>Admin-listed players ready for secondary market launch and FanPlay trading per Whitepaper Section 7 & 8.</p></div><span class="home-claim-badge">Admin Drops</span></div>'
+      '<div class="kc-bal-sub" id="homeBalSub">—</div>',
+      '<div class="home-claim-card" aria-labelledby="homeClaimTitle"><div class="home-claim-head">'
+      '<div class="home-claim-top"><span class="home-claim-icon">' + ic('bolt', 'ic')
+      + '</span><span class="home-claim-eyebrow">Open to claim</span></div>'
+        '<div><h2 id="homeClaimTitle">Launch &amp; Claim Activity Shares</h2>'
+        '<p>Fantrade clears who is eligible. You claim one, pay the listing fee, '
+        'and launch their Activity Shares for the exchange and FanPlay.</p></div></div>',
       '<div class="home-claim-list" id="homeClaimList" aria-live="polite"></div><p class="home-claim-status" id="homeClaimStatus" role="status"></p></div>'
       '<div class="claim-modal-backdrop" id="claimModalBackdrop" role="dialog" aria-modal="true" aria-labelledby="claimModalTitle">'
       '<div class="claim-modal-dialog"><button type="button" class="claim-modal-close" id="claimModalClose" aria-label="Close">&times;</button>'
       '<div class="claim-modal-head"><div id="claimModalPhoto"></div><div><h3 class="claim-modal-title" id="claimModalTitle">Launch Player Shares</h3>'
       '<div class="claim-modal-sub" id="claimModalSub">Whitepaper Section 7 & 8 Lister Program</div></div></div>'
-      '<div class="claim-section-lbl">1. Select Allocation Level</div>'
+      '<div class="claim-step"><div class="claim-section-lbl">1 &middot; Your allocation</div>'
       '<div class="claim-opt-grid">'
-      '<button type="button" class="claim-opt-btn on" data-level="1"><b>Level 1 (5%)</b><small>500,000 Activity Shares<br>50,000 $FTR Listing Fee</small></button>'
-      '<button type="button" class="claim-opt-btn" data-level="2"><b>Level 2 (10%)</b><small>1,000,000 Activity Shares<br>100,000 $FTR Listing Fee</small></button>'
+      '<button type="button" class="claim-opt-btn on" data-level="1">'
+      '<span class="claim-opt-lvl"><b>Level 1</b></span>'
+      '<span class="claim-opt-pct">5%</span>'
+      '<small>500,000 shares</small>'
+      '<span class="claim-opt-fee">50,000 $FTR</span></button>'
+      '<button type="button" class="claim-opt-btn" data-level="2">'
+      '<span class="claim-opt-lvl"><b>Level 2</b></span>'
+      '<span class="claim-opt-pct">10%</span>'
+      '<small>1,000,000 shares</small>'
+      '<span class="claim-opt-fee">100,000 $FTR</span></button>'
       '</div>'
-      '<div class="claim-section-lbl">2. Select Vesting Period</div>'
+      '<div class="claim-split"><div class="claim-split-bar" aria-hidden="true">'
+      '<i class="cs-ft" style="flex-basis:10%"></i><i class="cs-you" id="claimSplitYou" style="flex-basis:5%"></i>'
+      '<i class="cs-mkt" id="claimSplitMkt" style="flex-basis:85%"></i></div>'
+      '<div class="claim-split-keys">'
+      '<div class="claim-split-key cs-ft"><span>Fantrade</span><b>1,000,000</b></div>'
+      '<div class="claim-split-key cs-you"><span>You</span><b id="claimSplitYouTxt">500,000</b></div>'
+      '<div class="claim-split-key cs-mkt"><span>Market</span><b id="claimSplitMktTxt">8,500,000</b></div>'
+      '</div></div></div>'
+      '<div class="claim-step"><div class="claim-section-lbl">2 &middot; Vesting period</div>'
       '<div class="claim-vest-grid">'
-      '<button type="button" class="claim-vest-btn on" data-years="1"><b>1 Year</b><small>12 mo. yield</small></button>'
-      '<button type="button" class="claim-vest-btn" data-years="2"><b>2 Years</b><small>24 mo. yield</small></button>'
-      '<button type="button" class="claim-vest-btn" data-years="3"><b>3 Years</b><small>36 mo. yield</small></button>'
+      '<button type="button" class="claim-vest-btn on" data-years="1"><b>1 year</b><small>12 months</small></button>'
+      '<button type="button" class="claim-vest-btn" data-years="2"><b>2 years</b><small>24 months</small></button>'
+      '<button type="button" class="claim-vest-btn" data-years="3"><b>3 years</b><small>36 months</small></button>'
       '</div>'
-      '<div class="claim-rule-box"><b>Lister Economics:</b> Receive <b>30% of secondary trading fees</b> during your selected vesting period. Original allocation is subject to a <b>1% daily trading limit</b> (<span id="claimDailyLimitTxt">5,000</span> shares/day) and grants Pre-Airdrop Lister Fan Points.</div>'
+      '<dl class="claim-terms">'
+      '<div class="claim-term"><dt>Fee share</dt><dd>30%<small>of trading fees</small></dd></div>'
+      '<div class="claim-term"><dt>Daily limit</dt><dd><span id="claimDailyLimitTxt">5,000</span><small>shares a day</small></dd></div>'
+      '<div class="claim-term"><dt>Lister FP</dt><dd><span id="claimFpTxt">+2,500</span><small>pre-airdrop</small></dd></div>'
+      '</dl></div>'
+      '<div class="claim-section-lbl">3 &middot; What you pay</div>'
       '<div class="claim-fee-breakdown">'
-      '<div class="claim-fee-row"><span>Listing fee</span><span id="claimFeeTxt">50,000 $FTR</span></div>'
-      '<div class="claim-fee-row"><span>Permanent burn (2%)</span><span id="claimBurnTxt">1,000 $FTR</span></div>'
-      '<div class="claim-fee-row"><span>Lister Fan Points</span><span id="claimFpTxt">+2,500 FP</span></div>'
+      '<div class="claim-fee-row"><span>Listing fee</span><b id="claimFeeTxt">50,000 $FTR</b></div>'
+      '<div class="claim-fee-row burn"><span>Permanently burned (2%)</span><span id="claimBurnTxt">1,000 $FTR</span></div>'
       '<div class="claim-fee-row total"><span>Total payable</span><span id="claimTotalTxt">50,000 $FTR</span></div>'
       '</div>'
-      '<button type="button" class="claim-submit-btn" id="claimSubmitBtn">Pay 50,000 $FTR & Launch Shares</button>'
+      '<button type="button" class="claim-submit-btn" id="claimSubmitBtn">Pay 50,000 $FTR &amp; launch</button>'
       '</div></div></section>']
 HOME_CARDS = [
     # (icon, eyebrow, title, copy, stats [(label, value html)], cta label, href)
@@ -929,25 +1072,37 @@ DASH_JS = r"""
     var fee = (selectedLevel === 2) ? 100000 : 50000;
     var burn = Math.round(fee * 0.02);
     var daily = Math.round(shares * 0.01);
-    var fp = (selectedLevel === 2) ? '+5,000 FP' : '+2,500 FP';
+    var fp = (selectedLevel === 2) ? '+5,000' : '+2,500';
+    // The 10,000,000 always divides the same way: Fantrade keeps 10%, the
+    // claim takes 5% or 10%, and what is left is what the market can buy.
+    var TOTAL = 10000000, TREASURY = 1000000;
+    var market = TOTAL - TREASURY - shares;
+    function num(n){ return Number(n).toLocaleString('en-US'); }
+    function set(id, text){ var el = document.getElementById(id); if(el) el.textContent = text; }
+    function bar(id, count){
+      var el = document.getElementById(id);
+      if(el) el.style.flexBasis = (count / TOTAL * 100) + '%';
+    }
 
-    var dailyEl = document.getElementById('claimDailyLimitTxt');
-    var feeEl = document.getElementById('claimFeeTxt');
-    var burnEl = document.getElementById('claimBurnTxt');
-    var fpEl = document.getElementById('claimFpTxt');
-    var totEl = document.getElementById('claimTotalTxt');
-
-    if(dailyEl) dailyEl.textContent = Number(daily).toLocaleString('en-US');
-    if(feeEl) feeEl.textContent = Number(fee).toLocaleString('en-US') + ' $FTR';
-    if(burnEl) burnEl.textContent = Number(burn).toLocaleString('en-US') + ' $FTR';
-    if(fpEl) fpEl.textContent = fp;
-    if(totEl) totEl.textContent = Number(fee).toLocaleString('en-US') + ' $FTR';
+    set('claimDailyLimitTxt', num(daily));
+    set('claimFeeTxt', num(fee) + ' $FTR');
+    set('claimBurnTxt', num(burn) + ' $FTR');
+    set('claimFpTxt', fp);
+    set('claimTotalTxt', num(fee) + ' $FTR');
+    set('claimSplitYouTxt', num(shares));
+    set('claimSplitMktTxt', num(market));
+    bar('claimSplitYou', shares);
+    bar('claimSplitMkt', market);
 
     if(submitBtn){
-      var ticker = activeRow ? ftSym(activeRow.asset_id || activeRow.ticker) : 'Shares';
-      submitBtn.textContent = 'Pay ' + Number(fee).toLocaleString('en-US') + ' $FTR & Launch ' + ticker;
+      submitBtn.textContent = 'Pay ' + num(fee) + ' $FTR & launch';
     }
   }
+
+  // The dialog lives inside <main> in the markup, and <main> is its own
+  // stacking context, so a z-index of 9999 there still loses to the taskbar.
+  // Re-home it on <body> once and it covers the screen as intended.
+  if(modal && modal.parentNode !== document.body) document.body.appendChild(modal);
 
   function openClaimModal(row){
     activeRow = row;
@@ -958,8 +1113,10 @@ DASH_JS = r"""
     var subEl = document.getElementById('claimModalSub');
     var photoEl = document.getElementById('claimModalPhoto');
 
-    if(titleEl) titleEl.textContent = 'Launch ' + (a.n || 'Player') + ' (' + a.t + ')';
-    if(subEl) subEl.textContent = (row.title || 'Official Admin Listing') + ' · 10M Total Supply';
+    // The name carries the header; the ticker and the supply are the detail
+    // underneath, so a long name never has to compete with them.
+    if(titleEl) titleEl.textContent = a.n || 'Activity Asset';
+    if(subEl) subEl.innerHTML = '<b>' + (a.t || '') + '</b> · 10,000,000 Activity Shares';
     if(photoEl) photoEl.innerHTML = playerPhoto(a.t, a.n);
 
     if(modal){
@@ -1036,15 +1193,20 @@ DASH_JS = r"""
 
   function render(rows){
     if(!rows || !rows.length){
-      listEl.innerHTML = '<div class="home-claim-row" aria-disabled="true"><span></span><div><b>No active drops yet</b><small>Admin-listed Activity Assets will appear here.</small></div><span class="home-claim-action">Soon</span></div>';
+      listEl.innerHTML = '<div class="home-claim-row" aria-disabled="true"><span></span>'
+        + '<span class="home-claim-who"><b>Nothing to claim yet</b>'
+        + '<small>Players cleared by Fantrade will appear here.</small></span>'
+        + '<span class="home-claim-action">Soon<em></em></span></div>';
       setStatus(''); return;
     }
     listEl.innerHTML = rows.slice(0, 4).map(function(row){
       var a = assetFor(row), claimed = !!row.claimed;
       return '<button type="button" class="home-claim-row" data-listing="' + esc(row.id) + '"' + (claimed ? ' disabled' : '') + '>'
         + playerPhoto(a.t, a.n)
-        + '<span><b>' + esc(row.title || (a.n + ' Activity Asset')) + '</b><small>' + esc(a.t) + ' · 5% / 10% Claim · 1% daily limit</small></span>'
-        + '<span class="home-claim-action">' + (claimed ? 'Claimed' : 'Launch & Claim') + '</span></button>';
+        + '<span class="home-claim-who"><b>' + esc(a.pn || a.n) + '</b>'
+        + '<small><i>' + esc(a.t) + '</i>' + esc(row.title ? ' · ' + row.title : '') + '</small></span>'
+        + '<span class="home-claim-action">' + (claimed ? 'Claimed' : 'Claim')
+        + '<em>' + (claimed ? '' : 'from 50,000 $FTR') + '</em></span></button>';
     }).join('');
 
     listEl.querySelectorAll('button[data-listing]').forEach(function(button){
@@ -1204,14 +1366,14 @@ LB_CSS = """
 .scols{grid-template-columns:54px 2fr 1.15fr 1.5fr .8fr .9fr 1fr 92px}
 .club-cell{display:flex;align-items:center;gap:13px;min-width:0}
 .mcrest{width:34px;height:38px;flex:none;clip-path:polygon(0 0,100% 0,100% 66%,50% 100%,0 66%);
-  display:grid;place-items:center;font-family:Archivo;font-variation-settings:'wdth' 100,'wght' 900;
+  display:grid;place-items:center;font-family:Space Grotesk;font-weight:700;
   font-size:11px;color:#fff}
 .club-cell .cn{font-size:13.5px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .div-card{border:1px solid var(--hair);background:rgba(255,255,255,.03);border-radius:18px;padding:20px;
   box-shadow:var(--inset);display:flex;gap:16px;align-items:flex-start;margin-bottom:10px}
 .div-card:last-child{margin-bottom:0}
 .div-card .dot{width:9px;height:9px;border-radius:99px;flex:none;margin-top:6px}
-.div-card b{display:block;font-family:Archivo;font-variation-settings:'wdth' 118,'wght' 800;
+.div-card b{display:block;font-family:Space Grotesk;font-weight:700;
   text-transform:uppercase;font-size:14px;margin-bottom:4px}
 .div-card .r{font-size:11.5px;color:var(--faint);font-weight:300}
 .div-card .pp{margin-left:auto;text-align:right;flex:none}
@@ -1288,7 +1450,7 @@ lb = [T('<main><div class="kc-home-wrap">'
         '    <a href="dashboard.html" class="kc-p-back" title="Back to Home">'
         '      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>'
         '    </a>'
-        '    <div style="font-family:Archivo,sans-serif;font-variation-settings:\'wdth\' 120,\'wght\' 800;font-size:18px;color:var(--ink);white-space:nowrap">League Standings</div>'
+        '    <div style="font-family:Space Grotesk,sans-serif;font-weight:700;font-size:18px;color:var(--ink);white-space:nowrap">League Standings</div>'
         '  </div>'
         '  <a href="divisions.html" class="kc-p-action-btn" title="Divisions">'
         '    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>'
@@ -1300,8 +1462,8 @@ lb = [T('<main><div class="kc-home-wrap">'
 lb.append(T('<div class="bezel flat c12" data-reveal><div class="core pad-sm">'
             '<div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">'
             '<div class="crest-lg" id="lbCrest" style="background:linear-gradient(160deg,#1800ad,#0f0075)">ZF</div>'
-            '<div style="min-width:0"><div style="font-family:Archivo;'
-            'font-variation-settings:\'wdth\' 125,\'wght\' 900;text-transform:uppercase;font-size:21px;'
+            '<div style="min-width:0"><div style="font-family:Space Grotesk;'
+            'font-weight:700;text-transform:uppercase;font-size:21px;'
             'line-height:1" data-bind="club">Zero FC</div>'
             '<div class="sub-line" style="letter-spacing:.14em;text-transform:uppercase">'
             'Apex division · <span data-bind="handle">@alex_trader</span></div></div>'
@@ -1319,7 +1481,7 @@ lb.append(T('<div class="bezel flat c12" data-reveal><div class="core pad-sm">'
 # standings
 lb.append(T('<div class="bezel flat c12 flat-sep" data-reveal><div class="core">'
             '<div style="padding:0 0 18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">'
-            '<div><div style="font-family:Archivo;font-variation-settings:\'wdth\' 120,\'wght\' 800;'
+            '<div><div style="font-family:Space Grotesk;font-weight:700;'
             'text-transform:uppercase;font-size:19px">Gameweek 28 table</div>'
             '<div class="sub-line" id="lbCount">13 of 1,420 clubs</div></div>'
             '<div class="markets" style="margin-left:auto" id="lbFilter">'
@@ -1660,7 +1822,7 @@ print("built notifications.html")
 ST_CSS = """
 .sec-card{scroll-margin-top:130px}
 .sec-title{display:flex;align-items:center;gap:14px;margin-bottom:20px}
-.sec-title h3{font-family:Archivo;font-variation-settings:'wdth' 120,'wght' 800;text-transform:uppercase;
+.sec-title h3{font-family:Space Grotesk;font-weight:700;text-transform:uppercase;
   font-size:19px;margin:0}
 .sec-title p{font-size:12px;color:var(--faint);font-weight:300;margin:5px 0 0;line-height:1.5}
 .sess{display:flex;align-items:center;gap:14px;padding:15px 0;border-bottom:1px solid rgba(255,255,255,.05)}
@@ -1674,7 +1836,7 @@ ST_CSS = """
 .kc-settings-wrap{width:min(820px,100%);margin:0 auto;padding:6px 16px 110px;box-sizing:border-box}
 .settings-head{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:6px 0 18px}
 .settings-head-copy{min-width:0;text-align:center}
-.settings-head-copy h1{font:800 19px Archivo,sans-serif;font-variation-settings:'wdth' 120,'wght' 800;margin:0;color:var(--ink)}
+.settings-head-copy h1{font:800 19px Space Grotesk,sans-serif;font-weight:700;margin:0;color:var(--ink)}
 .settings-head-copy p{font-size:10.5px;color:var(--faint);margin:3px 0 0}
 .settings-nav{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:7px;margin:0 0 14px}
 .settings-nav a{min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:11px 5px;border:1px solid rgba(255,255,255,.065);border-radius:12px;background:rgba(255,255,255,.025);color:var(--faint);text-decoration:none;text-align:center;font-size:9px;line-height:1.2;transition:.2s ease}
@@ -1682,7 +1844,7 @@ ST_CSS = """
 .settings-nav a:hover{color:var(--ink);border-color:rgba(255,255,255,.14);background:rgba(255,255,255,.045)}
 .settings-nav a.on{color:#0a0d03;background:var(--lime);border-color:var(--lime);box-shadow:var(--shadow-action)}
 .settings-hero{padding:3px 2px 14px}
-.settings-hero h2{margin:0 0 5px;font:800 17px Archivo,sans-serif!important;text-transform:none!important}
+.settings-hero h2{margin:0 0 5px;font:800 17px Space Grotesk,sans-serif!important;text-transform:none!important}
 .settings-hero p{margin:0;color:var(--faint);font-size:11.5px}
 .settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .settings-card{display:flex;align-items:center;gap:13px;padding:16px;border:1px solid rgba(255,255,255,.07);border-radius:15px;background:rgba(10,12,14,.7);color:var(--ink);text-decoration:none;box-shadow:var(--shadow-card);transition:.2s ease}
@@ -2091,7 +2253,7 @@ AC_CSS = """
 .kc-p-avatar-box{position:relative;width:88px;height:88px;margin-bottom:12px}
 .kc-p-avatar-img{width:100%;height:100%;border-radius:50%;object-fit:cover;border:2.5px solid var(--lime);box-shadow:0 0 24px rgba(24,0,173,.2)}
 .kc-p-name-row{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:5px}
-.kc-p-username{font-family:Archivo,sans-serif;font-variation-settings:'wdth' 120,'wght' 800;font-size:22px;letter-spacing:-.01em;color:var(--ink)}
+.kc-p-username{font-family:Space Grotesk,sans-serif;font-weight:700;font-size:22px;letter-spacing:-.01em;color:var(--ink)}
 .kc-p-edit-btn{background:transparent;border:0;color:#767c82;cursor:pointer;display:grid;place-items:center;padding:2px;transition:color .15s}
 .kc-p-edit-btn:hover{color:var(--lime)}
 .kc-p-uid-row{display:flex;align-items:center;justify-content:center;gap:6px;font-family:'Montserrat', sans-serif;font-size:12px;color:#767c82;margin-bottom:14px}
@@ -2109,7 +2271,7 @@ AC_CSS = """
 .kc-ref-card{display:flex;align-items:center;justify-content:space-between;gap:16px;background:linear-gradient(135deg,rgba(255,255,255,.04) 0%,rgba(255,255,255,.02) 100%);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:16px 20px;margin:18px 0 24px;text-decoration:none;cursor:pointer;transition:border-color .2s,transform .2s}
 .kc-ref-card:hover{border-color:rgba(24,0,173,.3);transform:translateY(-1px)}
 .kc-ref-left{flex:1}
-.kc-ref-title{font-family:Archivo,sans-serif;font-variation-settings:'wdth' 115,'wght' 700;font-size:16px;color:var(--ink);margin-bottom:4px}
+.kc-ref-title{font-family:Space Grotesk,sans-serif;font-weight:700;font-size:16px;color:var(--ink);margin-bottom:4px}
 .kc-ref-sub{font-size:12px;color:#767c82}
 .kc-ref-icon-box{width:56px;height:56px;flex-shrink:0;border-radius:14px;overflow:hidden;background:rgba(255,255,255,.05);display:grid;place-items:center}
 .kc-ref-icon-box img{width:100%;height:100%;object-fit:cover}

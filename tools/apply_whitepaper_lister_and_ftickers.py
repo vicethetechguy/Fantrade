@@ -207,7 +207,7 @@ def patch_pages3():
     # First, let's update CSS for the claim card & modal
     new_claim_css = """.home-claim-card{margin-top:18px;padding:20px;border-radius:20px;background:linear-gradient(135deg,rgba(24,0,173,.35) 0%,rgba(18,20,17,.92) 100%);border:1px solid rgba(165,150,237,.25);color:#fff;box-shadow:0 16px 36px rgba(0,0,0,.35);display:grid;gap:14px}
 .home-claim-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
-.home-claim-card h2{font-size:18px;margin:0 0 4px;color:#fff;font-family:Archivo,sans-serif;font-variation-settings:'wdth' 115,'wght' 800;letter-spacing:-.01em}
+.home-claim-card h2{font-size:18px;margin:0 0 4px;color:#fff;font-family:Space Grotesk,sans-serif;font-weight:700;letter-spacing:-.01em}
 .home-claim-card p{margin:0;color:rgba(255,255,255,.74);font-size:12px;line-height:1.55}
 .home-claim-badge{display:inline-flex;align-items:center;justify-content:center;min-height:28px;padding:4px 12px;border-radius:999px;background:rgba(24,0,173,.4);border:1px solid rgba(165,150,237,.35);color:#a596ed;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
 .home-claim-list{display:grid;gap:10px}
@@ -215,7 +215,7 @@ def patch_pages3():
 .home-claim-row:hover:not([disabled]){border-color:rgba(165,150,237,.45);background:rgba(24,0,173,.18);transform:translateY(-1px)}
 .home-claim-row[disabled]{cursor:default;opacity:.65;border-color:rgba(255,255,255,.04)}
 .home-claim-row .player-photo{width:44px;height:44px;border-radius:50%;object-fit:cover;object-position:50% 18%;background:#050505;border:1px solid rgba(255,255,255,.1)}
-.home-claim-row b{display:block;font-size:13.5px;font-family:Archivo,sans-serif;font-variation-settings:'wdth' 115,'wght' 800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.home-claim-row b{display:block;font-size:13.5px;font-family:Space Grotesk,sans-serif;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .home-claim-row small{display:block;margin-top:3px;color:rgba(255,255,255,.65);font-size:11px;line-height:1.4}
 .home-claim-action{display:inline-flex;align-items:center;justify-content:center;min-height:34px;padding:8px 14px;border-radius:999px;background:var(--lime);color:#fff;font-size:11.5px;font-weight:800;letter-spacing:.02em;white-space:nowrap;box-shadow:0 6px 14px rgba(24,0,173,.35);transition:transform .15s ease}
 .home-claim-row[disabled] .home-claim-action{background:rgba(255,255,255,.12);color:rgba(255,255,255,.5);box-shadow:none}
@@ -229,13 +229,13 @@ def patch_pages3():
 .claim-modal-close{position:absolute;top:18px;right:18px;background:rgba(255,255,255,.08);border:0;color:#fff;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:16px;display:grid;place-items:center}
 .claim-modal-head{display:flex;align-items:center;gap:14px;margin-bottom:18px;padding-bottom:16px;border-bottom:1px solid rgba(255,255,255,.08)}
 .claim-modal-head .player-photo{width:56px;height:56px;border-radius:50%;object-fit:cover;object-position:50% 18%;border:2px solid var(--lime)}
-.claim-modal-title{margin:0;font-size:18px;font-family:Archivo,sans-serif;font-variation-settings:'wdth' 115,'wght' 800}
+.claim-modal-title{margin:0;font-size:18px;font-family:Space Grotesk,sans-serif;font-weight:700}
 .claim-modal-sub{font-size:12px;color:rgba(255,255,255,.65);margin-top:2px}
 .claim-section-lbl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.6);margin:14px 0 8px}
 .claim-opt-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .claim-opt-btn{border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:12px;background:rgba(255,255,255,.04);color:#fff;text-align:left;cursor:pointer;font:inherit;transition:all .15s ease}
 .claim-opt-btn.on{border-color:var(--lime);background:rgba(24,0,173,.22);box-shadow:0 0 0 1px var(--lime)}
-.claim-opt-btn b{display:block;font-size:13px;font-family:Archivo,sans-serif}
+.claim-opt-btn b{display:block;font-size:13px;font-family:Space Grotesk,sans-serif}
 .claim-opt-btn small{display:block;margin-top:4px;font-size:10.5px;color:rgba(255,255,255,.65);line-height:1.3}
 .claim-vest-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 .claim-vest-btn{border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:10px 8px;background:rgba(255,255,255,.04);color:#fff;text-align:center;cursor:pointer;font:inherit;transition:all .15s ease}
@@ -247,7 +247,7 @@ def patch_pages3():
 .claim-fee-breakdown{margin-top:14px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:12px 14px;display:grid;gap:6px;font-size:11.5px}
 .claim-fee-row{display:flex;justify-content:space-between;align-items:center;color:rgba(255,255,255,.7)}
 .claim-fee-row.total{border-top:1px solid rgba(255,255,255,.08);padding-top:6px;margin-top:2px;font-weight:700;color:#fff;font-size:13px}
-.claim-submit-btn{margin-top:16px;width:100%;min-height:46px;border-radius:999px;background:var(--lime);border:0;color:#fff;font-family:Archivo,sans-serif;font-variation-settings:'wdth' 115,'wght' 800;font-size:14px;cursor:pointer;display:grid;place-items:center;transition:all .2s ease;box-shadow:0 8px 20px rgba(24,0,173,.4)}
+.claim-submit-btn{margin-top:16px;width:100%;min-height:46px;border-radius:999px;background:var(--lime);border:0;color:#fff;font-family:Space Grotesk,sans-serif;font-weight:700;font-size:14px;cursor:pointer;display:grid;place-items:center;transition:all .2s ease;box-shadow:0 8px 20px rgba(24,0,173,.4)}
 .claim-submit-btn:hover:not([disabled]){transform:translateY(-1px);filter:brightness(1.1)}
 .claim-submit-btn[disabled]{opacity:.5;cursor:not-allowed}"""
 

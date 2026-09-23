@@ -14,7 +14,7 @@ body.app.calm .trade-page #tChart{width:auto!important;min-width:78px!important;
 body.app.calm .trade-page .tgrid{grid-template-columns:minmax(0,1fr) 300px;gap:64px}
 body.app.calm .trade-ticket{grid-column:1;grid-row:1;min-width:0}
 body.app.calm .trade-depth{grid-column:2;grid-row:1;min-width:0}
-body.app.calm .trade-depth>summary{font-family:Archivo,Montserrat,sans-serif;font-size:22px;min-height:48px;cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center}
+body.app.calm .trade-depth>summary{font-family:'Space Grotesk',Montserrat,sans-serif;font-size:22px;min-height:48px;cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center}
 body.app.calm .trade-depth>summary::-webkit-details-marker{display:none}
 body.app.calm .trade-depth>summary::after{content:'+';color:var(--dim)}
 body.app.calm .trade-depth[open]>summary::after{content:'−'}

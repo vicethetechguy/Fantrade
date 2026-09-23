@@ -96,10 +96,10 @@ EX_CSS = """
 .kc-row{display:grid;grid-template-columns:1fr 110px 92px;align-items:center;padding:13px 0;border-bottom:1px solid rgba(255,255,255,.04);text-decoration:none;color:inherit;transition:background .2s ease}
 .kc-row:hover{background:rgba(255,255,255,.025)}
 .kc-row-left{display:flex;align-items:center;gap:12px;min-width:0}
-.kc-avatar{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);display:grid;place-items:center;flex:none;color:var(--lime);font-family:Archivo,sans-serif;font-size:11px;font-weight:800;overflow:hidden}
+.kc-avatar{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);display:grid;place-items:center;flex:none;color:var(--lime);font-family:Space Grotesk,sans-serif;font-size:11px;font-weight:800;overflow:hidden}
 .kc-avatar .player-photo{width:100%;height:100%;object-fit:cover;object-position:50% 18%;display:block}
 .kc-avatar.coach{color:var(--amber);border-color:rgba(255,106,31,.25);background:rgba(255,106,31,.08)}
-.kc-pair-title{display:flex;align-items:center;gap:5px;font-family:Archivo,sans-serif;font-variation-settings:'wdth' 115,'wght' 800;font-size:14.5px;line-height:1.1;color:var(--ink)}
+.kc-pair-title{display:flex;align-items:center;gap:5px;font-family:Space Grotesk,sans-serif;font-weight:700;font-size:14.5px;line-height:1.1;color:var(--ink)}
 .kc-pair-quote{font-size:11.5px;color:#767c82;font-weight:600}
 .kc-tag{font-family:'Montserrat', sans-serif;font-size:9px;font-weight:600;color:#767c82;background:rgba(255,255,255,.08);border-radius:4px;padding:1px 4px;margin-left:2px}
 .kc-pair-sub{font-size:11.5px;color:#767c82;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -295,7 +295,7 @@ FP_CSS = """
 .kc-home-wrap{max-width:760px;margin:0 auto;padding:12px 16px 94px}
 .fp-topbar{display:flex;align-items:center;justify-content:space-between;padding:8px 0 16px;border-bottom:1px solid rgba(255,255,255,.06)}
 .fp-title-box{display:flex;align-items:center;gap:12px}
-.fp-title-box h2{font-family:Archivo,sans-serif;font-variation-settings:'wdth' 120,'wght' 900;font-size:18px;margin:0;color:#fff;text-transform:uppercase}
+.fp-title-box h2{font-family:Space Grotesk,sans-serif;font-weight:700;font-size:18px;margin:0;color:#fff;text-transform:uppercase}
 .fp-title-box span{font-size:11px;color:#8E9AA8}
 
 /* Metric Chips Dashboard (§80) */
@@ -323,7 +323,7 @@ FP_CSS = """
 
 /* Step Container Card */
 .fp-panel{background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.07);border-radius:20px;padding:24px;margin-bottom:20px}
-.fp-panel-title{font-family:Archivo,sans-serif;font-variation-settings:'wdth' 115,'wght' 800;font-size:18px;color:#fff;margin:0 0 6px;text-transform:uppercase}
+.fp-panel-title{font-family:Space Grotesk,sans-serif;font-weight:700;font-size:18px;color:#fff;margin:0 0 6px;text-transform:uppercase}
 .fp-panel-sub{font-size:13px;color:#8E9AA8;margin:0 0 18px}
 
 /* Asset Selection Grid */
@@ -331,7 +331,7 @@ FP_CSS = """
 .fp-asset-card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:14px;cursor:pointer;transition:all .2s;text-align:left}
 .fp-asset-card:hover{border-color:rgba(24,0,173,.4);background:rgba(255,255,255,.05)}
 .fp-asset-card.selected{border-color:var(--lime);background:rgba(24,0,173,.08);box-shadow:0 0 18px rgba(24,0,173,.15)}
-.fp-asset-sym{font-family:Archivo,sans-serif;font-variation-settings:'wdth' 120,'wght' 800;font-size:16px;color:#fff}
+.fp-asset-sym{font-family:Space Grotesk,sans-serif;font-weight:700;font-size:16px;color:#fff}
 .fp-asset-name{font-size:11.5px;color:#8E9AA8;margin-top:2px}
 .fp-asset-avail{margin-top:10px;font-size:11px;color:#1800ad;font-weight:600}
 
@@ -341,7 +341,7 @@ FP_CSS = """
 .fp-match-card:hover{border-color:rgba(24,0,173,.4)}
 .fp-match-card.selected{border-color:var(--lime);background:rgba(24,0,173,.08)}
 .fp-match-comp{font-size:10.5px;font-weight:700;color:var(--amber);text-transform:uppercase;letter-spacing:.06em}
-.fp-match-teams{font-family:Archivo,sans-serif;font-variation-settings:'wdth' 115,'wght' 800;font-size:17px;color:#fff;margin:6px 0}
+.fp-match-teams{font-family:Space Grotesk,sans-serif;font-weight:700;font-size:17px;color:#fff;margin:6px 0}
 .fp-match-meta{font-size:11.5px;color:#8E9AA8;display:flex;align-items:center;gap:12px}
 
 /* Market Tiers Grid (§10, §11, §12) */
@@ -350,7 +350,7 @@ FP_CSS = """
 .fp-market-card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:16px;cursor:pointer;transition:all .2s;display:flex;flex-direction:column;gap:8px}
 .fp-market-card:hover{border-color:rgba(24,0,173,.3)}
 .fp-market-card.selected{border-color:var(--lime);background:rgba(24,0,173,.08)}
-.fp-market-name{font-family:Archivo,sans-serif;font-variation-settings:'wdth' 120,'wght' 800;font-size:15px;color:#fff;text-transform:uppercase}
+.fp-market-name{font-family:Space Grotesk,sans-serif;font-weight:700;font-size:15px;color:#fff;text-transform:uppercase}
 .fp-market-limit{font-size:10.5px;color:var(--lime);font-weight:700}
 .fp-market-desc{font-size:12px;color:#8E9AA8;line-height:1.5;flex:1}
 
@@ -362,7 +362,7 @@ FP_CSS = """
 .fp-opt-left{display:flex;align-items:center;gap:14px}
 .fp-opt-check{width:22px;height:22px;border-radius:6px;border:1.5px solid rgba(255,255,255,.2);display:grid;place-items:center;color:#fff;font-weight:800;font-size:12px;transition:all .2s}
 .fp-opt-card.selected .fp-opt-check{background:var(--lime);border-color:var(--lime)}
-.fp-opt-label{font-family:Archivo,sans-serif;font-variation-settings:'wdth' 115,'wght' 700;font-size:14px;color:#fff}
+.fp-opt-label{font-family:Space Grotesk,sans-serif;font-weight:700;font-size:14px;color:#fff}
 .fp-opt-meta{font-size:11px;color:#8E9AA8;margin-top:2px;display:flex;gap:8px}
 .fp-opt-right{display:flex;gap:12px;text-align:right}
 .fp-opt-suc{font-family:'Montserrat',sans-serif;font-size:13px;font-weight:700;color:var(--lime)}
@@ -382,8 +382,8 @@ FP_CSS = """
 
 /* Action Buttons */
 .fp-nav-btns{display:flex;gap:12px;margin-top:20px}
-.fp-btn-back{flex:1;padding:14px 0;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:#fff;border-radius:12px;font-family:Archivo,sans-serif;font-weight:700;font-size:13px;text-transform:uppercase;cursor:pointer;text-align:center}
-.fp-btn-next{flex:2;padding:14px 0;background:var(--lime);border:0;color:#fff;border-radius:12px;font-family:Archivo,sans-serif;font-variation-settings:'wdth' 115,'wght' 800;font-size:13.5px;text-transform:uppercase;cursor:pointer;text-align:center;box-shadow:0 0 20px rgba(24,0,173,.3)}
+.fp-btn-back{flex:1;padding:14px 0;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:#fff;border-radius:12px;font-family:Space Grotesk,sans-serif;font-weight:700;font-size:13px;text-transform:uppercase;cursor:pointer;text-align:center}
+.fp-btn-next{flex:2;padding:14px 0;background:var(--lime);border:0;color:#fff;border-radius:12px;font-family:Space Grotesk,sans-serif;font-weight:700;font-size:13.5px;text-transform:uppercase;cursor:pointer;text-align:center;box-shadow:0 0 20px rgba(24,0,173,.3)}
 """
 
 fp = ['<main><div class="kc-home-wrap fanplay-layout">', tab_intro('FanPlay')]
@@ -1196,7 +1196,7 @@ function renderActiveList(){
     return '<div class="fp-panel" style="padding:18px;margin-bottom:12px">'
       + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">'
       + '  <div>'
-      + '    <span style="font-family:Archivo,sans-serif;font-variation-settings:\'wdth\' 120,\'wght\' 800;font-size:17px;color:#fff">' + assetSym + '</span>'
+      + '    <span style="font-family:Space Grotesk,sans-serif;font-weight:700;font-size:17px;color:#fff">' + assetSym + '</span>'
       + '    <span style="font-size:12px;color:#8E9AA8;margin-left:8px">' + matchName + '</span>'
       + '  </div>'
       + '  <span style="font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px;background:rgba(24,0,173,.12);color:var(--lime)">' + fp.status + '</span>'
@@ -1242,7 +1242,7 @@ function renderHistoryList(){
     return '<div class="fp-panel" style="padding:18px;margin-bottom:12px">'
       + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">'
       + '  <div>'
-      + '    <span style="font-family:Archivo,sans-serif;font-variation-settings:\'wdth\' 120,\'wght\' 800;font-size:17px;color:#fff">' + assetSym + '</span>'
+      + '    <span style="font-family:Space Grotesk,sans-serif;font-weight:700;font-size:17px;color:#fff">' + assetSym + '</span>'
       + '    <span style="font-size:12px;color:#8E9AA8;margin-left:8px">' + matchName + ' · ' + dt + '</span>'
       + '  </div>'
       + '  <span style="font-size:14px;font-weight:800;color:' + (isWin ? 'var(--lime)' : '#FF5E5E') + '">'

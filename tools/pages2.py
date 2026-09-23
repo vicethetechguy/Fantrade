@@ -35,7 +35,7 @@ def page(fname, title, body, js="", css="", app=False):
 FTR_CSS = """
 .kc-assets-wrap{max-width:680px;margin:0 auto;padding:12px 16px 84px}
 .kc-topbar{display:flex;align-items:center;justify-content:space-between;padding:8px 0 16px}
-.kc-top-title{font-family:Archivo,sans-serif;font-variation-settings:'wdth' 120,'wght' 800;font-size:17px;letter-spacing:-.01em;text-transform:uppercase}
+.kc-top-title{font-family:Space Grotesk,sans-serif;font-weight:700;font-size:17px;letter-spacing:-.01em;text-transform:uppercase}
 .kc-icon-btn{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;color:#8E9AA8;cursor:pointer;transition:all .2s ease;text-decoration:none}
 .kc-icon-btn:hover{color:#fff;background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.15)}
 .kc-icon-btn .ic{width:18px;height:18px}
@@ -315,7 +315,7 @@ HIW_CSS = """
 .walk{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:center;margin-bottom:16px}
 .walk.flip .art{order:-1}
 .walk .body{padding:44px 40px}
-.walk .n{font-family:Archivo;font-variation-settings:'wdth' 125,'wght' 900;font-size:clamp(52px,7vw,86px);
+.walk .n{font-family:Space Grotesk;font-weight:700;font-size:clamp(52px,7vw,86px);
   color:transparent;-webkit-text-stroke:1px rgba(24,0,173,.5);line-height:.85}
 .walk h3{font-size:clamp(26px,3.4vw,38px);margin:18px 0 14px}
 .walk p{color:var(--dim);font-weight:300;font-size:14.5px;max-width:46ch;margin:0}
@@ -338,7 +338,7 @@ HIW_CSS = """
 .cmp .ic{width:15px;height:15px}
 details{border-bottom:1px solid rgba(255,255,255,.06)}
 details summary{list-style:none;cursor:pointer;padding:22px 0;display:flex;align-items:center;gap:16px;
-  font-family:Archivo;font-variation-settings:'wdth' 115,'wght' 700;text-transform:uppercase;font-size:15px}
+  font-family:Space Grotesk;font-weight:700;text-transform:uppercase;font-size:15px}
 details summary::-webkit-details-marker{display:none}
 details summary .pm{margin-left:auto;width:28px;height:28px;border-radius:999px;border:1px solid var(--hair);
   display:grid;place-items:center;color:var(--dim);transition:transform .7s var(--ease),background .6s var(--ease)}

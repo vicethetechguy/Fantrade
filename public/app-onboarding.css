@@ -1,7 +1,7 @@
 /* Main app destinations share onboarding's quiet surfaces, spacing and typography. */
 body.app.calm{--void:#050505;--core:#050505;--panel:#121411;--panel-2:#171a16;--shell:#121411;--ink:#f4f6f1;--dim:#b9bcb7;--faint:#979c96;--lime:#1800ad;--hair:transparent;--hair-2:rgba(255,255,255,.12);background:#050505;font-family:Montserrat,system-ui,sans-serif;font-size:14px;line-height:1.6;padding-bottom:0}
 body.app.calm button,body.app.calm input,body.app.calm select{font-family:Montserrat,system-ui,sans-serif}
-body.app.calm h1,body.app.calm h2,body.app.calm h3,body.app.calm h4,body.app.calm .fp-panel-title{font-family:Archivo,Montserrat,system-ui,sans-serif!important;font-variation-settings:'wdth' 105,'wght' 750!important;letter-spacing:-.025em;text-transform:none!important;line-height:1.15}
+body.app.calm h1,body.app.calm h2,body.app.calm h3,body.app.calm h4,body.app.calm .fp-panel-title{font-family:'Space Grotesk',Montserrat,system-ui,sans-serif!important;font-weight:700!important;letter-spacing:-.025em;text-transform:none!important;line-height:1.15}
 body.app.calm main{padding-top:96px!important}
 body.app.calm .kc-home-wrap,body.app.calm .kc-ex-wrap,body.app.calm .kc-assets-wrap,body.app.calm .kc-profile-wrap,body.app.calm .lb2-wrap{width:100%;max-width:980px!important;margin:auto;padding:12px 28px 128px!important}
 body.app.calm .app-intro{display:flex;align-items:center;justify-content:space-between;gap:24px;margin-bottom:36px;grid-column:1/-1}
@@ -21,7 +21,7 @@ body.app.calm input{min-width:0;font-size:16px!important}
 /* Keep the header opaque as content passes beneath it. */
 body.app.calm .nav-island.topbar{top:12px!important;width:min(980px,calc(100vw - 40px))!important;max-width:980px!important;padding:0!important}
 body.app.calm .nav-island.topbar::before{background:#050505;border:0;height:80px}
-body.app.calm .nav-island.topbar .logo{font-family:Archivo,Montserrat,system-ui,sans-serif;font-size:24px!important;text-transform:lowercase;letter-spacing:-.03em;gap:8px!important}
+body.app.calm .nav-island.topbar .logo{font-family:'Space Grotesk',Montserrat,system-ui,sans-serif;font-size:24px!important;text-transform:lowercase;letter-spacing:-.03em;gap:8px!important}
 body.app.calm .nav-island.topbar .logo .brand-logo-img{width:28px!important;height:28px!important}
 body.app.calm .nav-island.topbar #navBell,body.app.calm .nav-profile-btn{border:0!important;background:#121411!important;border-radius:50%!important;min-width:40px;min-height:40px}
 body.app.calm .nav-profile-btn.has-photo .nav-avatar-img{object-fit:cover!important;background:transparent!important;padding:0!important}

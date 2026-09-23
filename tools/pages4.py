@@ -97,7 +97,7 @@ TRADE_CSS = """
 .kc-trade-wrap{max-width:680px;margin:0 auto;padding:8px 16px 110px}
 .kc-trade-topbar{display:flex;align-items:center;justify-content:space-between;padding:6px 0 14px;border-bottom:1px solid rgba(255,255,255,.06);margin-bottom:12px}
 .kc-trade-top-left{display:flex;align-items:center;gap:10px}
-.kc-trade-pair-title{font-family:Archivo,sans-serif;font-variation-settings:'wdth' 120,'wght' 800;font-size:18px;display:flex;align-items:center;gap:6px;color:var(--ink)}
+.kc-trade-pair-title{font-family:Space Grotesk,sans-serif;font-weight:700;font-size:18px;display:flex;align-items:center;gap:6px;color:var(--ink)}
 .kc-trade-pair-title .kc-quote{font-size:13px;color:#767c82;font-weight:600}
 .kc-trade-tag{background:rgba(255,255,255,.08);color:#8E9AA8;font-size:10px;font-weight:700;padding:2px 6px;border-radius:4px}
 .kc-trade-delta{font-family:'Montserrat', sans-serif;font-size:12px;font-weight:600;color:var(--lime);margin-left:4px}
@@ -169,7 +169,7 @@ TRADE_CSS = """
 .tline{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:6px 0;font-size:11.5px;color:#767c82}
 .tline b{font-family:'Montserrat', sans-serif;font-weight:500;color:var(--ink);font-size:12px}
 .bigbtn{display:block;width:100%;border:0;border-radius:10px;padding:14px 0;margin-top:12px;cursor:pointer;
-  font-family:Archivo,sans-serif;font-variation-settings:'wdth' 115,'wght' 800;font-size:13.5px;letter-spacing:.04em;text-transform:uppercase;
+  font-family:Space Grotesk,sans-serif;font-weight:700;font-size:13.5px;letter-spacing:.04em;text-transform:uppercase;
   background:var(--lime);color:#fff;transition:filter .2s}
 .bigbtn:hover{filter:brightness(1.08)}
 .bigbtn.sell{background:#FF3B47;color:#fff}

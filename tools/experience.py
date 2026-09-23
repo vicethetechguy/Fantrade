@@ -4,7 +4,7 @@ CSS = r"""
 :root{--dim:#adb4ae;--faint:#949e96;--hair:rgba(255,255,255,.12);--r-out:18px;--r-in:14px}
 body{background:#0c100e;line-height:1.6}
 .ux-page ~ .orb, .ux-page ~ .grain{display:none}
-.ux-page h1, .ux-page h2, .ux-page h3, .ux-page h4{font-variation-settings:'wdth' 100,'wght' 700;text-transform:none;line-height:1.14;letter-spacing:-.025em}
+.ux-page h1, .ux-page h2, .ux-page h3, .ux-page h4{font-weight:700;text-transform:none;line-height:1.14;letter-spacing:-.025em}
 .phead{padding:130px 0 24px}.phead h1{font-size:clamp(32px,4vw,48px);margin:12px 0}.phead .lede{max-width:650px;font-size:16px;margin:12px 0 0}
 .ux-page section{padding:32px 0}.sec-head{margin-bottom:24px}
 .ux-page .bezel{box-shadow:none;background:transparent;border:1px solid var(--hair);padding:0}.ux-page .core{background:#121814;box-shadow:none}

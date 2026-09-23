@@ -117,7 +117,7 @@ def patch_portfolio():
     if(claims.length){
       listerHtml = '<div class="kc-group-box" style="margin-bottom:28px;background:#121411;border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:22px">'
         + '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">'
-        + '  <div><h3 style="margin:0;font-size:18px;font-family:Archivo,sans-serif;color:var(--ink)">Lister Allocations & Vesting</h3>'
+        + '  <div><h3 style="margin:0;font-size:18px;font-family:Space Grotesk,sans-serif;color:var(--ink)">Lister Allocations & Vesting</h3>'
         + '  <p style="margin:4px 0 0;font-size:12px;color:var(--dim)">Whitepaper v2.0 §8 · 1% daily trading release & 30% trading fee participation</p></div>'
         + '  <span style="background:rgba(24,0,173,.3);color:#a596ed;padding:4px 12px;border-radius:999px;font-size:11px;font-weight:600">' + claims.length + ' Launched</span>'
         + '</div>'
