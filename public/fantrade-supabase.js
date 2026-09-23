@@ -226,6 +226,40 @@
       if (res.error) { console.warn('[Fantrade] read state not stored:', res.error.message); return null; }
       return true;
     },
+
+    /* ── Listings (admin drops) ──────────────────────────────── */
+    /* The rows an admin listed from the Table Editor, each flagged with
+       whether this manager has already claimed it. Null when the database
+       has no 06_listings.sql yet — the page shows its fallback copy. */
+    listings: async function () {
+      await load();
+      if (!client || !FTDB.signedIn()) return null;
+      var res = await client.rpc('ft_listings');
+      if (res.error) { console.warn('[Fantrade] listings unavailable:', res.error.message); return null; }
+      return res.data;
+    },
+    claim: async function (listingId) {
+      await load();
+      if (!client) throw new Error('Cannot reach the server right now.');
+      if (!FTDB.signedIn()) throw new Error('Sign in to claim a listing.');
+      var res = await client.rpc('ft_claim_listing', { p_listing: listingId });
+      if (res.error) throw new Error(message(res.error));
+      pullNotifications();
+      return res.data;
+    },
+
+    /* ── Profile photo ───────────────────────────────────────── */
+    /* A resized data URL, written straight to the manager's own profile row
+       (01_schema's owner-only update policy). Warn-only: without
+       07_profile_photo.sql the photo simply stays on this device. */
+    saveAvatar: async function (dataUrl) {
+      await load();
+      if (!client || !FTDB.signedIn()) return null;
+      var res = await client.from('profiles')
+        .update({ avatar_url: dataUrl || '' }).eq('id', FTDB.userId());
+      if (res.error) { console.warn('[Fantrade] photo not stored:', res.error.message); return null; }
+      return true;
+    },
     call: async function (fn, args) {
       await load();
       if (!client) throw new Error('Cannot reach the server right now.');

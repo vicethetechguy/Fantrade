@@ -10,7 +10,9 @@ body.app.calm .app-intro p{font-size:14px;color:var(--dim);line-height:1.6;margi
 body.app.calm .app-section-title{font-size:21px!important;margin:0 0 18px}
 body.app.calm .app-section-head{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:18px}
 body.app.calm .app-section-head h2{margin:0;font-size:22px}
-body.app.calm .app-section-head a,body.app.calm .app-text-link{color:var(--ink);font-size:12px;text-decoration:underline;text-underline-offset:4px}
+/* Brand blue pills instead of underlined text — profile, section heads, row links. */
+body.app.calm .app-section-head a,body.app.calm .app-text-link{display:inline-flex;align-items:center;justify-content:center;min-height:36px;padding:8px 18px;border:0;border-radius:999px;background:#1800ad;color:#fff;font-size:12px;font-weight:600;text-decoration:none;white-space:nowrap;cursor:pointer;transition:background .2s}
+body.app.calm .app-section-head a:hover,body.app.calm .app-text-link:hover{background:#3311cc;color:#fff}
 body.app.calm .app-primary{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:48px;padding:12px 24px;border:0;border-radius:999px;background:var(--lime);color:#fff;font-weight:600;font-size:13px;text-decoration:none;white-space:nowrap;cursor:pointer}
 body.app.calm .app-primary:hover{background:#3311cc}
 body.app.calm :focus-visible{outline:2px solid #a596ed!important;outline-offset:4px}

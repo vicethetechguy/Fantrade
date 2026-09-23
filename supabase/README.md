@@ -10,7 +10,7 @@ Project: `https://ajjwodnjcnmkzguospay.supabase.co`
 
 ## Run this once
 
-In the Supabase dashboard, open **SQL Editor** and run these five files in
+In the Supabase dashboard, open **SQL Editor** and run these seven files in
 order, each in its own query:
 
 | # | File | What it does |
@@ -20,16 +20,20 @@ order, each in its own query:
 | 3 | `03_seed_assets.sql` | The 18 players and coaches the exchange lists, each with its immutable F-ticker and its reference value |
 | 4 | `04_fanplay_clubs.sql` | Dream Clubs, FanPlay entries and the leaderboard |
 | 5 | `05_notifications.sql` | The notifications table behind the bell — every fill, wallet move, club and account notice, per manager under row-level security |
+| 6 | `06_listings.sql` | Admin-listed player drops and one-claim-per-manager claiming — listings are added from the Table Editor, claims grant shares through `ft_claim_listing()` |
+| 7 | `07_profile_photo.sql` | `profiles.avatar_url` and an `ft_snapshot()` that carries it, so a profile photo uploaded on one device shows on the next |
 
 They are safe to re-run: the tables use `if not exists`, the functions are
-`create or replace`, and the seed upserts on the asset id. Re-run them in
-order, though, and re-run all five rather than one on its own — file 2 resets
-who may call what, and file 4 hands those rights back out.
+`create or replace`, and the seed upserts on the asset (and listing) id. Re-run them in
+order, though, and re-run all seven rather than one on its own — file 2 resets
+who may call what, file 4 hands those rights back out, and file 7 restates
+`ft_snapshot()` after file 2.
 
 Check it worked: **Table Editor** should show `profiles`, `wallets`, `assets`,
-`holdings`, `transactions`, `payout_accounts`, `clubs`, `fanplay_entries` and `notifications`,
-with 18 rows in `assets`, every one carrying a `ticker`, and a green **RLS
-enabled** badge on all nine.
+`holdings`, `transactions`, `payout_accounts`, `clubs`, `fanplay_entries`,
+`notifications`, `listings` and `claims`, with 18 rows in `assets` (every one
+carrying a `ticker`), 2 rows in `listings`, and a green **RLS enabled** badge
+on all eleven.
 
 ## Then turn on auth
 
@@ -100,11 +104,15 @@ are enforced here rather than in the pages:
 | The FanPlay lifecycle (14.6) | `fanplay_entries_status_check` holds all nine states; the browser only ever writes ACTIVE, and a cancel lands as VOID |
 | Dream Clubs built from real holdings, with a team boost (19) | `holdings.slot`, `clubs.season_fp` and `clubs.boost` |
 
-Deliberately not here yet, because the pages do not have them and the paper
-puts them at a later phase: claiming and listing an asset, what it costs and
-how the allocation vests (7–9, phase 6), the $FTR allocation, presale and
-airdrop (11–13, phase 7), and the order book with resting orders, matching and
-fills (15.1–15.3, phase 2). Trades today execute at the catalogue price, which
+Listing and claiming (7–9, phase 6) exists only in the simplified form the home
+page needs: an admin lists a row in `listings` and each manager takes it once
+through `ft_claim_listing()`, which grants the shares immediately at the
+catalogue price — with no listing fee, no price paid to the lister and no
+vesting, because the pages do not charge for those yet. What is still
+deliberately not here, because the pages do not have them and the paper puts
+them at a later phase: the $FTR allocation, presale and airdrop (11–13, phase
+7), and the order book with resting orders, matching and fills (15.1–15.3,
+phase 2). Trades today execute at the catalogue price, which
 is what `assets.price` holds until that engine arrives.
 
 Nothing here invents a market either. The seed sets a reference value and

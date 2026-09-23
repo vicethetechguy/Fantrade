@@ -25,7 +25,8 @@ body.app.calm .secondary-page .quiet-search input{width:100%;background:var(--pa
 body.app.calm .secondary-page input::placeholder{color:var(--faint)}
 body.app.calm .secondary-page .section-heading{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:20px}
 body.app.calm .secondary-page .section-heading h2{font-size:23px;margin:0}
-body.app.calm .secondary-page .section-heading a{font-size:12px;color:var(--dim);text-decoration:underline;text-underline-offset:4px}
+body.app.calm .secondary-page .section-heading a{display:inline-flex;align-items:center;justify-content:center;min-height:32px;padding:7px 16px;border:0;border-radius:999px;background:#1800ad;color:#fff;font-size:12px;font-weight:600;text-decoration:none;white-space:nowrap;cursor:pointer;transition:background .2s}
+body.app.calm .secondary-page .section-heading a:hover{background:#3311cc;color:#fff}
 body.app.calm .secondary-page .quiet-empty{padding:40px 0}
 body.app.calm .secondary-page .quiet-empty h2{font-size:24px;margin:0 0 14px}
 body.app.calm .secondary-page .quiet-empty p{font-size:13px;line-height:1.7;color:var(--dim)}
