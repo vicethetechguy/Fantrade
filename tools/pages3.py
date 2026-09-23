@@ -142,8 +142,8 @@ body{background:#050505;--dim:#b9bcb7;--faint:#979c96;--ink:#f4f6f1;--lime:#1800
 .tf label{font-size:13px;text-transform:none;letter-spacing:0;color:var(--dim);font-weight:500;margin-bottom:8px}
 .tf .lrow{align-items:center;margin-bottom:8px}
 .tf .lrow label{margin:0}
-.tf .lrow a{font-size:13px;color:var(--ink);text-decoration:underline;text-underline-offset:3px}
-.tf .lrow a:hover{color:#fff}
+.tf .lrow a,.checkrow a,.auth-alt a{display:inline-flex;align-items:center;justify-content:center;min-height:30px;padding:5px 14px;border:0;border-radius:999px;background:#1800ad;color:#fff;font-size:13px;font-weight:600;text-decoration:none;white-space:nowrap;cursor:pointer;transition:background .2s}
+.tf .lrow a:hover,.checkrow a:hover,.auth-alt a:hover{background:#3311cc;color:#fff}
 .tf .inp{border:0;background:#121411;box-shadow:none;border-radius:14px;padding:0 16px;min-height:54px}
 .tf .inp:focus-within{outline:2px solid #8875e8;outline-offset:2px;background:#121411}
 .tf .inp>.ic{color:#858c82}
@@ -160,7 +160,6 @@ body{background:#050505;--dim:#b9bcb7;--faint:#979c96;--ink:#f4f6f1;--lime:#1800
 #pwLabel{font-size:12px!important;line-height:1.5;margin:8px 0 22px!important;color:var(--dim)!important}
 .checkrow{font-size:13px;font-weight:400;color:var(--dim);gap:12px;margin:4px 0 24px;line-height:1.6}
 .checkrow .box{width:22px;height:22px;border-radius:7px;border:0;background:#121411;box-shadow:none}
-.checkrow a,.auth-alt a{color:var(--ink);border:0;padding:0;text-decoration:underline;text-underline-offset:3px}
 .auth-submit{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;min-height:52px;border:0;border-radius:999px;padding:14px 24px;background:var(--lime);color:#fff;font:600 14px Montserrat,system-ui,sans-serif;cursor:pointer;transition:background .2s}
 .auth-submit:hover{background:#3311cc}
 .auth-submit:focus-visible{outline:2px solid #8875e8;outline-offset:3px}
@@ -665,6 +664,19 @@ DASH_CSS = """
 .kc-bal-val{font-family:'Montserrat', sans-serif;font-size:34px;font-weight:700;letter-spacing:-.02em;color:var(--ink);margin:8px 0 2px}
 .kc-bal-val small{font-size:16px;color:var(--lime);font-weight:600}
 .kc-bal-sub{font-size:12px;color:#767c82;font-family:'Montserrat', sans-serif}
+.home-claim-card{margin-top:18px;padding:18px;border-radius:18px;background:#1800ad;color:#fff;box-shadow:0 16px 34px rgba(24,0,173,.28);display:grid;gap:14px}
+.home-claim-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
+.home-claim-card h2{font-size:20px;margin:0 0 4px;color:#fff}
+.home-claim-card p{margin:0;color:rgba(255,255,255,.72);font-size:12px;line-height:1.55}
+.home-claim-badge{display:inline-flex;align-items:center;justify-content:center;min-height:30px;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.14);font-size:10px;font-weight:700;white-space:nowrap}
+.home-claim-list{display:grid;gap:10px}
+.home-claim-row{display:grid;grid-template-columns:42px minmax(0,1fr) auto;align-items:center;gap:12px;padding:12px;border:0;border-radius:14px;background:rgba(5,5,5,.24);color:#fff;text-align:left;width:100%;font:inherit;cursor:pointer}
+.home-claim-row[disabled]{cursor:default;opacity:.62}
+.home-claim-row img{width:42px;height:42px;border-radius:50%;object-fit:cover;background:#050505}
+.home-claim-row b{display:block;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.home-claim-row small{display:block;margin-top:3px;color:rgba(255,255,255,.64);font-size:10.5px;line-height:1.4}
+.home-claim-action{display:inline-flex;align-items:center;justify-content:center;min-height:34px;padding:8px 12px;border-radius:999px;background:#fff;color:#1800ad;font-size:11px;font-weight:800;white-space:nowrap}
+.home-claim-status{min-height:18px;font-size:11px;color:rgba(255,255,255,.72);margin:0}
 
 /* Quick Action Circles */
 .kc-bal-actions{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:18px;padding-top:16px;border-top:1px solid rgba(255,255,255,.06)}
@@ -737,9 +749,10 @@ da = ['<main><div class="kc-home-wrap home-layout">', tab_intro('Home'),
       '<section class="kc-home-bal-card" aria-label="Portfolio balance"><div class="kc-bal-header">Your portfolio'
       '<button type="button" class="kc-eye-btn" id="balEyeBtn" aria-label="Toggle balance visibility">'+'<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="fill:none"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>'+'</button></div>'
       '<div class="kc-bal-val"><span id="homeBalVal" data-bind="net">—</span> <small>$FTR</small></div>'
-      '<div class="kc-bal-sub" id="homeBalSub">—</div><div class="kc-bal-actions">']
-for label, href, icon in [('Deposit','buy.html','coin'),('Transfer','send.html','send'),('FanPlay','fanplay.html','ball'),('Clubs','clubs.html','formation')]:
-    da.append('<a class="kc-act-circle" href="'+href+'"><div class="kc-act-ico">'+ic(icon,'ic')+'</div><span>'+label+'</span></a>')
+      '<div class="kc-bal-sub" id="homeBalSub">—</div>'
+      '<div class="home-claim-card" aria-labelledby="homeClaimTitle"><div class="home-claim-head"><div><h2 id="homeClaimTitle">Claim listed players</h2>'
+      '<p>Admin-listed Activity Shares appear here when a drop is live.</p></div><span class="home-claim-badge">Admin drops</span></div>'
+      '<div class="home-claim-list" id="homeClaimList" aria-live="polite"></div><p class="home-claim-status" id="homeClaimStatus" role="status"></p></div></section>']
 HOME_CARDS = [
     # (icon, eyebrow, title, copy, stats [(label, value html)], cta label, href)
     ("ball", "FanPlay", "Put your football IQ into play.",
@@ -777,7 +790,7 @@ def home_card(i, card):
             '<a class="app-primary" href="%s">%s %s</a></article>'
             % (i, i + 1, len(HOME_CARDS), eyebrow, ic(icon, 'ic'), eyebrow, title, copy, stat_html, href, cta, ic('arrow', 'ic')))
 
-da.append('</div></section><section class="home-next" aria-roledescription="carousel" aria-label="Things to do">'
+da.append('<section class="home-next" aria-roledescription="carousel" aria-label="Things to do">'
           '<div class="home-cards" id="homeCards" tabindex="0">' + ''.join(home_card(i, c) for i, c in enumerate(HOME_CARDS)) + '</div>'
           '<div class="home-cards-nav"><div class="home-dots" id="homeDots">'
           + ''.join('<button type="button" aria-label="Show card %d"%s></button>' % (i + 1, ' aria-current="true"' if i == 0 else '') for i in range(len(HOME_CARDS)))
@@ -813,6 +826,61 @@ DASH_JS = r"""
   track.addEventListener('keydown', function(e){ if(e.key === 'ArrowRight'){ e.preventDefault(); go(current() + 1); } if(e.key === 'ArrowLeft'){ e.preventDefault(); go(current() - 1); } });
   function entries(){ var n = (FT.getState().fanplay.activeEntries || []).length; document.querySelectorAll('[data-home="entries"]').forEach(function(el){ el.textContent = n; }); }
   entries(); window.addEventListener('fantrade:statechange', entries); sync();
+})();
+
+(function(){
+  var listEl = document.getElementById('homeClaimList'), statusEl = document.getElementById('homeClaimStatus');
+  if(!listEl) return;
+  function esc(value){ var n=document.createElement('span'); n.textContent=value == null ? '' : String(value); return n.innerHTML; }
+  function assetFor(row){
+    var sym = row.asset_id || row.ticker || '';
+    if(sym && sym.charAt(0) !== '$') sym = '$' + sym.replace(/^\$/, '');
+    return ASSETS.filter(function(a){ return a.t === sym; })[0] || { t:sym, n:row.name || sym, p:Number(row.price)||0, c:row.kind === 'COACH' };
+  }
+  function fallbackListings(){
+    var claimed = FT.getState().claimedListings || [];
+    return [
+      { id:'lst-mbappe-drop', asset_id:'$Mbappe', title:'Starter drop', shares:50 },
+      { id:'lst-yamal-drop', asset_id:'$Yamal', title:'Rising star drop', shares:25 }
+    ].map(function(row){ row.claimed = claimed.indexOf(row.id) > -1; return row; });
+  }
+  function setStatus(text){ if(statusEl) statusEl.textContent = text || ''; }
+  function render(rows){
+    if(!rows || !rows.length){
+      listEl.innerHTML = '<div class="home-claim-row" aria-disabled="true"><span></span><div><b>No active drops yet</b><small>Admin-listed players will appear here.</small></div><span class="home-claim-action">Soon</span></div>';
+      setStatus(''); return;
+    }
+    listEl.innerHTML = rows.slice(0,2).map(function(row){
+      var a = assetFor(row), claimed = !!row.claimed;
+      return '<button type="button" class="home-claim-row" data-listing="' + esc(row.id) + '"' + (claimed ? ' disabled' : '') + '>'
+        + playerPhoto(a.t, a.n)
+        + '<span><b>' + esc(row.title || a.n) + '</b><small>' + esc(a.n) + ' · ' + Number(row.shares || 0).toLocaleString('en-US') + ' shares</small></span>'
+        + '<span class="home-claim-action">' + (claimed ? 'Claimed' : 'Claim') + '</span></button>';
+    }).join('');
+    listEl.querySelectorAll('button[data-listing]').forEach(function(button){
+      button.addEventListener('click', function(){
+        var row = rows.filter(function(x){ return x.id === button.dataset.listing; })[0];
+        if(!row || row.claimed) return;
+        button.disabled = true; setStatus('Claiming listed shares...');
+        var cloud = window.FTDB && FTDB.signedIn && FTDB.signedIn() && FTDB.claim;
+        (cloud ? FTDB.claim(row.id).then(function(res){ return FT.syncCloud().then(function(){ return res; }); }) : Promise.resolve(FT.claimListing(row)))
+          .then(function(res){ loadClaims(); setStatus('Claimed ' + Number(res.shares || row.shares).toLocaleString('en-US') + ' shares in ' + (res.name || assetFor(row).n) + '.'); })
+          .catch(function(error){ button.disabled = false; setStatus(error.message || 'Claim could not be completed.'); });
+      });
+    });
+  }
+  function loadClaims(){
+    setStatus('Checking current drops...');
+    if(window.FTDB && FTDB.listings && FTDB.signedIn && FTDB.signedIn()){
+      FTDB.listings().then(function(rows){ render(rows || fallbackListings()); setStatus(''); })
+        .catch(function(){ render(fallbackListings()); setStatus(''); });
+    } else {
+      render(fallbackListings());
+      setStatus('');
+    }
+  }
+  loadClaims();
+  window.addEventListener('fantrade:statechange', loadClaims);
 })();
 
 (function(){
@@ -1888,9 +1956,11 @@ AC_CSS = """
 """
 
 ac = ['<main><div class="kc-profile-wrap">', tab_intro('Your profile'),
-      '<section class="profile-identity"><img src="assets/fantrade-outline-logo.png" alt="" width="76" height="76">'
+      '<section class="profile-identity"><div class="profile-avatar-wrap"><button type="button" class="profile-avatar-button" id="kcAvatarBtn" aria-label="Upload profile picture">'
+      '<img src="assets/fantrade-outline-logo.png" alt="Profile photo" width="76" height="76" id="kcProfileAvatar" data-avatar-img></button>'
+      '<input type="file" id="kcAvatarInput" accept="image/png,image/jpeg,image/webp" hidden><button type="button" class="app-text-link profile-avatar-remove" id="kcAvatarRemove">Remove</button></div>'
       '<div><h2 id="kcUsername">Your name</h2><p data-bind="handle">Your manager profile</p>'
-      '<button type="button" class="ob-back app-text-link" id="kcEditNameBtn" style="border:0;background:none;padding:8px 0;cursor:pointer">Edit name</button></div></section>'
+      '<button type="button" class="app-text-link" id="kcEditNameBtn">Edit name</button></div></section>'
       '<dl class="profile-overview"><div><dt>Portfolio value · $FTR</dt><dd id="profileNet">—</dd></div>'
       '<div><dt>Players owned</dt><dd id="profileHoldings">—</dd></div><div><dt>Your club</dt><dd id="profileClub">—</dd></div></dl>'
       '<h2 class="app-section-title">Your Fantrade</h2><div class="profile-links">']
@@ -1920,6 +1990,53 @@ AC_JS = r"""
     t.classList.add('show');
     clearTimeout(t._timer);
     t._timer = setTimeout(function(){ t.classList.remove('show'); }, 2200);
+  }
+
+  // Profile picture upload
+  var avatarBtn = document.getElementById('kcAvatarBtn');
+  var avatarInput = document.getElementById('kcAvatarInput');
+  var avatarRemove = document.getElementById('kcAvatarRemove');
+  function resizeAvatar(file){
+    return new Promise(function(resolve, reject){
+      if(!file || !/^image\//.test(file.type || '')){ reject(new Error('Choose an image file.')); return; }
+      if(file.size > 5 * 1024 * 1024){ reject(new Error('Choose an image under 5 MB.')); return; }
+      var reader = new FileReader();
+      reader.onerror = function(){ reject(new Error('The image could not be opened.')); };
+      reader.onload = function(){
+        var img = new Image();
+        img.onerror = function(){ reject(new Error('The image could not be read.')); };
+        img.onload = function(){
+          var size = Math.min(480, Math.max(img.width, img.height));
+          var canvas = document.createElement('canvas');
+          canvas.width = size; canvas.height = size;
+          var ctx = canvas.getContext('2d');
+          ctx.fillStyle = '#050505'; ctx.fillRect(0,0,size,size);
+          var scale = Math.max(size / img.width, size / img.height);
+          var w = img.width * scale, h = img.height * scale;
+          ctx.drawImage(img, (size - w) / 2, (size - h) / 2, w, h);
+          resolve(canvas.toDataURL('image/jpeg', .86));
+        };
+        img.src = reader.result;
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+  if(avatarBtn && avatarInput){
+    avatarBtn.addEventListener('click', function(){ avatarInput.click(); });
+    avatarInput.addEventListener('change', function(){
+      var file = avatarInput.files && avatarInput.files[0];
+      if(!file) return;
+      resizeAvatar(file).then(function(dataUrl){
+        FT.setAvatar(dataUrl);
+        showToast('Profile picture updated.');
+      }).catch(function(error){ showToast(error.message); }).finally(function(){ avatarInput.value = ''; });
+    });
+  }
+  if(avatarRemove){
+    avatarRemove.addEventListener('click', function(){
+      FT.setAvatar('');
+      showToast('Profile picture removed.');
+    });
   }
 
   // Copy UID

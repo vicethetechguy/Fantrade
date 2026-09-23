@@ -388,7 +388,7 @@ def build_landing():
     coins='<div class="feature-art coin-art" aria-hidden="true"><div class="token"><span>$FTR</span></div><div class="token small"><span>10M</span></div></div>'
     entry='''<div class="feature-art entry-art" aria-hidden="true"><div class="entry-slip"><small>FANPLAY · MATCHDAY 06</small><b>Back your football IQ.</b><div class="entry-line"><span>Entry</span><strong>$Saka · Solo</strong></div><div class="entry-line"><span>Scoring</span><strong>Goals + assists + more</strong></div><div class="entry-confirm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>Ready for matchday</div></div></div>'''
     features=''.join([
-        feature('Leaderboard','make your name.<br>climb the leaderboard.',ranking,'leaderboard.html'),
+        feature('Leaderboard','make your club<br>climb the leaderboard.',ranking,'leaderboard.html'),
         feature('Dream Clubs','your players.<br>your dream club.',squad,'clubs.html'),
         feature('Alerts','every goal. every trade.<br>stay in the know.',notice,'notifications.html'),
         feature('Easy onboarding','your first Activity Share<br>is just the beginning.',signup,'signup.html'),

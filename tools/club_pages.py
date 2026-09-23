@@ -39,12 +39,42 @@ JS = r'''
   function esc(value){var n=document.createElement('span');n.textContent=value;return n.innerHTML.replace(/"/g,'&quot;');}
   function initials(name){return name.trim().split(/\s+/).map(function(w){return w[0]||'';}).join('').slice(0,3).toUpperCase();}
   function colour(club){var value=club.color||(club.colors||[])[0]||'#1800ad';return /^#[a-f0-9]{3,8}$/i.test(value)?value:'#1800ad';}
+  function meta(symbol){return (typeof ASSETS!=='undefined'?ASSETS:[]).filter(function(a){return a.t===symbol;})[0]||{};}
+  function groupForSlot(label){
+    if(label==='GK') return 'GK';
+    if(['LB','CB','RB','LWB','RWB'].indexOf(label)>-1) return 'DEF';
+    if(['DM','CM','CAM','LM','RM'].indexOf(label)>-1) return 'MID';
+    return 'FWD';
+  }
+  function ownedPlayers(){
+    var holdings=FT.getState().holdings||{};
+    return Object.keys(holdings).filter(function(symbol){
+      var h=holdings[symbol];return h&&h.shares>0&&!h.c;
+    }).map(function(symbol){
+      var h=holdings[symbol],m=meta(symbol);
+      return {symbol:symbol,name:h.n||m.n||symbol.slice(1),pos:m.pos||'FWD'};
+    });
+  }
+  function pickPlayer(slot,pool,used){
+    var wanted=groupForSlot(slot),pick=null;
+    pick=pool.filter(function(p){return !used[p.symbol]&&p.pos===wanted;})[0];
+    if(!pick&&wanted!=='GK') pick=pool.filter(function(p){return !used[p.symbol]&&p.pos!=='GK';})[0];
+    if(pick) used[pick.symbol]=true;
+    return pick;
+  }
+  function playerSlot(label,pick){
+    if(!pick) return '<div class="formation-player empty"><span>'+esc(label)+'</span><i>Empty</i><b>Own shares</b></div>';
+    return '<div class="formation-player"><span>'+esc(label)+'</span>'+playerPhoto(pick.symbol,pick.name)+'<b>'+esc(pick.name.replace(/ .*/,''))+'</b></div>';
+  }
   function pitch(shape){
-    var html=(forms[shape]||forms['4-3-3']).map(function(row){return '<div class="formation-row">'+row.map(function(p){return '<div class="formation-player"><span>'+p[0]+'</span>'+playerPhoto(p[1],p[1].slice(1))+'<b>'+p[1].slice(1)+'</b></div>';}).join('')+'</div>';}).join('');
-    var coach=fresh?'$Arteta':FT.getState().club.coach||'$Arteta';
-    html+='<div class="formation-coach">'+playerPhoto(coach,coach.slice(1))+'<div><span>Coach</span><b>'+esc(coach)+'</b></div></div>';
-    html+='<p class="formation-bench-label">Bench preview</p><div class="formation-bench">';
-    ['$Alisson','$Gabriel','$Pedri','$Musiala'].forEach(function(symbol){html+='<div class="formation-player">'+playerPhoto(symbol,symbol.slice(1))+'<b>'+symbol.slice(1)+'</b></div>';});
+    var pool=ownedPlayers(),used={},rows=forms[shape]||forms['4-3-3'];
+    var html=rows.map(function(row){return '<div class="formation-row">'+row.map(function(p){return playerSlot(p[0],pickPlayer(p[0],pool,used));}).join('')+'</div>';}).join('');
+    var state=FT.getState(),coachSymbol=(fresh?'$Arteta':state.club.coach)||'$Arteta',coach=state.holdings[coachSymbol];
+    if(coach&&coach.shares>0){html+='<div class="formation-coach">'+playerPhoto(coachSymbol,coach.n||coachSymbol.slice(1))+'<div><span>Coach</span><b>'+esc(coach.n||coachSymbol)+'</b></div></div>';}
+    else{html+='<div class="formation-coach empty"><span class="empty-coach">Coach</span><div><span>Coach</span><b>Own a coach share</b></div></div>';}
+    var bench=pool.filter(function(p){return !used[p.symbol];}).slice(0,4);
+    html+='<p class="formation-bench-label">Owned bench</p><div class="formation-bench">';
+    html+=bench.length?bench.map(function(p){return '<div class="formation-player">'+playerPhoto(p.symbol,p.name)+'<b>'+esc(p.name.replace(/ .*/,''))+'</b></div>';}).join(''):'<p class="quiet-note">No extra owned players yet.</p>';
     return html+'</div>';
   }
   function renderClub(){
@@ -57,8 +87,9 @@ JS = r'''
     el('clFp').textContent=Number(club.fp||0).toLocaleString('en-US');el('clRank').textContent=club.rank?'#'+club.rank:'—';
     el('clDivision').textContent=club.division||'Challenger';el('clBoost').textContent='+'+Number(club.boost||0).toFixed(1)+'%';
     el('clubShape').textContent=club.formation;el('clubPitch').innerHTML=pitch(club.formation);
-    var held=0;(forms[club.formation]||forms['4-3-3']).flat().forEach(function(p){if(state.holdings[p[1]]&&state.holdings[p[1]].shares>0)held++;});
-    el('clubOwnership').textContent='Formation preview · '+held+' of 11 featured players held. Your eligible shares are confirmed in FanPlay.';
+    var starterSlots=(forms[club.formation]||forms['4-3-3']).flat().length;
+    var held=Math.min(starterSlots,ownedPlayers().length);
+    el('clubOwnership').textContent=held+' of '+starterSlots+' line-up slots filled from owned Activity Shares. Empty slots need a claimed or bought player share.';
   }
   if(el('clubRail')){renderClub();window.addEventListener('fantrade:statechange',renderClub);return;}
   var fresh=new URLSearchParams(location.search).get('new')==='1',club=FT.getState().club;

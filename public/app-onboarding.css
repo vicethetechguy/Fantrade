@@ -11,7 +11,7 @@ body.app.calm .app-section-title{font-size:21px!important;margin:0 0 18px}
 body.app.calm .app-section-head{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:18px}
 body.app.calm .app-section-head h2{margin:0;font-size:22px}
 /* Brand blue pills instead of underlined text — profile, section heads, row links. */
-body.app.calm .app-section-head a,body.app.calm .app-text-link{display:inline-flex;align-items:center;justify-content:center;min-height:36px;padding:8px 18px;border:0;border-radius:999px;background:#1800ad;color:#fff;font-size:12px;font-weight:600;text-decoration:none;white-space:nowrap;cursor:pointer;transition:background .2s}
+body.app.calm .app-section-head a,body.app.calm .app-text-link{display:inline-flex;align-items:center;justify-content:center;min-height:36px;padding:8px 18px;border:0!important;border-radius:999px;background:#1800ad!important;color:#fff!important;font-size:12px;font-weight:600;text-decoration:none!important;white-space:nowrap;cursor:pointer;transition:background .2s}
 body.app.calm .app-section-head a:hover,body.app.calm .app-text-link:hover{background:#3311cc;color:#fff}
 body.app.calm .app-primary{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:48px;padding:12px 24px;border:0;border-radius:999px;background:var(--lime);color:#fff;font-weight:600;font-size:13px;text-decoration:none;white-space:nowrap;cursor:pointer}
 body.app.calm .app-primary:hover{background:#3311cc}
@@ -23,6 +23,7 @@ body.app.calm .nav-island.topbar::before{background:#050505;border:0;height:80px
 body.app.calm .nav-island.topbar .logo{font-family:Archivo,Montserrat,system-ui,sans-serif;font-size:24px!important;text-transform:lowercase;letter-spacing:-.03em;gap:8px!important}
 body.app.calm .nav-island.topbar .logo .brand-logo-img{width:28px!important;height:28px!important}
 body.app.calm .nav-island.topbar #navBell,body.app.calm .nav-profile-btn{border:0!important;background:#121411!important;border-radius:50%!important;min-width:40px;min-height:40px}
+body.app.calm .nav-profile-btn.has-photo .nav-avatar-img{object-fit:cover!important;background:transparent!important;padding:0!important}
 body.app.calm .nav-profile-btn .nav-avatar-img{background:var(--lime)!important}
 body.app.calm .taskbar{border:0!important;background:rgba(24,26,23,.96)!important;box-shadow:0 8px 28px rgba(0,0,0,.25)!important}
 body.app.calm .taskbar a{color:#d8d6e0!important}
@@ -125,13 +126,19 @@ body.app.calm .lb2-profit{font-size:14px}.lb2-profit small img{border-color:#050
 /* Profile: identity and simple links, with secondary account tools folded away. */
 body.app.calm .profile-identity{display:flex;gap:22px;align-items:center;margin:0 0 32px}
 body.app.calm .profile-identity>img{width:76px;height:76px;border-radius:50%;background:var(--lime);padding:16px}
+body.app.calm .profile-avatar-wrap{display:flex;flex-direction:column;align-items:center;gap:8px;flex:none}
+body.app.calm .profile-avatar-button{width:76px;height:76px;border:0;border-radius:50%;background:var(--lime);padding:16px;overflow:hidden;cursor:pointer;display:grid;place-items:center}
+body.app.calm .profile-avatar-button img{width:100%;height:100%;object-fit:contain;display:block}
+body.app.calm .profile-avatar-button.has-photo{padding:0;background:#121411}
+body.app.calm .profile-avatar-button.has-photo img{object-fit:cover}
+body.app.calm .profile-avatar-remove{min-height:28px;padding:5px 12px;font-size:10px}
 body.app.calm .profile-identity h2{font-size:28px;margin:0 0 6px;overflow-wrap:anywhere}
 body.app.calm .profile-identity p{font-size:13px;color:var(--dim);margin:0}
 body.app.calm .profile-overview{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin:0 0 40px}
 body.app.calm .profile-overview dt{font-size:12px;color:var(--dim);margin-bottom:8px}
 body.app.calm .profile-overview dd{margin:0;font-size:21px;letter-spacing:-.02em;overflow-wrap:anywhere}
 body.app.calm .profile-links{display:grid;grid-template-columns:1fr 1fr;gap:20px 48px}
-body.app.calm .profile-link{display:flex;align-items:center;gap:16px;padding:16px 0;color:var(--ink)}
+body.app.calm .profile-link{display:flex;align-items:center;gap:16px;padding:16px 0;color:var(--ink);text-decoration:none!important}
 body.app.calm .profile-link .ic{width:24px;height:24px;color:var(--dim);flex:none}
 body.app.calm .profile-link strong{font-size:14px;font-weight:600;display:block}
 body.app.calm .profile-link small{display:block;font-size:12px;color:var(--dim);margin-top:4px;line-height:1.6}

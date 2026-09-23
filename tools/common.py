@@ -1622,6 +1622,7 @@ body.app .taskbar a span{font-size:10px}
 .nav-profile-btn{width:28px;height:28px;border-radius:50%;overflow:hidden;border:0!important;outline:0!important;display:flex;align-items:center;justify-content:center;flex-shrink:0;text-decoration:none;background:transparent;box-shadow:none!important;transition:transform .2s ease}
 .nav-profile-btn:hover{transform:scale(1.08)}
 .nav-profile-btn .nav-avatar-img{width:100%;height:100%;object-fit:cover;border-radius:50%;display:block;border:0!important;outline:0!important}
+.nav-profile-btn.has-photo .nav-avatar-img{object-fit:cover!important;background:transparent!important;padding:0!important}
 .kc-p-topbar{display:flex;align-items:center;justify-content:space-between;padding:6px 0 16px;margin-bottom:8px}
 .kc-p-title-group{display:flex;align-items:center;gap:12px;min-width:0}
 .kc-p-back,.kc-p-action-btn{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;color:#8E9AA8;cursor:pointer;text-decoration:none;transition:all .2s ease;flex-shrink:0}
@@ -2208,6 +2209,7 @@ var FT = (function(){
     user: {
       name: "Alex Morgan",
       handle: "@alex_trader",
+      avatar: "",
       joined: "Matchday 01 · Sep 2026",
       rank: 124,
       region: "United Kingdom",
@@ -2340,6 +2342,7 @@ var FT = (function(){
       state.user.handle = '@' + snap.profile.handle;
       state.user.region = snap.profile.region || state.user.region;
       state.user.league = snap.profile.home_league || state.user.league;
+      state.user.avatar = snap.profile.avatar_url || state.user.avatar || "";
       state.auth.onboarded = !!snap.profile.onboarded;
     }
     if(snap.wallet){
@@ -2466,6 +2469,16 @@ var FT = (function(){
       document.querySelectorAll('#menuRank').forEach(function(el){
         el.textContent = 'Apex division · rank #' + state.club.rank;
       });
+      var avatar = state.user.avatar || 'assets/fantrade-outline-logo.png';
+      document.querySelectorAll('.nav-profile-btn').forEach(function(btn){
+        btn.classList.toggle('has-photo', !!state.user.avatar);
+      });
+      document.querySelectorAll('.nav-avatar-img,[data-avatar-img]').forEach(function(img){
+        if(img.getAttribute('src') !== avatar) img.setAttribute('src', avatar);
+        img.setAttribute('alt', state.user.name + ' profile photo');
+        var frame = img.closest ? img.closest('.profile-avatar-button') : null;
+        if(frame) frame.classList.toggle('has-photo', !!state.user.avatar);
+      });
       var n = FT.unread();
       document.querySelectorAll('#navDot').forEach(function(el){ el.hidden = n === 0; });
       document.querySelectorAll('[data-unread]').forEach(function(el){ el.textContent = n; });
@@ -2503,6 +2516,7 @@ var FT = (function(){
       state.auth.email = data.email;
       state.auth.since = 'Sep 2026';
       state.user.name = data.name;
+      state.user.avatar = "";
       state.user.handle = '@' + (data.name || 'manager').toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '');
       state.user.region = data.region || state.user.region;
       save(state); FT.syncUI();
@@ -2534,6 +2548,39 @@ var FT = (function(){
         p_region: state.user.region, p_home_league: state.user.league });
       save(state); FT.syncUI();
       window.dispatchEvent(new CustomEvent('fantrade:statechange', { detail: state }));
+    },
+    setAvatar: function(dataUrl){
+      state.user.avatar = dataUrl || "";
+      save(state); FT.syncUI();
+      window.dispatchEvent(new CustomEvent('fantrade:statechange', { detail: state }));
+      if(window.FTDB && FTDB.saveAvatar){
+        FTDB.saveAvatar(state.user.avatar).catch(function(){});
+      }
+    },
+    claimListing: function(row){
+      if(!row || !row.id) throw new Error('Pick a player listing to claim.');
+      state.claimedListings = state.claimedListings || [];
+      if(state.claimedListings.indexOf(row.id) > -1) throw new Error('You already claimed this listing.');
+      var sym = row.asset_id || row.ticker || "";
+      if(sym && sym.charAt(0) !== '$') sym = '$' + sym.replace(/^\$/, '');
+      var asset = (typeof ASSETS !== 'undefined' ? ASSETS : []).filter(function(a){ return a.t === sym; })[0] || {};
+      var shares = Math.max(1, Number(row.shares) || 1);
+      var price = Number(row.price || asset.p || 0);
+      if(!state.holdings[sym]){
+        state.holdings[sym] = { n: row.name || asset.n || sym, shares: 0, avg: price,
+          p: price, c: !!(row.kind === 'COACH' || asset.c), inClub: (row.kind === 'COACH' || asset.c) ? 'COACH' : 'SUB' };
+      }
+      var h = state.holdings[sym];
+      var nextShares = h.shares + shares;
+      h.avg = nextShares ? ((h.shares * h.avg) + (shares * price)) / nextShares : price;
+      h.shares = nextShares;
+      if(price) h.p = price;
+      state.claimedListings.push(row.id);
+      state.transactions.unshift({ type: 'GRANT', asset: sym, shares: shares, price: price,
+        total: 0, time: 'Just now' });
+      save(state); FT.syncUI();
+      window.dispatchEvent(new CustomEvent('fantrade:statechange', { detail: state }));
+      return { symbol: sym, name: h.n, shares: shares, held: h.shares };
     },
     setPref: function(key, val){
       state.prefs[key] = val; save(state);
