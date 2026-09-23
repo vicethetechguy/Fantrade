@@ -355,7 +355,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-off
 """
 
 def actions(primary='Start trading',secondary='Explore FanPlay'):
-    return f'<div class="actions"><a class="action primary" href="signup.html">{primary}</a><a class="action action-premium" href="fanplay.html">{secondary}</a></div>'
+    return f'<div class="actions"><a class="action primary" href="signup.html">{primary}</a><a class="action action-premium" href="signin.html?next=fanplay.html">{secondary}</a></div>'
 
 def hero_media():
     return '''<div class="hero-media-wrap" role="img" aria-label="Fantrade character checking the market on a phone">

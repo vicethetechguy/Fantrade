@@ -27,6 +27,46 @@
 
   var client = null, ready = null, lastError = null, session = null;
 
+  /* ── Signed-out visitors belong on the sign-in page ──────────────────
+     The app pages are for managers, so one opened without a session hands
+     over to signin.html, which brings it back here once the manager is in.
+     Two things are left alone: a page that cannot reach the database at all
+     (it runs from this browser, as it always has), and a browser that signed
+     in while the database was down, which keeps its own session.
+
+     The board is deliberately not on this list — it is the one page an
+     unsigned visitor may read — nor are the marketing pages or the auth
+     screens themselves. */
+  var IN_APP = ['account', 'activity', 'asset', 'buy', 'club-builder', 'clubs',
+    'dashboard', 'divisions', 'exchange', 'fanplay', 'ftr', 'liveboard', 'notifications',
+    'onboarding', 'portfolio', 'receive', 'send', 'settings', 'settings-alerts',
+    'settings-club', 'settings-data', 'settings-play', 'settings-profile',
+    'settings-security', 'settings-wallet', 'swap', 'trade', 'wallet', 'withdraw'];
+
+  function pageName() {
+    return ((window.location.pathname.split('/').pop() || 'index.html')
+      .replace(/\.html$/i, '')).toLowerCase();
+  }
+
+  /* The pages each keep their own copy of the state under this key (see the
+     STORAGE_KEY in any page's own script), so it is read straight from here —
+     window.FT is not shared with the page. */
+  function localSession() {
+    try {
+      var raw = window.localStorage.getItem('fantrade_v2_state');
+      if (!raw) return false;
+      var saved = JSON.parse(raw);
+      return !!(saved && saved.auth && saved.auth.signedIn);
+    } catch (error) { return false; }
+  }
+
+  function guard() {
+    if (session || !client || localSession()) return;
+    var page = pageName();
+    if (IN_APP.indexOf(page) === -1) return;
+    window.location.replace('signin.html?next=' + encodeURIComponent(page + '.html'));
+  }
+
   function load() {
     if (ready) return ready;
     ready = import(CONFIG.cdn)
@@ -37,10 +77,15 @@
         client.auth.onAuthStateChange(function (_event, next) {
           session = next;
           window.dispatchEvent(new CustomEvent('fantrade:auth', { detail: next }));
+          if (!next) guard();
         });
         return client.auth.getSession();
       })
-      .then(function (res) { session = res && res.data ? res.data.session : null; return client; })
+      .then(function (res) {
+        session = res && res.data ? res.data.session : null;
+        guard();
+        return client;
+      })
       .catch(function (error) {
         lastError = error;
         console.warn('[Fantrade] Database unavailable, working from this browser only:', error && error.message);

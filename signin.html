@@ -2394,6 +2394,23 @@ var FT = (function(){
   }
   if(window.FTDB){
     FTDB.ready().then(function(){ if(FTDB.signedIn()) sync(); });
+
+/* ── Where a sign-in should land ────────────────────────────────────────
+   An app page that needs a session sends visitors here as
+   signin.html?next=<page>. Only the pages in this list are honoured, so the
+   parameter cannot be used to send anyone elsewhere, and a manager who is
+   already signed in is carried straight on rather than asked again. */
+var AFTER_SIGNIN = ['account', 'activity', 'asset', 'buy', 'club-builder', 'clubs',
+  'dashboard', 'divisions', 'exchange', 'fanplay', 'ftr', 'liveboard', 'notifications',
+  'onboarding', 'portfolio', 'receive', 'send', 'settings', 'settings-alerts',
+  'settings-club', 'settings-data', 'settings-play', 'settings-profile',
+  'settings-security', 'settings-wallet', 'swap', 'trade', 'wallet', 'withdraw'];
+function nextPage(){
+  var raw = (new URLSearchParams(window.location.search)).get('next') || '';
+  raw = raw.split('/').pop().split('?')[0].replace(/\.html$/i, '').toLowerCase();
+  return AFTER_SIGNIN.indexOf(raw) === -1 ? null : raw + '.html';
+}
+if(nextPage()) FTDB.ready().then(function(){ if(FTDB.signedIn()) window.location.replace(nextPage()); });
     window.addEventListener('fantrade:auth', function(e){ if(e.detail) sync(); });
   }
 })();
@@ -2613,7 +2630,7 @@ if(sf) sf.addEventListener('submit', function(e){
     console.warn('[Fantrade] Signing in from this browser only:', reason);
     FT.signIn(em.trim(), name);
     showToast('Signed in on this device. Your account could not be reached, so this session is local.', 'info');
-    go('dashboard.html');
+    go(nextPage() || 'dashboard.html');
   }
 
   busy(true);
@@ -2623,7 +2640,7 @@ if(sf) sf.addEventListener('submit', function(e){
     return FT.syncCloud();
   }).then(function(){
     showToast('Welcome back. Loading your desk…', 'success');
-    go(FT.getState().auth.onboarded ? 'dashboard.html' : 'onboarding.html');
+    go(FT.getState().auth.onboarded ? (nextPage() || 'dashboard.html') : 'onboarding.html');
   }).catch(function(error){
     var msg = (error && error.message) || 'Sign in failed.';
     if(/reach the server|Failed to fetch|NetworkError/i.test(msg)){ localOnly(msg); return; }
