@@ -2017,25 +2017,46 @@ function spark(up,w,h){
   return "<svg class='spark' viewBox='0 0 "+w+" "+h+"' preserveAspectRatio='none'><polyline points='"+pts.join(' ')+
     "' fill='none' stroke='"+(up?'#1800ad':'#FF5E5E')+"' stroke-width='1.2' stroke-linejoin='round' opacity='.9'/></svg>";
 }
+var FT_TICKERS={
+  'FSAKA':'FSAKA', 'FHLND':'FHLND', 'FKM7':'FKM7', 'FVJR':'FVJR',
+  'FBEL':'FBEL', 'FPLMR':'FPLMR', 'FYAML':'FYAML', 'FMUS':'FMUS',
+  'FWRTZ':'FWRTZ', 'FRODR':'FRODR', 'FFODN':'FFODN', 'FPEDR':'FPEDR',
+  'FSALI':'FSALI', 'FBRN':'FBRN', 'FJACK':'FJACK', 'FARTA':'FARTA',
+  'FPEP':'FPEP', 'FMARS':'FMARS', '$CR7':'FCR7', '$Ronaldo':'FCR7', '$Messi':'FLM10',
+  'Saka':'FSAKA', 'Haaland':'FHLND', 'Mbappe':'FKM7', 'Vinicius':'FVJR',
+  'Bellingham':'FBEL', 'Palmer':'FPLMR', 'Yamal':'FYAML', 'Musiala':'FMUS',
+  'Wirtz':'FWRTZ', 'Rodri':'FRODR', 'Foden':'FFODN', 'Pedri':'FPEDR',
+  'Saliba':'FSALI', 'Bruno':'FBRN', 'Jackson':'FJACK', 'Arteta':'FARTA',
+  'Pep':'FPEP', 'Maresca':'FMARS', 'CR7':'FCR7', 'Ronaldo':'FCR7', 'Messi':'FLM10'
+};
+function ftSym(value){
+  if(!value) return '';
+  var s = String(value);
+  if(FT_TICKERS[s]) return FT_TICKERS[s];
+  if(s.startsWith('F') && s.length >= 4) return s;
+  return s.replace(/\$[A-Za-z0-9]+/g, function(id){
+    return FT_TICKERS[id] || (id.charAt(1) === 'F' ? id.slice(1) : 'F' + id.slice(1).toUpperCase());
+  }).replace(/^\$/, '');
+}
 var ASSETS=[
- {t:'$Saka',n:'Bukayo Saka',p:48.20,d:6.4,c:false,cap:'482.0M',h:51.2,low:46.8,q:'FTR',vol:'12.4M',tag:'10x',pos:'FWD',club:'Arsenal'},
- {t:'$Haaland',n:'Erling Haaland',p:71.40,d:-1.8,c:false,cap:'714.0M',h:74.0,low:70.1,q:'FTR',vol:'18.6M',tag:'10x',pos:'FWD',club:'Manchester City'},
- {t:'$Mbappe',n:'Kylian Mbappé',p:78.50,d:4.8,c:false,cap:'785.0M',h:81.0,low:76.2,q:'FTR',vol:'24.8M',tag:'10x',pos:'FWD',club:'Real Madrid'},
- {t:'$Vinicius',n:'Vinícius Júnior',p:63.10,d:0.7,c:false,cap:'631.0M',h:65.0,low:62.0,q:'FTR',vol:'15.2M',tag:'10x',pos:'FWD',club:'Real Madrid'},
- {t:'$Bellingham',n:'Jude Bellingham',p:58.90,d:3.3,c:false,cap:'589.0M',h:61.0,low:57.2,q:'FTR',vol:'14.1M',tag:'10x',pos:'MID',club:'Real Madrid'},
- {t:'$Palmer',n:'Cole Palmer',p:52.80,d:8.2,c:false,cap:'528.0M',h:54.5,low:49.1,q:'FTR',vol:'16.5M',tag:'10x',pos:'MID',club:'Chelsea'},
- {t:'$Yamal',n:'Lamine Yamal',p:66.20,d:9.4,c:false,cap:'662.0M',h:68.0,low:61.5,q:'FTR',vol:'22.1M',tag:'10x',pos:'FWD',club:'Barcelona'},
- {t:'$Musiala',n:'Jamal Musiala',p:46.70,d:5.1,c:false,cap:'467.0M',h:48.5,low:44.2,q:'FTR',vol:'11.5M',tag:'10x',pos:'MID',club:'Bayern Munich'},
- {t:'$Wirtz',n:'Florian Wirtz',p:44.60,d:3.8,c:false,cap:'446.0M',h:46.2,low:43.0,q:'FTR',vol:'10.9M',tag:'10x',pos:'MID',club:'Bayer Leverkusen'},
- {t:'$Rodri',n:'Rodri',p:61.30,d:1.4,c:false,cap:'613.0M',h:62.5,low:60.1,q:'FTR',vol:'13.7M',tag:'10x',pos:'MID',club:'Manchester City'},
- {t:'$Foden',n:'Phil Foden',p:54.10,d:-1.2,c:false,cap:'541.0M',h:56.0,low:53.2,q:'FTR',vol:'11.8M',tag:'10x',pos:'FWD',club:'Manchester City'},
- {t:'$Pedri',n:'Pedri González',p:41.15,d:-0.9,c:false,cap:'411.5M',h:42.5,low:40.1,q:'FTR',vol:'8.9M',tag:'10x',pos:'MID',club:'Barcelona'},
- {t:'$Saliba',n:'William Saliba',p:33.80,d:2.7,c:false,cap:'338.0M',h:35.0,low:32.4,q:'FTR',vol:'7.2M',tag:'10x',pos:'DEF',club:'Arsenal'},
- {t:'$Bruno',n:'Bruno Fernandes',p:39.75,d:2.1,c:false,cap:'397.5M',h:41.8,low:38.5,q:'FTR',vol:'9.8M',tag:'10x',pos:'MID',club:'Manchester United'},
- {t:'$Jackson',n:'Nicolas Jackson',p:14.85,d:11.2,c:false,cap:'148.5M',h:15.5,low:13.2,q:'FTR',vol:'5.4M',tag:'10x',pos:'FWD',club:'Chelsea'},
- {t:'$Arteta',n:'Mikel Arteta',p:22.05,d:4.9,c:true,cap:'220.5M',h:23.5,low:21.0,q:'FTR',vol:'6.1M',tag:'COACH',pos:'MGR',club:'Arsenal'},
- {t:'$Pep',n:'Pep Guardiola',p:29.60,d:-0.4,c:true,cap:'296.0M',h:30.8,low:28.9,q:'FTR',vol:'7.8M',tag:'COACH',pos:'MGR',club:'Manchester City'},
- {t:'$Maresca',n:'Enzo Maresca',p:18.30,d:1.2,c:true,cap:'183.0M',h:19.2,low:17.8,q:'FTR',vol:'4.5M',tag:'COACH',pos:'MGR',club:'Chelsea'}
+ {t:'FSAKA',n:'Bukayo Saka',p:48.20,d:6.4,c:false,cap:'482.0M',h:51.2,low:46.8,q:'FTR',vol:'12.4M',tag:'10x',pos:'FWD',club:'Arsenal'},
+ {t:'FHLND',n:'Erling Haaland',p:71.40,d:-1.8,c:false,cap:'714.0M',h:74.0,low:70.1,q:'FTR',vol:'18.6M',tag:'10x',pos:'FWD',club:'Manchester City'},
+ {t:'FKM7',n:'Kylian Mbappé',p:78.50,d:4.8,c:false,cap:'785.0M',h:81.0,low:76.2,q:'FTR',vol:'24.8M',tag:'10x',pos:'FWD',club:'Real Madrid'},
+ {t:'FVJR',n:'Vinícius Júnior',p:63.10,d:0.7,c:false,cap:'631.0M',h:65.0,low:62.0,q:'FTR',vol:'15.2M',tag:'10x',pos:'FWD',club:'Real Madrid'},
+ {t:'FBEL',n:'Jude Bellingham',p:58.90,d:3.3,c:false,cap:'589.0M',h:61.0,low:57.2,q:'FTR',vol:'14.1M',tag:'10x',pos:'MID',club:'Real Madrid'},
+ {t:'FPLMR',n:'Cole Palmer',p:52.80,d:8.2,c:false,cap:'528.0M',h:54.5,low:49.1,q:'FTR',vol:'16.5M',tag:'10x',pos:'MID',club:'Chelsea'},
+ {t:'FYAML',n:'Lamine Yamal',p:66.20,d:9.4,c:false,cap:'662.0M',h:68.0,low:61.5,q:'FTR',vol:'22.1M',tag:'10x',pos:'FWD',club:'Barcelona'},
+ {t:'FMUS',n:'Jamal Musiala',p:46.70,d:5.1,c:false,cap:'467.0M',h:48.5,low:44.2,q:'FTR',vol:'11.5M',tag:'10x',pos:'MID',club:'Bayern Munich'},
+ {t:'FWRTZ',n:'Florian Wirtz',p:44.60,d:3.8,c:false,cap:'446.0M',h:46.2,low:43.0,q:'FTR',vol:'10.9M',tag:'10x',pos:'MID',club:'Bayer Leverkusen'},
+ {t:'FRODR',n:'Rodri',p:61.30,d:1.4,c:false,cap:'613.0M',h:62.5,low:60.1,q:'FTR',vol:'13.7M',tag:'10x',pos:'MID',club:'Manchester City'},
+ {t:'FFODN',n:'Phil Foden',p:54.10,d:-1.2,c:false,cap:'541.0M',h:56.0,low:53.2,q:'FTR',vol:'11.8M',tag:'10x',pos:'FWD',club:'Manchester City'},
+ {t:'FPEDR',n:'Pedri González',p:41.15,d:-0.9,c:false,cap:'411.5M',h:42.5,low:40.1,q:'FTR',vol:'8.9M',tag:'10x',pos:'MID',club:'Barcelona'},
+ {t:'FSALI',n:'William Saliba',p:33.80,d:2.7,c:false,cap:'338.0M',h:35.0,low:32.4,q:'FTR',vol:'7.2M',tag:'10x',pos:'DEF',club:'Arsenal'},
+ {t:'FBRN',n:'Bruno Fernandes',p:39.75,d:2.1,c:false,cap:'397.5M',h:41.8,low:38.5,q:'FTR',vol:'9.8M',tag:'10x',pos:'MID',club:'Manchester United'},
+ {t:'FJACK',n:'Nicolas Jackson',p:14.85,d:11.2,c:false,cap:'148.5M',h:15.5,low:13.2,q:'FTR',vol:'5.4M',tag:'10x',pos:'FWD',club:'Chelsea'},
+ {t:'FARTA',n:'Mikel Arteta',p:22.05,d:4.9,c:true,cap:'220.5M',h:23.5,low:21.0,q:'FTR',vol:'6.1M',tag:'COACH',pos:'MGR',club:'Arsenal'},
+ {t:'FPEP',n:'Pep Guardiola',p:29.60,d:-0.4,c:true,cap:'296.0M',h:30.8,low:28.9,q:'FTR',vol:'7.8M',tag:'COACH',pos:'MGR',club:'Manchester City'},
+ {t:'FMARS',n:'Enzo Maresca',p:18.30,d:1.2,c:true,cap:'183.0M',h:19.2,low:17.8,q:'FTR',vol:'4.5M',tag:'COACH',pos:'MGR',club:'Chelsea'}
 ];
 var PLAYER_IMAGES={
   saka:'assets/players/saka.webp',haaland:'assets/players/haaland.webp',mbappe:'assets/players/mbappe.webp',
@@ -2049,7 +2070,14 @@ var PLAYER_IMAGES={
   alisson:'assets/players/alisson.webp',gabriel:'assets/players/gabriel.webp'
 };
 function playerPhoto(symbol,name,className){
-  var key=String(symbol||'').replace(/[^A-Za-z]/g,'').toLowerCase();
+  var raw = String(symbol||'').replace(/^\$/, '');
+  var sLower = raw.toLowerCase();
+  var key = sLower;
+  if(sLower.startsWith('f') && sLower.length > 3){
+    var map = { fsaka:'saka', fhlnd:'haaland', fkm7:'mbappe', fvjr:'vinicius', fbel:'bellingham', fplmr:'palmer', fyaml:'yamal', fmus:'musiala', fwrtz:'wirtz', frodr:'rodri', ffodn:'foden', fpedr:'pedri', fsali:'saliba', fbrn:'bruno', fjack:'jackson', farta:'arteta', fpep:'pep', fmars:'maresca', fcr7:'saka', flm10:'saka' };
+    if(map[sLower]) key = map[sLower];
+    else key = sLower.slice(1);
+  }
   var label=String(name||symbol||'Player').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
   var src=PLAYER_IMAGES[key]||PLAYER_IMAGES.saka;
   return "<img class='"+(className||'player-photo')+"' src='"+src+"' alt='"+label+"' loading='lazy' decoding='async'>";
@@ -2108,19 +2136,19 @@ var FT = (function(){
         msg:"Zero FC finished 18th of 1,420 clubs with 812 FP. Your Elite-tier stake returned at 2.48x.",
         time:"09:14 · 2h ago", amt:"+6,200 $FTR", tone:"up" },
       { id:"n-2", kind:"order", icon:"candle", title:"Buy order filled", read:false, day:"Today",
-        msg:"10,000 $Saka filled at an average of 48.20 $FTR. Average cost basis moved to 31.40.",
+        msg:"10,000 FSAKA filled at an average of 48.20 $FTR. Average cost basis moved to 31.40.",
         time:"08:02 · 3h ago", amt:"-483,928 $FTR", tone:"down" },
       { id:"n-3", kind:"club", icon:"whistle", title:"Teamsheet risk on Zero FC", read:false, day:"Today",
         msg:"W. Saliba is listed as a late fitness test. Auto-sub will field Gabriel if he is withdrawn.",
         time:"07:40 · 4h ago", amt:"", tone:"" },
       { id:"n-4", kind:"settle", icon:"coin", title:"Dividend distributed", read:true, day:"Yesterday",
-        msg:"$Saka clean sheet and man-of-the-match distribution paid to all holders on the ledger.",
+        msg:"FSAKA clean sheet and man-of-the-match distribution paid to all holders on the ledger.",
         time:"Yesterday · 22:10", amt:"+420 $FTR", tone:"up" },
       { id:"n-5", kind:"club", icon:"bolt", title:"Coach synergy unlocked", read:true, day:"Yesterday",
-        msg:"$Arteta now matches your 4-3-3 shape. Club multiplier rose from 10.0% to 15.0%.",
+        msg:"FARTA now matches your 4-3-3 shape. Club multiplier rose from 10.0% to 15.0%.",
         time:"Yesterday · 19:22", amt:"", tone:"" },
       { id:"n-6", kind:"order", icon:"swap", title:"Limit order expired", read:true, day:"Yesterday",
-        msg:"Your limit buy for 2,000 $Pedri at 38.00 $FTR expired unfilled. Nothing was charged.",
+        msg:"Your limit buy for 2,000 FPEDR at 38.00 $FTR expired unfilled. Nothing was charged.",
         time:"Yesterday · 11:05", amt:"", tone:"" },
       { id:"n-7", kind:"system", icon:"shield", title:"New sign-in on Chrome, London", read:true, day:"Sep 12",
         msg:"If this was not you, change your password and revoke the session from Settings → Security.",
@@ -2136,30 +2164,30 @@ var FT = (function(){
       gbpRate: 12.40
     },
     holdings: {
-      '$Saka': { n: 'Bukayo Saka', shares: 10000, avg: 31.40, p: 48.20, c: false, inClub: 'RW' },
-      '$Bruno': { n: 'Bruno Fernandes', shares: 5000, avg: 38.00, p: 39.75, c: false, inClub: 'CAM' },
-      '$Haaland': { n: 'Erling Haaland', shares: 3000, avg: 68.50, p: 71.40, c: false, inClub: 'ST' },
-      '$Arteta': { n: 'Mikel Arteta', shares: 1000, avg: 20.50, p: 22.05, c: true, inClub: 'COACH' }
+      'FSAKA': { n: 'Bukayo Saka', shares: 10000, avg: 31.40, p: 48.20, c: false, inClub: 'RW' },
+      'FBRN': { n: 'Bruno Fernandes', shares: 5000, avg: 38.00, p: 39.75, c: false, inClub: 'CAM' },
+      'FHLND': { n: 'Erling Haaland', shares: 3000, avg: 68.50, p: 71.40, c: false, inClub: 'ST' },
+      'FARTA': { n: 'Mikel Arteta', shares: 1000, avg: 20.50, p: 22.05, c: true, inClub: 'COACH' }
     },
     clubs: [
       { id: "c-1", name: "Zero FC", stadium: "Emirates of the North",
         colors: ["#1800ad", "#0f0075"], colorName: "Indigo", formation: "4-3-3",
-        coach: "$Arteta", rank: 124, fp: 8420, boost: 15.0, value: 245800,
+        coach: "FARTA", rank: 124, fp: 8420, boost: 15.0, value: 245800,
         division: "Apex" },
       { id: "c-2", name: "North Bank XI", stadium: "The Reserve",
         colors: ["#4DA6FF", "#0b5fae"], colorName: "Azure", formation: "4-2-3-1",
-        coach: "$Pep", rank: 412, fp: 5140, boost: 9.5, value: 132400,
+        coach: "FPEP", rank: 412, fp: 5140, boost: 9.5, value: 132400,
         division: "Contender" }
     ],
     activeClub: "c-1",
     fanplay: {
       activeEntries: [
         { id: "e-1", mode: "Dream Club", clubId: "c-1", target: "Zero FC", tier: "Elite", mult: 2.0, stake: 2500, projectedFP: 230, status: "Active in MD 07" },
-        { id: "e-2", mode: "Individual", clubId: "", target: "$Saka", tier: "PRO", mult: 1.4, stake: 2500, projectedFP: 140, status: "Active in MD 07" }
+        { id: "e-2", mode: "Individual", clubId: "", target: "FSAKA", tier: "PRO", mult: 1.4, stake: 2500, projectedFP: 140, status: "Active in MD 07" }
       ]
     },
     transactions: [
-      { type: "BUY", asset: "$Saka", shares: 10000, price: 48.20, total: 483928, time: "Today, 14:22" },
+      { type: "BUY", asset: "FSAKA", shares: 10000, price: 48.20, total: 483928, time: "Today, 14:22" },
       { type: "STAKE", asset: "FanPlay MD 07", shares: 1, price: 2500, total: 2500, time: "Yesterday, 19:10" },
       { type: "PAYOUT", asset: "Matchday 06 Settle", shares: 1, price: 6200, total: 6200, time: "Sep 08, 02:15" },
       { type: "CONVERT", asset: "GBP Deposit (£1,000)", shares: 1000, price: 12.40, total: 12338, time: "Sep 07, 11:45" }
@@ -2245,7 +2273,7 @@ var FT = (function(){
         return { id: c.id, name: c.name, stadium: c.stadium,
                  colors: Array.isArray(c.colors) ? c.colors : (prev.colors || ['#1800ad', '#0f0075']),
                  colorName: c.color_name, formation: c.formation,
-                 coach: c.coach || prev.coach || '$Arteta',
+                 coach: c.coach || prev.coach || 'FARTA',
                  division: c.division, fp: Number(c.season_fp) || 0,
                  boost: Number(c.boost) || 0,
                  // Rank and value are worked out from the whole field, not
@@ -2433,30 +2461,92 @@ var FT = (function(){
         FTDB.saveAvatar(state.user.avatar).catch(function(){});
       }
     },
-    claimListing: function(row){
-      if(!row || !row.id) throw new Error('Pick a player listing to claim.');
+    claimListing: function(opts){
+      var row = typeof opts === 'object' && opts.id ? opts : (opts && opts.row ? opts.row : opts);
+      if(!row || !row.id) throw new Error('Pick an Activity Asset listing to claim.');
       state.claimedListings = state.claimedListings || [];
-      if(state.claimedListings.indexOf(row.id) > -1) throw new Error('You already claimed this listing.');
+      state.listerClaims = state.listerClaims || [];
+      if(state.claimedListings.indexOf(row.id) > -1) throw new Error('You have already claimed this listing.');
+
+      var level = (opts && (opts.level === 2 || opts.level === '2')) ? 2 : 1;
+      var vestingYears = (opts && [1, 2, 3].indexOf(Number(opts.vestingYears)) > -1) ? Number(opts.vestingYears) : 1;
       var sym = row.asset_id || row.ticker || "";
-      if(sym && sym.charAt(0) !== '$') sym = '$' + sym.replace(/^\$/, '');
-      var asset = (typeof ASSETS !== 'undefined' ? ASSETS : []).filter(function(a){ return a.t === sym; })[0] || {};
-      var shares = Math.max(1, Number(row.shares) || 1);
+      if(sym && sym.charAt(0) !== '$' && !sym.startsWith('F')) sym = '$' + sym;
+      var ticker = ftSym(sym);
+      var asset = (typeof ASSETS !== 'undefined' ? ASSETS : []).filter(function(a){ return a.t === sym || a.sym === ticker || ftSym(a.t) === ticker; })[0] || {};
+
+      // Whitepaper Section 7: Level 1 = 5% (500,000 shares), Level 2 = 10% (1,000,000 shares) of 10M total supply
+      var shares = level === 2 ? 1000000 : 500000;
+      var percent = level === 2 ? 10 : 5;
+      var fee = level === 2 ? 5000 : 2500;
+      var burned = Math.round(fee * 0.02); // 2% permanently burned
+
+      if(state.wallet.balance < fee){
+        throw new Error('Insufficient $FTR balance. Claiming at Level ' + level + ' (' + percent + '%) requires ' + fee.toLocaleString('en-US') + ' $FTR.');
+      }
+
+      state.wallet.balance -= fee;
+      state.claimedListings.push(row.id);
+
+      // Whitepaper Section 8.2: 1% of original allocation per day (5,000/day for 500k; 10,000/day for 1M)
+      var dailyLimit = Math.round(shares * 0.01);
+      var now = Date.now();
+      var vestingUntil = now + (vestingYears * 365 * 24 * 3600 * 1000);
+      var listerFp = Math.round(shares / 100); // Pre-Airdrop Lister Fan Points
+
+      state.listerClaims.push({
+        id: 'lc-' + row.id,
+        listingId: row.id,
+        assetId: sym,
+        ticker: ticker,
+        name: row.name || asset.n || ticker,
+        level: level,
+        shares: shares,
+        percent: percent,
+        feePaid: fee,
+        feeBurned: burned,
+        vestingYears: vestingYears,
+        claimedAt: now,
+        vestingUntil: vestingUntil,
+        dailyLimit: dailyLimit,
+        tradedToday: 0,
+        lastTradedDate: new Date().toISOString().slice(0, 10),
+        feeSharePercent: 30, // 30% trading fee participation
+        feeShareEarned: 0,
+        listerFp: listerFp
+      });
+
+      // Credit shares to holdings
       var price = Number(row.price || asset.p || 0);
       if(!state.holdings[sym]){
-        state.holdings[sym] = { n: row.name || asset.n || sym, shares: 0, avg: price,
+        state.holdings[sym] = { n: row.name || asset.n || ticker, shares: 0, avg: price,
           p: price, c: !!(row.kind === 'COACH' || asset.c), inClub: (row.kind === 'COACH' || asset.c) ? 'COACH' : 'SUB' };
       }
       var h = state.holdings[sym];
       var nextShares = h.shares + shares;
       h.avg = nextShares ? ((h.shares * h.avg) + (shares * price)) / nextShares : price;
       h.shares = nextShares;
+      h.isLister = true;
+      h.listerDailyLimit = dailyLimit;
       if(price) h.p = price;
-      state.claimedListings.push(row.id);
-      state.transactions.unshift({ type: 'GRANT', asset: sym, shares: shares, price: price,
-        total: 0, time: 'Just now' });
+
+      // Award Lister Fan Points (Whitepaper Section 9)
+      state.club.fp = (state.club.fp || 0) + listerFp;
+
+      // Book transaction
+      state.transactions.unshift({
+        type: 'LAUNCH',
+        asset: ticker,
+        shares: shares,
+        price: price,
+        total: -fee,
+        label: 'Launched ' + ticker + ' Activity Shares (' + percent + '%, ' + vestingYears + 'y vesting, ' + burned + ' $FTR burned)',
+        time: 'Just now'
+      });
+
       save(state); FT.syncUI();
       window.dispatchEvent(new CustomEvent('fantrade:statechange', { detail: state }));
-      return { symbol: sym, name: h.n, shares: shares, held: h.shares };
+      return { symbol: ticker, name: h.n, shares: shares, held: h.shares, feePaid: fee, feeBurned: burned, dailyLimit: dailyLimit, vestingYears: vestingYears, listerFp: listerFp };
     },
     setPref: function(key, val){
       state.prefs[key] = val; save(state);
@@ -2481,6 +2571,23 @@ var FT = (function(){
       if(n && !n.read){ n.read = true; save(state); FT.syncUI(); }
     },
     executeTrade: function(side, assetSymbol, assetName, shares, price, isCoach){
+      if(side === 'sell' && state.listerClaims && state.listerClaims.length){
+        var today = new Date().toISOString().slice(0, 10);
+        var claim = state.listerClaims.find(function(lc){
+          return lc.assetId === assetSymbol || lc.ticker === assetSymbol || ftSym(lc.assetId) === ftSym(assetSymbol);
+        });
+        if(claim && Date.now() < claim.vestingUntil){
+          if(claim.lastTradedDate !== today){
+            claim.tradedToday = 0;
+            claim.lastTradedDate = today;
+          }
+          if(claim.tradedToday + shares > claim.dailyLimit){
+            var rem = Math.max(0, claim.dailyLimit - claim.tradedToday);
+            throw new Error('Lister daily trading limit: You can only trade up to 1% (' + claim.dailyLimit.toLocaleString('en-US') + ' shares) per day during your ' + claim.vestingYears + '-year vesting. Remaining today: ' + rem.toLocaleString('en-US') + ' shares.');
+          }
+          claim.tradedToday += shares;
+        }
+      }
       var subtotal = shares * price;
       var fee = subtotal * 0.004;
       var total = Math.round(side === 'buy' ? subtotal + fee : subtotal - fee);
@@ -2510,6 +2617,18 @@ var FT = (function(){
         }
       }
 
+      if(state.listerClaims && state.listerClaims.length){
+        var claimMatch = state.listerClaims.find(function(lc){
+          return lc.assetId === assetSymbol || lc.ticker === assetSymbol || ftSym(lc.assetId) === ftSym(assetSymbol);
+        });
+        if(claimMatch && Date.now() < claimMatch.vestingUntil){
+          var listerFeeShare = Math.round(fee * 0.30);
+          if(listerFeeShare > 0){
+            claimMatch.feeShareEarned = (claimMatch.feeShareEarned || 0) + listerFeeShare;
+            state.wallet.balance += listerFeeShare;
+          }
+        }
+      }
       state.transactions.unshift({
         type: side.toUpperCase(),
         asset: assetSymbol,
@@ -2635,7 +2754,7 @@ var FT = (function(){
         colors: ["#1800ad", "#0f0075"],
         colorName: "Indigo",
         formation: "4-3-3",
-        coach: "$Arteta",
+        coach: "FARTA",
         rank: 900 + state.clubs.length,
         fp: 0,
         boost: 0,
@@ -3020,19 +3139,19 @@ function getFallbackOptions(asset, match, market){
 function getLocalEligibleAssets(){
   var s = (typeof FT !== 'undefined' && typeof FT.getState === 'function') ? FT.getState() : null;
   var teamMap = {
-    '$Saka': 'Arsenal', '$Bruno': 'Manchester United', '$Haaland': 'Manchester City',
-    '$Arteta': 'Arsenal', '$Mbappe': 'Real Madrid', '$Yamal': 'Barcelona',
-    '$Bellingham': 'Real Madrid', '$Palmer': 'Chelsea', '$Foden': 'Manchester City',
-    '$Saliba': 'Arsenal', '$Pedri': 'Barcelona', '$Rodri': 'Manchester City',
-    '$Vinicius': 'Real Madrid', '$Rice': 'Arsenal', '$Wirtz': 'Bayer Leverkusen',
-    '$Musiala': 'Bayern Munich', '$Gavi': 'Barcelona', '$Camavinga': 'Real Madrid',
+    'FSAKA': 'Arsenal', 'FBRN': 'Manchester United', 'FHLND': 'Manchester City',
+    'FARTA': 'Arsenal', 'FKM7': 'Real Madrid', 'FYAML': 'Barcelona',
+    'FBEL': 'Real Madrid', 'FPLMR': 'Chelsea', 'FFODN': 'Manchester City',
+    'FSALI': 'Arsenal', 'FPEDR': 'Barcelona', 'FRODR': 'Manchester City',
+    'FVJR': 'Real Madrid', '$Rice': 'Arsenal', 'FWRTZ': 'Bayer Leverkusen',
+    'FMUS': 'Bayern Munich', '$Gavi': 'Barcelona', '$Camavinga': 'Real Madrid',
     '$Guardiola': 'Manchester City'
   };
   var holdings = (s && s.holdings && Object.keys(s.holdings).length > 0) ? s.holdings : {
-    '$Saka': { n: 'Bukayo Saka', shares: 10000, avg: 31.40, p: 48.20, c: false },
-    '$Bruno': { n: 'Bruno Fernandes', shares: 5000, avg: 38.00, p: 39.75, c: false },
-    '$Haaland': { n: 'Erling Haaland', shares: 3000, avg: 68.50, p: 71.40, c: false },
-    '$Arteta': { n: 'Mikel Arteta', shares: 1000, avg: 20.50, p: 22.05, c: true }
+    'FSAKA': { n: 'Bukayo Saka', shares: 10000, avg: 31.40, p: 48.20, c: false },
+    'FBRN': { n: 'Bruno Fernandes', shares: 5000, avg: 38.00, p: 39.75, c: false },
+    'FHLND': { n: 'Erling Haaland', shares: 3000, avg: 68.50, p: 71.40, c: false },
+    'FARTA': { n: 'Mikel Arteta', shares: 1000, avg: 20.50, p: 22.05, c: true }
   };
   var lockedMap = {};
   var entries = (s && s.fanplay && s.fanplay.activeEntries) ? s.fanplay.activeEntries : [];
@@ -3062,10 +3181,10 @@ function getLocalEligibleAssets(){
   });
   if(list.length === 0){
     list = [
-      { id:'asset-saka', assetId:'asset-saka', symbol:'$Saka', name:'Bukayo Saka', team:'Arsenal', club:'Arsenal', availableQuantity:10000, totalQuantity:10000, lockedQuantity:0 },
-      { id:'asset-bruno', assetId:'asset-bruno', symbol:'$Bruno', name:'Bruno Fernandes', team:'Manchester United', club:'Manchester United', availableQuantity:5000, totalQuantity:5000, lockedQuantity:0 },
-      { id:'asset-haaland', assetId:'asset-haaland', symbol:'$Haaland', name:'Erling Haaland', team:'Manchester City', club:'Manchester City', availableQuantity:3000, totalQuantity:3000, lockedQuantity:0 },
-      { id:'asset-arteta', assetId:'asset-arteta', symbol:'$Arteta', name:'Mikel Arteta', team:'Arsenal', club:'Arsenal', availableQuantity:1000, totalQuantity:1000, lockedQuantity:0 }
+      { id:'asset-saka', assetId:'asset-saka', symbol:'FSAKA', name:'Bukayo Saka', team:'Arsenal', club:'Arsenal', availableQuantity:10000, totalQuantity:10000, lockedQuantity:0 },
+      { id:'asset-bruno', assetId:'asset-bruno', symbol:'FBRN', name:'Bruno Fernandes', team:'Manchester United', club:'Manchester United', availableQuantity:5000, totalQuantity:5000, lockedQuantity:0 },
+      { id:'asset-haaland', assetId:'asset-haaland', symbol:'FHLND', name:'Erling Haaland', team:'Manchester City', club:'Manchester City', availableQuantity:3000, totalQuantity:3000, lockedQuantity:0 },
+      { id:'asset-arteta', assetId:'asset-arteta', symbol:'FARTA', name:'Mikel Arteta', team:'Arsenal', club:'Arsenal', availableQuantity:1000, totalQuantity:1000, lockedQuantity:0 }
     ];
   }
   return list;
@@ -3286,7 +3405,7 @@ function renderAssetGrid(){
     var isSel = selAsset && (selAsset.id === a.id || selAsset.assetId === a.id || selAsset.symbol === a.symbol);
     return '<div role="button" tabindex="0" class="fp-asset-card' + (isSel ? ' selected' : '') + '" onclick="window.selectAsset(\'' + (a.id || a.assetId || a.symbol) + '\')">'
       + playerPhoto(a.symbol, a.name, 'fp-player-photo')
-      + '<div class="fp-asset-sym">' + a.symbol + '</div>'
+      + '<div class="fp-asset-sym">' + ftSym(a.symbol) + '</div>'
       + '<div class="fp-asset-name">' + a.name + ' · ' + (a.team || a.club || 'Pro') + '</div>'
       + '<div class="fp-asset-avail">Available: <b>' + (a.availableQuantity || 0).toLocaleString() + '</b> shares</div>'
       + '</div>';
@@ -3575,7 +3694,7 @@ function loadUserFanPlays(){
         return {
           id: e.id,
           status: e.status || 'ACTIVE',
-          asset: e.asset || { symbol: e.target || '$Saka' },
+          asset: e.asset || { symbol: e.target || 'FSAKA' },
           match: e.match || { homeTeam: 'Arsenal', awayTeam: 'Chelsea', status: 'SCHEDULED' },
           market: e.market || { name: e.tier || 'Solo' },
           stakedShares: e.stakedShares || e.stake || 100,

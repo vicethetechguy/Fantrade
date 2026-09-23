@@ -43,8 +43,8 @@ function param(k){
   var m = new RegExp('[?&]' + k + '=([^&]*)').exec(window.location.search);
   return m ? decodeURIComponent(m[1].replace(/\+/g, ' ')) : '';
 }
-var SYM = param('a') || '$Saka';
-var A = ASSETS.filter(function(x){ return x.t.toLowerCase() === SYM.toLowerCase(); })[0] || ASSETS[0];
+var SYM = ftSym(param('a') || 'FSAKA');
+var A = ASSETS.filter(function(x){ return x.t.toLowerCase() === SYM.toLowerCase() || ftSym(x.t).toLowerCase() === SYM.toLowerCase(); })[0] || ASSETS[0];
 function fmt(n){ return Math.round(n).toLocaleString('en-US'); }
 function money(n){ return n.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}); }
 function held(){ return FT.getState().holdings[A.t] || null; }
@@ -181,7 +181,7 @@ trade = [T('<main><div class="kc-trade-wrap trade-page">' + '<a href="exchange.h
            '<div class="kc-trade-topbar">'
            '  <div class="kc-trade-top-left">'
            '    <span id="tPortrait" class="trade-portrait"></span><div class="trade-player"><p id="tPlayerName"></p><div class="kc-trade-pair-title">'
-           '      <span id="tSym">$Saka</span><span class="kc-quote">/FTR</span>'
+           '      <span id="tSym">FSAKA</span><span class="kc-quote">/FTR</span>'
            '      <span class="kc-trade-delta" id="tDelta">+6.40%</span>'
            '    </div></div>'
            '  </div>'
@@ -242,7 +242,7 @@ trade.append(T('<div class="trade-ticket">'
                '</span></div>'
 
                '<div class="tfield"><div class="bd">'
-               '<label class="lbl" for="tQty">Shares<span class="unit"> · <span id="tQtyUnit">$Saka</span></span></label>'
+               '<label class="lbl" for="tQty">Shares<span class="unit"> · <span id="tQtyUnit">FSAKA</span></span></label>'
                '<input id="tQty" inputmode="numeric" placeholder="Enter quantity" value=""></div>'
                '<span class="pm"><button type="button" data-step="-1" data-for="tQty" '
                'aria-label="Fewer shares">&minus;</button>'
@@ -267,7 +267,7 @@ trade.append(T('<div class="trade-ticket">'
                '<div class="tline"><span id="tTotLabel">Total cost</span><b id="tTot">—</b></div>'
                '<div class="tline"><span id="tAvailLabel">Avail.</span><b id="tAvail">—</b></div>'
                '<div class="tline"><span class="dash" id="tMaxLabel">Max buy</span><b id="tMax">—</b></div>'
-               '<button class="bigbtn" type="button" id="tGo">Buy $Saka</button>'
+               '<button class="bigbtn" type="button" id="tGo">Buy FSAKA</button>'
                '</div>'
 
                # swap
@@ -308,7 +308,7 @@ trade.append('<div class="flat-sep" data-reveal>'
 trade.append('</div></main>')
 
 TRADE_JS = PICK_JS + r"""
-document.title = 'Trade ' + A.t + ' — Fantrade';
+document.title = 'Trade ' + ftSym(A.t) + ' Activity Shares — Fantrade';
 var el = function(id){ return document.getElementById(id); };
 var mode = param('side') === 'sell' ? 'sell' : 'buy', otype = 'limit', view = 'open';
 
@@ -317,13 +317,13 @@ if(el('tCoin')){
   el('tCoin').className = 'coin' + (A.c ? ' am' : '');
   el('tCoin').innerHTML = '<svg class="ic" aria-hidden="true"><use href="#i-' + (A.c ? 'whistle' : 'boot') + '"/></svg>';
 }
-if(el('tSym')) el('tSym').textContent = A.t;
+if(el('tSym')) el('tSym').textContent = ftSym(A.t);
 el('tPortrait').innerHTML = playerPhoto(A.t,A.n);
 el('tPlayerName').textContent = A.n;
 var tradeDesktop = window.matchMedia('(min-width: 901px)');
 el('tradeDepth').open = tradeDesktop.matches;
 tradeDesktop.addEventListener('change',function(event){el('tradeDepth').open=event.matches;});
-if(el('tQtyUnit')) el('tQtyUnit').textContent = A.t;
+if(el('tQtyUnit')) el('tQtyUnit').textContent = ftSym(A.t);
 if(el('tChart')) el('tChart').href = 'asset.html?a=' + encodeURIComponent(A.t);
 el('tDelta').textContent = (A.d >= 0 ? '+' : '') + A.d.toFixed(2) + '%';
 el('tDelta').classList.toggle('down', A.d < 0);

@@ -238,11 +238,17 @@
       if (res.error) { console.warn('[Fantrade] listings unavailable:', res.error.message); return null; }
       return res.data;
     },
-    claim: async function (listingId) {
+    claim: async function (listingId, level, vestingYears) {
       await load();
       if (!client) throw new Error('Cannot reach the server right now.');
       if (!FTDB.signedIn()) throw new Error('Sign in to claim a listing.');
-      var res = await client.rpc('ft_claim_listing', { p_listing: listingId });
+      var params = { p_listing: listingId };
+      if (level) params.p_level = Number(level) || 1;
+      if (vestingYears) params.p_vesting_years = Number(vestingYears) || 1;
+      var res = await client.rpc('ft_claim_listing', params);
+      if (res.error && /parameters|signature|schema cache/i.test(res.error.message)) {
+        res = await client.rpc('ft_claim_listing', { p_listing: listingId });
+      }
       if (res.error) throw new Error(message(res.error));
       pullNotifications();
       return res.data;

@@ -31,9 +31,45 @@ JS = r'''
     var query=el('pfSearch').value.trim().toLowerCase();
     var shown=keys.filter(function(k){var h=state.holdings[k];return (filter==='all'||filter==='player'&&!h.c||filter==='coach'&&h.c||filter==='club'&&h.inClub&&h.inClub!=='SUB')&&(k+' '+h.n).toLowerCase().includes(query);});
     el('pfCount').textContent=shown.length+' of '+keys.length+' positions · Values in FTR';
+    var listerHtml = '';
+    var claims = state.listerClaims || [];
+    if(claims.length){
+      listerHtml = '<div class="kc-group-box" style="margin-bottom:28px;background:#121411;border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:22px">'
+        + '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">'
+        + '  <div><h3 style="margin:0;font-size:18px;font-family:Archivo,sans-serif;color:var(--ink)">Lister Allocations & Vesting</h3>'
+        + '  <p style="margin:4px 0 0;font-size:12px;color:var(--dim)">Whitepaper v2.0 §8 · 1% daily trading release & 30% trading fee participation</p></div>'
+        + '  <span style="background:rgba(24,0,173,.3);color:#a596ed;padding:4px 12px;border-radius:999px;font-size:11px;font-weight:600">' + claims.length + ' Launched</span>'
+        + '</div>'
+        + '<div style="display:grid;gap:12px">'
+        + claims.map(function(cl){
+            var daysLeft = Math.max(0, Math.ceil((cl.vestingUntil - Date.now()) / (1000 * 3600 * 24)));
+            var dailyAvail = Math.max(0, cl.dailyLimit - (cl.tradedToday || 0));
+            return '<div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:16px;display:grid;grid-template-columns:auto 1fr auto;gap:16px;align-items:center">'
+              + playerPhoto(cl.assetId, cl.name, 'kc-avatar')
+              + '<div><div style="display:flex;align-items:center;gap:8px"><b>' + esc(cl.name) + '</b> <span style="background:#1800ad;color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:6px">' + esc(cl.ticker) + '</span></div>'
+              + '<div style="font-size:12px;color:var(--dim);margin-top:4px">Level ' + cl.level + ' (' + cl.percent + '% of 10M) · <b>' + Number(cl.shares).toLocaleString() + ' shares</b> · ' + cl.vestingYears + '-year vesting (' + daysLeft + ' days remaining)</div>'
+              + '<div style="font-size:11px;color:#a596ed;margin-top:4px">Daily Trading Release (1%): <b>' + Number(dailyAvail).toLocaleString() + ' / ' + Number(cl.dailyLimit).toLocaleString() + ' shares available today</b></div></div>'
+              + '<div style="text-align:right"><div style="font-size:11px;color:var(--dim)">30% Fee Share Earned</div><b style="font-size:14px;color:var(--positive)">+' + Number(cl.feeShareEarned || 0).toLocaleString() + ' $FTR</b>'
+              + '<div style="font-size:11px;color:var(--dim);margin-top:4px">Lister FP: <b style="color:var(--ink)">+' + Number(cl.listerFp || 0).toLocaleString() + ' FP</b></div></div>'
+              + '</div>';
+          }).join('')
+        + '</div></div>';
+    }
+    var listerWrap = el('pfListerAllocations');
+    if(!listerWrap){
+      var host = el('pfRows');
+      if(host && host.parentNode){
+        var div = document.createElement('div');
+        div.id = 'pfListerAllocations';
+        host.parentNode.insertBefore(div, host);
+        listerWrap = div;
+      }
+    }
+    if(listerWrap) listerWrap.innerHTML = listerHtml;
+
     el('pfRows').innerHTML=shown.map(function(k){
       var h=state.holdings[k],pnl=h.shares*(h.p-h.avg),position=h.inClub&&h.inClub!=='SUB';
-      return '<div class="portfolio-row"><a class="portfolio-player" href="asset.html?a='+encodeURIComponent(k)+'">'+playerPhoto(k,h.n)+'<span><b>'+esc(h.n)+'</b><small>'+esc(k)+' · '+fmt(h.shares)+' shares'+(position?' · In club':'')+'</small></span></a>'
+      return '<div class="portfolio-row"><a class="portfolio-player" href="asset.html?a='+encodeURIComponent(k)+'">'+playerPhoto(k,h.n)+'<span><b>'+esc(h.n)+'</b><small><b>'+esc(ftSym(k))+'</b> · '+fmt(h.shares)+' shares'+(h.isLister?' · <span style="color:#a596ed">Lister Allocation (1%/day trade limit)</span>':'')+(position?' · In club':'')+'</small></span></a>'
         +'<div class="portfolio-cost"><span>Average cost</span><b>'+fmt(h.avg)+' FTR</b></div><div class="portfolio-value"><b>'+fmt(h.shares*h.p)+' <small>FTR</small></b><span class="'+(pnl>=0?'positive':'negative')+'">'+(pnl>=0?'+':'')+fmt(pnl)+' FTR return</span></div>'
         +'<a class="quiet-button portfolio-trade" aria-label="Trade '+esc(h.n)+'" href="trade.html?a='+encodeURIComponent(k)+'">Trade</a></div>';
     }).join('')||'<div class="quiet-empty"><h2>'+(keys.length?'No matching shares.':'Your portfolio starts here.')+'</h2><p>'+(keys.length?'Try another name or filter.':'Buy player or coach shares on the exchange and follow them here.')+'</p></div>';
@@ -50,7 +86,7 @@ JS = r'''
     var state=FT.getState(),rows=[['Type','Asset','Units','Price (FTR)','Total (FTR)','When']];
     state.transactions.forEach(function(t){rows.push([t.type,t.asset,t.shares,t.price,t.total,t.time]);});
     rows.push([],['Holding','Shares','Average cost','Price','Value']);
-    Object.keys(state.holdings).forEach(function(k){var h=state.holdings[k];rows.push([k,h.shares,h.avg,h.p,h.shares*h.p]);});
+    Object.keys(state.holdings).forEach(function(k){var h=state.holdings[k];rows.push([ftSym(k),h.shares,h.avg,h.p,h.shares*h.p]);});
     function cell(value){var s=String(value==null?'':value);if(typeof value==='string'&&/^[=+\-@\t\r]/.test(s))s="'"+s;return '"'+s.replace(/"/g,'""')+'"';}
     var url=URL.createObjectURL(new Blob([rows.map(function(row){return row.map(cell).join(',');}).join('\r\n')],{type:'text/csv;charset=utf-8'}));
     var link=document.createElement('a');link.href=url;link.download='fantrade-ledger.csv';document.body.appendChild(link);link.click();link.remove();setTimeout(function(){URL.revokeObjectURL(url);},1000);

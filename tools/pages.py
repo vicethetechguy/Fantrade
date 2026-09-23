@@ -153,7 +153,7 @@ ex = [T('<main><div class="kc-ex-wrap">' + tab_intro('Exchange') +
 
 EX_JS = r"""
 var cat = 'markets', sub = 'all', sortCol = '', sortAsc = false, q = '';
-var favs = JSON.parse(localStorage.getItem('ft_favorites') || '["$Saka","$Haaland","$Mbappe","$Yamal"]');
+var favs = JSON.parse(localStorage.getItem('ft_favorites') || '["FSAKA","FHLND","FKM7","FYAML"]');
 
 function fmt(n){ return n.toLocaleString('en-US'); }
 
@@ -161,7 +161,7 @@ function getFilteredList(){
   var s = FT.getState();
   var list = ASSETS.filter(function(a){
     // Search filter
-    if(q && (a.t + ' ' + a.n).toLowerCase().indexOf(q) < 0) return false;
+    if(q && (a.t + ' ' + ftSym(a.t) + ' ' + a.n).toLowerCase().indexOf(q) < 0) return false;
 
     // Category filter
     if(cat === 'fav' && favs.indexOf(a.t) < 0) return false;
@@ -203,7 +203,7 @@ function renderMarketRows(){
   host.innerHTML = list.map(function(a){
     var to = 'asset.html?a=' + encodeURIComponent(a.t);
     var quote = a.q || 'FTR';
-    var sym = a.t.replace('$', '');
+    var sym = ftSym(a.t);
     var up = a.d >= 0;
     var subPrice = (a.p * 0.1).toFixed(2) + ' USD';
 
@@ -567,19 +567,19 @@ function getFallbackOptions(asset, match, market){
 function getLocalEligibleAssets(){
   var s = (typeof FT !== 'undefined' && typeof FT.getState === 'function') ? FT.getState() : null;
   var teamMap = {
-    '$Saka': 'Arsenal', '$Bruno': 'Manchester United', '$Haaland': 'Manchester City',
-    '$Arteta': 'Arsenal', '$Mbappe': 'Real Madrid', '$Yamal': 'Barcelona',
-    '$Bellingham': 'Real Madrid', '$Palmer': 'Chelsea', '$Foden': 'Manchester City',
-    '$Saliba': 'Arsenal', '$Pedri': 'Barcelona', '$Rodri': 'Manchester City',
-    '$Vinicius': 'Real Madrid', '$Rice': 'Arsenal', '$Wirtz': 'Bayer Leverkusen',
-    '$Musiala': 'Bayern Munich', '$Gavi': 'Barcelona', '$Camavinga': 'Real Madrid',
+    'FSAKA': 'Arsenal', 'FBRN': 'Manchester United', 'FHLND': 'Manchester City',
+    'FARTA': 'Arsenal', 'FKM7': 'Real Madrid', 'FYAML': 'Barcelona',
+    'FBEL': 'Real Madrid', 'FPLMR': 'Chelsea', 'FFODN': 'Manchester City',
+    'FSALI': 'Arsenal', 'FPEDR': 'Barcelona', 'FRODR': 'Manchester City',
+    'FVJR': 'Real Madrid', '$Rice': 'Arsenal', 'FWRTZ': 'Bayer Leverkusen',
+    'FMUS': 'Bayern Munich', '$Gavi': 'Barcelona', '$Camavinga': 'Real Madrid',
     '$Guardiola': 'Manchester City'
   };
   var holdings = (s && s.holdings && Object.keys(s.holdings).length > 0) ? s.holdings : {
-    '$Saka': { n: 'Bukayo Saka', shares: 10000, avg: 31.40, p: 48.20, c: false },
-    '$Bruno': { n: 'Bruno Fernandes', shares: 5000, avg: 38.00, p: 39.75, c: false },
-    '$Haaland': { n: 'Erling Haaland', shares: 3000, avg: 68.50, p: 71.40, c: false },
-    '$Arteta': { n: 'Mikel Arteta', shares: 1000, avg: 20.50, p: 22.05, c: true }
+    'FSAKA': { n: 'Bukayo Saka', shares: 10000, avg: 31.40, p: 48.20, c: false },
+    'FBRN': { n: 'Bruno Fernandes', shares: 5000, avg: 38.00, p: 39.75, c: false },
+    'FHLND': { n: 'Erling Haaland', shares: 3000, avg: 68.50, p: 71.40, c: false },
+    'FARTA': { n: 'Mikel Arteta', shares: 1000, avg: 20.50, p: 22.05, c: true }
   };
   var lockedMap = {};
   var entries = (s && s.fanplay && s.fanplay.activeEntries) ? s.fanplay.activeEntries : [];
@@ -609,10 +609,10 @@ function getLocalEligibleAssets(){
   });
   if(list.length === 0){
     list = [
-      { id:'asset-saka', assetId:'asset-saka', symbol:'$Saka', name:'Bukayo Saka', team:'Arsenal', club:'Arsenal', availableQuantity:10000, totalQuantity:10000, lockedQuantity:0 },
-      { id:'asset-bruno', assetId:'asset-bruno', symbol:'$Bruno', name:'Bruno Fernandes', team:'Manchester United', club:'Manchester United', availableQuantity:5000, totalQuantity:5000, lockedQuantity:0 },
-      { id:'asset-haaland', assetId:'asset-haaland', symbol:'$Haaland', name:'Erling Haaland', team:'Manchester City', club:'Manchester City', availableQuantity:3000, totalQuantity:3000, lockedQuantity:0 },
-      { id:'asset-arteta', assetId:'asset-arteta', symbol:'$Arteta', name:'Mikel Arteta', team:'Arsenal', club:'Arsenal', availableQuantity:1000, totalQuantity:1000, lockedQuantity:0 }
+      { id:'asset-saka', assetId:'asset-saka', symbol:'FSAKA', name:'Bukayo Saka', team:'Arsenal', club:'Arsenal', availableQuantity:10000, totalQuantity:10000, lockedQuantity:0 },
+      { id:'asset-bruno', assetId:'asset-bruno', symbol:'FBRN', name:'Bruno Fernandes', team:'Manchester United', club:'Manchester United', availableQuantity:5000, totalQuantity:5000, lockedQuantity:0 },
+      { id:'asset-haaland', assetId:'asset-haaland', symbol:'FHLND', name:'Erling Haaland', team:'Manchester City', club:'Manchester City', availableQuantity:3000, totalQuantity:3000, lockedQuantity:0 },
+      { id:'asset-arteta', assetId:'asset-arteta', symbol:'FARTA', name:'Mikel Arteta', team:'Arsenal', club:'Arsenal', availableQuantity:1000, totalQuantity:1000, lockedQuantity:0 }
     ];
   }
   return list;
@@ -833,7 +833,7 @@ function renderAssetGrid(){
     var isSel = selAsset && (selAsset.id === a.id || selAsset.assetId === a.id || selAsset.symbol === a.symbol);
     return '<div role="button" tabindex="0" class="fp-asset-card' + (isSel ? ' selected' : '') + '" onclick="window.selectAsset(\'' + (a.id || a.assetId || a.symbol) + '\')">'
       + playerPhoto(a.symbol, a.name, 'fp-player-photo')
-      + '<div class="fp-asset-sym">' + a.symbol + '</div>'
+      + '<div class="fp-asset-sym">' + ftSym(a.symbol) + '</div>'
       + '<div class="fp-asset-name">' + a.name + ' · ' + (a.team || a.club || 'Pro') + '</div>'
       + '<div class="fp-asset-avail">Available: <b>' + (a.availableQuantity || 0).toLocaleString() + '</b> shares</div>'
       + '</div>';
@@ -1122,7 +1122,7 @@ function loadUserFanPlays(){
         return {
           id: e.id,
           status: e.status || 'ACTIVE',
-          asset: e.asset || { symbol: e.target || '$Saka' },
+          asset: e.asset || { symbol: e.target || 'FSAKA' },
           match: e.match || { homeTeam: 'Arsenal', awayTeam: 'Chelsea', status: 'SCHEDULED' },
           market: e.market || { name: e.tier || 'Solo' },
           stakedShares: e.stakedShares || e.stake || 100,
@@ -1353,17 +1353,17 @@ page("fanplay.html", "FanPlay — Fantrade", "".join(fp), FP_JS, FP_CSS, app=Tru
 #  away colour, away score, status, clock, your asset on the pitch)
 MATCHDAY = [
     ("eng", "Premier League", "Matchweek 7", [
-        ("m-ars", "Arsenal", "ARS", "#EF0107", "2", "Chelsea", "CHE", "#034694", "1", "live", "68'", "$Saka · 42 FP"),
-        ("m-mci", "Man City", "MCI", "#6CABDD", "3", "Everton", "EVE", "#003399", "0", "live", "71'", "$Haaland · 58 FP"),
-        ("m-mun", "Man United", "MUN", "#DA291C", "1", "Tottenham", "TOT", "#8f95a3", "1", "live", "54'", "$Bruno · 31 FP"),
+        ("m-ars", "Arsenal", "ARS", "#EF0107", "2", "Chelsea", "CHE", "#034694", "1", "live", "68'", "FSAKA · 42 FP"),
+        ("m-mci", "Man City", "MCI", "#6CABDD", "3", "Everton", "EVE", "#003399", "0", "live", "71'", "FHLND · 58 FP"),
+        ("m-mun", "Man United", "MUN", "#DA291C", "1", "Tottenham", "TOT", "#8f95a3", "1", "live", "54'", "FBRN · 31 FP"),
         ("m-new", "Newcastle", "NEW", "#8f95a3", "\u2013", "Brighton", "BHA", "#0057B8", "\u2013", "soon", "19:30", ""),
     ]),
     ("esp", "La Liga", "Jornada 7", [
-        ("m-rma", "Real Madrid", "RMA", "#FEBE10", "4", "Real Betis", "BET", "#00954C", "0", "ft", "FT", "$Vinicius · 44 FP"),
-        ("m-bar", "Barcelona", "BAR", "#A50044", "\u2013", "Sevilla", "SEV", "#D4021D", "\u2013", "soon", "21:00", "$Pedri"),
+        ("m-rma", "Real Madrid", "RMA", "#FEBE10", "4", "Real Betis", "BET", "#00954C", "0", "ft", "FT", "FVJR · 44 FP"),
+        ("m-bar", "Barcelona", "BAR", "#A50044", "\u2013", "Sevilla", "SEV", "#D4021D", "\u2013", "soon", "21:00", "FPEDR"),
     ]),
     ("ger", "Bundesliga", "Spieltag 6", [
-        ("m-bay", "Bayern", "FCB", "#DC052D", "2", "RB Leipzig", "RBL", "#DD0741", "2", "ht", "HT", "$Musiala · 19 FP"),
+        ("m-bay", "Bayern", "FCB", "#DC052D", "2", "RB Leipzig", "RBL", "#DD0741", "2", "ht", "HT", "FMUS · 19 FP"),
     ]),
     ("ita", "Serie A", "Play-offs", [
         ("m-sud", "Sudtirol", "SUD", "#8f95a3", "1", "Bari", "BAR", "#C8102E", "1", "aet", "AET", ""),

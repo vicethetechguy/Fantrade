@@ -197,11 +197,11 @@ function quote(){var from=el('swapFrom').value,to=el('swapTo').value,q=amount('s
 function pickCard(k,sub){if(!k||!prices[k+':name'])return '<span class="swap-pick-empty">Choose a player</span><svg class="ic swap-pick-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>';
   return playerPhoto(k,prices[k+':name'])+'<span class="swap-pick-text"><b>'+esc(prices[k+':name'])+'</b><small>'+esc(sub)+'</small></span><svg class="ic swap-pick-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>';}
 function syncPicks(){var s=FT.getState(),f=el('swapFrom').value,t=el('swapTo').value,h=s.holdings[f];
-  el('swapFromBtn').innerHTML=h?pickCard(f,f+' · '+fmt(h.shares)+' shares available'):'<span class="swap-pick-empty">No shares held yet</span>';
+  el('swapFromBtn').innerHTML=h?pickCard(f,ftSym(f)+' · '+fmt(h.shares)+' shares available'):'<span class="swap-pick-empty">No shares held yet</span>';
   el('swapFromBtn').disabled=!h;
-  el('swapToBtn').innerHTML=pickCard(t,t+' · '+(prices[t]?Number(prices[t]).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})+' FTR per share':''));}
+  el('swapToBtn').innerHTML=pickCard(t,ftSym(t)+' · '+(prices[t]?Number(prices[t]).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})+' FTR per share':''));}
 function swapCalc(){var k=el('swapFrom').value,h=FT.getState().holdings[k];syncPicks();el('swapPreview').innerHTML=h?'':'<a class="utility-back" href="exchange.html">Explore players on the exchange</a>';
-  try{var q=quote();el('swGet').textContent=fmt(q.got)+' '+q.to;el('swFee').textContent=fmt(q.fee)+' $FTR';el('swDust').textContent=fmt(q.change)+' $FTR';}
+  try{var q=quote();el('swGet').textContent=fmt(q.got)+' '+ftSym(q.to);el('swFee').textContent=fmt(q.fee)+' $FTR';el('swDust').textContent=fmt(q.change)+' $FTR';}
   catch(e){['swGet','swFee','swDust'].forEach(id=>el(id).textContent='—');}
 }
 ['swapFrom','swapTo'].forEach(id=>el(id).addEventListener('change',swapCalc));el('swapQty').addEventListener('input',swapCalc);
@@ -214,8 +214,8 @@ el('swapForm').onsubmit=function(e){e.preventDefault();status('');try{var q=quot
 var picking='from',picker=el('swapPicker');
 function clubOf(k){var a=ASSETS.filter(function(x){return x.t===k;})[0];return a&&a.club?a.club:(prices[k+':coach']?'Coach':'');}
 function pickerRows(){var s=FT.getState(),q=el('swapSearch').value.trim().toLowerCase(),rows;
-  if(picking==='from'){rows=Object.keys(s.holdings).filter(k=>s.holdings[k].shares>0).map(k=>({t:k,n:s.holdings[k].n,sub:k+(clubOf(k)?' · '+clubOf(k):''),v:fmt(s.holdings[k].shares),u:'shares'}));}
-  else{var from=el('swapFrom').value;rows=[...new Set(ASSETS.map(a=>a.t).concat(Object.keys(s.holdings)))].filter(k=>k!==from&&prices[k]).map(k=>({t:k,n:prices[k+':name'],sub:k+(clubOf(k)?' · '+clubOf(k):''),v:Number(prices[k]).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}),u:'FTR'}));}
+  if(picking==='from'){rows=Object.keys(s.holdings).filter(k=>s.holdings[k].shares>0).map(k=>({t:k,n:s.holdings[k].n,sub:ftSym(k)+(clubOf(k)?' · '+clubOf(k):''),v:fmt(s.holdings[k].shares),u:'shares'}));}
+  else{var from=el('swapFrom').value;rows=[...new Set(ASSETS.map(a=>a.t).concat(Object.keys(s.holdings)))].filter(k=>k!==from&&prices[k]).map(k=>({t:k,n:prices[k+':name'],sub:ftSym(k)+(clubOf(k)?' · '+clubOf(k):''),v:Number(prices[k]).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}),u:'FTR'}));}
   rows=rows.filter(r=>(r.n+' '+r.sub).toLowerCase().includes(q));
   var current=el(picking==='from'?'swapFrom':'swapTo').value;
   el('swapSearchStatus').textContent=rows.length?rows.length+(picking==='from'?' holdings':' shares'):'No matches. Try another name or club.';

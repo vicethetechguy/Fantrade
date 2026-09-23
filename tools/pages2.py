@@ -87,10 +87,10 @@ FTR_CSS = """
 .kc-asset-chg.down{color:#FF5E5E}
 """
 
-WALLET_ASSETS = [("$Saka", "Bukayo Saka", "boot", "", 6.4, 0),
-                 ("$Haaland", "Erling Haaland", "boot", "", -1.8, 1),
-                 ("$Bruno", "Bruno Fernandes", "boot", "", 4.2, 2),
-                 ("$Arteta", "Mikel Arteta", "whistle", "am", 14.2, 9)]
+WALLET_ASSETS = [("FSAKA", "Bukayo Saka", "boot", "", 6.4, 0),
+                 ("FHLND", "Erling Haaland", "boot", "", -1.8, 1),
+                 ("FBRN", "Bruno Fernandes", "boot", "", 4.2, 2),
+                 ("FARTA", "Mikel Arteta", "whistle", "am", 14.2, 9)]
 
 f = ['<main><div class="kc-assets-wrap wallet-layout">', tab_intro('Wallet')]
 

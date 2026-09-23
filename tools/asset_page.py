@@ -84,8 +84,8 @@ HTML = '''<main><div class="asset-page">
 JS = r'''
 (function(){
   var byId = function(id){ return document.getElementById(id); };
-  var requested = new URLSearchParams(location.search).get('a') || '$Saka';
-  var asset = ASSETS.find(function(a){ return a.t.toLowerCase() === requested.toLowerCase(); });
+  var requested = new URLSearchParams(location.search).get('a') || 'FSAKA';
+  var asset = ASSETS.find(function(a){ return a.t.toLowerCase() === requested.toLowerCase() || ftSym(a.t).toLowerCase() === requested.toLowerCase(); });
   var picker = byId('assetPicker');
   function money(value){ return Number(value).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}); }
   function escapeText(value){ var node = document.createElement('span'); node.textContent = value; return node.innerHTML; }
@@ -95,7 +95,7 @@ JS = r'''
     byId('assetSearchStatus').textContent = matches.length ? matches.length + ' shares' : 'No matches. Try another name or club.';
     byId('assetSearchResults').innerHTML = matches.map(function(a){
       return '<a class="asset-search-row" href="asset.html?a=' + encodeURIComponent(a.t) + '"' + (asset && a.t === asset.t ? ' aria-current="page"' : '') + '>'
-        + playerPhoto(a.t,a.n) + '<span><b>' + escapeText(a.n) + '</b><small>' + escapeText(a.t + ' · ' + a.club) + '</small></span>'
+        + playerPhoto(a.t,a.n) + '<span><b>' + escapeText(a.n) + '</b><small>' + escapeText(ftSym(a.t) + ' · ' + a.club) + '</small></span>'
         + '<span class="asset-search-price">' + money(a.p) + '<small>FTR</small></span></a>';
     }).join('');
   }
@@ -117,7 +117,7 @@ JS = r'''
 
   document.title=asset.n + ' shares — Fantrade';
   byId('assetName').textContent=asset.n;
-  byId('assetSubtitle').textContent=asset.t + ' · ' + asset.club;
+  byId('assetSubtitle').textContent=ftSym(asset.t) + ' · ' + asset.club;
   byId('assetPortrait').innerHTML=playerPhoto(asset.t,asset.n);
   byId('assetPrice').textContent=money(asset.p);
   byId('assetChange').textContent=(asset.d>=0?'+':'') + asset.d.toFixed(2) + '%';
@@ -127,7 +127,7 @@ JS = r'''
   byId('assetVolume').textContent=asset.vol + ' shares';
   byId('assetClub').textContent=asset.club;
   byId('assetRole').textContent=asset.c?'Coach':({FWD:'Forward',MID:'Midfielder',DEF:'Defender',GK:'Goalkeeper'}[asset.pos]||asset.pos);
-  byId('assetSymbol').textContent=asset.t;
+  byId('assetSymbol').textContent=ftSym(asset.t);
   byId('assetBuy').href='trade.html?a='+encodeURIComponent(asset.t)+'&side=buy';
   byId('assetSell').href='trade.html?a='+encodeURIComponent(asset.t)+'&side=sell';
   function renderPosition(){

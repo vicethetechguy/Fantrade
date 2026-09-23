@@ -445,12 +445,12 @@ body{background:#050505;--dim:#b9bcb7;--faint:#979c96;--ink:#f4f6f1;--lime:#1800
 }
 """
 
-STARTERS = [("$Saka", "Bukayo Saka", "Arsenal · Forward", 48.20, False),
-            ("$Bruno", "Bruno Fernandes", "Man United · Midfielder", 39.75, False),
-            ("$Haaland", "Erling Haaland", "Man City · Forward", 71.40, False),
-            ("$Saliba", "William Saliba", "Arsenal · Defender", 33.80, False),
-            ("$Musiala", "Jamal Musiala", "Bayern · Midfielder", 46.70, False),
-            ("$Arteta", "Mikel Arteta", "Arsenal · Coach", 22.05, True)]
+STARTERS = [("FSAKA", "Bukayo Saka", "Arsenal · Forward", 48.20, False),
+            ("FBRN", "Bruno Fernandes", "Man United · Midfielder", 39.75, False),
+            ("FHLND", "Erling Haaland", "Man City · Forward", 71.40, False),
+            ("FSALI", "William Saliba", "Arsenal · Defender", 33.80, False),
+            ("FMUS", "Jamal Musiala", "Bayern · Midfielder", 46.70, False),
+            ("FARTA", "Mikel Arteta", "Arsenal · Coach", 22.05, True)]
 STEPS = [("01", "Your first shares"), ("02", "Your profile"), ("03", "Your club"), ("04", "Ready to play")]
 ob = ['<main class="onboarding"><header class="ob-intro"><h1>Make the game yours.</h1>'
       '<p>A few quick steps to your first shares and your own Dream Club.</p></header>'
@@ -681,19 +681,51 @@ DASH_CSS = """
 .kc-bal-val{font-family:'Montserrat', sans-serif;font-size:34px;font-weight:700;letter-spacing:-.02em;color:var(--ink);margin:8px 0 2px}
 .kc-bal-val small{font-size:16px;color:var(--lime);font-weight:600}
 .kc-bal-sub{font-size:12px;color:#767c82;font-family:'Montserrat', sans-serif}
-.home-claim-card{margin-top:18px;padding:18px;border-radius:18px;background:#1800ad;color:#fff;box-shadow:0 16px 34px rgba(24,0,173,.28);display:grid;gap:14px}
+.home-claim-card{margin-top:18px;padding:20px;border-radius:20px;background:linear-gradient(135deg,rgba(24,0,173,.35) 0%,rgba(18,20,17,.92) 100%);border:1px solid rgba(165,150,237,.25);color:#fff;box-shadow:0 16px 36px rgba(0,0,0,.35);display:grid;gap:14px}
 .home-claim-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
-.home-claim-card h2{font-size:20px;margin:0 0 4px;color:#fff}
-.home-claim-card p{margin:0;color:rgba(255,255,255,.72);font-size:12px;line-height:1.55}
-.home-claim-badge{display:inline-flex;align-items:center;justify-content:center;min-height:30px;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.14);font-size:10px;font-weight:700;white-space:nowrap}
+.home-claim-card h2{font-size:18px;margin:0 0 4px;color:#fff;font-family:Archivo,sans-serif;font-variation-settings:'wdth' 115,'wght' 800;letter-spacing:-.01em}
+.home-claim-card p{margin:0;color:rgba(255,255,255,.74);font-size:12px;line-height:1.55}
+.home-claim-badge{display:inline-flex;align-items:center;justify-content:center;min-height:28px;padding:4px 12px;border-radius:999px;background:rgba(24,0,173,.4);border:1px solid rgba(165,150,237,.35);color:#a596ed;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
 .home-claim-list{display:grid;gap:10px}
-.home-claim-row{display:grid;grid-template-columns:42px minmax(0,1fr) auto;align-items:center;gap:12px;padding:12px;border:0;border-radius:14px;background:rgba(5,5,5,.24);color:#fff;text-align:left;width:100%;font:inherit;cursor:pointer}
-.home-claim-row[disabled]{cursor:default;opacity:.62}
-.home-claim-row img{width:42px;height:42px;border-radius:50%;object-fit:cover;background:#050505}
-.home-claim-row b{display:block;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.home-claim-row small{display:block;margin-top:3px;color:rgba(255,255,255,.64);font-size:10.5px;line-height:1.4}
-.home-claim-action{display:inline-flex;align-items:center;justify-content:center;min-height:34px;padding:8px 12px;border-radius:999px;background:#fff;color:#1800ad;font-size:11px;font-weight:800;white-space:nowrap}
-.home-claim-status{min-height:18px;font-size:11px;color:rgba(255,255,255,.72);margin:0}
+.home-claim-row{display:grid;grid-template-columns:44px minmax(0,1fr) auto;align-items:center;gap:12px;padding:12px 14px;border:1px solid rgba(255,255,255,.07);border-radius:14px;background:rgba(255,255,255,.04);color:#fff;text-align:left;width:100%;font:inherit;cursor:pointer;transition:all .2s ease}
+.home-claim-row:hover:not([disabled]){border-color:rgba(165,150,237,.45);background:rgba(24,0,173,.18);transform:translateY(-1px)}
+.home-claim-row[disabled]{cursor:default;opacity:.65;border-color:rgba(255,255,255,.04)}
+.home-claim-row .player-photo{width:44px;height:44px;border-radius:50%;object-fit:cover;object-position:50% 18%;background:#050505;border:1px solid rgba(255,255,255,.1)}
+.home-claim-row b{display:block;font-size:13.5px;font-family:Archivo,sans-serif;font-variation-settings:'wdth' 115,'wght' 800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.home-claim-row small{display:block;margin-top:3px;color:rgba(255,255,255,.65);font-size:11px;line-height:1.4}
+.home-claim-action{display:inline-flex;align-items:center;justify-content:center;min-height:34px;padding:8px 14px;border-radius:999px;background:var(--lime);color:#fff;font-size:11.5px;font-weight:800;letter-spacing:.02em;white-space:nowrap;box-shadow:0 6px 14px rgba(24,0,173,.35);transition:transform .15s ease}
+.home-claim-row[disabled] .home-claim-action{background:rgba(255,255,255,.12);color:rgba(255,255,255,.5);box-shadow:none}
+.home-claim-status{min-height:18px;font-size:11.5px;color:rgba(255,255,255,.8);margin:0}
+
+/* Claim Modal Dialog */
+.claim-modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.78);backdrop-filter:blur(6px);z-index:9999;display:none;place-items:center;padding:16px}
+.claim-modal-backdrop.open{display:grid}
+.claim-modal-dialog{background:#121411;border:1px solid rgba(165,150,237,.3);border-radius:24px;width:100%;max-width:460px;padding:24px;color:#fff;box-shadow:0 24px 60px rgba(0,0,0,.6);position:relative;animation:kcPop .2s cubic-bezier(.16,1,.3,1)}
+@keyframes kcPop{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
+.claim-modal-close{position:absolute;top:18px;right:18px;background:rgba(255,255,255,.08);border:0;color:#fff;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:16px;display:grid;place-items:center}
+.claim-modal-head{display:flex;align-items:center;gap:14px;margin-bottom:18px;padding-bottom:16px;border-bottom:1px solid rgba(255,255,255,.08)}
+.claim-modal-head .player-photo{width:56px;height:56px;border-radius:50%;object-fit:cover;object-position:50% 18%;border:2px solid var(--lime)}
+.claim-modal-title{margin:0;font-size:18px;font-family:Archivo,sans-serif;font-variation-settings:'wdth' 115,'wght' 800}
+.claim-modal-sub{font-size:12px;color:rgba(255,255,255,.65);margin-top:2px}
+.claim-section-lbl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.6);margin:14px 0 8px}
+.claim-opt-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.claim-opt-btn{border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:12px;background:rgba(255,255,255,.04);color:#fff;text-align:left;cursor:pointer;font:inherit;transition:all .15s ease}
+.claim-opt-btn.on{border-color:var(--lime);background:rgba(24,0,173,.22);box-shadow:0 0 0 1px var(--lime)}
+.claim-opt-btn b{display:block;font-size:13px;font-family:Archivo,sans-serif}
+.claim-opt-btn small{display:block;margin-top:4px;font-size:10.5px;color:rgba(255,255,255,.65);line-height:1.3}
+.claim-vest-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.claim-vest-btn{border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:10px 8px;background:rgba(255,255,255,.04);color:#fff;text-align:center;cursor:pointer;font:inherit;transition:all .15s ease}
+.claim-vest-btn.on{border-color:var(--lime);background:rgba(24,0,173,.22);box-shadow:0 0 0 1px var(--lime)}
+.claim-vest-btn b{display:block;font-size:12.5px}
+.claim-vest-btn small{display:block;font-size:10px;color:rgba(255,255,255,.6);margin-top:2px}
+.claim-rule-box{margin-top:14px;background:rgba(24,0,173,.14);border:1px solid rgba(165,150,237,.25);border-radius:14px;padding:12px 14px;font-size:11px;color:rgba(255,255,255,.8);line-height:1.55}
+.claim-rule-box b{color:#a596ed}
+.claim-fee-breakdown{margin-top:14px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:12px 14px;display:grid;gap:6px;font-size:11.5px}
+.claim-fee-row{display:flex;justify-content:space-between;align-items:center;color:rgba(255,255,255,.7)}
+.claim-fee-row.total{border-top:1px solid rgba(255,255,255,.08);padding-top:6px;margin-top:2px;font-weight:700;color:#fff;font-size:13px}
+.claim-submit-btn{margin-top:16px;width:100%;min-height:46px;border-radius:999px;background:var(--lime);border:0;color:#fff;font-family:Archivo,sans-serif;font-variation-settings:'wdth' 115,'wght' 800;font-size:14px;cursor:pointer;display:grid;place-items:center;transition:all .2s ease;box-shadow:0 8px 20px rgba(24,0,173,.4)}
+.claim-submit-btn:hover:not([disabled]){transform:translateY(-1px);filter:brightness(1.1)}
+.claim-submit-btn[disabled]{opacity:.5;cursor:not-allowed}
 
 /* Quick Action Circles */
 .kc-bal-actions{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:18px;padding-top:16px;border-top:1px solid rgba(255,255,255,.06)}
@@ -767,9 +799,33 @@ da = ['<main><div class="kc-home-wrap home-layout">', tab_intro('Home'),
       '<button type="button" class="kc-eye-btn" id="balEyeBtn" aria-label="Toggle balance visibility">'+'<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="fill:none"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>'+'</button></div>'
       '<div class="kc-bal-val"><span id="homeBalVal" data-bind="net">—</span> <small>$FTR</small></div>'
       '<div class="kc-bal-sub" id="homeBalSub">—</div>'
-      '<div class="home-claim-card" aria-labelledby="homeClaimTitle"><div class="home-claim-head"><div><h2 id="homeClaimTitle">Claim listed players</h2>'
-      '<p>Admin-listed Activity Shares appear here when a drop is live.</p></div><span class="home-claim-badge">Admin drops</span></div>'
-      '<div class="home-claim-list" id="homeClaimList" aria-live="polite"></div><p class="home-claim-status" id="homeClaimStatus" role="status"></p></div></section>']
+      '<div class="home-claim-card" aria-labelledby="homeClaimTitle"><div class="home-claim-head"><div><h2 id="homeClaimTitle">Launch & Claim Activity Shares</h2>'
+      '<p>Admin-listed players ready for secondary market launch and FanPlay trading per Whitepaper Section 7 & 8.</p></div><span class="home-claim-badge">Admin Drops</span></div>'
+      '<div class="home-claim-list" id="homeClaimList" aria-live="polite"></div><p class="home-claim-status" id="homeClaimStatus" role="status"></p></div>'
+      '<div class="claim-modal-backdrop" id="claimModalBackdrop" role="dialog" aria-modal="true" aria-labelledby="claimModalTitle">'
+      '<div class="claim-modal-dialog"><button type="button" class="claim-modal-close" id="claimModalClose" aria-label="Close">&times;</button>'
+      '<div class="claim-modal-head"><div id="claimModalPhoto"></div><div><h3 class="claim-modal-title" id="claimModalTitle">Launch Player Shares</h3>'
+      '<div class="claim-modal-sub" id="claimModalSub">Whitepaper Section 7 & 8 Lister Program</div></div></div>'
+      '<div class="claim-section-lbl">1. Select Allocation Level</div>'
+      '<div class="claim-opt-grid">'
+      '<button type="button" class="claim-opt-btn on" data-level="1"><b>Level 1 (5%)</b><small>500,000 Activity Shares<br>50,000 $FTR Listing Fee</small></button>'
+      '<button type="button" class="claim-opt-btn" data-level="2"><b>Level 2 (10%)</b><small>1,000,000 Activity Shares<br>100,000 $FTR Listing Fee</small></button>'
+      '</div>'
+      '<div class="claim-section-lbl">2. Select Vesting Period</div>'
+      '<div class="claim-vest-grid">'
+      '<button type="button" class="claim-vest-btn on" data-years="1"><b>1 Year</b><small>12 mo. yield</small></button>'
+      '<button type="button" class="claim-vest-btn" data-years="2"><b>2 Years</b><small>24 mo. yield</small></button>'
+      '<button type="button" class="claim-vest-btn" data-years="3"><b>3 Years</b><small>36 mo. yield</small></button>'
+      '</div>'
+      '<div class="claim-rule-box"><b>Lister Economics:</b> Receive <b>30% of secondary trading fees</b> during your selected vesting period. Original allocation is subject to a <b>1% daily trading limit</b> (<span id="claimDailyLimitTxt">5,000</span> shares/day) and grants Pre-Airdrop Lister Fan Points.</div>'
+      '<div class="claim-fee-breakdown">'
+      '<div class="claim-fee-row"><span>Listing fee</span><span id="claimFeeTxt">50,000 $FTR</span></div>'
+      '<div class="claim-fee-row"><span>Permanent burn (2%)</span><span id="claimBurnTxt">1,000 $FTR</span></div>'
+      '<div class="claim-fee-row"><span>Lister Fan Points</span><span id="claimFpTxt">+2,500 FP</span></div>'
+      '<div class="claim-fee-row total"><span>Total payable</span><span id="claimTotalTxt">50,000 $FTR</span></div>'
+      '</div>'
+      '<button type="button" class="claim-submit-btn" id="claimSubmitBtn">Pay 50,000 $FTR & Launch Shares</button>'
+      '</div></div></section>']
 HOME_CARDS = [
     # (icon, eyebrow, title, copy, stats [(label, value html)], cta label, href)
     ("ball", "FanPlay", "Put your football IQ into play.",
@@ -847,53 +903,161 @@ DASH_JS = r"""
 
 (function(){
   var listEl = document.getElementById('homeClaimList'), statusEl = document.getElementById('homeClaimStatus');
+  var modal = document.getElementById('claimModalBackdrop'), closeBtn = document.getElementById('claimModalClose');
+  var submitBtn = document.getElementById('claimSubmitBtn');
+  var activeRow = null, selectedLevel = 1, selectedYears = 1;
   if(!listEl) return;
+
   function esc(value){ var n=document.createElement('span'); n.textContent=value == null ? '' : String(value); return n.innerHTML; }
   function assetFor(row){
-    var sym = row.asset_id || row.ticker || '';
-    if(sym && sym.charAt(0) !== '$') sym = '$' + sym.replace(/^\$/, '');
+    var sym = ftSym(row.asset_id || row.ticker || '');
     return ASSETS.filter(function(a){ return a.t === sym; })[0] || { t:sym, n:row.name || sym, p:Number(row.price)||0, c:row.kind === 'COACH' };
   }
   function fallbackListings(){
     var claimed = FT.getState().claimedListings || [];
     return [
-      { id:'lst-mbappe-drop', asset_id:'$Mbappe', title:'Starter drop', shares:50 },
-      { id:'lst-yamal-drop', asset_id:'$Yamal', title:'Rising star drop', shares:25 }
+      { id:'lst-saka-drop', asset_id:'FSAKA', ticker:'FSAKA', name:'Bukayo Saka', title:'Arsenal Star Drop', shares:500000 },
+      { id:'lst-mbappe-drop', asset_id:'FKM7', ticker:'FKM7', name:'Kylian Mbappé', title:'Galáctico Drop', shares:500000 },
+      { id:'lst-yamal-drop', asset_id:'FYAML', ticker:'FYAML', name:'Lamine Yamal', title:'Golden Boy Drop', shares:500000 },
+      { id:'lst-haaland-drop', asset_id:'FHLND', ticker:'FHLND', name:'Erling Haaland', title:'Goal Machine Drop', shares:500000 }
     ].map(function(row){ row.claimed = claimed.indexOf(row.id) > -1; return row; });
   }
   function setStatus(text){ if(statusEl) statusEl.textContent = text || ''; }
+
+  function updateModalCalculations(){
+    var shares = (selectedLevel === 2) ? 1000000 : 500000;
+    var fee = (selectedLevel === 2) ? 100000 : 50000;
+    var burn = Math.round(fee * 0.02);
+    var daily = Math.round(shares * 0.01);
+    var fp = (selectedLevel === 2) ? '+5,000 FP' : '+2,500 FP';
+
+    var dailyEl = document.getElementById('claimDailyLimitTxt');
+    var feeEl = document.getElementById('claimFeeTxt');
+    var burnEl = document.getElementById('claimBurnTxt');
+    var fpEl = document.getElementById('claimFpTxt');
+    var totEl = document.getElementById('claimTotalTxt');
+
+    if(dailyEl) dailyEl.textContent = Number(daily).toLocaleString('en-US');
+    if(feeEl) feeEl.textContent = Number(fee).toLocaleString('en-US') + ' $FTR';
+    if(burnEl) burnEl.textContent = Number(burn).toLocaleString('en-US') + ' $FTR';
+    if(fpEl) fpEl.textContent = fp;
+    if(totEl) totEl.textContent = Number(fee).toLocaleString('en-US') + ' $FTR';
+
+    if(submitBtn){
+      var ticker = activeRow ? ftSym(activeRow.asset_id || activeRow.ticker) : 'Shares';
+      submitBtn.textContent = 'Pay ' + Number(fee).toLocaleString('en-US') + ' $FTR & Launch ' + ticker;
+    }
+  }
+
+  function openClaimModal(row){
+    activeRow = row;
+    selectedLevel = 1;
+    selectedYears = 1;
+    var a = assetFor(row);
+    var titleEl = document.getElementById('claimModalTitle');
+    var subEl = document.getElementById('claimModalSub');
+    var photoEl = document.getElementById('claimModalPhoto');
+
+    if(titleEl) titleEl.textContent = 'Launch ' + (a.n || 'Player') + ' (' + a.t + ')';
+    if(subEl) subEl.textContent = (row.title || 'Official Admin Listing') + ' · 10M Total Supply';
+    if(photoEl) photoEl.innerHTML = playerPhoto(a.t, a.n);
+
+    if(modal){
+      modal.querySelectorAll('.claim-opt-btn').forEach(function(b){
+        b.classList.toggle('on', Number(b.dataset.level) === 1);
+      });
+      modal.querySelectorAll('.claim-vest-btn').forEach(function(b){
+        b.classList.toggle('on', Number(b.dataset.years) === 1);
+      });
+      updateModalCalculations();
+      modal.classList.add('open');
+    }
+  }
+
+  function closeClaimModal(){
+    if(modal) modal.classList.remove('open');
+    activeRow = null;
+  }
+
+  if(closeBtn) closeBtn.addEventListener('click', closeClaimModal);
+  if(modal){
+    modal.addEventListener('click', function(e){
+      if(e.target === modal) closeClaimModal();
+    });
+    modal.querySelectorAll('.claim-opt-btn').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        modal.querySelectorAll('.claim-opt-btn').forEach(function(b){ b.classList.remove('on'); });
+        btn.classList.add('on');
+        selectedLevel = Number(btn.dataset.level) || 1;
+        updateModalCalculations();
+      });
+    });
+    modal.querySelectorAll('.claim-vest-btn').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        modal.querySelectorAll('.claim-vest-btn').forEach(function(b){ b.classList.remove('on'); });
+        btn.classList.add('on');
+        selectedYears = Number(btn.dataset.years) || 1;
+        updateModalCalculations();
+      });
+    });
+  }
+
+  if(submitBtn){
+    submitBtn.addEventListener('click', function(){
+      if(!activeRow) return;
+      var row = activeRow;
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Launching Activity Shares...';
+      setStatus('Processing claim and setting up vesting...');
+
+      var cloud = window.FTDB && FTDB.signedIn && FTDB.signedIn() && FTDB.claim;
+      (cloud ? FTDB.claim(row.id, selectedLevel, selectedYears).then(function(res){
+        return FT.syncCloud().then(function(){ return res; });
+      }).catch(function(err){
+        console.warn('[Fantrade] Cloud claim fallback to local state:', err.message);
+        return FT.claimListing(row, selectedLevel, selectedYears);
+      }) : Promise.resolve(FT.claimListing(row, selectedLevel, selectedYears)))
+        .then(function(res){
+          closeClaimModal();
+          loadClaims();
+          var sym = ftSym(row.asset_id || row.ticker);
+          var shares = (selectedLevel === 2) ? 1000000 : 500000;
+          setStatus('Successfully launched ' + sym + '! Claimed ' + Number(shares).toLocaleString('en-US') + ' shares with 1% daily trading limit & 30% trading fee participation.');
+          if(window.FT && FT.notify) FT.notify('Lister Allocation Active: ' + Number(shares).toLocaleString('en-US') + ' ' + sym + ' shares vested (' + selectedYears + 'y).');
+        })
+        .catch(function(error){
+          submitBtn.disabled = false;
+          updateModalCalculations();
+          setStatus(error.message || 'Claim could not be completed.');
+          alert(error.message || 'Claim failed');
+        });
+    });
+  }
+
   function render(rows){
     if(!rows || !rows.length){
-      listEl.innerHTML = '<div class="home-claim-row" aria-disabled="true"><span></span><div><b>No active drops yet</b><small>Admin-listed players will appear here.</small></div><span class="home-claim-action">Soon</span></div>';
+      listEl.innerHTML = '<div class="home-claim-row" aria-disabled="true"><span></span><div><b>No active drops yet</b><small>Admin-listed Activity Assets will appear here.</small></div><span class="home-claim-action">Soon</span></div>';
       setStatus(''); return;
     }
-    listEl.innerHTML = rows.slice(0,2).map(function(row){
+    listEl.innerHTML = rows.slice(0, 4).map(function(row){
       var a = assetFor(row), claimed = !!row.claimed;
       return '<button type="button" class="home-claim-row" data-listing="' + esc(row.id) + '"' + (claimed ? ' disabled' : '') + '>'
         + playerPhoto(a.t, a.n)
-        + '<span><b>' + esc(row.title || a.n) + '</b><small>' + esc(a.n) + ' · ' + Number(row.shares || 0).toLocaleString('en-US') + ' shares</small></span>'
-        + '<span class="home-claim-action">' + (claimed ? 'Claimed' : 'Claim') + '</span></button>';
+        + '<span><b>' + esc(row.title || (a.n + ' Activity Asset')) + '</b><small>' + esc(a.t) + ' · 5% / 10% Claim · 1% daily limit</small></span>'
+        + '<span class="home-claim-action">' + (claimed ? 'Claimed' : 'Launch & Claim') + '</span></button>';
     }).join('');
+
     listEl.querySelectorAll('button[data-listing]').forEach(function(button){
       button.addEventListener('click', function(){
         var row = rows.filter(function(x){ return x.id === button.dataset.listing; })[0];
         if(!row || row.claimed) return;
-        button.disabled = true; setStatus('Claiming listed shares...');
-        var cloud = window.FTDB && FTDB.signedIn && FTDB.signedIn() && FTDB.claim;
-        (cloud ? FTDB.claim(row.id).then(function(res){ return FT.syncCloud().then(function(){ return res; }); }).catch(function(err){
-          if(/schema cache|ft_claim_listing/i.test((err && err.message) || '')){
-            console.warn('[Fantrade] ft_claim_listing not in schema cache, claiming on this device:', err.message);
-            return FT.claimListing(row);
-          }
-          throw err;
-        }) : Promise.resolve(FT.claimListing(row)))
-          .then(function(res){ loadClaims(); setStatus('Claimed ' + Number(res.shares || row.shares).toLocaleString('en-US') + ' shares in ' + (res.name || assetFor(row).n) + '.'); })
-          .catch(function(error){ button.disabled = false; setStatus(error.message || 'Claim could not be completed.'); });
+        openClaimModal(row);
       });
     });
   }
+
   function loadClaims(){
-    setStatus('Checking current drops...');
+    setStatus('Checking active admin listings...');
     if(window.FTDB && FTDB.listings && FTDB.signedIn && FTDB.signedIn()){
       FTDB.listings().then(function(rows){ render(rows || fallbackListings()); setStatus(''); })
         .catch(function(){ render(fallbackListings()); setStatus(''); });
@@ -969,7 +1133,7 @@ DASH_JS = r"""
                (a.club && a.club.toLowerCase().indexOf(searchKeyword) >= 0);
       });
     } else {
-      if(homeFilter === 'hot') list = list.filter(function(a){ return ['$Saka','$Haaland','$Mbappe','$Yamal','$Palmer','$Arteta'].indexOf(a.t) >= 0; });
+      if(homeFilter === 'hot') list = list.filter(function(a){ return ['FSAKA','FHLND','FKM7','FYAML','FPLMR','FARTA'].indexOf(a.t) >= 0; });
       else if(homeFilter === 'gainers') list = list.slice().sort(function(a,b){ return b.d - a.d; }).slice(0, 7);
       else if(homeFilter === 'forwards') list = list.filter(function(a){ return a.pos === 'FWD'; });
       else if(homeFilter === 'midfielders') list = list.filter(function(a){ return a.pos === 'MID'; });
@@ -1070,11 +1234,11 @@ LB_CSS = """
 # rank, club, manager, holders, value, delta%, core XI, coach + shape, boost, FP, yield, division
 BOARD = [
     (1, "Apex Titans FC", "@TacticalKlopp", 48, 612400, 7.2, ["Mbappé 98", "Haaland 97", "Vinícius 95"],
-     "$Pep · 4-3-3 Tiki-taka", 18.5, 14890, 34200, "apex", "#1800ad"),
+     "FPEP · 4-3-3 Tiki-taka", 18.5, 14890, 34200, "apex", "#1800ad"),
     (2, "Galactico Syndicate", "@ZidaneTactics", 32, 540100, 5.6, ["Bellingham 96", "Kane 95", "Rodri 94"],
      "$DonCarlo · 4-3-1-2 Fluid", 17.0, 13920, 29800, "apex", "#F4F6F1"),
     (3, "Arsenal Elite FC", "@GoonerBoss", 112, 495200, 6.9, ["Saka 95", "Ødegaard 94", "Saliba 93"],
-     "$Arteta · 4-3-3 Inverted", 16.5, 13450, 27100, "apex", "#FF5E8A"),
+     "FARTA · 4-3-3 Inverted", 16.5, 13450, 27100, "apex", "#FF5E8A"),
     (4, "Bavarian Meta XI", "@KaiserTactics", 19, 462800, 2.5, ["Musiala 94", "Sané 91", "Kimmich 93"],
      "$Alonso · 3-4-2-1 Dominance", 14.0, 12890, 23500, "apex", "#4DA6FF"),
     (5, "Lombardia Capital", "@MilanoWhale", 61, 420500, -0.9, ["Lautaro 93", "Barella 92", "Bastoni 91"],
@@ -1084,7 +1248,7 @@ BOARD = [
     (7, "Seleção Futures", "@SambaStake", 27, 371900, 4.4, ["Vinícius 95", "Rodrygo 90", "Éder 88"],
      "$Dorival · 4-2-3-1 Counter", 12.5, 11020, 18300, "apex", "#1800ad"),
     (124, "Zero FC", "You · single-owner", 1, 245800, 7.9, ["Bruno 90", "Saka 95", "Haaland 97"],
-     "$Arteta · 4-3-3 High press", 15.0, 8420, 18400, "apex", "#1800ad"),
+     "FARTA · 4-3-3 High press", 15.0, 8420, 18400, "apex", "#1800ad"),
     (151, "Rioja Rising", "@TempranilloFC", 12, 198200, 1.4, ["Yamal 92", "Pedri 91", "Cubarsí 87"],
      "$Flick · 4-3-3 Youth", 11.0, 7180, 9400, "contender", "#FF6A1F"),
     (188, "Naija Nine", "@LagosLedger", 34, 176500, 9.8, ["Osimhen 91", "Lookman 88", "Iwobi 84"],
@@ -1394,9 +1558,9 @@ function initials(n){ return (n || 'FC').split(/\s+/).map(function(w){ return w.
 function openClubModal(clubName){
   var b = BOARD_DATA.filter(function(x){ return x.c.toLowerCase() === clubName.toLowerCase(); })[0];
   if(!b){
-    if(clubName === "Risk On") b = { c: "Risk On", m: "Marcus Vance", r: 1, v: 3497855, fp: 812, b: 18.5, h: 4, co: "$Arteta · 4-3-3 High press", xi: ["Haaland", "Saka", "Mbappe"], cl: "#1800ad" };
-    else if(clubName === "Apex Eleven") b = { c: "Apex Eleven", m: "Elena Rostova", r: 2, v: 1853334, fp: 786, b: 16.0, h: 20, co: "$Pep · 3-5-2 Possession", xi: ["Bellingham", "Rodri", "Vinicius"], cl: "#FF6A1F" };
-    else if(clubName === "North Bank") b = { c: "North Bank", m: "David K.", r: 3, v: 1800986, fp: 754, b: 15.2, h: 23, co: "$Arteta · 4-3-3 Overload", xi: ["Saka", "Odegaard", "Saliba"], cl: "#FF3B47" };
+    if(clubName === "Risk On") b = { c: "Risk On", m: "Marcus Vance", r: 1, v: 3497855, fp: 812, b: 18.5, h: 4, co: "FARTA · 4-3-3 High press", xi: ["Haaland", "Saka", "Mbappe"], cl: "#1800ad" };
+    else if(clubName === "Apex Eleven") b = { c: "Apex Eleven", m: "Elena Rostova", r: 2, v: 1853334, fp: 786, b: 16.0, h: 20, co: "FPEP · 3-5-2 Possession", xi: ["Bellingham", "Rodri", "Vinicius"], cl: "#FF6A1F" };
+    else if(clubName === "North Bank") b = { c: "North Bank", m: "David K.", r: 3, v: 1800986, fp: 754, b: 15.2, h: 23, co: "FARTA · 4-3-3 Overload", xi: ["Saka", "Odegaard", "Saliba"], cl: "#FF3B47" };
     else b = BOARD_DATA[0];
   }
 

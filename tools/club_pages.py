@@ -31,10 +31,10 @@ JS = r'''
 (function(){
   var el=function(id){return document.getElementById(id);};
   var forms={
-    '4-3-3':[[['LW','$Vinicius'],['ST','$Haaland'],['RW','$Saka']],[['CM','$Rice'],['CAM','$Bruno'],['CM','$Odegaard']],[['LB','$Davies'],['CB','$VanDijk'],['CB','$Saliba'],['RB','$White']],[['GK','$Raya']]],
-    '4-4-2':[[['ST','$Haaland'],['ST','$Jackson']],[['LM','$Vinicius'],['CM','$Rice'],['CM','$Bruno'],['RM','$Saka']],[['LB','$Davies'],['CB','$VanDijk'],['CB','$Saliba'],['RB','$White']],[['GK','$Raya']]],
-    '3-5-2':[[['ST','$Haaland'],['ST','$Vinicius']],[['LWB','$Davies'],['CM','$Rice'],['CM','$Odegaard'],['CAM','$Bruno'],['RWB','$Saka']],[['CB','$VanDijk'],['CB','$Saliba'],['CB','$Gabriel']],[['GK','$Raya']]],
-    '4-2-3-1':[[['ST','$Haaland']],[['LW','$Vinicius'],['CAM','$Bruno'],['RW','$Saka']],[['DM','$Rice'],['DM','$Odegaard']],[['LB','$Davies'],['CB','$VanDijk'],['CB','$Saliba'],['RB','$White']],[['GK','$Raya']]]
+    '4-3-3':[[['LW','FVJR'],['ST','FHLND'],['RW','FSAKA']],[['CM','$Rice'],['CAM','FBRN'],['CM','$Odegaard']],[['LB','$Davies'],['CB','$VanDijk'],['CB','FSALI'],['RB','$White']],[['GK','$Raya']]],
+    '4-4-2':[[['ST','FHLND'],['ST','FJACK']],[['LM','FVJR'],['CM','$Rice'],['CM','FBRN'],['RM','FSAKA']],[['LB','$Davies'],['CB','$VanDijk'],['CB','FSALI'],['RB','$White']],[['GK','$Raya']]],
+    '3-5-2':[[['ST','FHLND'],['ST','FVJR']],[['LWB','$Davies'],['CM','$Rice'],['CM','$Odegaard'],['CAM','FBRN'],['RWB','FSAKA']],[['CB','$VanDijk'],['CB','FSALI'],['CB','$Gabriel']],[['GK','$Raya']]],
+    '4-2-3-1':[[['ST','FHLND']],[['LW','FVJR'],['CAM','FBRN'],['RW','FSAKA']],[['DM','$Rice'],['DM','$Odegaard']],[['LB','$Davies'],['CB','$VanDijk'],['CB','FSALI'],['RB','$White']],[['GK','$Raya']]]
   };
   function esc(value){var n=document.createElement('span');n.textContent=value;return n.innerHTML.replace(/"/g,'&quot;');}
   function initials(name){return name.trim().split(/\s+/).map(function(w){return w[0]||'';}).join('').slice(0,3).toUpperCase();}
@@ -69,7 +69,7 @@ JS = r'''
   function pitch(shape){
     var pool=ownedPlayers(),used={},rows=forms[shape]||forms['4-3-3'];
     var html=rows.map(function(row){return '<div class="formation-row">'+row.map(function(p){return playerSlot(p[0],pickPlayer(p[0],pool,used));}).join('')+'</div>';}).join('');
-    var state=FT.getState(),coachSymbol=(fresh?'$Arteta':state.club.coach)||'$Arteta',coach=state.holdings[coachSymbol];
+    var state=FT.getState(),coachSymbol=(fresh?'FARTA':state.club.coach)||'FARTA',coach=state.holdings[coachSymbol];
     if(coach&&coach.shares>0){html+='<div class="formation-coach">'+playerPhoto(coachSymbol,coach.n||coachSymbol.slice(1))+'<div><span>Coach</span><b>'+esc(coach.n||coachSymbol)+'</b></div></div>';}
     else{html+='<div class="formation-coach empty"><span class="empty-coach">Coach</span><div><span>Coach</span><b>Own a coach share</b></div></div>';}
     var bench=pool.filter(function(p){return !used[p.symbol];}).slice(0,4);
