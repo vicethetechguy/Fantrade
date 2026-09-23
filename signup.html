@@ -1722,6 +1722,18 @@ function playerPhoto(symbol,name,className){
   var src=PLAYER_IMAGES[key]||PLAYER_IMAGES.saka;
   return "<img class='"+(className||'player-photo')+"' src='"+src+"' alt='"+label+"' loading='lazy' decoding='async'>";
 }
+/* Exchange symbols: the manager sees the short F-ticker; the $-id is only
+   how the account keys the position. A ticker loaded from the catalogue
+   overwrites the map, so the seed stays the source of truth. */
+var FT_TICKERS = { '$Saka':'FSAKA', '$Haaland':'FHLND', '$Mbappe':'FKM7', '$Vinicius':'FVJR',
+  '$Bellingham':'FBEL', '$Palmer':'FPLMR', '$Yamal':'FYAML', '$Musiala':'FMUS', '$Wirtz':'FWRTZ',
+  '$Rodri':'FRODR', '$Foden':'FFODN', '$Pedri':'FPEDR', '$Saliba':'FSALI', '$Bruno':'FBRN',
+  '$Jackson':'FJACK', '$Arteta':'FARTA', '$Pep':'FPEP', '$Maresca':'FMARS' };
+function ftSym(value){
+  return String(value == null ? '' : value).replace(/\$[A-Za-z0-9]+/g, function(id){
+    return FT_TICKERS[id] || id.slice(1);
+  });
+}
 /* Asset prices come from the catalogue in the database: read on load, then
    once a minute. Nothing here invents or simulates a price; if the database
    cannot be reached, the seeded catalogue above simply stays as it is. */
@@ -1745,6 +1757,7 @@ function refreshAssets(){
       a.club = r.club || a.club;
       a.pos = r.position || a.pos;
       a.c = r.kind === 'COACH';
+      if(r.ticker && r.id){ a.tk = r.ticker; FT_TICKERS[r.id] = r.ticker; }
     });
     window.dispatchEvent(new CustomEvent('fantrade:assets', { detail: ASSETS }));
   }).catch(function(){});
@@ -1799,6 +1812,15 @@ var FT = (function(){
     } catch(e){}
   }
   var state = load();
+  /* Older builds seeded three demo notices; drop them once, so the bell only
+     ever counts what this manager really received. */
+  if(state.notifications && state.notifications.length &&
+      state.notifications.some(function(n){ return n.id === 'n-1' || n.id === 'n-2' || n.id === 'n-3'; })){
+    state.notifications = state.notifications.filter(function(n){
+      return n.id !== 'n-1' && n.id !== 'n-2' && n.id !== 'n-3';
+    });
+    save(state);
+  }
 
 
   /* ── The database, kept in step with this state ──────────────────────
@@ -1892,6 +1914,28 @@ var FT = (function(){
     if(typeof FT !== 'undefined' && FT.syncUI) FT.syncUI();
     window.dispatchEvent(new CustomEvent('fantrade:statechange', { detail: state }));
   }
+  /* The database's copy of this account's notices lands asynchronously; adopt
+     it — raised on the phone, read on the laptop — then ask for what is new. */
+  window.addEventListener('fantrade:notifications', function(e){
+    var rows = (e && e.detail) || [];
+    var list = state.notifications || [];
+    rows.forEach(function(r){
+      var mapped = { id: r.id, kind: r.kind || 'system', icon: r.icon || 'bell',
+        title: r.title, msg: r.msg || '', amt: r.amt || '', tone: r.tone || '',
+        read: !!r.read_at, ts: r.created_at ? Date.parse(r.created_at) : Date.now(),
+        day: ftDay(r.created_at), time: ftTime(r.created_at) };
+      var i = -1;
+      list.forEach(function(x, idx){ if(x.id === r.id) i = idx; });
+      if(i > -1) list[i] = mapped; else list.push(mapped);
+    });
+    list.sort(function(a, b){ return (b.ts || 0) - (a.ts || 0); });
+    if(list.length > 60) list.length = 60;
+    state.notifications = list;
+    save(state);
+    FT.syncUI();
+    window.dispatchEvent(new CustomEvent('fantrade:statechange', { detail: state }));
+  });
+  window.dispatchEvent(new CustomEvent('fantrade:notifications:want'));
   /* Clubs made while offline carry a local id like 'c-1'; only a uuid means
      the database has seen this one. */
   function serverId(id){ return /^[0-9a-f]{8}-[0-9a-f]{4}-/i.test(String(id || '')) ? id : null; }
@@ -1899,11 +1943,96 @@ var FT = (function(){
     return { p_name: c.name, p_stadium: c.stadium, p_formation: c.formation,
              p_colors: c.colors, p_color_name: c.colorName, p_coach: c.coach };
   }
+  /* ── Notifications ──────────────────────────────────────────────
+     One row per thing that happened — a fill, a wallet move, a change of
+     club or settings — and the bell counts the ones not yet read. */
+  function ftDay(iso){
+    var d = iso ? new Date(iso) : new Date(), now = new Date();
+    if(d.toDateString() === now.toDateString()) return 'Today';
+    var y = new Date(now.getTime() - 86400000);
+    if(d.toDateString() === y.toDateString()) return 'Yesterday';
+    return d.toLocaleDateString(undefined, { weekday:'short', day:'numeric', month:'short' });
+  }
+  function ftTime(iso){
+    if(!iso) return 'Just now';
+    var d = new Date(iso), now = new Date(), mins = Math.round((now - d) / 60000);
+    if(mins < 1) return 'Just now';
+    if(mins < 60) return d.toTimeString().slice(0,5) + ' · ' + mins + 'm ago';
+    if(d.toDateString() === now.toDateString()) return d.toTimeString().slice(0,5) + ' · ' + Math.round(mins / 60) + 'h ago';
+    return d.toTimeString().slice(0,5) + ' · ' + ftDay(iso);
+  }
+  function ftMoney(n){ return Math.round(Math.abs(Number(n) || 0)).toLocaleString('en-US'); }
+  function addNote(note){
+    try {
+      note.id = note.id || ('n-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 7));
+      note.read = false;
+      note.ts = Date.now();
+      note.day = ftDay();
+      note.time = ftTime();
+      state.notifications = state.notifications || [];
+      state.notifications.unshift(note);
+      if(state.notifications.length > 60) state.notifications.length = 60;
+      save(state);
+      FT.syncUI();
+      window.dispatchEvent(new CustomEvent('fantrade:statechange', { detail: state }));
+      if(window.FTDB && FTDB.notify) FTDB.notify(note).catch(function(){});
+    } catch(e){}
+    return note;
+  }
+  /* What a successful call means in words. For anything that moved money the
+     row the caller just wrote to state.transactions carries the figures. */
+  function noteActivity(fn, args){
+    try {
+      var tx = (state.transactions && state.transactions[0]) || null, note = null;
+      if(fn === 'ft_buy_shares' || fn === 'ft_sell_shares'){
+        var bought = fn === 'ft_buy_shares';
+        note = { kind:'order', icon:'candle',
+          title: bought ? 'Buy order filled' : 'Sell order filled',
+          msg: tx ? ftMoney(tx.shares) + ' × ' + ftSym(tx.asset) + ' @ ' + Number(tx.price || 0).toFixed(2) + ' $FTR'
+                  : ftMoney(args && args.p_shares) + ' × ' + ftSym(args && args.p_asset),
+          amt: (bought ? '-' : '+') + ftMoney(tx ? tx.total : 0) + ' $FTR',
+          tone: bought ? 'down' : 'up' };
+      } else if(fn === 'ft_swap_shares'){
+        note = { kind:'order', icon:'swap', title:'Swap settled',
+          msg: ftSym(args && args.p_from) + ' → ' + ftSym(args && args.p_to) + ' · ' + ftMoney(args && args.p_shares) + ' shares',
+          amt:'', tone:'' };
+      } else if(fn === 'ft_transfer_ftr'){
+        note = { kind:'system', icon:'send', title:'Transfer sent',
+          msg: ftMoney(args && args.p_amount) + ' $FTR to @' + String((args && args.p_handle) || '').replace(/^@/, ''),
+          amt:'-' + ftMoney(args && args.p_amount) + ' $FTR', tone:'down' };
+      } else if(fn === 'ft_withdraw_to_bank'){
+        note = { kind:'system', icon:'bank', title:'Withdrawal on its way',
+          msg: ftMoney(args && args.p_amount) + ' $FTR to ' + String((args && args.p_bank) || 'your bank'),
+          amt:'-' + ftMoney(args && args.p_amount) + ' $FTR', tone:'down' };
+      } else if(fn === 'ft_convert_gbp'){
+        note = { kind:'system', icon:'coin', title:'Funds added',
+          msg: '£' + ftMoney(args && args.p_gbp) + ' → ' + ftMoney(tx ? tx.total : 0) + ' $FTR',
+          amt:'+' + ftMoney(tx ? tx.total : 0) + ' $FTR', tone:'up' };
+      } else if(fn === 'ft_save_club'){
+        note = { kind:'club', icon:'formation', title:'Club saved',
+          msg: String((args && args.p_name) || (state.club && state.club.name) || 'Your Dream Club'), amt:'', tone:'' };
+      } else if(fn === 'ft_set_slot'){
+        note = { kind:'club', icon:'subs', title:'Teamsheet updated',
+          msg: ftSym(args && args.p_asset) + ' · ' + String((args && args.p_slot) || 'position set'), amt:'', tone:'' };
+      } else if(fn === 'ft_enter_fanplay_shares'){
+        note = { kind:'club', icon:'target', title:'FanPlay entry placed',
+          msg: ftMoney(args && args.p_shares) + ' × ' + ftSym(args && args.p_asset) + ' locked for this matchday', amt:'', tone:'' };
+      } else if(fn === 'ft_cancel_fanplay'){
+        note = { kind:'club', icon:'target', title:'FanPlay entry cancelled',
+          msg: 'Your stake came back to your portfolio.', amt:'', tone:'' };
+      } else if(fn === 'ft_update_profile'){
+        note = { kind:'system', icon:'user', title:'Profile updated',
+          msg: 'Your manager details were saved.', amt:'', tone:'' };
+      }
+      if(note) addNote(note);
+    } catch(e){}
+  }
   var pending = 0;
   function push(fn, args, onResult){
-    var db = cloud(); if(!db) return;
+    var db = cloud(); if(!db){ noteActivity(fn, args); return; }
     pending += 1;
     db.call(fn, args).then(function(res){
+      noteActivity(fn, args);
       if(onResult) onResult(res);
       return db.snapshot();
     }).then(function(snap){
@@ -1949,7 +2078,7 @@ var FT = (function(){
         el.textContent = state.club.rank > 0 ? (state.club.division || 'Apex') + ' division \u00b7 rank #' + state.club.rank : 'No club ranking yet';
       });
       var n = FT.unread();
-      document.querySelectorAll('#navDot').forEach(function(el){ el.hidden = n === 0; });
+      document.querySelectorAll('#navDot').forEach(function(el){ el.hidden = n === 0; }); document.querySelectorAll('.nav-bell-badge').forEach(function(el){ el.textContent = n; el.style.display = n === 0 ? 'none' : ''; });
       document.querySelectorAll('[data-unread]').forEach(function(el){ el.textContent = n; });
       document.querySelectorAll('[data-bind]').forEach(function(el){
         var k = el.getAttribute('data-bind'), v;
@@ -2032,12 +2161,14 @@ var FT = (function(){
     },
     readAll: function(){
       (state.notifications || []).forEach(function(n){ n.read = true; });
+      var readIds = (state.notifications || []).map(function(x){ return x.id; });
+      if(window.FTDB && FTDB.markRead && readIds.length) FTDB.markRead(readIds).catch(function(){});
       save(state); FT.syncUI();
       window.dispatchEvent(new CustomEvent('fantrade:statechange', { detail: state }));
     },
     readOne: function(id){
       var n = (state.notifications || []).filter(function(x){ return x.id === id; })[0];
-      if(n && !n.read){ n.read = true; save(state); FT.syncUI(); }
+      if(n && !n.read){ n.read = true; save(state); FT.syncUI(); window.dispatchEvent(new CustomEvent('fantrade:statechange', { detail: state })); if(window.FTDB && FTDB.markRead) FTDB.markRead([id]).catch(function(){}); }
     },
     executeTrade: function(side, assetSymbol, assetName, shares, price, isCoach){
       var subtotal = shares * price;
@@ -2358,6 +2489,9 @@ var FT = (function(){
       return { spent: shares, received: got, fee: Math.round(fee) };
     },
     depositFtr: function(amount){
+      addNote({ kind:'system', icon:'coin', title:'Deposit received',
+        msg: ftMoney(amount) + ' $FTR added to your wallet.',
+        amt:'+' + ftMoney(amount) + ' $FTR', tone:'up' });
       state.wallet.balance += amount;
       state.transactions.unshift({
         type: "DEPOSIT",

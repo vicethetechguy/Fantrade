@@ -84,6 +84,7 @@
       .then(function (res) {
         session = res && res.data ? res.data.session : null;
         guard();
+        pullNotifications();
         return client;
       })
       .catch(function (error) {
@@ -103,6 +104,37 @@
     return text;
   }
 
+  /* ── Notifications ─────────────────────────────────────────────────
+     The pages render their own list; this keeps it in step with the table
+     so a notice raised on one device turns up on the next. The browser
+     makes the row's id, which is what stops the same notice counting
+     twice when both copies meet in the merge. */
+  var lastNotes = null;
+
+  function noteId() {
+    return 'n-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 7);
+  }
+
+  function broadcastNotes(rows) {
+    if (rows) lastNotes = rows;
+    if (!lastNotes) return;
+    window.dispatchEvent(new CustomEvent('fantrade:notifications', { detail: lastNotes }));
+  }
+
+  function pullNotifications() {
+    if (!FTDB.signedIn()) return Promise.resolve(null);
+    return FTDB.notifications().then(function (rows) {
+      if (rows) broadcastNotes(rows);
+      return rows;
+    }).catch(function () { return null; });
+  }
+
+  /* A page that has just woken up asks; whoever holds the list answers. */
+  window.addEventListener('fantrade:notifications:want', function () {
+    if (lastNotes) broadcastNotes(); else pullNotifications();
+  });
+  window.addEventListener('focus', function () { pullNotifications(); });
+
   var FTDB = {
     config: CONFIG,
     ready: load,
@@ -119,6 +151,11 @@
       var res = await client.auth.signUp({ email: email, password: password, options: { data: meta || {} } });
       if (res.error) throw new Error(message(res.error));
       session = res.data.session;
+      if (session) {
+        await FTDB.notify({ kind: 'system', icon: 'star', title: 'Welcome to Fantrade',
+          msg: 'Your manager account is ready, ' + email + '.', amt: '', tone: '' });
+        pullNotifications();
+      }
       return { session: session, needsConfirmation: !session };
     },
     signIn: async function (email, password) {
@@ -127,6 +164,9 @@
       var res = await client.auth.signInWithPassword({ email: email, password: password });
       if (res.error) throw new Error(message(res.error));
       session = res.data.session;
+      await FTDB.notify({ kind: 'system', icon: 'shield', title: 'Signed in',
+        msg: email + ' signed in to Fantrade.', amt: '', tone: '' });
+      pullNotifications();
       return session;
     },
     signOut: async function () {
@@ -157,10 +197,42 @@
       if (res.error) { console.warn('[Fantrade] leaderboard failed:', res.error.message); return null; }
       return res.data;
     },
+    /* ── Notifications ──────────────────────────────────────────── */
+    notifications: async function (limit) {
+      await load();
+      if (!client || !FTDB.signedIn()) return null;
+      var res = await client.from('notifications')
+        .select('id,kind,icon,title,msg,amt,tone,read_at,created_at')
+        .order('created_at', { ascending: false })
+        .limit(limit || 100);
+      return res.error ? null : res.data;
+    },
+    notify: async function (row) {
+      await load();
+      if (!client || !FTDB.signedIn() || !row) return null;
+      var res = await client.from('notifications').insert({
+        id: row.id || noteId(), user_id: FTDB.userId(),
+        kind: row.kind || 'system', icon: row.icon || 'bell',
+        title: row.title, msg: row.msg || '', amt: row.amt || '', tone: row.tone || ''
+      });
+      if (res.error) { console.warn('[Fantrade] notification not stored:', res.error.message); return null; }
+      return row;
+    },
+    markRead: async function (ids) {
+      await load();
+      if (!client || !FTDB.signedIn() || !ids || !ids.length) return null;
+      var res = await client.from('notifications')
+        .update({ read_at: new Date().toISOString() }).in('id', ids).select('id');
+      if (res.error) { console.warn('[Fantrade] read state not stored:', res.error.message); return null; }
+      return true;
+    },
     call: async function (fn, args) {
       await load();
       if (!client) throw new Error('Cannot reach the server right now.');
       if (!FTDB.signedIn()) throw new Error('Sign in to save this to your account.');
+      /* Any notice this call is about lands through the page that made it;
+         this pull picks up everything raised elsewhere since last look. */
+      pullNotifications();
       var res = await client.rpc(fn, args || {});
       if (res.error) throw new Error(message(res.error));
       return res.data;

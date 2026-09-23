@@ -10,7 +10,7 @@ Project: `https://ajjwodnjcnmkzguospay.supabase.co`
 
 ## Run this once
 
-In the Supabase dashboard, open **SQL Editor** and run these four files in
+In the Supabase dashboard, open **SQL Editor** and run these five files in
 order, each in its own query:
 
 | # | File | What it does |
@@ -19,16 +19,17 @@ order, each in its own query:
 | 2 | `02_functions.sql` | The money functions (buy, sell, swap, convert, transfer, withdraw, profile) and who is allowed to call them |
 | 3 | `03_seed_assets.sql` | The 18 players and coaches the exchange lists, each with its immutable F-ticker and its reference value |
 | 4 | `04_fanplay_clubs.sql` | Dream Clubs, FanPlay entries and the leaderboard |
+| 5 | `05_notifications.sql` | The notifications table behind the bell — every fill, wallet move, club and account notice, per manager under row-level security |
 
 They are safe to re-run: the tables use `if not exists`, the functions are
 `create or replace`, and the seed upserts on the asset id. Re-run them in
-order, though, and re-run all four rather than one on its own — file 2 resets
+order, though, and re-run all five rather than one on its own — file 2 resets
 who may call what, and file 4 hands those rights back out.
 
 Check it worked: **Table Editor** should show `profiles`, `wallets`, `assets`,
-`holdings`, `transactions`, `payout_accounts`, `clubs` and `fanplay_entries`,
+`holdings`, `transactions`, `payout_accounts`, `clubs`, `fanplay_entries` and `notifications`,
 with 18 rows in `assets`, every one carrying a `ticker`, and a green **RLS
-enabled** badge on all eight.
+enabled** badge on all nine.
 
 ## Then turn on auth
 
