@@ -46,7 +46,7 @@ h1,h2,h3,.brand,.wordmark,.screen-brand{
 }
 p{margin:0}
 button,a{-webkit-tap-highlight-color:transparent}
-a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:4px}
+a:focus-visible,button:focus-visible{outline:none}
 .skip{position:fixed;top:-80px;left:16px;z-index:99;background:var(--accent);color:var(--accent-ink);font-weight:700;padding:12px 18px;border-radius:8px;transition:top .2s}
 .skip:focus{top:12px}
 

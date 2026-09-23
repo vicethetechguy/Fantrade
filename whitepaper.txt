@@ -1,0 +1,696 @@
+FANTRADE — White Paper Draft v2.0 
+FANTRADE 
+WHITE PAPER — Draft v2.0 
+The Football Activity Exchange 
+A market infrastructure for Fantrade Activity Assets, FanPlay, ownership, exchange, and $FTR. 
+Updated with the F-ticker Activity Share model 
+ 
+ 
+
+
+FANTRADE — White Paper Draft v2.0 
+Document Status 
+This document is a product and economic design draft. It describes the intended Fantrade model and architecture, 
+while identifying parameters that remain subject to configuration, technical validation, economic testing, football-
+data availability, and legal review. 
+Nothing in this document constitutes financial, investment, legal, tax, securities, or regulatory advice. Terminology is 
+intended to accurately describe Fantrade's product model; terminology alone does not determine legal or 
+regulatory classification. 
+Contents 
+• 
+1. Abstract 
+• 
+2. Introduction 
+• 
+3. The Fantrade Concept 
+• 
+4. Fantrade Activity Assets 
+• 
+5. The F-Ticker System 
+• 
+6. Reference Valuation 
+• 
+7. Activity Asset Listing and Claiming 
+• 
+8. Lister Economics and Vesting 
+• 
+9. Fan Points and the Pre-Airdrop Lister Program 
+• 
+10. $FTR Token 
+• 
+11. $FTR Token Allocation 
+• 
+12. Presale 
+• 
+13. Airdrop 
+• 
+14. FanPlay 
+• 
+15. The Fantrade Exchange 
+• 
+16. Ownership and Share Accounting 
+• 
+17. Fees and Economic Flow 
+• 
+18. Football Data Infrastructure 
+• 
+19. Dream Club 
+• 
+20. Security and Market Integrity 
+• 
+21. Hybrid Blockchain Architecture 
+• 
+22. Chiliz Integration 
+• 
+23. Economic Flywheel 
+• 
+24. Risks and Limitations 
+• 
+25. Legal and Regulatory Considerations 
+• 
+26. Roadmap 
+• 
+27. Open Parameters 
+• 
+28. Conclusion 
+ 
+ 
+
+
+FANTRADE — White Paper Draft v2.0 
+1. Abstract 
+Fantrade is a football activity exchange designed to connect football fandom with market-style digital assets and 
+performance-based participation. Rather than representing ownership of a football player or coach, Fantrade 
+creates digital Activity Assets associated with the football activities and performance of eligible players and coaches. 
+Each Activity Asset is represented within Fantrade by 10,000,000 shares. Users can acquire, hold, sell, trade, and use 
+eligible shares in Fantrade experiences such as FanPlay. 
+The platform uses compact F-tickers to identify Activity Assets in the exchange. For example, Cristiano Ronaldo's 
+Activity Asset may use FCR7, while Erling Haaland may use FHLND. The ticker is a short market identifier; the 
+underlying asset record retains the full player or coach identity. 
+$FTR is the native utility and settlement token of the Fantrade ecosystem. It is used for applicable purchases, 
+trading-related flows, listing fees, FanPlay settlement, and other platform-defined utilities. 
+Fantrade combines an exchange, ownership accounting, football performance data, FanPlay prediction mechanics, 
+user-created listings, reference valuation, lister incentives, and an eventual blockchain settlement layer. 
+2. Introduction 
+Football generates enormous quantities of real-world activity: appearances, goals, assists, cards, minutes, shots, 
+saves, passes, defensive actions, team results, and other measurable events. Fans already follow these events as if 
+they were market movements, but conventional football products rarely connect that attention to a persistent 
+ownership and exchange layer. 
+Fantrade is designed around that connection. The platform transforms football activity into a structured digital 
+market experience without claiming that users own the underlying footballer, coach, club, contract, image rights, 
+employment relationship, or sporting rights. 
+The objective is to build a market where football activity can be discovered, valued, traded, and used in interactive 
+experiences. 
+3. The Fantrade Concept 
+3.1 Activity, not the person 
+Fantrade does not tokenize football players or coaches. It creates digital Activity Assets based on the football 
+activities and performance of eligible players and coaches. 
+A Fantrade Activity Asset therefore represents a defined digital market relationship to football activity. It does not 
+represent equity in the person, employment rights, image rights, transfer rights, contract rights, club ownership, or 
+legal ownership of the player or coach. 
+3.2 Core experience 
+1. Discover an eligible Activity Asset. 
+2. Review its Fantrade Reference Valuation, market information, football data, and available shares. 
+3. Acquire or trade its shares using $FTR. 
+4. Hold shares as an ownership position within Fantrade. 
+5. Use eligible shares in FanPlay predictions. 
+
+
+FANTRADE — White Paper Draft v2.0 
+6. Receive or incur FanPlay settlement based on the configured prediction rules and verified football events. 
+7. Trade shares again through the Fantrade Exchange subject to normal market and reservation rules. 
+4. Fantrade Activity Assets 
+Every eligible player or coach activity represented on Fantrade is modeled as an Activity Asset. 
+Property 
+Model 
+Asset type 
+PLAYER_ACTIVITY or COACH_ACTIVITY 
+Total shares 
+10,000,000 per Activity Asset 
+Identifier 
+Short immutable F-ticker 
+Valuation 
+Fantrade Reference Valuation 
+Market 
+Fantrade Exchange 
+Utility 
+Holding, trading, eligible FanPlay participation 
+Data source 
+Normalized football-data provider layer 
+4.1 Share supply 
+Each Activity Asset has a fixed conceptual supply of 10,000,000 shares within the Fantrade model. Secondary-
+market trading transfers existing shares; it does not create new shares. 
+4.2 Coaches 
+Coaches are first-class Activity Assets rather than a secondary category. Their Activity Assets can use the same 
+exchange, ownership, listing, FanPlay, and fee infrastructure, subject to the prediction types and football data 
+available for coaching activity. 
+5. The F-Ticker System 
+Fantrade uses compact market identifiers beginning with the letter F. The F prefix identifies the asset as a Fantrade 
+Activity Asset, while the remaining characters provide a short, recognizable identifier. 
+Person 
+Example F-ticker 
+Display 
+Cristiano Ronaldo 
+FCR7 
+Cristiano Ronaldo Activity 
+Erling Haaland 
+FHLND 
+Erling Haaland Activity 
+Bruno Fernandes 
+FBRN 
+Bruno Fernandes Activity 
+Bukayo Saka 
+FSAKA 
+Bukayo Saka Activity 
+Kylian Mbappé 
+FKM7 
+Kylian Mbappé Activity 
+Lionel Messi 
+FLM10 
+Lionel Messi Activity 
+The examples above illustrate the naming convention rather than a final registry. Tickers should be short, 
+distinctive, collision-resistant, and immutable after issuance. 
+The ticker is not the player's name. The complete asset record maintains the official identity and football metadata, 
+while the ticker functions as the exchange symbol. 
+6. Reference Valuation 
+Fantrade may provide a Fantrade Reference Valuation for each Activity Asset. This is an indicative platform 
+valuation intended to provide a starting reference for discovery, listing, and market context. 
+
+
+FANTRADE — White Paper Draft v2.0 
+The valuation may be AI-assisted and can incorporate football activity, performance data, player or coach context, 
+market conditions, historical information, and configurable valuation methodology. 
+A Reference Valuation is not necessarily the trading price. Actual secondary-market prices are determined by orders 
+and trades in the Fantrade Exchange. 
+The valuation methodology, model governance, update frequency, confidence presentation, and human review 
+process remain subject to implementation and validation. 
+7. Activity Asset Listing and Claiming 
+Fantrade is designed so that users can propose and list eligible player or coach Activity Assets, subject to Fantrade 
+eligibility, verification, and platform controls. 
+The listing flow is built around two claim levels: 
+Claim level 
+Share allocation 
+Share of 10M supply 
+Level 1 
+500,000 
+5% 
+Level 2 
+1,000,000 
+10% 
+The user pays the applicable listing/claim fee in $FTR. A portion of the listing payment may be permanently burned; 
+the current proposed burn is 2% of the listing payment. 
+The listing process should distinguish the listing fee from the Activity Asset's market valuation and from any later 
+trading fees. 
+8. Lister Economics and Vesting 
+8.1 Vesting 
+A lister selects a vesting period for the claimed allocation. The minimum proposed vesting period is one year. 
+Selected period 
+Fee participation duration 
+1 year 
+12 months 
+2 years 
+24 months 
+3 years 
+36 months 
+At the end of the selected period, the lister's 30% eligible trading-fee participation ends. Fully vested shares remain 
+the lister's Fantrade shares, subject to normal platform rules. 
+8.2 Trading limit 
+A lister may trade up to 1% of their original allocation per day, subject to the shares actually vested and available 
+and all normal exchange reservation rules. 
+For a 500,000-share allocation, 1% of the original allocation is 5,000 shares per day. For a 1,000,000-share 
+allocation, it is 10,000 shares per day. 
+8.3 Trading-fee participation 
+The lister receives 30% of eligible trading fees generated by the listed Activity Asset's shares, paid monthly, 
+throughout the selected vesting period. 
+Eligible trading fees are fees generated by trading the relevant Activity Asset. Listing fees, withdrawal fees, 
+administrative fees, and unrelated platform fees are not automatically included. 
+
+
+FANTRADE — White Paper Draft v2.0 
+9. Fan Points and the Pre-Airdrop Lister Program 
+Fantrade uses Fan Points (FP) across its ecosystem. The lister program does not introduce a separate 'Lister Points' 
+system. 
+Before the Airdrop snapshot, eligible listers can accumulate FP based on the value and contribution of the players or 
+coaches they list. The exact formula remains configurable and subject to economic testing. 
+Once the Airdrop snapshot occurs, historical lister FP accumulation stops permanently. The historical lister program 
+is therefore a pre-Airdrop program. 
+Pre-Airdrop lister rewards are funded from the Airdrop allocation, not from Ecosystem & Development. 
+10. $FTR Token 
+$FTR is Fantrade's native ecosystem token. It is designed to provide a common unit for applicable Fantrade 
+economic flows. 
+• 
+Payment for eligible Activity Asset listing/claim processes. 
+• 
+Exchange settlement where applicable. 
+• 
+Trading-fee payment where configured. 
+• 
+FanPlay settlement. 
+• 
+Swap-related fees. 
+• 
+Other platform utilities defined by Fantrade. 
+• 
+Future blockchain-based settlement and ecosystem functionality, subject to implementation. 
+The exact utility set may evolve as the platform moves from centralized infrastructure to blockchain-compatible 
+settlement. 
+11. $FTR Token Allocation 
+Allocation 
+Percentage 
+Amount 
+Presale 
+20% 
+2,000,000 
+DEX Liquidity 
+15% 
+1,500,000 
+Airdrop 
+15% 
+1,500,000 
+Ecosystem & Development 
+20% 
+2,000,000 
+Team 
+10% 
+1,000,000 
+Founding Team 
+5% 
+500,000 
+Treasury / Reserve 
+10% 
+1,000,000 
+Advisors & Strategic Partners 
+5% 
+500,000 
+Total 
+100% 
+10,000,000 
+The intended maximum supply is 10,000,000 $FTR. If listing-payment burns are implemented on-chain as 
+permanent token burns, the effective outstanding supply can decline over time. 
+12. Presale 
+The current proposed presale schedule is: 
+Event 
+Allocation 
+
+
+FANTRADE — White Paper Draft v2.0 
+TGE 
+10% 
+Cliff 
+3 months 
+Linear vesting 
+12 months 
+The final presale mechanics, jurisdictional availability, sale price, participant restrictions, and contractual structure 
+remain subject to legal and economic review. 
+13. Airdrop 
+The Airdrop allocation is 15% of total $FTR supply, equal to 1,500,000 $FTR. 
+Recipient group 
+Share of Airdrop 
+Amount 
+Pre-Airdrop listers 
+50% 
+750,000 
+Normal users 
+20% 
+300,000 
+Testers 
+30% 
+450,000 
+Total 
+100% 
+1,500,000 
+13.1 Lister distribution 
+The 750,000 $FTR lister pool is distributed pro rata among eligible pre-Airdrop listers according to their eligible 
+Listing FP. 
+Illustrative formula: 
+Lister Airdrop = (Eligible Lister FP / Total Eligible Lister FP) × 750,000 $FTR 
+The Airdrop does not need to occur at TGE. Because Activity Asset listing requires $FTR and may occur before token 
+launch, the Airdrop is tied to the defined listing period and Airdrop snapshot rather than automatically to TGE. 
+14. FanPlay 
+FanPlay is Fantrade's prediction and performance layer. Users do not stake $FTR as the primary FanPlay stake. They 
+stake eligible Activity Asset shares they already own. 
+14.1 Core flow 
+8. Select an eligible Activity Asset. 
+9. Select a match. 
+10. Select a FanPlay market. 
+11. Choose prediction options. 
+12. Select the number of available shares to stake. 
+13. Review potential FP gain/loss. 
+14. Activate FanPlay. 
+15. Shares become locked while the FanPlay is active. 
+16. Football events are evaluated using authoritative normalized data. 
+17. Final FP is calculated. 
+18. FP is converted to $FTR using the configured conversion. 
+19. Locked shares are released after settlement. 
+
+
+FANTRADE — White Paper Draft v2.0 
+14.2 Share locking 
+A user's owned shares are divided into available and locked shares. Locked shares cannot be sold, transferred, or 
+used in another FanPlay until the relevant reservation is released. 
+14.3 Prediction economics 
+Each prediction option has a success FP value and a failure FP value. 
+Option FP = configured outcome FP × staked shares 
+Total FP = sum of all selected option FP results 
+Current conversion: 1,000 FP = 1 $FTR. 
+Example: +5 FP × 500 shares = +2,500 FP = +2.5 $FTR. A failed prediction of −5 FP × 500 shares = −2,500 FP = −2.5 
+$FTR. 
+The platform must support negative settlement. The final collateral, maximum-loss, negative-balance, or 
+settlement-risk policy remains an explicit economic parameter and must not be silently assumed. 
+14.4 Markets 
+Market 
+Purpose 
+Simple 
+Accessible prediction structures 
+PRO 
+Greater decision depth 
+Elite 
+More complex prediction combinations 
+Killer 
+Higher complexity and exposure 
+Viynx Move 
+Advanced market structures 
+Viynx Max 
+Most advanced market structures 
+All users can access all market levels. The progression is based on complexity, decision depth, exposure, and 
+potential upside/downside rather than subscription gating or arbitrary reward multipliers. 
+14.5 Prediction types 
+• 
+BOOLEAN 
+• 
+THRESHOLD 
+• 
+EXACT 
+• 
+RANGE 
+• 
+TEAM_RESULT 
+Option groups, dependencies, and contradiction rules prevent redundant or incompatible combinations. Difficulty 
+labels such as Easy, Medium, Hard, and Extreme are configuration and UX concepts. 
+14.6 Settlement 
+FanPlay uses a lifecycle such as DRAFT → ACTIVE → LIVE → PENDING_SETTLEMENT → SETTLED, with exception 
+states including VOID, CANCELLED, SUSPENDED, and DISPUTED. 
+Activation and settlement must be transactional and idempotent. Final settlement uses authoritative final football 
+data. Live FP can be provisional and may change before final settlement. 
+15. The Fantrade Exchange 
+The Exchange is the market layer where Activity Asset shares are bought and sold. 
+
+
+FANTRADE — White Paper Draft v2.0 
+15.1 Orders 
+• 
+BUY and SELL limit orders initially. 
+• 
+Price-time priority / FIFO. 
+• 
+Partial fills. 
+• 
+Order reservation. 
+• 
+Order lifecycle including pending, open, partially filled, filled, cancelled, expired, and rejected. 
+• 
+Self-trade prevention. 
+• 
+Idempotent trade execution. 
+15.2 Real order book 
+The order book must represent actual user orders. Synthetic depth, random price movement, fake order volume, 
+and generated market charts are not part of the production model. 
+15.3 Trade execution 
+A trade execution should atomically coordinate order matching, ownership transfer, $FTR movement, fees, 
+reservations, fill creation, order status updates, and immutable ledger entries. 
+15.4 Market price 
+The displayed market price is derived from actual trades. Historical price charts and statistics are derived from 
+recorded executions rather than synthetic values. 
+16. Ownership and Share Accounting 
+Fantrade treats ownership accounting as a core financial state. 
+For every Activity Asset: 
+Total supply = treasury/custody shares + user holdings + other explicitly defined custody states. 
+For every user holding: 
+Owned shares = available shares + locked shares. 
+Share reservations are authoritative for locked shares. Exchange orders and FanPlay reservations must coordinate 
+so that the same shares cannot be committed twice. 
+16.1 Centralized source of truth 
+The initial Fantrade implementation uses PostgreSQL as the operational source of truth. Financial and ownership 
+state is not stored as authoritative client-side LocalStorage data. 
+16.2 Future blockchain compatibility 
+Domain services and repositories are designed so blockchain settlement can be introduced later without replacing 
+the product's core business logic. 
+17. Fees and Economic Flow 
+Fantrade can charge configurable trading and platform fees. Fees must be explicit, auditable, and represented in the 
+ledger. 
+
+
+FANTRADE — White Paper Draft v2.0 
+The proposed lister participation is 30% of eligible trading fees generated by the corresponding Activity Asset during 
+the lister's selected vesting period. 
+The remaining eligible fee share is retained according to Fantrade's fee policy, which may support operations, 
+treasury, liquidity, ecosystem development, or other approved uses. 
+The 2% listing-payment burn is a supply-reduction mechanism, not ordinary platform revenue. 
+18. Football Data Infrastructure 
+Fantrade depends on reliable football data. A provider abstraction should normalize player, coach, fixture, live 
+match, event, lineup, statistics, injury, and related information. 
+• 
+Player and coach identity 
+• 
+Fixtures and match state 
+• 
+Lineups 
+• 
+Live events 
+• 
+Goals and assists 
+• 
+Cards 
+• 
+Minutes 
+• 
+Player statistics 
+• 
+Final match results 
+• 
+Relevant corrections and status changes 
+No random, fabricated, or synthetic football data should be used for production FanPlay settlement. 
+The architecture should support multiple providers so Fantrade is not permanently coupled to a single data vendor. 
+19. Dream Club 
+Dream Club allows users to create a virtual club using Activity Assets they actually hold. 
+A user selects 11 eligible players and a bench from their available holdings, subject to configured roster rules. The 
+club may include a coach Activity Asset. 
+The club's FanPlay exposure is derived from the selected holdings rather than from fictional ownership. 
+Individual player/coach outcomes accumulate into an Accumulated FP value. A configurable team boost can then be 
+applied. 
+The exact team-boost formula remains an open economic parameter. 
+20. Security and Market Integrity 
+Fantrade's financial state requires transaction safety and strong auditability. 
+• 
+Immutable double-entry $FTR ledger. 
+• 
+Transactional share reservations. 
+• 
+Atomic trade settlement. 
+• 
+Idempotency keys for mutation endpoints. 
+
+
+FANTRADE — White Paper Draft v2.0 
+• 
+Self-trade prevention. 
+• 
+Concurrency controls. 
+• 
+Reconciliation jobs. 
+• 
+Role-based administrative access. 
+• 
+Audit logs for economically significant actions. 
+• 
+Final-data settlement rather than client-submitted results. 
+• 
+Provider failure and data-correction handling. 
+• 
+Explicit handling of postponed, cancelled, suspended, and disputed matches. 
+Core reconciliation rules include ledger debit/credit equality, holding availability consistency, order fill consistency, 
+reservation consistency, and total Activity Asset share accounting. 
+21. Hybrid Blockchain Architecture 
+Fantrade is designed to launch with centralized PostgreSQL infrastructure while retaining a clean path toward 
+blockchain settlement. 
+The recommended architecture separates domain logic from settlement technology. 
+• 
+AssetTokenAdapter 
+• 
+OwnershipAdapter 
+• 
+TradeSettlementAdapter 
+• 
+ClaimAdapter 
+• 
+FeeDistributionAdapter 
+• 
+BlockchainService 
+This allows Fantrade to operate as a reliable centralized product first and introduce on-chain settlement when the 
+economic, legal, technical, and liquidity conditions are appropriate. 
+22. Chiliz Integration 
+Chiliz is a potential blockchain ecosystem for Fantrade's future on-chain infrastructure. The eventual integration 
+may support $FTR, Activity Asset ownership or representations, vesting, claims, fee distribution, and settlement. 
+The final contract architecture, token standards, deployment network, gas model, wallet UX, oracle/data design, 
+and contract security model remain subject to technical validation and independent smart-contract security review. 
+The centralized Fantrade domain model should remain usable independently of any particular blockchain 
+deployment. 
+23. Economic Flywheel 
+Fantrade's intended ecosystem flywheel is: 
+20. More football Activity Assets create more discovery opportunities. 
+21. More assets create more markets. 
+22. More markets increase trading activity. 
+23. Trading activity creates eligible trading fees. 
+
+
+FANTRADE — White Paper Draft v2.0 
+24. Listers receive a defined portion of eligible fees during their vesting periods. 
+25. FanPlay gives existing Activity Asset holders an additional reason to hold shares. 
+26. More football activity and verified data create richer FanPlay markets. 
+27. Users interact more frequently with $FTR. 
+28. Listing-payment burns can reduce outstanding $FTR supply when implemented. 
+29. Liquidity, ecosystem development, partnerships, and distribution can support broader adoption. 
+This is a product-economic model, not a guarantee of demand, price appreciation, revenue, or token value. 
+24. Risks and Limitations 
+• 
+Market prices may move significantly and may not reflect Reference Valuation. 
+• 
+Activity Asset demand may be low or highly concentrated. 
+• 
+Football data may be delayed, incomplete, corrected, or unavailable. 
+• 
+Prediction outcomes depend on configured rules and authoritative event data. 
+• 
+Negative FanPlay settlement introduces economic risk requiring explicit collateral and loss controls. 
+• 
+Smart contracts can contain vulnerabilities if and when blockchain functionality is introduced. 
+• 
+Regulatory treatment may vary across jurisdictions. 
+• 
+Football organizations, clubs, leagues, players, agents, and data providers may impose contractual or usage 
+restrictions. 
+• 
+Listing eligibility can change based on verification and platform policy. 
+• 
+Liquidity is not guaranteed. 
+• 
+Fee participation does not guarantee a lister a particular amount of income. 
+25. Legal and Regulatory Considerations 
+Fantrade should be structured and reviewed with the understanding that economic substance matters more than 
+terminology. 
+Calling an instrument an 'Activity Share' or assigning it an F-ticker does not, by itself, determine whether the 
+instrument is regulated or whether football-related rights are implicated. 
+Fantrade should not represent that users own football players, coaches, clubs, contracts, image rights, transfer 
+rights, or sporting rights unless legally authorized and contractually supported. 
+Before launch, Fantrade should obtain jurisdiction-specific legal advice covering token issuance, trading 
+functionality, rewards, fee participation, consumer protection, advertising, KYC/AML obligations where applicable, 
+data licensing, intellectual property, football-body permissions, tax treatment, and blockchain deployment. 
+The product should accurately describe its actual economic and technical functionality and avoid relying on 
+terminology as a substitute for legal analysis. 
+26. Roadmap 
+Phase 
+Focus 
+Phase 1 
+Product foundation, authentication, Activity Assets, 
+ownership 
+
+
+FANTRADE — White Paper Draft v2.0 
+Phase 2 
+Exchange, orders, matching, ledger, reservations 
+Phase 3 
+FanPlay prediction and settlement engine 
+Phase 4 
+Dream Club and team exposure 
+Phase 5 
+Football data/live-event infrastructure 
+Phase 6 
+Lister listing/claim system and Reference Valuation 
+Phase 7 
+$FTR launch, airdrop, and ecosystem mechanics 
+Phase 8 
+Blockchain/Chiliz integration 
+Phase 9 
+Independent security review and production hardening 
+Phase 10 
+Scale, partnerships, liquidity, and ecosystem expansion 
+27. Open Parameters 
+The following parameters should remain explicitly configurable or marked TBD until validated: 
+• 
+Lister FP formula. 
+• 
+Exact Reference Valuation methodology. 
+• 
+Final listing/claim fee amounts. 
+• 
+2% burn implementation and burn destination/mechanics. 
+• 
+Negative FanPlay settlement, collateral, and maximum-loss policy. 
+• 
+Dream Club team-boost formula. 
+• 
+Final $FTR unlock schedules beyond the current presale proposal. 
+• 
+DEX launch structure and liquidity-management policy. 
+• 
+Final blockchain network and contract standards. 
+• 
+Final Chiliz architecture. 
+• 
+Football data providers and licensing agreements. 
+• 
+Jurisdiction-specific legal structure and launch restrictions. 
+• 
+Final fee schedule. 
+28. Conclusion 
+Fantrade is designed as a new category of football market infrastructure: a platform where football activity 
+becomes a structured digital asset experience. 
+The core distinction is intentional. Fantrade does not claim to tokenize or sell football players. It creates Activity 
+Assets associated with football activities and performance, represented through a compact market ticker system 
+such as FCR7 for Cristiano Ronaldo and FHLND for Erling Haaland. 
+Users can hold and trade Activity Shares, use eligible shares in FanPlay, participate in Dream Clubs, and interact with 
+the broader $FTR economy. 
+The combination of real ownership accounting, an exchange, verified football data, configurable prediction 
+mechanics, user-created listings, Reference Valuation, lister economics, and a future blockchain settlement layer 
+forms the foundation of the Fantrade ecosystem. 
+The long-term objective is to make football activity continuously discoverable, tradable, and interactive while 
+maintaining a clear distinction between digital Fantrade assets and the real-world people whose football activity 
+generates the underlying data. 
+
+
+FANTRADE — White Paper Draft v2.0 
+Appendix A — Terminology 
+Term 
+Meaning 
+Activity Asset 
+Digital Fantrade asset associated with the football 
+activity/performance of an eligible player or coach. 
+Activity Share 
+A share representing a user's position in a Fantrade 
+Activity Asset. 
+F-ticker 
+Short immutable market identifier beginning with F, 
+e.g. FCR7 or FHLND. 
+FCR7 
+Example Fantrade ticker for Cristiano Ronaldo Activity 
+Shares. 
+FHLND 
+Example Fantrade ticker for Erling Haaland Activity 
+Shares. 
+Reference Valuation 
+Fantrade's indicative valuation for an Activity Asset. 
+FanPlay 
+Prediction and performance layer using eligible owned 
+Activity Shares. 
+FP 
+Fan Points used for FanPlay and the pre-Airdrop lister 
+program. 
+$FTR 
+Fantrade's native ecosystem and settlement token. 
+Lister 
+User who successfully lists/claims an eligible Activity 
+Asset allocation. 
+Airdrop Snapshot 
+Defined point after which historical pre-Airdrop lister 
+FP accumulation stops. 
+ 

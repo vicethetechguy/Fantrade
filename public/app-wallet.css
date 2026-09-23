@@ -122,7 +122,7 @@ body.app.calm .asset-search-row[aria-current=true]{background:#242821}
 /* Swap: the chosen player sits on a card that opens the picker. */
 .swap-pick{display:flex;align-items:center;gap:14px;width:100%;min-height:72px;padding:12px 16px;border:0;border-radius:15px;background:#121411;color:var(--ink);font:inherit;text-align:left;cursor:pointer;transition:background .2s}
 .swap-pick:hover{background:#1a1d19}
-.swap-pick:focus-visible{outline:2px solid #8875e8;outline-offset:3px}
+.swap-pick:focus-visible{outline:none!important}
 .swap-pick:disabled{cursor:default;opacity:.7}
 .swap-pick>img{width:44px;height:44px;border-radius:50%;object-fit:cover;flex:none;background:#242821}
 .swap-pick-text{flex:1;min-width:0}

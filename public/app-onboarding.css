@@ -15,7 +15,8 @@ body.app.calm .app-section-head a,body.app.calm .app-text-link{display:inline-fl
 body.app.calm .app-section-head a:hover,body.app.calm .app-text-link:hover{background:#3311cc;color:#fff}
 body.app.calm .app-primary{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:48px;padding:12px 24px;border:0;border-radius:999px;background:var(--lime);color:#fff;font-weight:600;font-size:13px;text-decoration:none;white-space:nowrap;cursor:pointer}
 body.app.calm .app-primary:hover{background:#3311cc}
-body.app.calm :focus-visible{outline:2px solid #a596ed!important;outline-offset:4px}
+body.app.calm :focus-visible{outline:none!important}
+body.app.calm input:focus,body.app.calm select:focus,body.app.calm textarea:focus,body.app.calm input:focus-visible,body.app.calm select:focus-visible,body.app.calm textarea:focus-visible{outline:none!important;box-shadow:none!important;border-color:transparent!important}
 body.app.calm input{min-width:0;font-size:16px!important}
 /* Keep the header opaque as content passes beneath it. */
 body.app.calm .nav-island.topbar{top:12px!important;width:min(980px,calc(100vw - 40px))!important;max-width:980px!important;padding:0!important}
@@ -38,7 +39,7 @@ body.app.calm .kc-cat-tab,body.app.calm .kc-tab-btn,body.app.calm .lb2-tabs butt
 body.app.calm .kc-cat-tab.on,body.app.calm .kc-tab-btn.on,body.app.calm .lb2-tabs button.on,body.app.calm .fp-view-btn.on{background:var(--lime)!important;color:#fff!important}
 body.app.calm .kc-tab-btn::after,body.app.calm .lb2-tabs button::after{display:none!important}
 body.app.calm .kc-search-box,body.app.calm .kc-home-search-box,body.app.calm .tf .inp,body.app.calm .fp-stake-input-wrap{border:0!important;border-radius:14px!important;background:#121411!important;box-shadow:none!important;min-height:52px}
-body.app.calm .kc-search-box:focus-within,body.app.calm .kc-home-search-box:focus-within,body.app.calm .fp-stake-input-wrap:focus-within{outline:2px solid #8875e8;outline-offset:2px}
+body.app.calm .kc-search-box:focus-within,body.app.calm .kc-home-search-box:focus-within,body.app.calm .fp-stake-input-wrap:focus-within{outline:none!important}
 body.app.calm .kc-icon-btn,body.app.calm .kc-action-btn,body.app.calm .kc-p-back,body.app.calm .kc-p-action-btn,body.app.calm .kc-act-ico,body.app.calm .kc-act-icon{border:0!important;background:#121411!important;color:var(--ink)!important;box-shadow:none!important;border-radius:50%!important;width:46px;height:46px}
 body.app.calm .kc-eye-btn{min-width:36px;min-height:36px;justify-content:center}
 body.app.calm .kc-bal-val,body.app.calm .kc-card-bal{font-size:clamp(30px,4vw,46px)!important;letter-spacing:-.045em;line-height:1.2;margin:12px 0 8px;overflow-wrap:anywhere}
@@ -272,7 +273,7 @@ body.app.calm .taskbar a[data-tab="fanplay"]:hover:not(.on) .tb-icon-box{backgro
 body.app.calm .home-next{padding:0!important;background:transparent!important;border-radius:0;display:flex;flex-direction:column;justify-content:stretch;align-items:stretch;min-width:0}
 body.app.calm .home-cards{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-behavior:smooth;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:none;border-radius:24px;flex:1}
 body.app.calm .home-cards::-webkit-scrollbar{display:none}
-body.app.calm .home-cards:focus-visible{outline:2px solid #a596ed;outline-offset:4px}
+body.app.calm .home-cards:focus-visible{outline:none!important}
 body.app.calm .home-card{flex:0 0 100%;scroll-snap-align:start;scroll-snap-stop:always;box-sizing:border-box;display:flex;flex-direction:column;align-items:flex-start;min-height:340px;padding:26px;border-radius:24px;background:radial-gradient(120% 70% at 100% 0%,rgba(24,0,173,.28),transparent 60%),#121411;box-shadow:inset 0 1px 0 rgba(255,255,255,.05)}
 body.app.calm .home-card-top{display:flex;align-items:center;gap:10px;margin-bottom:18px}
 body.app.calm .home-card-icon{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:#1800ad;color:#fff}

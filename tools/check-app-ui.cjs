@@ -53,7 +53,7 @@ const server = http.createServer((request, response) => {
         });
         assert(!result.overflow, `${name} overflows at ${width}px`);
         assert.deepEqual(result.brokenImages, [], `${name} has broken images at ${width}px`);
-        assert.equal(result.dockLinks, name === 'asset.html' ? 0 : 5, `${name} has an unexpected primary dock`);
+        assert.equal(result.dockLinks, ['asset.html', 'onboarding.html'].includes(name) ? 0 : 5, `${name} has an unexpected primary dock`);
         assert(result.dockInside, `${name} dock leaves the viewport at ${width}px`);
         if (shots.has(name) && (width === 390 || width === 1280)) {
           await page.waitForTimeout(650);

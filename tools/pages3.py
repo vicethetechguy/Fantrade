@@ -145,16 +145,17 @@ body{background:#050505;--dim:#b9bcb7;--faint:#979c96;--ink:#f4f6f1;--lime:#1800
 .tf .lrow a,.checkrow a,.auth-alt a{display:inline-flex;align-items:center;justify-content:center;min-height:30px;padding:5px 14px;border:0;border-radius:999px;background:#1800ad;color:#fff;font-size:13px;font-weight:600;text-decoration:none;white-space:nowrap;cursor:pointer;transition:background .2s}
 .tf .lrow a:hover,.checkrow a:hover,.auth-alt a:hover{background:#3311cc;color:#fff}
 .tf .inp{border:0;background:#121411;box-shadow:none;border-radius:14px;padding:0 16px;min-height:54px}
-.tf .inp:focus-within{outline:2px solid #8875e8;outline-offset:2px;background:#121411}
+.tf .inp:focus-within{outline:none;background:#121411}
 .tf .inp>.ic{color:#858c82}
-.tf input,.tf select{font-size:16px;min-height:52px;font-weight:400}
+.tf input,.tf select{font-size:16px;min-height:52px;font-weight:400;border:0!important;outline:none!important;background:transparent!important;box-shadow:none!important}
+.tf input:focus,.tf select:focus,.tf input:focus-visible,.tf select:focus-visible{outline:none!important;border:0!important;box-shadow:none!important}
 .tf input::placeholder{color:#858c82}
 .tf .eye{min-height:44px;min-width:44px;font-size:12px;letter-spacing:0;text-transform:none;color:var(--dim);font-family:Montserrat,system-ui,sans-serif}
 .tf .eye:hover{color:var(--ink)}
 .tf .hint{font-size:12px;color:var(--dim);font-weight:400;margin-top:8px}
 .tf .err{font-size:12px}
-.tf.bad .inp{outline:2px solid #e57575;background:#121411}
-.tf.ok .inp{border:0}
+.tf.bad .inp{outline:none!important;border:0!important;box-shadow:none!important;background:#121411}
+.tf.ok .inp{border:0!important;outline:none!important;box-shadow:none!important}
 .strength{margin-top:-8px}
 .strength i{height:4px;background:#1d201c}
 #pwLabel{font-size:12px!important;line-height:1.5;margin:8px 0 22px!important;color:var(--dim)!important}
@@ -162,7 +163,7 @@ body{background:#050505;--dim:#b9bcb7;--faint:#979c96;--ink:#f4f6f1;--lime:#1800
 .checkrow .box{width:22px;height:22px;border-radius:7px;border:0;background:#121411;box-shadow:none}
 .auth-submit{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;min-height:52px;border:0;border-radius:999px;padding:14px 24px;background:var(--lime);color:#fff;font:600 14px Montserrat,system-ui,sans-serif;cursor:pointer;transition:background .2s}
 .auth-submit:hover{background:#3311cc}
-.auth-submit:focus-visible{outline:2px solid #8875e8;outline-offset:3px}
+.auth-submit:focus-visible{outline:none}
 .splitline{margin:28px 0 16px;font-size:12px;font-weight:500;letter-spacing:0;text-transform:none;color:var(--dim)}
 .splitline::before,.splitline::after{background:#1d201c}
 .oauth{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
@@ -214,6 +215,22 @@ si.append('<div class="auth-alt">New to Fantrade? <a href="signup.html">Create a
 si.append('</main>')
 
 SIGNIN_JS = AUTH_JS + r"""
+var AFTER_SIGNIN = ['account','activity','asset','buy','club-builder','clubs',
+  'dashboard','divisions','exchange','fanplay','ftr','liveboard','notifications',
+  'onboarding','portfolio','receive','send','settings','settings-alerts',
+  'settings-club','settings-data','settings-play','settings-profile',
+  'settings-security','settings-wallet','swap','trade','wallet','withdraw'];
+function nextPage(){
+  try{
+    var raw = (new URLSearchParams(window.location.search)).get('next') || '';
+    raw = raw.split('/').pop().split('?')[0].replace(/\.html$/i, '').toLowerCase();
+    return AFTER_SIGNIN.indexOf(raw) === -1 ? null : raw + '.html';
+  }catch(e){ return null; }
+}
+window.nextPage = nextPage;
+if(nextPage() && window.FTDB){
+  FTDB.ready().then(function(){ if(FTDB.signedIn()) window.location.replace(nextPage()); });
+}
 var sf = document.getElementById('signinForm');
 if(sf) sf.addEventListener('submit', function(e){
   e.preventDefault();
@@ -225,16 +242,16 @@ if(sf) sf.addEventListener('submit', function(e){
   var name = FT.getState().auth.email === em.trim() ? null : em.trim().split('@')[0]
       .split(/[._-]+/).map(function(w){ return w.charAt(0).toUpperCase() + w.slice(1); }).join(' ');
   var btn = sf.querySelector('.auth-submit'), label = btn ? btn.textContent : '';
-  function busy(on){ if(!btn) return; btn.disabled = on; btn.textContent = on ? 'Signing in…' : label; }
+  function busy(on){ if(!btn) return; btn.disabled = on; btn.textContent = on ? 'Signing in\u2026' : label; }
   function go(href){ setTimeout(function(){ window.location.href = href; }, 700); }
 
-  /* No account server within reach — the prototype still runs from this
+  /* No account server within reach \u2014 the prototype still runs from this
      browser, so the desk opens rather than the door closing. */
   function localOnly(reason){
     console.warn('[Fantrade] Signing in from this browser only:', reason);
     FT.signIn(em.trim(), name);
     showToast('Signed in on this device. Your account could not be reached, so this session is local.', 'info');
-    go('dashboard.html');
+    go(nextPage() || 'dashboard.html');
   }
 
   busy(true);
@@ -244,7 +261,7 @@ if(sf) sf.addEventListener('submit', function(e){
     return FT.syncCloud();
   }).then(function(){
     showToast('Welcome back. Loading your desk…', 'success');
-    go(FT.getState().auth.onboarded ? 'dashboard.html' : 'onboarding.html');
+    go(FT.getState().auth.onboarded ? (nextPage() || 'dashboard.html') : 'onboarding.html');
   }).catch(function(error){
     var msg = (error && error.message) || 'Sign in failed.';
     if(/reach the server|Failed to fetch|NetworkError/i.test(msg)){ localOnly(msg); return; }
@@ -393,8 +410,8 @@ body{background:#050505;--dim:#b9bcb7;--faint:#979c96;--ink:#f4f6f1;--lime:#1800
 .pick .px{font-size:13px;font-weight:500;margin-top:8px}.pick .px small{font-size:10px;color:var(--dim)}
 .field{border:0;box-shadow:none;background:#121411;border-radius:14px;min-height:56px;padding:12px 16px}
 .field label{text-transform:none;letter-spacing:0;font-size:13px;color:var(--dim)}
-.field input{font-size:16px;min-height:32px;width:45%}
-.field:focus-within,.tf .inp:focus-within{outline:2px solid #8875e8;outline-offset:2px}
+.field input{font-size:16px;min-height:32px;width:45%;border:0!important;outline:none!important;background:transparent!important;color:var(--ink)!important;box-shadow:none!important;-webkit-appearance:none;text-align:right}
+.field:focus-within,.tf .inp:focus-within{outline:none!important;border:0!important;box-shadow:none!important}
 .quick{gap:8px;margin:12px 0 24px}
 .quick button{border:0;background:#121411;min-height:44px;font-size:12px}
 .line{border:0;padding:5px 0;font-size:13px}.line b{color:var(--ink);font-weight:500}
@@ -407,7 +424,7 @@ body{background:#050505;--dim:#b9bcb7;--faint:#979c96;--ink:#f4f6f1;--lime:#1800
 .tf{margin-bottom:24px}.tf label,.k-label{font-size:13px;text-transform:none;letter-spacing:0;color:var(--dim);font-weight:500}
 .tf .inp{border:0;background:#121411;box-shadow:none;border-radius:14px;padding:12px 16px;min-height:54px}
 .tf input,.tf select{font-size:16px;min-height:28px}.tf input::placeholder{color:#858c82}
-.tf-row{gap:16px}.tf .err{font-size:12px}.tf.bad .inp{outline:2px solid #e57575}
+.tf-row{gap:16px}.tf .err{font-size:12px}.tf.bad .inp{outline:none!important;border:0!important;box-shadow:none!important}.tf.ok .inp{outline:none!important;border:0!important;box-shadow:none!important}
 .forms{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:12px 0 28px}
 .forms button{border:0;border-radius:12px;min-height:48px;background:#121411;color:var(--dim);font:500 14px Montserrat,system-ui,sans-serif;cursor:pointer}
 .forms button[aria-pressed="true"]{background:var(--lime);color:#fff}
@@ -648,7 +665,7 @@ DASH_CSS = """
 /* Search bar */
 .kc-home-searchbar-wrap{display:flex;align-items:center;gap:10px;margin-bottom:16px}
 .kc-home-search-box{flex:1;display:flex;align-items:center;gap:10px;height:44px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);border-radius:999px;padding:0 16px;transition:border-color .2s,background .2s}
-.kc-home-search-box:focus-within{border-color:var(--lime);background:rgba(255,255,255,.08)}
+.kc-home-search-box:focus-within{border-color:transparent;background:rgba(255,255,255,.08);outline:none}
 .kc-home-search-box svg{color:#767c82;flex-shrink:0}
 .kc-home-search-box input{flex:1;background:transparent;border:0;outline:0;color:var(--ink);font-family:Montserrat,sans-serif;font-size:13px}
 .kc-home-search-box input::placeholder{color:#767c82}

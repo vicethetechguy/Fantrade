@@ -34,7 +34,7 @@ body.app.calm .trade-page .tfield:has(input[readonly]){background:transparent;ma
 body.app.calm .trade-page .tfield:has(input[readonly]) .bd{display:flex;gap:20px;align-items:center}
 body.app.calm .trade-page .tfield:has(input[readonly]) .lbl{margin:0;flex:none}
 body.app.calm .trade-page .tfield input[readonly]{font-size:12px!important;text-align:right}
-body.app.calm .trade-page .tfield:focus-within,body.app.calm .trade-page .otype:focus-within{outline:2px solid #a596ed;outline-offset:3px}
+body.app.calm .trade-page .tfield:focus-within,body.app.calm .trade-page .otype:focus-within{outline:none!important}
 body.app.calm .trade-page .slider{margin:28px 6px 36px}
 body.app.calm .trade-page .tline{padding:9px 0;font-size:12px;gap:20px;color:var(--dim)}
 body.app.calm .trade-page .tline b{font-size:12px;text-align:right;overflow-wrap:anywhere}

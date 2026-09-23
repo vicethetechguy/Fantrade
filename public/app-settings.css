@@ -38,13 +38,13 @@ body.app.calm .sec-title p{font-size:14px;color:var(--dim);font-weight:400;margi
 body.app.calm .kc-settings-wrap .tf{margin-bottom:22px}
 body.app.calm .kc-settings-wrap .tf label,body.app.calm .kc-settings-wrap .k-label{display:block;font-size:13px;font-weight:500;letter-spacing:0;text-transform:none;color:var(--dim);margin-bottom:8px}
 body.app.calm .kc-settings-wrap .tf .inp{padding:0 16px;min-height:54px}
-body.app.calm .kc-settings-wrap .tf .inp:focus-within{outline:2px solid #8875e8;outline-offset:2px}
+body.app.calm .kc-settings-wrap .tf .inp:focus-within{outline:none!important}
 body.app.calm .kc-settings-wrap .tf .inp>.ic{color:#858c82}
 body.app.calm .kc-settings-wrap .tf input,body.app.calm .kc-settings-wrap .tf select{min-height:52px;color:var(--ink)}
 body.app.calm .kc-settings-wrap .tf input::placeholder{color:#858c82}
 body.app.calm .kc-settings-wrap .tf .hint{font-size:12px;color:var(--dim)}
 body.app.calm .kc-settings-wrap .tf .err{font-size:12px}
-body.app.calm .kc-settings-wrap .tf.bad .inp{outline:2px solid #e57575}
+body.app.calm .kc-settings-wrap .tf.bad .inp{outline:none!important}
 body.app.calm .kc-settings-wrap .tf-row{gap:16px}
 
 /* Actions: indigo pill for the main one, dark pill for the rest. */
