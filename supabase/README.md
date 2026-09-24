@@ -23,6 +23,7 @@ order, each in its own query:
 | 6 | `06_listings.sql` | Admin-listed player drops and one-claim-per-manager claiming — listings are added from the Table Editor, claims grant shares through `ft_claim_listing()` |
 | 7 | `07_profile_photo.sql` | `profiles.avatar_url` and an `ft_snapshot()` that carries it, so a profile photo uploaded on one device shows on the next |
 | 8 | `08_claim_by_value.sql` | Cleared players that are not trading yet, and first-come claiming: the claimer pays for 5% or 10% of the shares at the reference value, and the player goes live for everyone else |
+| 9 | `09_admin.sql` | The admin at /admin: the admins list, an activity log, account suspension, and the `ft_admin_*` functions it calls, each refusing anyone not on the list. Re-run it after re-running `02_functions.sql` |
 
 They are safe to re-run: the tables use `if not exists`, the functions are
 `create or replace`, and the seed upserts on the asset (and listing) id. Re-run them in
