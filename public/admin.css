@@ -16,6 +16,7 @@
   color-scheme:dark;
 }
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 html,body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:14px;line-height:1.5;
   -webkit-font-smoothing:antialiased}
 body{min-height:100vh;min-height:100dvh}
@@ -300,3 +301,22 @@ table.t{width:100%;border-collapse:collapse;min-width:720px}
 .pill.file::before{display:none}
 .pill .ic{width:14px;height:14px}
 @media (min-width:901px) and (max-width:1180px){.kpis.four{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* ── Player profile form ─────────────────────────────────────────── */
+.drawer.wide{width:min(640px,100%)}
+.grid-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+img.av{object-fit:cover;object-position:50% 18%;background:var(--panel-3)}
+.pill.trading{background:rgba(255,255,255,.08);color:var(--ink)}
+.dot-warn{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--warn);vertical-align:middle;margin-left:4px}
+.photo-row{display:flex;align-items:center;gap:18px}
+.photo-drop{width:96px;height:96px;border-radius:50%;flex-shrink:0;cursor:pointer;display:grid;place-items:center;overflow:hidden;
+  background:var(--panel-2);box-shadow:inset 0 0 0 1.5px var(--line-2);transition:box-shadow .15s ease}
+.photo-drop:hover,.photo-drop.over{box-shadow:0 0 0 3px var(--lilac)}
+.photo-drop img{width:100%;height:100%;object-fit:cover;object-position:50% 18%;display:block}
+.photo-drop .av{width:96px;height:96px}
+.photo-side{min-width:0}
+.photo-btns{display:flex;gap:8px;flex-wrap:wrap}
+.check{display:flex;gap:10px;align-items:flex-start;padding:12px 14px;border-radius:12px;background:var(--brand-soft);font-size:12.5px;line-height:1.55;color:#d9d3ff;cursor:pointer}
+.check input{margin-top:3px;accent-color:var(--lilac);width:16px;height:16px;flex-shrink:0}
+.check[hidden]{display:none}
+@media (max-width:900px){ .grid-3{grid-template-columns:1fr 1fr} .photo-row{align-items:flex-start} }
