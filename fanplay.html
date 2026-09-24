@@ -2130,6 +2130,29 @@ var ASSETS=[
  {t:'FMARS',n:'Enzo Maresca',p:18.30,d:1.2,c:true,cap:'183.0M',h:19.2,low:17.8,q:'FTR',vol:'4.5M',tag:'COACH',pos:'MGR',club:'Chelsea',lg:'Premier League'},
  {t:'FWIEG',n:'Sarina Wiegman',p:26.80,d:1.5,c:true,cap:'268.0M',h:27.4,low:26.1,q:'FTR',vol:'4.0M',tag:'COACH',pos:'MGR',club:'England',lg:'International',w:1}
 ];
+/* Players Fantrade has cleared for listing that nobody has launched yet.
+   The first manager to claim one pays for the shares they take at the
+   reference price below, and the player goes live on the Exchange for
+   everyone else to buy. The prices are demo figures, not valuations. */
+var ELIGIBLE=[
+ {t:'FCR7',n:'Cristiano Ronaldo',aka:'CR7',p:34.60,pos:'FWD',club:'Al Nassr',lg:'Saudi Pro League'},
+ {t:'FLM10',n:'Lionel Messi',p:38.20,pos:'FWD',club:'Inter Miami',lg:'MLS'},
+ {t:'FKANE',n:'Harry Kane',p:62.40,pos:'FWD',club:'Bayern Munich',lg:'Bundesliga'},
+ {t:'FRICE',n:'Declan Rice',p:49.60,pos:'MID',club:'Arsenal',lg:'Premier League'},
+ {t:'FVVD',n:'Virgil van Dijk',aka:'VVD',p:29.80,pos:'DEF',club:'Liverpool',lg:'Premier League'},
+ {t:'FOSIM',n:'Victor Osimhen',p:41.30,pos:'FWD',club:'Galatasaray',lg:'Süper Lig'},
+ {t:'FSALH',n:'Mohamed Salah',aka:'Mo Salah',p:27.90,pos:'FWD',club:'Trabzonspor',lg:'Süper Lig'},
+ {t:'FLOOK',n:'Ademola Lookman',p:18.40,pos:'FWD',club:'Atlético Madrid',lg:'La Liga'},
+ {t:'FCHUK',n:'Samuel Chukwueze',p:1.85,pos:'FWD',club:'AC Milan',lg:'Serie A'},
+ {t:'FSHAW',n:'Khadija Shaw',aka:'Bunny Shaw',p:32.50,pos:'FWD',club:'Manchester City',lg:'WSL',w:1},
+ {t:'FPAJR',n:'Ewa Pajor',p:30.10,pos:'FWD',club:'Barcelona',lg:'Liga F',w:1},
+ {t:'FRODM',n:'Trinity Rodman',p:26.40,pos:'FWD',club:'Washington Spirit',lg:'NWSL',w:1},
+ {t:'FKELY',n:'Chloe Kelly',p:22.80,pos:'FWD',club:'Arsenal',lg:'WSL',w:1},
+ {t:'FAJBD',n:'Rasheedat Ajibade',p:1.60,pos:'FWD',club:'Paris Saint-Germain',lg:'Première Ligue',w:1},
+ {t:'FALOZ',n:'Michelle Alozie',p:1.20,pos:'DEF',club:'Chicago Stars',lg:'NWSL',w:1}
+];
+/* 1 $FTR = $0.10, the rate the Exchange shows. */
+var FTR_USD=0.1;
 /* Filled in at build time from assets/players/attribution.json: a picture
    is only used when its source and licence are on record. */
 var PLAYER_IMAGES={"alisson":"assets/players/alisson.webp","arta":"assets/players/arta.webp","arteta":"assets/players/arteta.webp","bellingham":"assets/players/bellingham.webp","bonmati":"assets/players/bonmati.webp","brn":"assets/players/brn.webp","bruno":"assets/players/bruno.webp","davies":"assets/players/davies.webp","earps":"assets/players/earps.webp","foden":"assets/players/foden.webp","gabriel":"assets/players/gabriel.webp","haaland":"assets/players/haaland.webp","hlnd":"assets/players/hlnd.webp","jackson":"assets/players/jackson.webp","james":"assets/players/james.webp","kerr":"assets/players/kerr.webp","maresca":"assets/players/maresca.webp","mbappe":"assets/players/mbappe.webp","mus":"assets/players/mus.webp","musiala":"assets/players/musiala.webp","odegaard":"assets/players/odegaard.webp","palmer":"assets/players/palmer.webp","pedri":"assets/players/pedri.webp","pep":"assets/players/pep.webp","putellas":"assets/players/putellas.webp","raya":"assets/players/raya.webp","rice":"assets/players/rice.webp","rodri":"assets/players/rodri.webp","russo":"assets/players/russo.webp","saka":"assets/players/saka.webp","sali":"assets/players/sali.webp","saliba":"assets/players/saliba.webp","vandijk":"assets/players/vandijk.webp","vinicius":"assets/players/vinicius.webp","white":"assets/players/white.webp","wiegman":"assets/players/wiegman.webp","williamson":"assets/players/williamson.webp","wirtz":"assets/players/wirtz.webp","yamal":"assets/players/yamal.webp"};
@@ -2153,7 +2176,7 @@ function playerPhoto(symbol,name,className){
   var sLower = raw.toLowerCase();
   var key = sLower;
   if(sLower.startsWith('f') && sLower.length > 3){
-    var map = { fsaka:'saka', fhlnd:'haaland', fkm7:'mbappe', fvjr:'vinicius', fbel:'bellingham', fplmr:'palmer', fyaml:'yamal', fmus:'musiala', fwrtz:'wirtz', frodr:'rodri', ffodn:'foden', fpedr:'pedri', fsali:'saliba', fbrn:'bruno', fjack:'jackson', farta:'arteta', fpep:'pep', fmars:'maresca', faitn:'bonmati', fputl:'putellas', fkerr:'kerr', fruss:'russo', fljms:'james', fwilm:'williamson', fearp:'earps', fwieg:'wiegman' };
+    var map = { fsaka:'saka', fhlnd:'haaland', fkm7:'mbappe', fvjr:'vinicius', fbel:'bellingham', fplmr:'palmer', fyaml:'yamal', fmus:'musiala', fwrtz:'wirtz', frodr:'rodri', ffodn:'foden', fpedr:'pedri', fsali:'saliba', fbrn:'bruno', fjack:'jackson', farta:'arteta', fpep:'pep', fmars:'maresca', faitn:'bonmati', fputl:'putellas', fkerr:'kerr', fruss:'russo', fljms:'james', fwilm:'williamson', fearp:'earps', fwieg:'wiegman', fvvd:'vandijk', frice:'rice', fkane:'kane', fsalh:'salah' };
     if(map[sLower]) key = map[sLower];
     else key = sLower.slice(1);
   }
@@ -2243,7 +2266,7 @@ var FT = (function(){
         time:"Sep 11 · 23:59", amt:"", tone:"" }
     ],
     wallet: {
-      balance: 128450,
+      balance: 1000000,
       locked: 0,
       seasonEarned: 19640,
       gbpRate: 12.40
@@ -2281,6 +2304,13 @@ var FT = (function(){
                               (st.clubs && st.clubs[0]) || {});
     }
     if(!st.club.id) st.club.id = 'c-1';
+    // Demo accounts start with 1,000,000 $FTR. A balance saved before that
+    // is lifted once; after that it is whatever the manager makes of it.
+    if(!st.demoGrant1M){
+      if(st.wallet && Number(st.wallet.balance) < 1000000) st.wallet.balance = 1000000;
+      st.demoGrant1M = true;
+    }
+    st.listedAssets = st.listedAssets || [];
     delete st.clubs;
     delete st.activeClub;
     st.fanplay = st.fanplay || {};
@@ -2313,6 +2343,10 @@ var FT = (function(){
     } catch(e){}
   }
   var state = load();
+  /* Players launched from this device join the market on every page. */
+  (state.listedAssets || []).forEach(function(a){
+    if(typeof ASSETS !== 'undefined' && !ASSETS.some(function(x){ return x.t === a.t; })) ASSETS.push(a);
+  });
 
 
   /* ── The database, kept in step with this state ──────────────────────
@@ -2585,6 +2619,69 @@ var FT = (function(){
       if(window.FTDB && FTDB.saveAvatar){
         FTDB.saveAvatar(state.user.avatar).catch(function(){});
       }
+    },
+    /* What a claim costs: the value of the shares taken, at the player's
+       reference price. Level 1 is 5% of the 10,000,000 (500,000 shares),
+       Level 2 is 10% (1,000,000). 2% of what is paid is burned. */
+    claimQuote: function(asset, level){
+      var shares = Number(level) === 2 ? 1000000 : 500000;
+      var price = Number(asset && asset.p) || 0;
+      var cost = Math.round(shares * price);
+      var bal = Number(state.wallet.balance) || 0;
+      return { level: shares === 1000000 ? 2 : 1, shares: shares, percent: shares / 100000, price: price,
+               cost: cost, burn: Math.round(cost * 0.02), usd: cost * FTR_USD,
+               balance: bal, short: Math.max(0, cost - bal) };
+    },
+    isLaunched: function(ticker){
+      return ASSETS.some(function(a){ return a.t === ticker; });
+    },
+    /* Claim a cleared player and put them on the market. `settled` means the
+       database has already taken the payment, so only the local copy moves. */
+    launchPlayer: function(src, level, vestingYears, opts){
+      var e = typeof src === 'object' && src ? src : ELIGIBLE.filter(function(x){ return x.t === src; })[0];
+      if(!e || !e.t) throw new Error('That player has not been cleared for listing.');
+      if(FT.isLaunched(e.t)) throw new Error(e.n + ' has already been claimed. You can buy their shares on the Exchange.');
+      var settled = !!(opts && opts.settled);
+      vestingYears = [1, 2, 3].indexOf(Number(vestingYears)) > -1 ? Number(vestingYears) : 1;
+      var q = FT.claimQuote(e, level);
+      if(!settled && q.short > 0){
+        throw new Error('You need ' + q.short.toLocaleString('en-US') + ' more $FTR to claim ' + q.percent + '% of ' + e.n + '.');
+      }
+      var coach = e.pos === 'MGR';
+      var asset = { t: e.t, n: e.n, p: e.p, d: 0, c: coach, cap: (e.p * 10).toFixed(1) + 'M', h: e.p, low: e.p,
+                    q: 'FTR', vol: '0', tag: coach ? 'COACH' : '10x', pos: e.pos, club: e.club, lg: e.lg,
+                    launched: Date.now(), launchedBy: state.user.handle || '' };
+      if(e.w) asset.w = 1;
+      if(!settled) state.wallet.balance -= q.cost;
+      state.listedAssets = state.listedAssets || [];
+      state.listedAssets.push(asset);
+      ASSETS.push(asset);
+      state.claimedListings = state.claimedListings || [];
+      state.claimedListings.push('lst-' + e.t);
+      var now = Date.now(), daily = Math.round(q.shares * 0.01), fp = Math.round(q.shares / 100);
+      state.listerClaims = state.listerClaims || [];
+      state.listerClaims.push({
+        id: 'lc-' + e.t, listingId: 'lst-' + e.t, assetId: e.t, ticker: e.t, name: e.n,
+        level: q.level, shares: q.shares, percent: q.percent, feePaid: q.cost, feeBurned: q.burn,
+        vestingYears: vestingYears, claimedAt: now, vestingUntil: now + vestingYears * 365 * 86400000,
+        dailyLimit: daily, tradedToday: 0, lastTradedDate: new Date().toISOString().slice(0, 10),
+        feeSharePercent: 30, feeShareEarned: 0, listerFp: fp
+      });
+      state.holdings[e.t] = { n: e.n, shares: q.shares, avg: e.p, p: e.p, c: coach,
+                              inClub: coach ? 'COACH' : 'SUB', isLister: true, listerDailyLimit: daily };
+      state.club.fp = (state.club.fp || 0) + fp;
+      state.transactions.unshift({ type: 'LAUNCH', asset: e.t, shares: q.shares, price: e.p, total: q.cost,
+        label: 'Claimed ' + q.percent + '% of ' + e.n + ' (' + vestingYears + 'y vesting)', time: 'Just now' });
+      if(Array.isArray(state.notifications)){
+        state.notifications.unshift({ id: 'n-launch-' + e.t, kind: 'order', icon: 'star', read: false, day: 'Today',
+          title: e.n + ' is live on the Exchange',
+          msg: 'You claimed ' + q.shares.toLocaleString('en-US') + ' ' + e.t + ' shares, vesting over ' + vestingYears + (vestingYears === 1 ? ' year' : ' years') + '. Other managers can now buy the rest.',
+          time: 'Just now', amt: '-' + q.cost.toLocaleString('en-US') + ' $FTR', tone: 'down' });
+      }
+      save(state); FT.syncUI();
+      window.dispatchEvent(new CustomEvent('fantrade:statechange', { detail: state }));
+      return { symbol: e.t, name: e.n, shares: q.shares, cost: q.cost, burned: q.burn,
+               dailyLimit: daily, vestingYears: vestingYears, listerFp: fp };
     },
     claimListing: function(opts){
       var row = typeof opts === 'object' && opts.id ? opts : (opts && opts.row ? opts.row : opts);

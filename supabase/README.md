@@ -15,13 +15,14 @@ order, each in its own query:
 
 | # | File | What it does |
 |---|------|--------------|
-| 1 | `01_schema.sql` | Tables, row-level security, and the trigger that gives every new account a profile, a wallet and 50,000 $FTR |
+| 1 | `01_schema.sql` | Tables, row-level security, and the trigger that gives every new account a profile, a wallet and 1,000,000 $FTR |
 | 2 | `02_functions.sql` | The money functions (buy, sell, swap, convert, transfer, withdraw, profile) and who is allowed to call them |
 | 3 | `03_seed_assets.sql` | The 18 players and coaches the exchange lists, each with its immutable F-ticker and its reference value |
 | 4 | `04_fanplay_clubs.sql` | Dream Clubs, FanPlay entries and the leaderboard |
 | 5 | `05_notifications.sql` | The notifications table behind the bell — every fill, wallet move, club and account notice, per manager under row-level security |
 | 6 | `06_listings.sql` | Admin-listed player drops and one-claim-per-manager claiming — listings are added from the Table Editor, claims grant shares through `ft_claim_listing()` |
 | 7 | `07_profile_photo.sql` | `profiles.avatar_url` and an `ft_snapshot()` that carries it, so a profile photo uploaded on one device shows on the next |
+| 8 | `08_claim_by_value.sql` | Cleared players that are not trading yet, and first-come claiming: the claimer pays for 5% or 10% of the shares at the reference value, and the player goes live for everyone else |
 
 They are safe to re-run: the tables use `if not exists`, the functions are
 `create or replace`, and the seed upserts on the asset (and listing) id. Re-run them in

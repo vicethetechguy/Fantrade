@@ -15,7 +15,12 @@
 -- The immutable-ticker guard is lifted for this run only: three codes are
 -- being settled into the short F-form below before any real trading exists,
 -- and the seed is the one place a listed ticker may be set.
-alter table public.assets disable trigger if exists assets_ticker_fixed;
+do $$ begin
+  if exists (select 1 from pg_trigger where tgname = 'assets_ticker_fixed'
+               and tgrelid = 'public.assets'::regclass) then
+    execute 'alter table public.assets disable trigger assets_ticker_fixed';
+  end if;
+end $$;
 insert into public.assets (id, ticker, name, kind, club, league, position, price, reference_value, reference_at) values
   ('$Saka', 'FSAKA', 'Bukayo Saka', 'PLAYER', 'Arsenal', 'Premier League', 'FWD', 48.20, 48.20, now()),
   ('$Haaland', 'FHLND', 'Erling Haaland', 'PLAYER', 'Manchester City', 'Premier League', 'FWD', 71.40, 71.40, now()),
@@ -53,7 +58,12 @@ on conflict (id) do update set
   -- truth about how much trading has actually happened.
   prev_close = null, day_change = 0, day_high = null, day_low = null,
   updated_at = now();
-alter table public.assets enable trigger if exists assets_ticker_fixed;
+do $$ begin
+  if exists (select 1 from pg_trigger where tgname = 'assets_ticker_fixed'
+               and tgrelid = 'public.assets'::regclass) then
+    execute 'alter table public.assets enable trigger assets_ticker_fixed';
+  end if;
+end $$;
 
 -- Every row above now carries its ticker, so the column can hold the line for
 -- whatever is added next. On an install that predates the F-ticker this is the

@@ -699,21 +699,41 @@ DASH_CSS = """
   display:grid;gap:18px;min-height:388px;align-content:start}
 .home-claim-head{display:grid;gap:10px}
 .home-claim-top{display:flex;align-items:center;gap:10px}
-/* The mark sits straight on the blue with nothing behind it, in white. */
-.home-claim-mark{width:34px;height:34px;object-fit:contain;flex-shrink:0;filter:brightness(0) invert(1)}
+/* The mark sits straight on the blue with nothing behind it, in black:
+   brightness(0) keeps the logo's shape and takes it to solid black. */
+.home-claim-mark{width:34px;height:34px;object-fit:contain;flex-shrink:0;filter:brightness(0)}
 .home-claim-eyebrow{font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
   color:rgba(255,255,255,.72)}
 .home-claim-card h2{font-size:25px!important;margin:0 0 8px;color:#fff;letter-spacing:-.022em}
 .home-claim-card p{margin:0;color:rgba(255,255,255,.76);font-size:13.5px;line-height:1.65}
-.home-claim-list{display:grid;gap:10px;min-height:152px}
+.home-claim-search{display:flex;align-items:center;gap:10px;margin:0;padding:6px 6px 6px 16px;
+  border-radius:999px;background:rgba(0,0,0,.26);transition:box-shadow .15s ease}
+.home-claim-search:focus-within{box-shadow:0 0 0 2px rgba(255,255,255,.6)}
+.home-claim-search .ic{width:18px;height:18px;flex-shrink:0;color:rgba(255,255,255,.72)}
+.home-claim-search input{flex:1;min-width:0;height:40px;border:0;outline:0;background:transparent;
+  color:#fff;font:inherit;font-size:14px;padding:0}
+.home-claim-search input::placeholder{color:rgba(255,255,255,.62)}
+.home-claim-search input::-webkit-search-cancel-button{-webkit-appearance:none;appearance:none;display:none}
+.home-claim-search button{flex-shrink:0;min-height:40px;padding:0 18px;border:0;border-radius:999px;
+  background:#fff;color:var(--lime);font:inherit;font-size:13px;font-weight:700;cursor:pointer}
+/* Results only change when the manager searches, so the card never grows or
+   shrinks on its own while the page loads. */
+.home-claim-results{display:grid;gap:10px;align-content:start}
+.home-claim-hint p{margin:0 0 12px;font-size:12.5px;color:rgba(255,255,255,.72)}
+.home-claim-chips{display:flex;flex-wrap:wrap;gap:8px}
+.home-claim-chips button{border:0;border-radius:999px;padding:9px 14px;background:rgba(0,0,0,.26);
+  color:#fff;font:inherit;font-size:12.5px;font-weight:600;cursor:pointer;transition:background .15s ease}
+.home-claim-chips button:hover{background:rgba(0,0,0,.42)}
+.home-claim-empty{display:grid;gap:6px;padding:16px 18px;border-radius:16px;background:rgba(0,0,0,.26)}
+.home-claim-empty b{font-family:Space Grotesk,sans-serif;font-size:14.5px;letter-spacing:-.01em}
+.home-claim-empty span{font-size:12.5px;line-height:1.6;color:rgba(255,255,255,.72)}
 /* The rows sit in a well rather than behind a border, the way the stats block
    does on the scrolling cards. */
 .home-claim-row{display:grid;grid-template-columns:44px minmax(0,1fr) auto;align-items:center;gap:13px;
-  padding:12px 14px;border:0;border-radius:16px;background:rgba(0,0,0,.26);color:#fff;
-  text-align:left;width:100%;font:inherit;cursor:pointer;transition:background .2s ease,transform .2s ease}
+  padding:12px 14px;border:0;border-radius:16px;background:rgba(0,0,0,.26);color:#fff;text-decoration:none;
+  text-align:left;width:100%;box-sizing:border-box;font:inherit;cursor:pointer;transition:background .2s ease,transform .2s ease}
 .home-claim-who{min-width:0}
-.home-claim-row:hover:not([disabled]){background:rgba(0,0,0,.4);transform:translateY(-1px)}
-.home-claim-row[disabled]{cursor:default;opacity:.55}
+.home-claim-row:hover{background:rgba(0,0,0,.4);transform:translateY(-1px)}
 .home-claim-row .player-photo{width:44px;height:44px;border-radius:50%;object-fit:cover;
   object-position:50% 18%;background:rgba(0,0,0,.4);border:0}
 .home-claim-row b{display:block;font-family:Space Grotesk,sans-serif;font-weight:700;font-size:14.5px;
@@ -725,21 +745,26 @@ DASH_CSS = """
 .home-claim-row small i{font-style:normal;font-family:Space Grotesk,sans-serif;font-weight:700;
   font-size:10.5px;letter-spacing:.04em;color:#fff;background:rgba(255,255,255,.16);
   border-radius:6px;padding:2px 6px;flex-shrink:0}
+/* The money line: dollars first, because that is the figure people know. */
+.home-claim-val{display:block;margin-top:5px;font-size:11.5px;line-height:1.45;color:rgba(255,255,255,.74)}
+.home-claim-val strong{color:#fff;font-weight:700}
 /* White on blue: the pill has to out-contrast the card it sits on. */
-.home-claim-action{display:grid;justify-items:center;align-content:center;gap:1px;min-height:38px;
+.home-claim-action{display:grid;place-items:center;min-height:36px;min-width:64px;box-sizing:border-box;
   padding:7px 15px;border-radius:999px;background:#fff;color:var(--lime);font-size:12px;
-  font-weight:700;letter-spacing:.01em;white-space:nowrap;transition:transform .15s ease}
-.home-claim-action em{font-style:normal;font-size:9.5px;font-weight:600;letter-spacing:.02em;
-  color:rgba(24,0,173,.62)}
-.home-claim-action em:empty{display:none}
-.home-claim-row[disabled] .home-claim-action{background:rgba(255,255,255,.16);color:rgba(255,255,255,.62)}
+  font-weight:700;letter-spacing:.01em;white-space:nowrap}
+.home-claim-row.is-listed .home-claim-action{background:rgba(255,255,255,.16);color:#fff}
 @media(max-width:600px){
   .home-claim-card{padding:22px}
-  /* At this width the fee line cannot earn its place beside the name. */
-  .home-claim-action em{display:none}
-  .home-claim-action{min-height:34px;padding:8px 14px}
+  .home-claim-row{gap:11px;padding:11px 12px}
+  .home-claim-action{min-height:34px;min-width:0;padding:8px 13px}
+  .home-claim-search button{padding:0 14px}
 }
-.home-claim-status{min-height:18px;font-size:12px;color:rgba(255,255,255,.82);margin:0}
+/* Scrolling cards */
+.home-card-soon{display:inline-flex;align-items:center;margin:0 0 16px;padding:6px 12px;border-radius:999px;
+  background:rgba(255,106,31,.14);color:var(--amber);font-size:11px;font-weight:700;letter-spacing:.07em;
+  text-transform:uppercase}
+body.app.calm .home-card-stats dd{overflow-wrap:anywhere}
+body.app.calm .home-card .app-primary[aria-pressed="true"]{background:rgba(255,255,255,.1)}
 
 /* Claim Modal Dialog */
 .claim-modal-backdrop{position:fixed;inset:0;background:rgba(3,2,8,.82);backdrop-filter:blur(8px);
@@ -835,6 +860,15 @@ DASH_CSS = """
   color:#fff;font-size:13px}
 .claim-fee-row.total span:last-child{font-family:Space Grotesk,sans-serif;font-weight:700;font-size:19px;
   letter-spacing:-.02em}
+.claim-opt-fee i{display:block;font-style:normal;font-weight:500;font-size:10.5px;opacity:.72;margin-top:2px}
+.claim-fee-row b small,.claim-fee-row span small{font-size:11px;color:var(--faint);font-weight:500}
+.claim-fee-row.usd{justify-content:flex-end;margin-top:-5px;font-size:12px;color:var(--dim)}
+.claim-fee-row.bal{margin-top:2px}
+.claim-short{margin:14px 0 0;padding:12px 14px;border-radius:14px;background:rgba(255,106,31,.12);
+  color:#ffc7a6;font-size:12.5px;line-height:1.55}
+.claim-short[hidden]{display:none}
+.claim-short b{color:#fff}
+.claim-short a{color:#fff;font-weight:700;margin-left:4px}
 .claim-submit-btn{margin-top:18px;width:100%;min-height:50px;border-radius:999px;background:var(--lime);
   border:0;color:#fff;font-family:Space Grotesk,sans-serif;font-weight:700;font-size:14.5px;
   letter-spacing:-.01em;cursor:pointer;display:grid;place-items:center;
@@ -920,6 +954,18 @@ DASH_CSS = """
 .kc-ref-icon-box{width:52px;height:52px;flex-shrink:0;border-radius:14px;overflow:hidden;background:rgba(255,255,255,.05);display:grid;place-items:center}
 """
 
+# Launch & Claim: the search and its starting suggestions are written into the
+# page, so the card is its full size from first paint and never reflows.
+CLAIM_SUGGEST = ['Lionel Messi', 'Khadija Shaw', 'Victor Osimhen', 'Rasheedat Ajibade', 'Bukayo Saka']
+CLAIM_SEARCH_HTML = (
+    '<form class="home-claim-search" id="homeClaimForm" role="search" autocomplete="off">' + ic('search', 'ic')
+    + '<input type="search" id="homeClaimInput" placeholder="Search any footballer" '
+      'aria-label="Search footballers" autocomplete="off"><button type="submit">Search</button></form>'
+    + '<div class="home-claim-results" id="homeClaimResults" aria-live="polite">'
+    + '<div class="home-claim-hint"><p>Try one of these, or any name you like.</p><div class="home-claim-chips">'
+    + ''.join('<button type="button" data-q="%s">%s</button>' % (n, n) for n in CLAIM_SUGGEST)
+    + '</div></div></div>')
+
 da = ['<main><div class="kc-home-wrap home-layout">', tab_intro('Home'),
       '<section class="kc-home-bal-card" aria-label="Portfolio balance"><div class="kc-bal-header">Your portfolio'
       '<button type="button" class="kc-eye-btn" id="balEyeBtn" aria-label="Toggle balance visibility">'+'<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="fill:none"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>'+'</button></div>'
@@ -930,9 +976,9 @@ da = ['<main><div class="kc-home-wrap home-layout">', tab_intro('Home'),
       '<img class="home-claim-mark" src="assets/fantrade-logo.png" alt="" width="34" height="34">'
       '<span class="home-claim-eyebrow">Open to claim</span></div>'
         '<div><h2 id="homeClaimTitle">Launch &amp; Claim Activity Shares</h2>'
-        '<p>Fantrade clears who is eligible. You claim one, pay the listing fee, '
-        'and launch their Activity Shares for the exchange and FanPlay.</p></div></div>',
-      '<div class="home-claim-list" id="homeClaimList" aria-live="polite"></div><p class="home-claim-status" id="homeClaimStatus" role="status"></p></div>'
+        '<p>Search any footballer. If they already trade, see what a share costs. If nobody has claimed '
+        'them yet, take 5% or 10% of their shares and launch them on the Exchange.</p></div></div>',
+      CLAIM_SEARCH_HTML + '</div>'
       '<div class="claim-modal-backdrop" id="claimModalBackdrop" role="dialog" aria-modal="true" aria-labelledby="claimModalTitle">'
       '<div class="claim-modal-dialog"><button type="button" class="claim-modal-close" id="claimModalClose" aria-label="Close">&times;</button>'
       '<div class="claim-modal-head"><div id="claimModalPhoto"></div><div><h3 class="claim-modal-title" id="claimModalTitle">Launch Player Shares</h3>'
@@ -943,12 +989,12 @@ da = ['<main><div class="kc-home-wrap home-layout">', tab_intro('Home'),
       '<span class="claim-opt-lvl"><b>Level 1</b></span>'
       '<span class="claim-opt-pct">5%</span>'
       '<small>500,000 shares</small>'
-      '<span class="claim-opt-fee">50,000 $FTR</span></button>'
+      '<span class="claim-opt-fee" id="claimOpt1Fee">&mdash;</span></button>'
       '<button type="button" class="claim-opt-btn" data-level="2">'
       '<span class="claim-opt-lvl"><b>Level 2</b></span>'
       '<span class="claim-opt-pct">10%</span>'
       '<small>1,000,000 shares</small>'
-      '<span class="claim-opt-fee">100,000 $FTR</span></button>'
+      '<span class="claim-opt-fee" id="claimOpt2Fee">&mdash;</span></button>'
       '</div>'
       '<div class="claim-split"><div class="claim-split-bar" aria-hidden="true">'
       '<i class="cs-ft" style="flex-basis:10%"></i><i class="cs-you" id="claimSplitYou" style="flex-basis:5%"></i>'
@@ -967,52 +1013,51 @@ da = ['<main><div class="kc-home-wrap home-layout">', tab_intro('Home'),
       '<dl class="claim-terms">'
       '<div class="claim-term"><dt>Fee share</dt><dd>30%<small>of trading fees</small></dd></div>'
       '<div class="claim-term"><dt>Daily limit</dt><dd><span id="claimDailyLimitTxt">5,000</span><small>shares a day</small></dd></div>'
-      '<div class="claim-term"><dt>Lister FP</dt><dd><span id="claimFpTxt">+2,500</span><small>pre-airdrop</small></dd></div>'
+      '<div class="claim-term"><dt>Lister FP</dt><dd><span id="claimFpTxt">+5,000</span><small>pre-airdrop</small></dd></div>'
       '</dl></div>'
       '<div class="claim-section-lbl">3 &middot; What you pay</div>'
       '<div class="claim-fee-breakdown">'
-      '<div class="claim-fee-row"><span>Listing fee</span><b id="claimFeeTxt">50,000 $FTR</b></div>'
-      '<div class="claim-fee-row burn"><span>Permanently burned (2%)</span><span id="claimBurnTxt">1,000 $FTR</span></div>'
-      '<div class="claim-fee-row total"><span>Total payable</span><span id="claimTotalTxt">50,000 $FTR</span></div>'
+      '<div class="claim-fee-row"><span>Reference price</span><b id="claimPriceTxt">&mdash;</b></div>'
+      '<div class="claim-fee-row"><span>Shares you take</span><b id="claimSharesTxt">500,000</b></div>'
+      '<div class="claim-fee-row burn"><span>Of which burned (2%)</span><span id="claimBurnTxt">&mdash;</span></div>'
+      '<div class="claim-fee-row total"><span>You pay</span><span id="claimTotalTxt">&mdash;</span></div>'
+      '<div class="claim-fee-row usd"><span id="claimUsdTxt"></span></div>'
+      '<div class="claim-fee-row bal"><span>Your balance</span><b id="claimBalTxt">&mdash;</b></div>'
       '</div>'
-      '<button type="button" class="claim-submit-btn" id="claimSubmitBtn">Pay 50,000 $FTR &amp; launch</button>'
+      '<p class="claim-short" id="claimShort" hidden>You need <b id="claimShortAmt"></b> more to claim at this level.'
+      '<a href="buy.html">Add funds</a></p>'
+      '<button type="button" class="claim-submit-btn" id="claimSubmitBtn">Pay &amp; launch</button>'
       '</div></div></section>']
 HOME_CARDS = [
-    # (icon, eyebrow, title, copy, stats [(label, value html)], cta label, href)
-    ("ball", "FanPlay", "Put your football IQ into play.",
-     "Choose a player you own, pick a match and make your predictions. FanPlay guides you through each step.",
-     [("Active entries", '<span data-home="entries">0</span>'), ("Matchday", "MD 07")],
-     "Explore FanPlay", "fanplay.html"),
-    ("formation", "Dream Club", "Build a squad worth backing.",
-     "Pick a shape, field eleven players you own and send the whole club into FanPlay for a boost.",
-     [("Your club", '<span data-bind="club">Zero FC</span>'), ("Formation", '<span data-bind="formation">4-3-3</span>')],
-     "Manage your club", "clubs.html"),
-    ("pulse", "Live board", "Follow every fixture live.",
+    # (badge html, title, copy, stats [(label, value html)], cta label, href or "action:<name>", icon)
+    ("", "Follow every fixture live.",
      "Scores, your players' involvement and FP as it lands, across every league you play in.",
      [("Leagues", "4"), ("Fixtures today", "9")],
-     "Open live board", "liveboard.html"),
-    ("trophy", "Leaderboard", "Climb the table this season.",
-     "Every Dream Club is ranked on the same data. See who is setting the pace and where you stand.",
-     [("Your rank", '<span data-bind="rank">#124</span>'), ("Season FP", '<span data-bind="fp">8,420</span>')],
-     "See the leaderboard", "leaderboard.html"),
-    ("swap", "Swap", "Move between players in one step.",
-     "Trade shares in one player straight into another without selling to your wallet first.",
-     [("Swap fee", "0.4%"), ("Settles", "Instantly")],
-     "Swap players", "swap.html"),
-    ("coin", "Wallet", "Top up and keep playing.",
-     "Add $FTR to buy your next player or enter another round. Your balance is ready the moment it lands.",
-     [("Available", '<span data-bind="balance">128,450</span> $FTR'), ("Conversion", "£1 = 12.40 $FTR")],
-     "Add funds", "buy.html"),
+     "Open live board", "liveboard.html", "arrow"),
+    ("", "Bring your mates. Share their fees.",
+     "Send friends your invite link. When they trade and play, you earn 35% of the trading fees they pay, for as long as they stay.",
+     [("Your invite code", '<span data-home="reflink">&mdash;</span>'), ("Your share", "35% of fees")],
+     "Copy invite link", "action:copy-ref", "copy"),
+    ('<span class="home-card-soon">Coming soon</span>', "Fantrade Fan Day, London.",
+     "Our first day in real life: matchday on a big screen, the season's top Dream Club managers on stage, "
+     "and a room full of people who trade the same players you do.",
+     [("Where", "London"), ("When", "Spring 2027")],
+     "Notify me", "action:irl-notify", "bell"),
 ]
 
 def home_card(i, card):
-    icon, eyebrow, title, copy, stats, cta, href = card
+    badge, title, copy, stats, cta, target, icon = card
     stat_html = ''.join('<div><dt>%s</dt><dd>%s</dd></div>' % (k, v) for k, v in stats)
-    return ('<article class="home-card" id="homeCard%d" aria-roledescription="slide" aria-label="%d of %d: %s">'
-            '<div class="home-card-top"><span class="home-card-icon">%s</span><span class="home-card-eyebrow">%s</span></div>'
-            '<h2>%s</h2><p>%s</p><dl class="home-card-stats">%s</dl>'
-            '<a class="app-primary" href="%s">%s %s</a></article>'
-            % (i, i + 1, len(HOME_CARDS), eyebrow, ic(icon, 'ic'), eyebrow, title, copy, stat_html, href, cta, ic('arrow', 'ic')))
+    if target.startswith('action:'):
+        act = target[len('action:'):]
+        pressed = ' aria-pressed="false"' if act == 'irl-notify' else ''
+        cta_html = ('<button type="button" class="app-primary" data-home-action="%s"%s><span>%s</span> %s</button>'
+                    % (act, pressed, cta, ic(icon, 'ic')))
+    else:
+        cta_html = '<a class="app-primary" href="%s">%s %s</a>' % (target, cta, ic(icon, 'ic'))
+    return ('<article class="home-card" id="homeCard%d" aria-roledescription="slide" aria-label="%d of %d: %s">%s'
+            '<h2>%s</h2><p>%s</p><dl class="home-card-stats">%s</dl>%s</article>'
+            % (i, i + 1, len(HOME_CARDS), title.rstrip('.'), badge, title, copy, stat_html, cta_html))
 
 da.append('<section class="home-next" aria-roledescription="carousel" aria-label="Things to do">'
           '<div class="home-cards" id="homeCards" tabindex="0">' + ''.join(home_card(i, c) for i, c in enumerate(HOME_CARDS)) + '</div>'
@@ -1021,8 +1066,6 @@ da.append('<section class="home-next" aria-roledescription="carousel" aria-label
           + '</div><div class="home-arrows"><button type="button" id="homePrev" aria-label="Previous card">' + ic('arrow', 'ic') + '</button>'
           '<button type="button" id="homeNext" aria-label="Next card">' + ic('arrow', 'ic') + '</button></div></div></section>'
           '<section class="home-market"><div class="app-section-head"><h2>Players to watch</h2><a href="exchange.html">View exchange</a></div>'
-          '<div class="kc-home-searchbar-wrap"><div class="kc-home-search-box">'+ic('search','ic')+
-          '<input type="search" id="homeSearchInput" placeholder="Search players or clubs" aria-label="Search player shares" autocomplete="off"></div></div>'
           '<div class="kc-cat-tabs" id="homeTabs"><button class="kc-cat-tab on" type="button" data-f="hot">Trending</button>'
           '<button class="kc-cat-tab" type="button" data-f="gainers">Top gainers</button>'
           '<button class="kc-cat-tab" type="button" data-f="forwards">Forwards</button>'
@@ -1052,196 +1095,214 @@ DASH_JS = r"""
   entries(); window.addEventListener('fantrade:statechange', entries); sync();
 })();
 
+/* Launch & Claim, search first. Nothing here loads or redraws on its own:
+   the suggestions are in the page from the start and results change only
+   when the manager searches, so the card never jumps while the page loads. */
 (function(){
-  var listEl = document.getElementById('homeClaimList'), statusEl = document.getElementById('homeClaimStatus');
+  var form = document.getElementById('homeClaimForm'), input = document.getElementById('homeClaimInput');
+  var box = document.getElementById('homeClaimResults');
   var modal = document.getElementById('claimModalBackdrop'), closeBtn = document.getElementById('claimModalClose');
   var submitBtn = document.getElementById('claimSubmitBtn');
-  var activeRow = null, selectedLevel = 1, selectedYears = 1;
-  if(!listEl) return;
+  if(!form || !input || !box) return;
+  var hint = box.innerHTML, active = null, level = 1, years = 1, cloudRows = null, askedCloud = false;
 
-  function esc(value){ var n=document.createElement('span'); n.textContent=value == null ? '' : String(value); return n.innerHTML; }
-  function assetFor(row){
-    var sym = ftSym(row.asset_id || row.ticker || '');
-    return ASSETS.filter(function(a){ return a.t === sym; })[0] || { t:sym, n:row.name || sym, p:Number(row.price)||0, c:row.kind === 'COACH' };
+  function esc(v){ var n = document.createElement('span'); n.textContent = v == null ? '' : String(v); return n.innerHTML; }
+  function fold(s){ return String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase(); }
+  function num(n){ return Math.round(Number(n) || 0).toLocaleString('en-US'); }
+  function compact(n){ n = Number(n) || 0; return n >= 1e6 ? (Math.round(n / 1e4) / 100).toLocaleString('en-US') + 'M' : num(n); }
+  function usd(ftr){
+    var d = (Number(ftr) || 0) * FTR_USD;
+    if(d >= 1e6) return '$' + compact(d);
+    if(d >= 100) return '$' + num(d);
+    return '$' + d.toFixed(d < 1 ? 3 : 2);
   }
-  function fallbackListings(){
-    var claimed = FT.getState().claimedListings || [];
-    return [
-      { id:'lst-saka-drop', asset_id:'FSAKA', ticker:'FSAKA', name:'Bukayo Saka', title:'Arsenal Star Drop', shares:500000 },
-      { id:'lst-bonmati-drop', asset_id:'FAITN', ticker:'FAITN', name:'Aitana Bonmatí', title:'Ballon d\'Or Drop', shares:500000 },
-      { id:'lst-haaland-drop', asset_id:'FHLND', ticker:'FHLND', name:'Erling Haaland', title:'Goal Machine Drop', shares:500000 },
-      { id:'lst-russo-drop', asset_id:'FRUSS', ticker:'FRUSS', name:'Alessia Russo', title:'Lioness Drop', shares:500000 },
-      { id:'lst-mbappe-drop', asset_id:'FKM7', ticker:'FKM7', name:'Kylian Mbappé', title:'Galáctico Drop', shares:500000 },
-      { id:'lst-kerr-drop', asset_id:'FKERR', ticker:'FKERR', name:'Sam Kerr', title:'NWSL Striker Drop', shares:500000 },
-      { id:'lst-yamal-drop', asset_id:'FYAML', ticker:'FYAML', name:'Lamine Yamal', title:'Golden Boy Drop', shares:500000 },
-      { id:'lst-putellas-drop', asset_id:'FPUTL', ticker:'FPUTL', name:'Alexia Putellas', title:'London City Drop', shares:500000 }
-    ].map(function(row){ row.claimed = claimed.indexOf(row.id) > -1; return row; });
-  }
-  function setStatus(text){ if(statusEl) statusEl.textContent = text || ''; }
 
-  function updateModalCalculations(){
-    var shares = (selectedLevel === 2) ? 1000000 : 500000;
-    var fee = (selectedLevel === 2) ? 100000 : 50000;
-    var burn = Math.round(fee * 0.02);
-    var daily = Math.round(shares * 0.01);
-    var fp = (selectedLevel === 2) ? '+5,000' : '+2,500';
-    // The 10,000,000 always divides the same way: Fantrade keeps 10%, the
-    // claim takes 5% or 10%, and what is left is what the market can buy.
-    var TOTAL = 10000000, TREASURY = 1000000;
-    var market = TOTAL - TREASURY - shares;
-    function num(n){ return Number(n).toLocaleString('en-US'); }
-    function set(id, text){ var el = document.getElementById(id); if(el) el.textContent = text; }
-    function bar(id, count){
-      var el = document.getElementById(id);
-      if(el) el.style.flexBasis = (count / TOTAL * 100) + '%';
+  /* Cleared players come from the database when signed in, otherwise from
+     the catalogue built into the page. Anyone already on the market is
+     shown as trading, never as claimable. */
+  function eligible(){ return (cloudRows && cloudRows.length) ? cloudRows : ELIGIBLE; }
+  function askCloud(){
+    if(askedCloud || !(window.FTDB && FTDB.signedIn && FTDB.signedIn() && FTDB.listings)) return;
+    askedCloud = true;
+    FTDB.listings().then(function(rows){
+      if(!rows || !rows.length) return;
+      cloudRows = rows.filter(function(r){ return !r.claimed; }).map(function(r){
+        var t = ftSym(r.ticker || r.asset_id), local = ELIGIBLE.filter(function(e){ return e.t === t; })[0] || {};
+        return { t: t, n: r.name || local.n, p: Number(r.price) || local.p, pos: r.position || local.pos || (r.kind === 'COACH' ? 'MGR' : 'FWD'),
+                 club: r.club || local.club, lg: r.league || local.lg, w: local.w, aka: local.aka, listingId: r.id };
+      }).filter(function(e){ return e.p > 0; });
+      if(input.value.trim()) search(input.value);
+    }).catch(function(){});
+  }
+  function catalogue(){
+    var out = ASSETS.map(function(a){ return { a: a, listed: true }; });
+    eligible().forEach(function(e){ if(!FT.isLaunched(e.t)) out.push({ a: e, listed: false }); });
+    return out;
+  }
+  function score(r, f){
+    var name = fold(r.a.n);
+    if(name.indexOf(f) === 0) return 0;
+    if(name.split(/\s+/).some(function(w){ return w.indexOf(f) === 0; })) return 1;
+    return 2;
+  }
+  function row(r){
+    var a = r.a;
+    var meta = '<small><i>' + esc(a.t) + '</i>' + esc(a.club || '') + '</small>';
+    if(r.listed){
+      return '<a class="home-claim-row is-listed" href="asset.html?a=' + encodeURIComponent(a.t) + '">' + playerPhoto(a.t, a.n)
+        + '<span class="home-claim-who"><b>' + esc(a.n) + '</b>' + meta
+        + '<span class="home-claim-val"><strong>' + usd(a.p) + '</strong> a share &middot; ' + Number(a.p).toFixed(2) + ' $FTR</span></span>'
+        + '<span class="home-claim-action">Buy</span></a>';
     }
-
-    set('claimDailyLimitTxt', num(daily));
-    set('claimFeeTxt', num(fee) + ' $FTR');
-    set('claimBurnTxt', num(burn) + ' $FTR');
-    set('claimFpTxt', fp);
-    set('claimTotalTxt', num(fee) + ' $FTR');
-    set('claimSplitYouTxt', num(shares));
-    set('claimSplitMktTxt', num(market));
-    bar('claimSplitYou', shares);
-    bar('claimSplitMkt', market);
-
-    if(submitBtn){
-      submitBtn.textContent = 'Pay ' + num(fee) + ' $FTR & launch';
+    var q = FT.claimQuote(a, 1);
+    return '<button type="button" class="home-claim-row" data-claim="' + esc(a.t) + '">' + playerPhoto(a.t, a.n)
+      + '<span class="home-claim-who"><b>' + esc(a.n) + '</b>' + meta
+      + '<span class="home-claim-val">Open to claim. 5% costs <strong>' + usd(q.cost) + '</strong> &middot; ' + compact(q.cost) + ' $FTR</span></span>'
+      + '<span class="home-claim-action">Claim</span></button>';
+  }
+  function search(raw){
+    var f = fold(raw).trim();
+    if(!f){ box.innerHTML = hint; return; }
+    askCloud();
+    var words = f.split(/\s+/);
+    var hits = catalogue().filter(function(r){
+      var hay = fold([r.a.n, r.a.aka, r.a.t, r.a.club].join(' '));
+      return words.every(function(w){ return hay.indexOf(w) > -1; });
+    }).sort(function(x, y){ return score(x, f) - score(y, f); }).slice(0, 4);
+    if(!hits.length){
+      box.innerHTML = '<div class="home-claim-empty"><b>No cleared player matches &ldquo;' + esc(raw.trim()) + '&rdquo;.</b>'
+        + '<span>Fantrade adds footballers to the claim list as it approves them. Check the spelling, or try a surname.</span></div>';
+      return;
     }
+    box.innerHTML = hits.map(row).join('');
   }
 
-  // The dialog lives inside <main> in the markup, and <main> is its own
-  // stacking context, so a z-index of 9999 there still loses to the taskbar.
-  // Re-home it on <body> once and it covers the screen as intended.
+  input.addEventListener('input', function(){ search(input.value); });
+  form.addEventListener('submit', function(e){ e.preventDefault(); search(input.value); });
+  box.addEventListener('click', function(e){
+    var chip = e.target.closest('[data-q]');
+    if(chip){ input.value = chip.dataset.q; search(input.value); input.focus(); return; }
+    var claim = e.target.closest('[data-claim]');
+    if(claim){ var t = claim.dataset.claim; open(eligible().filter(function(x){ return x.t === t; })[0]); }
+  });
+
+  // <main> is its own stacking context, so the dialog lives on <body>.
   if(modal && modal.parentNode !== document.body) document.body.appendChild(modal);
-
-  function openClaimModal(row){
-    activeRow = row;
-    selectedLevel = 1;
-    selectedYears = 1;
-    var a = assetFor(row);
-    var titleEl = document.getElementById('claimModalTitle');
-    var subEl = document.getElementById('claimModalSub');
-    var photoEl = document.getElementById('claimModalPhoto');
-
-    // The name carries the header; the ticker and the supply are the detail
-    // underneath, so a long name never has to compete with them.
-    if(titleEl) titleEl.textContent = a.n || 'Activity Asset';
-    if(subEl) subEl.innerHTML = '<b>' + (a.t || '') + '</b> · 10,000,000 Activity Shares';
-    if(photoEl) photoEl.innerHTML = playerPhoto(a.t, a.n);
-
-    if(modal){
-      modal.querySelectorAll('.claim-opt-btn').forEach(function(b){
-        b.classList.toggle('on', Number(b.dataset.level) === 1);
-      });
-      modal.querySelectorAll('.claim-vest-btn').forEach(function(b){
-        b.classList.toggle('on', Number(b.dataset.years) === 1);
-      });
-      updateModalCalculations();
-      modal.classList.add('open');
+  function set(id, html){ var el = document.getElementById(id); if(el) el.innerHTML = html; }
+  function bar(id, count){ var el = document.getElementById(id); if(el) el.style.flexBasis = (count / 10000000 * 100) + '%'; }
+  function refresh(){
+    if(!active) return;
+    var q = FT.claimQuote(active, level), q1 = FT.claimQuote(active, 1), q2 = FT.claimQuote(active, 2);
+    var market = 10000000 - 1000000 - q.shares;
+    set('claimOpt1Fee', compact(q1.cost) + ' $FTR<i>&asymp; ' + usd(q1.cost) + '</i>');
+    set('claimOpt2Fee', compact(q2.cost) + ' $FTR<i>&asymp; ' + usd(q2.cost) + '</i>');
+    set('claimSplitYouTxt', num(q.shares)); set('claimSplitMktTxt', num(market));
+    bar('claimSplitYou', q.shares); bar('claimSplitMkt', market);
+    set('claimDailyLimitTxt', num(q.shares * 0.01));
+    set('claimFpTxt', '+' + num(q.shares / 100));
+    set('claimPriceTxt', Number(active.p).toFixed(2) + ' $FTR <small>(' + usd(active.p) + ')</small>');
+    set('claimSharesTxt', num(q.shares) + ' <small>(' + q.percent + '%)</small>');
+    set('claimBurnTxt', num(q.burn) + ' $FTR');
+    set('claimTotalTxt', num(q.cost) + ' $FTR');
+    set('claimUsdTxt', '&asymp; ' + usd(q.cost));
+    set('claimBalTxt', num(q.balance) + ' $FTR');
+    set('claimShortAmt', num(q.short) + ' $FTR');
+    var short = document.getElementById('claimShort'); if(short) short.hidden = q.short <= 0;
+    if(submitBtn){
+      submitBtn.disabled = q.short > 0;
+      submitBtn.textContent = q.short > 0 ? 'Not enough $FTR for this level' : 'Pay ' + compact(q.cost) + ' $FTR & launch ' + active.t;
     }
   }
-
-  function closeClaimModal(){
-    if(modal) modal.classList.remove('open');
-    activeRow = null;
+  function pick(sel, attr, value){
+    modal.querySelectorAll(sel).forEach(function(b){ b.classList.toggle('on', Number(b.dataset[attr]) === value); });
   }
-
-  if(closeBtn) closeBtn.addEventListener('click', closeClaimModal);
+  function open(a){
+    if(!a || !modal) return;
+    active = a; level = 1; years = 1;
+    set('claimModalTitle', esc(a.n));
+    set('claimModalSub', '<b>' + esc(a.t) + '</b> &middot; ' + esc(a.club || '') + ' &middot; 10,000,000 Activity Shares');
+    set('claimModalPhoto', playerPhoto(a.t, a.n));
+    pick('.claim-opt-btn', 'level', 1); pick('.claim-vest-btn', 'years', 1);
+    refresh();
+    modal.classList.add('open');
+    if(closeBtn) closeBtn.focus();
+  }
+  function close(){ if(modal) modal.classList.remove('open'); active = null; }
+  if(closeBtn) closeBtn.addEventListener('click', close);
   if(modal){
-    modal.addEventListener('click', function(e){
-      if(e.target === modal) closeClaimModal();
+    modal.addEventListener('click', function(e){ if(e.target === modal) close(); });
+    document.addEventListener('keydown', function(e){ if(e.key === 'Escape' && modal.classList.contains('open')) close(); });
+    modal.querySelectorAll('.claim-opt-btn').forEach(function(b){
+      b.addEventListener('click', function(){ level = Number(b.dataset.level) || 1; pick('.claim-opt-btn', 'level', level); refresh(); });
     });
-    modal.querySelectorAll('.claim-opt-btn').forEach(function(btn){
-      btn.addEventListener('click', function(){
-        modal.querySelectorAll('.claim-opt-btn').forEach(function(b){ b.classList.remove('on'); });
-        btn.classList.add('on');
-        selectedLevel = Number(btn.dataset.level) || 1;
-        updateModalCalculations();
-      });
-    });
-    modal.querySelectorAll('.claim-vest-btn').forEach(function(btn){
-      btn.addEventListener('click', function(){
-        modal.querySelectorAll('.claim-vest-btn').forEach(function(b){ b.classList.remove('on'); });
-        btn.classList.add('on');
-        selectedYears = Number(btn.dataset.years) || 1;
-        updateModalCalculations();
-      });
+    modal.querySelectorAll('.claim-vest-btn').forEach(function(b){
+      b.addEventListener('click', function(){ years = Number(b.dataset.years) || 1; pick('.claim-vest-btn', 'years', years); refresh(); });
     });
   }
+  window.addEventListener('fantrade:statechange', function(){ if(active) refresh(); });
 
-  if(submitBtn){
-    submitBtn.addEventListener('click', function(){
-      if(!activeRow) return;
-      var row = activeRow;
-      submitBtn.disabled = true;
-      submitBtn.textContent = 'Launching Activity Shares...';
-      setStatus('Processing claim and setting up vesting...');
-
-      var cloud = window.FTDB && FTDB.signedIn && FTDB.signedIn() && FTDB.claim;
-      (cloud ? FTDB.claim(row.id, selectedLevel, selectedYears).then(function(res){
-        return FT.syncCloud().then(function(){ return res; });
-      }).catch(function(err){
-        console.warn('[Fantrade] Cloud claim fallback to local state:', err.message);
-        return FT.claimListing(row, selectedLevel, selectedYears);
-      }) : Promise.resolve(FT.claimListing(row, selectedLevel, selectedYears)))
-        .then(function(res){
-          closeClaimModal();
-          loadClaims();
-          var sym = ftSym(row.asset_id || row.ticker);
-          var shares = (selectedLevel === 2) ? 1000000 : 500000;
-          setStatus('Successfully launched ' + sym + '! Claimed ' + Number(shares).toLocaleString('en-US') + ' shares with 1% daily trading limit & 30% trading fee participation.');
-          if(window.FT && FT.notify) FT.notify('Lister Allocation Active: ' + Number(shares).toLocaleString('en-US') + ' ' + sym + ' shares vested (' + selectedYears + 'y).');
+  if(submitBtn) submitBtn.addEventListener('click', function(){
+    if(!active || submitBtn.disabled) return;
+    var a = active, lv = level, yr = years;
+    submitBtn.disabled = true; submitBtn.textContent = 'Launching ' + a.t + '…';
+    var db = window.FTDB && FTDB.signedIn && FTDB.signedIn() && FTDB.claim;
+    var run = db
+      ? FTDB.claim(a.listingId || ('lst-' + a.t), lv, yr).then(function(){
+          var res = FT.launchPlayer(a, lv, yr, { settled: true });
+          return FT.syncCloud ? FT.syncCloud().then(function(){ return res; }, function(){ return res; }) : res;
+        }, function(err){
+          // A database without the claim function yet: carry on locally.
+          if(/function|schema cache|could not find/i.test(String(err && err.message))) return FT.launchPlayer(a, lv, yr);
+          throw err;
         })
-        .catch(function(error){
-          submitBtn.disabled = false;
-          updateModalCalculations();
-          setStatus(error.message || 'Claim could not be completed.');
-          alert(error.message || 'Claim failed');
-        });
+      : new Promise(function(ok){ ok(FT.launchPlayer(a, lv, yr)); });
+    run.then(function(res){
+      close();
+      input.value = a.n; search(a.n);
+      showToast(esc(a.n) + ' is live. You hold ' + num(res.shares) + ' ' + a.t + ' shares, vesting over ' + yr + (yr === 1 ? ' year.' : ' years.'));
+    }).catch(function(err){
+      refresh();
+      showToast(esc((err && err.message) || 'The claim did not go through.'), 'error');
     });
-  }
+  });
+})();
 
-  function render(rows){
-    if(!rows || !rows.length){
-      listEl.innerHTML = '<div class="home-claim-row" aria-disabled="true"><span></span>'
-        + '<span class="home-claim-who"><b>Nothing to claim yet</b>'
-        + '<small>Players cleared by Fantrade will appear here.</small></span>'
-        + '<span class="home-claim-action">Soon<em></em></span></div>';
-      setStatus(''); return;
-    }
-    listEl.innerHTML = rows.slice(0, 4).map(function(row){
-      var a = assetFor(row), claimed = !!row.claimed;
-      return '<button type="button" class="home-claim-row" data-listing="' + esc(row.id) + '"' + (claimed ? ' disabled' : '') + '>'
-        + playerPhoto(a.t, a.n)
-        + '<span class="home-claim-who"><b>' + esc(a.pn || a.n) + '</b>'
-        + '<small><i>' + esc(a.t) + '</i>' + esc(row.title ? ' · ' + row.title : '') + '</small></span>'
-        + '<span class="home-claim-action">' + (claimed ? 'Claimed' : 'Claim')
-        + '<em>' + (claimed ? '' : 'from 50,000 $FTR') + '</em></span></button>';
-    }).join('');
-
-    listEl.querySelectorAll('button[data-listing]').forEach(function(button){
-      button.addEventListener('click', function(){
-        var row = rows.filter(function(x){ return x.id === button.dataset.listing; })[0];
-        if(!row || row.claimed) return;
-        openClaimModal(row);
-      });
+/* The scrolling cards' own buttons: copy the invite link, and remember a
+   "notify me" for the Fan Day on this device. */
+(function(){
+  var handle = String((FT.getState().user || {}).handle || '').replace(/^@/, '') || 'manager';
+  var link = 'https://fantrade.app/ref/' + encodeURIComponent(handle);
+  document.querySelectorAll('[data-home="reflink"]').forEach(function(el){ el.textContent = handle; });
+  function copied(){ showToast('Invite link copied'); }
+  document.querySelectorAll('[data-home-action="copy-ref"]').forEach(function(b){
+    b.addEventListener('click', function(){
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(link).then(copied, fallback);
+      } else fallback();
+      function fallback(){
+        var t = document.createElement('textarea'); t.value = link; t.setAttribute('readonly', '');
+        t.style.position = 'fixed'; t.style.opacity = '0'; document.body.appendChild(t); t.select();
+        try { document.execCommand('copy'); copied(); } catch(e){ showToast('Your link: ' + link); }
+        t.remove();
+      }
     });
+  });
+  var KEY = 'ft_irl_notify';
+  function isOn(){ try { return localStorage.getItem(KEY) === '1'; } catch(e){ return false; } }
+  function paint(b){
+    var on = isOn();
+    b.setAttribute('aria-pressed', on ? 'true' : 'false');
+    var label = b.querySelector('span'); if(label) label.textContent = on ? "You're on the list" : 'Notify me';
   }
-
-  function loadClaims(){
-    setStatus('Checking active admin listings...');
-    if(window.FTDB && FTDB.listings && FTDB.signedIn && FTDB.signedIn()){
-      FTDB.listings().then(function(rows){ render(rows || fallbackListings()); setStatus(''); })
-        .catch(function(){ render(fallbackListings()); setStatus(''); });
-    } else {
-      render(fallbackListings());
-      setStatus('');
-    }
-  }
-  loadClaims();
-  window.addEventListener('fantrade:statechange', loadClaims);
+  document.querySelectorAll('[data-home-action="irl-notify"]').forEach(function(b){
+    paint(b);
+    b.addEventListener('click', function(){
+      var on = !isOn();
+      try { localStorage.setItem(KEY, on ? '1' : '0'); } catch(e){}
+      paint(b);
+      showToast(on ? "We'll tell you when Fan Day tickets open." : 'Fan Day reminder turned off.');
+    });
+  });
 })();
 
 (function(){
@@ -1994,7 +2055,7 @@ SECTIONS["wallet"] = T('<div class="bezel flat sec-card" data-reveal><div class=
             '<p>Where settled $FTR goes when you take it off the platform.</p></div></div>'
             '<div class="mini-grid" style="grid-template-columns:repeat(3,1fr)">'
             '<div class="mini"><div class="k">Available</div><div class="v lime"><span data-bind="balance">'
-            '128,450</span></div></div>'
+            '1,000,000</span></div></div>'
             '<div class="mini"><div class="k">Locked</div><div class="v"><span data-bind="locked">5,000</span></div></div>'
             '<div class="mini"><div class="k">Season payouts</div><div class="v"><span data-bind="earned">'
             '19,640</span></div></div></div>'

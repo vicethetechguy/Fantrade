@@ -324,10 +324,10 @@ begin
           coalesce(new.raw_user_meta_data->>'region', 'United Kingdom'),
           coalesce(new.raw_user_meta_data->>'home_league', 'Premier League'));
 
-  insert into public.wallets (user_id, balance) values (new.id, 50000);
+  insert into public.wallets (user_id, balance) values (new.id, 1000000);
 
   insert into public.transactions (user_id, type, label, total, balance_after)
-  values (new.id, 'GRANT', 'Welcome balance', 50000, 50000);
+  values (new.id, 'GRANT', 'Welcome balance', 1000000, 1000000);
 
   return new;
 end;

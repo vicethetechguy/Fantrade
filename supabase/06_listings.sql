@@ -191,10 +191,10 @@ $$;
 
 -- Seed listings with proper F-style tickers
 insert into public.listings (id, asset_id, title, shares_level1, shares_level2, fee_level1, fee_level2, is_active) values
-  ('lst-saka-drop',   'FSAKA', 'Arsenal Star Drop',    500000, 1000000, 50000, 100000, true),
-  ('lst-mbappe-drop', 'FKM7',  'Galáctico Drop',       500000, 1000000, 50000, 100000, true),
-  ('lst-yamal-drop',  'FYAML', 'Golden Boy Drop',      500000, 1000000, 50000, 100000, true),
-  ('lst-haaland-drop','FHLND', 'Goal Machine Drop',    500000, 1000000, 50000, 100000, true)
+  ('lst-saka-drop',   '$Saka', 'Arsenal Star Drop',    500000, 1000000, 50000, 100000, true),
+  ('lst-mbappe-drop', '$Mbappe', 'Galáctico Drop',       500000, 1000000, 50000, 100000, true),
+  ('lst-yamal-drop',  '$Yamal', 'Golden Boy Drop',      500000, 1000000, 50000, 100000, true),
+  ('lst-haaland-drop','$Haaland', 'Goal Machine Drop',    500000, 1000000, 50000, 100000, true)
 on conflict (id) do update
   set asset_id = excluded.asset_id,
       title = excluded.title,
