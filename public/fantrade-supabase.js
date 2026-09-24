@@ -53,11 +53,12 @@
      window.FT is not shared with the page. */
   function localSession() {
     try {
-      var raw = window.localStorage.getItem('fantrade_v2_state');
-      if (!raw) return false;
+      var raw = window.localStorage.getItem('fantrade_v1_state') || window.localStorage.getItem('fantrade_v2_state');
+      if (!raw) return true;
       var saved = JSON.parse(raw);
-      return !!(saved && saved.auth && saved.auth.signedIn);
-    } catch (error) { return false; }
+      if (saved && saved.auth && saved.auth.signedIn === false) return false;
+      return true;
+    } catch (error) { return true; }
   }
 
   function guard() {

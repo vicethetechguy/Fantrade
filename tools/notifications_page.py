@@ -13,7 +13,13 @@ HTML = '''<main><div class="utility-page inbox-page"><div class="inbox-sticky">
 JS = r'''
 var kind='all';
 function esc(value){var span=document.createElement('span');span.textContent=String(value==null?'':value);return span.innerHTML.replace(/"/g,'&quot;');}
-function unreadCount(){var notes=FT.getState().notifications||[],count=notes.filter(n=>!n.read).length;document.getElementById('ntTotal').textContent=count?count+' unread':'You’re all caught up';document.getElementById('ntRead').disabled=count===0;document.getElementById('ntClear').disabled=notes.length===0;}
+function unreadCount(){
+  var notes=FT.getState().notifications||[],count=notes.filter(n=>!n.read).length;
+  document.getElementById('ntTotal').textContent=notes.length ? (count?count+' unread':'You’re all caught up') : 'No notifications';
+  document.getElementById('ntRead').disabled=count===0;
+  document.getElementById('ntClear').disabled=notes.length===0;
+  if(typeof FT !== 'undefined' && FT.syncUI) FT.syncUI();
+}
 function renderFeed(){var list=FT.getState().notifications.filter(n=>kind==='all'||n.kind===kind),day=null,out=[];unreadCount();
   list.forEach(function(n){if(n.day!==day){day=n.day;out.push('<h2 class="inbox-day">'+esc(day)+'</h2>');}
     out.push('<button type="button" class="inbox-row '+(n.read?'':'unread')+'" data-id="'+esc(n.id)+'" aria-label="'+esc(n.title)+(n.read?'':', unread. Mark as read')+'">'
@@ -24,7 +30,7 @@ function renderFeed(){var list=FT.getState().notifications.filter(n=>kind==='all
   document.querySelectorAll('.inbox-row').forEach(function(row){row.onclick=function(){FT.readOne(row.dataset.id);row.classList.remove('unread');row.setAttribute('aria-label',row.querySelector('strong').textContent);unreadCount();};});
 }
 document.querySelectorAll('[data-k]').forEach(function(b){b.onclick=function(){kind=b.dataset.k;document.querySelectorAll('[data-k]').forEach(x=>x.setAttribute('aria-pressed',x===b));renderFeed();};});
-document.getElementById('ntRead').onclick=function(){FT.readAll();renderFeed();};
-document.getElementById('ntClear').onclick=function(){FT.clearNotifications('all');renderFeed();};
+document.getElementById('ntRead').onclick=function(){ FT.readAll(); renderFeed(); if(typeof FT!=='undefined'&&FT.syncUI)FT.syncUI(); };
+document.getElementById('ntClear').onclick=function(){ FT.clearNotifications('all'); renderFeed(); if(typeof FT!=='undefined'&&FT.syncUI)FT.syncUI(); };
 window.addEventListener('fantrade:statechange',renderFeed);renderFeed();
 '''

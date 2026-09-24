@@ -463,9 +463,17 @@ ob.append('</div></div><div class="step-pane on" data-pane="0">'
           '<p class="ob-p">Choose your first shares using your demo balance. You can explore more players after setup.</p>'
           '<div class="grant"><div class="k">Your demo balance</div><div class="v"><b id="obBalance">50,000</b> <span>$FTR</span></div></div>'
           '<div class="picks" id="obPicks" role="group" aria-label="Choose your first player">')
+STARTER_IMG_MAP = {
+    'FSAKA': 'saka', 'FBRN': 'bruno', 'FHLND': 'haaland',
+    'FSALI': 'saliba', 'FMUS': 'musiala', 'FARTA': 'arteta',
+    'FAITN': 'bonmati', 'FPUTL': 'putellas', 'FKERR': 'kerr',
+    'FRUSS': 'russo', 'FLJMS': 'james', 'FWILM': 'williamson',
+    'FEARP': 'earps', 'FWIEG': 'wiegman'
+}
 for sym, nm, role, px, coach in STARTERS:
+    img_slug = STARTER_IMG_MAP.get(sym, sym[1:].lower())
     ob.append(f'<button class="pick" type="button" data-sym="{sym}" data-nm="{nm}" data-px="{px}" data-coach="{int(coach)}" aria-pressed="false">'
-              f'<img src="assets/players/{sym[1:].lower()}.webp" alt="" width="52" height="52">'
+              f'<img src="assets/players/{img_slug}.webp" alt="" width="52" height="52">'
               f'<span class="sym">{nm}</span><span class="nm">{role}</span><span class="px">{px:.2f} <small>$FTR / share</small></span></button>')
 ob.append('</div><div class="field"><label for="obShares">Shares to buy</label><input id="obShares" value="500" inputmode="numeric"></div>'
           '<div class="quick"><button type="button" data-s="100">100</button><button type="button" data-s="250">250</button>'
@@ -688,17 +696,16 @@ DASH_CSS = """
 .home-claim-card{margin-top:20px;padding:26px;border-radius:24px;border:0;color:#fff;
   background:radial-gradient(120% 78% at 100% 0%,rgba(255,255,255,.18),transparent 58%),var(--lime);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.16),0 20px 44px rgba(24,0,173,.34);
-  display:grid;gap:18px}
+  display:grid;gap:18px;min-height:388px;align-content:start}
 .home-claim-head{display:grid;gap:10px}
 .home-claim-top{display:flex;align-items:center;gap:10px}
-/* The mark sits straight on the blue with nothing behind it. brightness(0)
-   takes the logo to solid black while keeping its shape. */
-.home-claim-mark{width:34px;height:34px;object-fit:contain;flex-shrink:0;filter:brightness(0)}
+/* The mark sits straight on the blue with nothing behind it, in white. */
+.home-claim-mark{width:34px;height:34px;object-fit:contain;flex-shrink:0;filter:brightness(0) invert(1)}
 .home-claim-eyebrow{font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
   color:rgba(255,255,255,.72)}
 .home-claim-card h2{font-size:25px!important;margin:0 0 8px;color:#fff;letter-spacing:-.022em}
 .home-claim-card p{margin:0;color:rgba(255,255,255,.76);font-size:13.5px;line-height:1.65}
-.home-claim-list{display:grid;gap:10px}
+.home-claim-list{display:grid;gap:10px;min-height:152px}
 /* The rows sit in a well rather than behind a border, the way the stats block
    does on the scrolling cards. */
 .home-claim-row{display:grid;grid-template-columns:44px minmax(0,1fr) auto;align-items:center;gap:13px;
@@ -736,16 +743,16 @@ DASH_CSS = """
 
 /* Claim Modal Dialog */
 .claim-modal-backdrop{position:fixed;inset:0;background:rgba(3,2,8,.82);backdrop-filter:blur(8px);
-  z-index:9999;display:none;place-items:center;padding:16px;overflow-y:auto}
+  z-index:9999;display:none;place-items:center;padding:16px;overflow-y:auto;scrollbar-width:none}
+.claim-modal-backdrop::-webkit-scrollbar{display:none}
 .claim-modal-backdrop.open{display:grid}
 /* No border: depth comes from the fill and the shadow, like every other
    surface in the app. */
 .claim-modal-dialog{background:#12101a;border:0;border-radius:28px;width:100%;max-width:470px;
   padding:26px;color:#fff;box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 28px 70px rgba(0,0,0,.66);
   position:relative;animation:kcPop .22s cubic-bezier(.16,1,.3,1);margin:auto;
-  max-height:calc(100dvh - 32px);overflow-y:auto;scrollbar-width:thin}
-.claim-modal-dialog::-webkit-scrollbar{width:6px}
-.claim-modal-dialog::-webkit-scrollbar-thumb{background:rgba(255,255,255,.14);border-radius:999px}
+  max-height:calc(100dvh - 32px);overflow-y:auto;scrollbar-width:none}
+.claim-modal-dialog::-webkit-scrollbar{display:none}
 @keyframes kcPop{from{opacity:0;transform:scale(.96) translateY(8px)}to{opacity:1;transform:none}}
 .claim-modal-close{position:absolute;top:20px;right:20px;background:rgba(255,255,255,.08);border:0;
   color:#fff;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:17px;
@@ -1063,7 +1070,9 @@ DASH_JS = r"""
       { id:'lst-saka-drop', asset_id:'FSAKA', ticker:'FSAKA', name:'Bukayo Saka', title:'Arsenal Star Drop', shares:500000 },
       { id:'lst-mbappe-drop', asset_id:'FKM7', ticker:'FKM7', name:'Kylian Mbappé', title:'Galáctico Drop', shares:500000 },
       { id:'lst-yamal-drop', asset_id:'FYAML', ticker:'FYAML', name:'Lamine Yamal', title:'Golden Boy Drop', shares:500000 },
-      { id:'lst-haaland-drop', asset_id:'FHLND', ticker:'FHLND', name:'Erling Haaland', title:'Goal Machine Drop', shares:500000 }
+      { id:'lst-haaland-drop', asset_id:'FHLND', ticker:'FHLND', name:'Erling Haaland', title:'Goal Machine Drop', shares:500000 },
+      { id:'lst-bonmati-drop', asset_id:'FAITN', ticker:'FAITN', name:'Aitana Bonmatí', title:'Ballon d\'Or Féminin Drop', shares:500000 },
+      { id:'lst-kerr-drop', asset_id:'FKERR', ticker:'FKERR', name:'Sam Kerr', title:'Chelsea Queen Drop', shares:500000 }
     ].map(function(row){ row.claimed = claimed.indexOf(row.id) > -1; return row; });
   }
   function setStatus(text){ if(statusEl) statusEl.textContent = text || ''; }
@@ -1296,7 +1305,7 @@ DASH_JS = r"""
                (a.club && a.club.toLowerCase().indexOf(searchKeyword) >= 0);
       });
     } else {
-      if(homeFilter === 'hot') list = list.filter(function(a){ return ['FSAKA','FHLND','FKM7','FYAML','FPLMR','FARTA'].indexOf(a.t) >= 0; });
+      if(homeFilter === 'hot') list = list.filter(function(a){ return ['FSAKA','FAITN','FHLND','FKERR','FKM7','FYAML','FRUSS','FPLMR','FLJMS','FWIEG','FARTA'].indexOf(a.t) >= 0; });
       else if(homeFilter === 'gainers') list = list.slice().sort(function(a,b){ return b.d - a.d; }).slice(0, 7);
       else if(homeFilter === 'forwards') list = list.filter(function(a){ return a.pos === 'FWD'; });
       else if(homeFilter === 'midfielders') list = list.filter(function(a){ return a.pos === 'MID'; });

@@ -88,6 +88,7 @@ FTR_CSS = """
 """
 
 WALLET_ASSETS = [("FSAKA", "Bukayo Saka", "boot", "", 6.4, 0),
+                 ("FAITN", "Aitana Bonmatí", "boot", "", 5.8, 0),
                  ("FHLND", "Erling Haaland", "boot", "", -1.8, 1),
                  ("FBRN", "Bruno Fernandes", "boot", "", 4.2, 2),
                  ("FARTA", "Mikel Arteta", "whistle", "am", 14.2, 9)]

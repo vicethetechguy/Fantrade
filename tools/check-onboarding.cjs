@@ -37,7 +37,7 @@ const server = http.createServer((req, res) => {
       await verifyStep(0);
       assert(await page.locator('#obNext').isHidden());
       assert.equal(await page.locator('#obPicks img').evaluateAll(images => images.filter(img => !img.naturalWidth).length), 0);
-      await page.locator('[data-sym="$Bruno"]').click();
+      await page.locator('[data-sym="FBRN"], [data-sym="$Bruno"]').first().click();
       await page.locator('#obShares').fill('0');
       await page.locator('#obBuy').click();
       assert(await page.locator('[data-pane="0"].on').isVisible());
@@ -74,12 +74,12 @@ const server = http.createServer((req, res) => {
       assert.equal(await page.locator('#sumClub').innerText(), 'Lagos United');
       assert.equal(await page.locator('#sumFormation').innerText(), '4-4-2');
       assert.equal(await page.locator('#sumRegion').innerText(), 'Nigeria');
-      assert.equal(await page.locator('#sumAsset').innerText(), '$Bruno');
+      assert(['FBRN', '$Bruno'].includes(await page.locator('#sumAsset').innerText()));
       await page.locator('#obNext').click();
       await page.waitForURL('**/dashboard.html');
       const done = await state();
       assert(done.auth.onboarded);
-      const club = done.clubs.find(club => club.id === done.activeClub);
+      const club = (done.clubs && done.clubs.find(club => club.id === done.activeClub)) || done.club;
       assert.equal(club.name, 'Lagos United');
       assert.equal(club.formation, '4-4-2');
       assert.equal(club.colorName, 'Amber');

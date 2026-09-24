@@ -346,7 +346,8 @@ footer{border-top:1px solid var(--hair);padding:70px 0 64px;background:rgba(255,
 /* modal */
 .ft-modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.78);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);z-index:9990;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .25s ease}
 .ft-modal-backdrop.open{opacity:1;pointer-events:auto}
-.ft-modal-box{background:var(--core);border:1px solid var(--hair);border-radius:24px;box-shadow:var(--ambient),var(--inset);max-width:540px;width:100%;max-height:90vh;overflow-y:auto;padding:32px;position:relative;transform:scale(.95);transition:transform .25s cubic-bezier(.16,1,.3,1)}
+.ft-modal-box{background:var(--core);border:1px solid var(--hair);border-radius:24px;box-shadow:var(--ambient),var(--inset);max-width:540px;width:100%;max-height:90vh;overflow-y:auto;scrollbar-width:none;padding:32px;position:relative;transform:scale(.95);transition:transform .25s cubic-bezier(.16,1,.3,1)}
+.ft-modal-box::-webkit-scrollbar{display:none}
 .ft-modal-backdrop.open .ft-modal-box{transform:scale(1)}
 .ft-modal-close{position:absolute;top:18px;right:20px;background:rgba(255,255,255,.05);border:1px solid var(--hair);color:var(--dim);border-radius:50%;width:32px;height:32px;display:grid;place-items:center;font-size:18px;cursor:pointer;transition:all .2s ease}
 .ft-modal-close:hover{background:rgba(255,255,255,.1);color:var(--ink)}
@@ -557,7 +558,8 @@ footer{border-top:1px solid var(--hair);padding:70px 0 64px;background:rgba(255,
 .bell .ic{width:17px;height:17px}
 .bell .dot{position:absolute;top:6px;right:7px;width:8px;height:8px;border-radius:99px;background:var(--lime);
   box-shadow:0 0 0 2px #0A0B0C,0 0 12px rgba(24,0,173,.9)}
-.nav-bell-badge{position:absolute;top:-4px;right:-4px;min-width:17px;height:17px;border-radius:999px;background:var(--accent);color:var(--accent-ink);font-size:10px;font-weight:800;display:grid;place-items:center;padding:0 4px;box-shadow:0 0 10px rgba(24,0,173,.6);border:1.5px solid #0A0B0C;line-height:1;z-index:2}
+.nav-bell-badge{position:absolute;top:-4px;right:-4px;min-width:17px;height:17px;border-radius:999px;background:#1800ad;color:#fff;font-size:10px;font-weight:800;display:grid;place-items:center;padding:0 4px;box-shadow:0 0 10px rgba(24,0,173,.6);border:1.5px solid #0A0B0C;line-height:1;z-index:2}
+.nav-bell-badge[hidden],.nav-bell-badge.hidden{display:none!important}
 .topbar .bell{display:grid!important}
 .menu{position:absolute;right:0;top:calc(100% + 14px);width:252px;padding:10px;border-radius:20px;z-index:95;
   background:rgba(10,11,12,.95);backdrop-filter:blur(24px) saturate(160%);-webkit-backdrop-filter:blur(24px) saturate(160%);
@@ -1801,12 +1803,12 @@ var FT_TICKERS={
   'FBEL':'FBEL', 'FPLMR':'FPLMR', 'FYAML':'FYAML', 'FMUS':'FMUS',
   'FWRTZ':'FWRTZ', 'FRODR':'FRODR', 'FFODN':'FFODN', 'FPEDR':'FPEDR',
   'FSALI':'FSALI', 'FBRN':'FBRN', 'FJACK':'FJACK', 'FARTA':'FARTA',
-  'FPEP':'FPEP', 'FMARS':'FMARS', '$CR7':'FCR7', '$Ronaldo':'FCR7', '$Messi':'FLM10',
+  'FPEP':'FPEP', 'FMARS':'FMARS', 'FAITN':'FAITN', 'FPUTL':'FPUTL', 'FKERR':'FKERR', 'FRUSS':'FRUSS', 'FLJMS':'FLJMS', 'FWILM':'FWILM', 'FEARP':'FEARP', 'FWIEG':'FWIEG', '$CR7':'FCR7', '$Ronaldo':'FCR7', '$Messi':'FLM10',
   'Saka':'FSAKA', 'Haaland':'FHLND', 'Mbappe':'FKM7', 'Vinicius':'FVJR',
   'Bellingham':'FBEL', 'Palmer':'FPLMR', 'Yamal':'FYAML', 'Musiala':'FMUS',
   'Wirtz':'FWRTZ', 'Rodri':'FRODR', 'Foden':'FFODN', 'Pedri':'FPEDR',
   'Saliba':'FSALI', 'Bruno':'FBRN', 'Jackson':'FJACK', 'Arteta':'FARTA',
-  'Pep':'FPEP', 'Maresca':'FMARS', 'CR7':'FCR7', 'Ronaldo':'FCR7', 'Messi':'FLM10'
+  'Pep':'FPEP', 'Maresca':'FMARS', 'Bonmati':'FAITN', 'Aitana':'FAITN', 'Putellas':'FPUTL', 'Alexia':'FPUTL', 'Kerr':'FKERR', 'Russo':'FRUSS', 'James':'FLJMS', 'Williamson':'FWILM', 'Earps':'FEARP', 'Wiegman':'FWIEG', 'CR7':'FCR7', 'Ronaldo':'FCR7', 'Messi':'FLM10'
 };
 function ftSym(value){
   if(!value) return '';
@@ -1844,6 +1846,10 @@ var PLAYER_IMAGES={
   rodri:'assets/players/rodri.webp',foden:'assets/players/foden.webp',pedri:'assets/players/pedri.webp',
   saliba:'assets/players/saliba.webp',bruno:'assets/players/bruno.webp',jackson:'assets/players/jackson.webp',
   arteta:'assets/players/arteta.webp',pep:'assets/players/pep.webp',maresca:'assets/players/maresca.webp',
+  bonmati:'assets/players/bonmati.webp',putellas:'assets/players/putellas.webp',
+  kerr:'assets/players/kerr.webp',russo:'assets/players/russo.webp',
+  james:'assets/players/james.webp',williamson:'assets/players/williamson.webp',
+  earps:'assets/players/earps.webp',wiegman:'assets/players/wiegman.webp',
   rice:'assets/players/rice.webp',odegaard:'assets/players/odegaard.webp',davies:'assets/players/davies.webp',
   vandijk:'assets/players/vandijk.webp',white:'assets/players/white.webp',raya:'assets/players/raya.webp',
   alisson:'assets/players/alisson.webp',gabriel:'assets/players/gabriel.webp'
@@ -1853,7 +1859,7 @@ function playerPhoto(symbol,name,className){
   var sLower = raw.toLowerCase();
   var key = sLower;
   if(sLower.startsWith('f') && sLower.length > 3){
-    var map = { fsaka:'saka', fhlnd:'haaland', fkm7:'mbappe', fvjr:'vinicius', fbel:'bellingham', fplmr:'palmer', fyaml:'yamal', fmus:'musiala', fwrtz:'wirtz', frodr:'rodri', ffodn:'foden', fpedr:'pedri', fsali:'saliba', fbrn:'bruno', fjack:'jackson', farta:'arteta', fpep:'pep', fmars:'maresca', fcr7:'saka', flm10:'saka' };
+    var map = { fsaka:'saka', fhlnd:'haaland', fkm7:'mbappe', fvjr:'vinicius', fbel:'bellingham', fplmr:'palmer', fyaml:'yamal', fmus:'musiala', fwrtz:'wirtz', frodr:'rodri', ffodn:'foden', fpedr:'pedri', fsali:'saliba', fbrn:'bruno', fjack:'jackson', farta:'arteta', fpep:'pep', fmars:'maresca', faitn:'bonmati', fputl:'putellas', fkerr:'kerr', fruss:'russo', fljms:'james', fwilm:'williamson', fearp:'earps', fwieg:'wiegman', fcr7:'saka', flm10:'saka' };
     if(map[sLower]) key = map[sLower];
     else key = sLower.slice(1);
   }
@@ -1989,8 +1995,12 @@ var FT = (function(){
   }
   function save(s){
     try {
-      var out = {};
-      Object.keys(s).forEach(function(k){ if(k !== 'club') out[k] = s[k]; });
+      var out = Object.assign({}, s);
+      if(s.club){
+        out.club = s.club;
+        out.clubs = [s.club];
+        out.activeClub = s.club.id || 'c-1';
+      }
       localStorage.setItem(STORAGE_KEY, JSON.stringify(out));
     } catch(e){}
   }
@@ -2155,7 +2165,23 @@ var FT = (function(){
         if(frame) frame.classList.toggle('has-photo', !!state.user.avatar);
       });
       var n = FT.unread();
-      document.querySelectorAll('#navDot').forEach(function(el){ el.hidden = n === 0; });
+      document.querySelectorAll('#navDot').forEach(function(el){
+        el.hidden = n === 0;
+        el.style.display = n === 0 ? 'none' : '';
+      });
+      document.querySelectorAll('.nav-bell-badge').forEach(function(el){
+        if(n === 0){
+          el.hidden = true;
+          el.setAttribute('hidden', '');
+          el.style.display = 'none';
+          el.textContent = '';
+        } else {
+          el.hidden = false;
+          el.removeAttribute('hidden');
+          el.style.display = 'grid';
+          el.textContent = n > 99 ? '99+' : String(n);
+        }
+      });
       document.querySelectorAll('[data-unread]').forEach(function(el){ el.textContent = n; });
       document.querySelectorAll('[data-bind]').forEach(function(el){
         var k = el.getAttribute('data-bind'), v;
@@ -2249,7 +2275,8 @@ var FT = (function(){
       // Whitepaper Section 7: Level 1 = 5% (500,000 shares), Level 2 = 10% (1,000,000 shares) of 10M total supply
       var shares = level === 2 ? 1000000 : 500000;
       var percent = level === 2 ? 10 : 5;
-      var fee = level === 2 ? 5000 : 2500;
+      var price = Number(row.price || asset.p || 0);
+      var fee = Math.max(1, Math.round(shares * price * 0.002));
       var burned = Math.round(fee * 0.02); // 2% permanently burned
 
       if(state.wallet.balance < fee){
@@ -2288,7 +2315,6 @@ var FT = (function(){
       });
 
       // Credit shares to holdings
-      var price = Number(row.price || asset.p || 0);
       if(!state.holdings[sym]){
         state.holdings[sym] = { n: row.name || asset.n || ticker, shares: 0, avg: price,
           p: price, c: !!(row.kind === 'COACH' || asset.c), inClub: (row.kind === 'COACH' || asset.c) ? 'COACH' : 'SUB' };
