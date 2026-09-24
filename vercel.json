@@ -2,5 +2,17 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "outputDirectory": "dist",
   "cleanUrls": true,
-  "trailingSlash": false
+  "trailingSlash": false,
+  "redirects": [
+    {
+      "source": "/portfolio",
+      "destination": "/wallet",
+      "permanent": true
+    },
+    {
+      "source": "/portfolio.html",
+      "destination": "/wallet",
+      "permanent": true
+    }
+  ]
 }

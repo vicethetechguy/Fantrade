@@ -320,3 +320,17 @@ img.av{object-fit:cover;object-position:50% 18%;background:var(--panel-3)}
 .check input{margin-top:3px;accent-color:var(--lilac);width:16px;height:16px;flex-shrink:0}
 .check[hidden]{display:none}
 @media (max-width:900px){ .grid-3{grid-template-columns:1fr 1fr} .photo-row{align-items:flex-start} }
+
+/* ── $FTR market ─────────────────────────────────────────────────── */
+.market-card{margin-bottom:16px}
+.market-top{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:16px}
+.market-top > div:first-child{display:grid;gap:4px}
+.market-price{font-family:var(--head);font-weight:700;font-size:36px;letter-spacing:-.03em;line-height:1}
+.market-stats{display:grid;grid-template-columns:repeat(4,auto);gap:6px 28px;margin:0}
+.market-stats dt{display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--faint)}
+.market-stats dd{margin:2px 0 0;font-family:var(--head);font-weight:700;font-size:17px}
+.sw{width:8px;height:8px;border-radius:3px;display:inline-block}
+.sw.circ,.supply-bar .circ{background:var(--lilac)} .sw.tre,.supply-bar .tre{background:#3a3a48} .sw.burn,.supply-bar .burn{background:var(--amber)}
+.supply-bar{display:flex;height:10px;border-radius:999px;overflow:hidden;gap:2px;background:var(--panel-3)}
+.supply-bar i{display:block;min-width:2px}
+@media (max-width:900px){ .market-stats{grid-template-columns:repeat(2,auto)} .market-price{font-size:30px} }

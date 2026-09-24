@@ -15,7 +15,7 @@ order, each in its own query:
 
 | # | File | What it does |
 |---|------|--------------|
-| 1 | `01_schema.sql` | Tables, row-level security, and the trigger that gives every new account a profile, a wallet and 1,000,000 $FTR |
+| 1 | `01_schema.sql` | Tables, row-level security, and the trigger that gives every new account a profile, a wallet and a starting balance (file 11 makes this 1,000 $FTR from the treasury) |
 | 2 | `02_functions.sql` | The money functions (buy, sell, swap, convert, transfer, withdraw, profile) and who is allowed to call them |
 | 3 | `03_seed_assets.sql` | The 18 players and coaches the exchange lists, each with its immutable F-ticker and its reference value |
 | 4 | `04_fanplay_clubs.sql` | Dream Clubs, FanPlay entries and the leaderboard |
@@ -25,6 +25,7 @@ order, each in its own query:
 | 8 | `08_claim_by_value.sql` | Cleared players that are not trading yet, and first-come claiming: the claimer pays for 5% or 10% of the shares at the reference value, and the player goes live for everyone else |
 | 9 | `09_admin.sql` | The admin at /admin: the admins list, an activity log, account suspension, and the `ft_admin_*` functions it calls, each refusing anyone not on the list. Re-run it after re-running `02_functions.sql` |
 | 10 | `10_player_profiles.sql` | Player profiles kept in the admin (known-as name, men's or women's game, country, date of birth, shirt number, height, foot, about, photo and its credit), the public `player-photos` Storage bucket that only admins can write to, and `ft_player_profiles()` that the app reads |
+| 11 | `11_ftr_economy.sql` | The $FTR economy: a 10,000,000 cap (wallets + treasury + burned), a market price in dollars (starts at $2, set in the admin), real-world player valuations in dollars (a share = valuation ÷ 10,000,000, paid in $FTR at the live price), and every buy, sell, swap, top-up, withdrawal, claim and welcome grant reworked to that maths. Moves existing balances across once, keeping their dollar value |
 
 They are safe to re-run: the tables use `if not exists`, the functions are
 `create or replace`, and the seed upserts on the asset (and listing) id. Re-run them in

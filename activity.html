@@ -1969,56 +1969,82 @@ function ftSym(value){
    than guessing from the club name, which would file Arsenal's women
    under the Premier League. `w` marks the women's game. */
 var ASSETS=[
- {t:'FSAKA',n:'Bukayo Saka',p:48.20,d:6.4,c:false,cap:'482.0M',h:51.2,low:46.8,q:'FTR',vol:'12.4M',tag:'10x',pos:'FWD',club:'Arsenal',lg:'Premier League'},
- {t:'FHLND',n:'Erling Haaland',p:71.40,d:-1.8,c:false,cap:'714.0M',h:74.0,low:70.1,q:'FTR',vol:'18.6M',tag:'10x',pos:'FWD',club:'Manchester City',lg:'Premier League'},
- {t:'FKM7',n:'Kylian Mbappé',p:78.50,d:4.8,c:false,cap:'785.0M',h:81.0,low:76.2,q:'FTR',vol:'24.8M',tag:'10x',pos:'FWD',club:'Real Madrid',lg:'La Liga'},
- {t:'FVJR',n:'Vinícius Júnior',p:63.10,d:0.7,c:false,cap:'631.0M',h:65.0,low:62.0,q:'FTR',vol:'15.2M',tag:'10x',pos:'FWD',club:'Real Madrid',lg:'La Liga'},
- {t:'FBEL',n:'Jude Bellingham',p:58.90,d:3.3,c:false,cap:'589.0M',h:61.0,low:57.2,q:'FTR',vol:'14.1M',tag:'10x',pos:'MID',club:'Real Madrid',lg:'La Liga'},
- {t:'FPLMR',n:'Cole Palmer',p:52.80,d:8.2,c:false,cap:'528.0M',h:54.5,low:49.1,q:'FTR',vol:'16.5M',tag:'10x',pos:'MID',club:'Chelsea',lg:'Premier League'},
- {t:'FYAML',n:'Lamine Yamal',p:66.20,d:9.4,c:false,cap:'662.0M',h:68.0,low:61.5,q:'FTR',vol:'22.1M',tag:'10x',pos:'FWD',club:'Barcelona',lg:'La Liga'},
- {t:'FMUS',n:'Jamal Musiala',p:46.70,d:5.1,c:false,cap:'467.0M',h:48.5,low:44.2,q:'FTR',vol:'11.5M',tag:'10x',pos:'MID',club:'Bayern Munich',lg:'Bundesliga'},
- {t:'FWRTZ',n:'Florian Wirtz',p:44.60,d:3.8,c:false,cap:'446.0M',h:46.2,low:43.0,q:'FTR',vol:'10.9M',tag:'10x',pos:'MID',club:'Bayer Leverkusen',lg:'Bundesliga'},
- {t:'FRODR',n:'Rodri',p:61.30,d:1.4,c:false,cap:'613.0M',h:62.5,low:60.1,q:'FTR',vol:'13.7M',tag:'10x',pos:'MID',club:'Manchester City',lg:'Premier League'},
- {t:'FFODN',n:'Phil Foden',p:54.10,d:-1.2,c:false,cap:'541.0M',h:56.0,low:53.2,q:'FTR',vol:'11.8M',tag:'10x',pos:'FWD',club:'Manchester City',lg:'Premier League'},
- {t:'FPEDR',n:'Pedri González',p:41.15,d:-0.9,c:false,cap:'411.5M',h:42.5,low:40.1,q:'FTR',vol:'8.9M',tag:'10x',pos:'MID',club:'Barcelona',lg:'La Liga'},
- {t:'FSALI',n:'William Saliba',p:33.80,d:2.7,c:false,cap:'338.0M',h:35.0,low:32.4,q:'FTR',vol:'7.2M',tag:'10x',pos:'DEF',club:'Arsenal',lg:'Premier League'},
- {t:'FBRN',n:'Bruno Fernandes',p:39.75,d:2.1,c:false,cap:'397.5M',h:41.8,low:38.5,q:'FTR',vol:'9.8M',tag:'10x',pos:'MID',club:'Manchester United',lg:'Premier League'},
- {t:'FJACK',n:'Nicolas Jackson',p:14.85,d:11.2,c:false,cap:'148.5M',h:15.5,low:13.2,q:'FTR',vol:'5.4M',tag:'10x',pos:'FWD',club:'Chelsea',lg:'Premier League'},
- {t:'FAITN',n:'Aitana Bonmatí',p:44.80,d:1.9,c:false,cap:'448.0M',h:46.1,low:43.2,q:'FTR',vol:'6.8M',tag:'10x',pos:'MID',club:'Barcelona',lg:'Liga F',w:1},
- {t:'FPUTL',n:'Alexia Putellas',p:36.40,d:5.6,c:false,cap:'364.0M',h:37.2,low:34.1,q:'FTR',vol:'7.9M',tag:'10x',pos:'MID',club:'London City Lionesses',lg:'WSL',w:1},
- {t:'FRUSS',n:'Alessia Russo',p:38.90,d:2.4,c:false,cap:'389.0M',h:39.8,low:37.6,q:'FTR',vol:'6.1M',tag:'10x',pos:'FWD',club:'Arsenal',lg:'WSL',w:1},
- {t:'FLJMS',n:'Lauren James',p:35.70,d:4.2,c:false,cap:'357.0M',h:36.9,low:34.0,q:'FTR',vol:'5.9M',tag:'10x',pos:'FWD',club:'Chelsea',lg:'WSL',w:1},
- {t:'FKERR',n:'Sam Kerr',p:31.20,d:3.1,c:false,cap:'312.0M',h:32.0,low:30.1,q:'FTR',vol:'5.2M',tag:'10x',pos:'FWD',club:'Gotham FC',lg:'NWSL',w:1},
- {t:'FWILM',n:'Leah Williamson',p:27.50,d:0.8,c:false,cap:'275.0M',h:28.1,low:27.0,q:'FTR',vol:'3.4M',tag:'10x',pos:'DEF',club:'Arsenal',lg:'WSL',w:1},
- {t:'FEARP',n:'Mary Earps',p:24.30,d:-0.6,c:false,cap:'243.0M',h:24.9,low:23.8,q:'FTR',vol:'3.1M',tag:'10x',pos:'GK',club:'London City Lionesses',lg:'WSL',w:1},
- {t:'FARTA',n:'Mikel Arteta',p:22.05,d:4.9,c:true,cap:'220.5M',h:23.5,low:21.0,q:'FTR',vol:'6.1M',tag:'COACH',pos:'MGR',club:'Arsenal',lg:'Premier League'},
- {t:'FPEP',n:'Pep Guardiola',p:29.60,d:-0.4,c:true,cap:'296.0M',h:30.8,low:28.9,q:'FTR',vol:'7.8M',tag:'COACH',pos:'MGR',club:'Manchester City',lg:'Premier League'},
- {t:'FMARS',n:'Enzo Maresca',p:18.30,d:1.2,c:true,cap:'183.0M',h:19.2,low:17.8,q:'FTR',vol:'4.5M',tag:'COACH',pos:'MGR',club:'Chelsea',lg:'Premier League'},
- {t:'FWIEG',n:'Sarina Wiegman',p:26.80,d:1.5,c:true,cap:'268.0M',h:27.4,low:26.1,q:'FTR',vol:'4.0M',tag:'COACH',pos:'MGR',club:'England',lg:'International',w:1}
+ {t:'FSAKA',n:'Bukayo Saka',p:6.3052,v:126104000,d:6.4,c:false,cap:'63.1M',h:6.69764,low:6.122061,q:'FTR',vol:'1.6M',tag:'10x',pos:'FWD',club:'Arsenal',lg:'Premier League'},
+ {t:'FHLND',n:'Erling Haaland',p:12.6104,v:252208000,d:-1.8,c:false,cap:'126.1M',h:13.069602,low:12.380799,q:'FTR',vol:'3.3M',tag:'10x',pos:'FWD',club:'Manchester City',lg:'Premier League'},
+ {t:'FKM7',n:'Kylian Mbappé',p:11.464,v:229280000,d:4.8,c:false,cap:'114.6M',h:11.829096,low:11.128112,q:'FTR',vol:'3.6M',tag:'10x',pos:'FWD',club:'Real Madrid',lg:'La Liga'},
+ {t:'FVJR',n:'Vinícius Júnior',p:8.0248,v:160496000,d:0.7,c:false,cap:'80.2M',h:8.266434,low:7.884906,q:'FTR',vol:'1.9M',tag:'10x',pos:'FWD',club:'Real Madrid',lg:'La Liga'},
+ {t:'FBEL',n:'Jude Bellingham',p:9.1712,v:183424000,d:3.3,c:false,cap:'91.7M',h:9.498187,low:8.906496,q:'FTR',vol:'2.2M',tag:'10x',pos:'MID',club:'Real Madrid',lg:'La Liga'},
+ {t:'FPLMR',n:'Cole Palmer',p:5.732,v:114640000,d:8.2,c:false,cap:'57.3M',h:5.916553,low:5.330326,q:'FTR',vol:'1.8M',tag:'10x',pos:'MID',club:'Chelsea',lg:'Premier League'},
+ {t:'FYAML',n:'Lamine Yamal',p:12.6104,v:252208000,d:9.4,c:false,cap:'126.1M',h:12.953281,low:11.7151,q:'FTR',vol:'4.2M',tag:'10x',pos:'FWD',club:'Barcelona',lg:'La Liga'},
+ {t:'FMUS',n:'Jamal Musiala',p:5.732,v:114640000,d:5.1,c:false,cap:'57.3M',h:5.952934,low:5.425148,q:'FTR',vol:'1.4M',tag:'10x',pos:'MID',club:'Bayern Munich',lg:'Bundesliga'},
+ {t:'FWRTZ',n:'Florian Wirtz',p:5.732,v:114640000,d:3.8,c:false,cap:'57.3M',h:5.937632,low:5.526368,q:'FTR',vol:'1.4M',tag:'10x',pos:'MID',club:'Liverpool',lg:'Premier League'},
+ {t:'FRODR',n:'Rodri',p:2.866,v:57320000,d:1.4,c:false,cap:'28.7M',h:2.922104,low:2.809896,q:'FTR',vol:'640.5K',tag:'10x',pos:'MID',club:'Barcelona',lg:'La Liga'},
+ {t:'FFODN',n:'Phil Foden',p:4.5856,v:91712000,d:-1.2,c:false,cap:'45.9M',h:4.746647,low:4.509315,q:'FTR',vol:'1.0M',tag:'10x',pos:'FWD',club:'Manchester City',lg:'Premier League'},
+ {t:'FPEDR',n:'Pedri González',p:8.598,v:171960000,d:-0.9,c:false,cap:'86.0M',h:8.880073,low:8.37861,q:'FTR',vol:'1.9M',tag:'10x',pos:'MID',club:'Barcelona',lg:'La Liga'},
+ {t:'FSALI',n:'William Saliba',p:5.732,v:114640000,d:2.7,c:false,cap:'57.3M',h:5.935503,low:5.49458,q:'FTR',vol:'1.2M',tag:'10x',pos:'DEF',club:'Arsenal',lg:'Premier League'},
+ {t:'FBRN',n:'Bruno Fernandes',p:2.0062,v:40124000,d:2.1,c:false,cap:'20.1M',h:2.109664,low:1.943112,q:'FTR',vol:'494.6K',tag:'10x',pos:'MID',club:'Manchester United',lg:'Premier League'},
+ {t:'FJACK',n:'Nicolas Jackson',p:2.2928,v:45856000,d:11.2,c:false,cap:'22.9M',h:2.393158,low:2.038044,q:'FTR',vol:'833.7K',tag:'10x',pos:'FWD',club:'Aston Villa',lg:'Premier League'},
+ {t:'FAITN',n:'Aitana Bonmatí',p:0.091712,v:1834240,d:1.9,c:false,cap:'917.1K',h:0.094373,low:0.088437,q:'FTR',vol:'13.9K',tag:'10x',pos:'MID',club:'Barcelona',lg:'Liga F',w:1},
+ {t:'FPUTL',n:'Alexia Putellas',p:0.068784,v:1375680,d:5.6,c:false,cap:'687.8K',h:0.070296,low:0.064438,q:'FTR',vol:'14.9K',tag:'10x',pos:'MID',club:'London City Lionesses',lg:'WSL',w:1},
+ {t:'FRUSS',n:'Alessia Russo',p:0.074516,v:1490320,d:2.4,c:false,cap:'745.2K',h:0.07624,low:0.072026,q:'FTR',vol:'11.7K',tag:'10x',pos:'FWD',club:'Arsenal',lg:'WSL',w:1},
+ {t:'FLJMS',n:'Lauren James',p:0.040124,v:802480,d:4.2,c:false,cap:'401.2K',h:0.041473,low:0.038213,q:'FTR',vol:'6.6K',tag:'10x',pos:'FWD',club:'Chelsea',lg:'WSL',w:1},
+ {t:'FKERR',n:'Sam Kerr',p:0.02866,v:573200,d:3.1,c:false,cap:'286.6K',h:0.029395,low:0.02765,q:'FTR',vol:'4.8K',tag:'10x',pos:'FWD',club:'Gotham FC',lg:'NWSL',w:1},
+ {t:'FWILM',n:'Leah Williamson',p:0.04299,v:859800,d:0.8,c:false,cap:'429.9K',h:0.043928,low:0.042208,q:'FTR',vol:'5.3K',tag:'10x',pos:'DEF',club:'Arsenal',lg:'WSL',w:1},
+ {t:'FEARP',n:'Mary Earps',p:0.006878,v:137568,d:-0.6,c:false,cap:'68.8K',h:0.007048,low:0.006737,q:'FTR',vol:'877',tag:'10x',pos:'GK',club:'London City Lionesses',lg:'WSL',w:1},
+ {t:'FARTA',n:'Mikel Arteta',p:1.1025,v:22050000,d:4.9,c:true,cap:'11.0M',h:1.175,low:1.05,q:'FTR',vol:'305.0K',tag:'COACH',pos:'MGR',club:'Arsenal',lg:'Premier League'},
+ {t:'FPEP',n:'Pep Guardiola',p:1.48,v:29600000,d:-0.4,c:true,cap:'14.8M',h:1.54,low:1.445,q:'FTR',vol:'390.0K',tag:'COACH',pos:'MGR',club:'Manchester City',lg:'Premier League'},
+ {t:'FMARS',n:'Enzo Maresca',p:0.915,v:18300000,d:1.2,c:true,cap:'9.2M',h:0.96,low:0.89,q:'FTR',vol:'225.0K',tag:'COACH',pos:'MGR',club:'Chelsea',lg:'Premier League'},
+ {t:'FWIEG',n:'Sarina Wiegman',p:1.34,v:26800000,d:1.5,c:true,cap:'13.4M',h:1.37,low:1.305,q:'FTR',vol:'200.0K',tag:'COACH',pos:'MGR',club:'England',lg:'International',w:1}
 ];
 /* Players Fantrade has cleared for listing that nobody has launched yet.
    The first manager to claim one pays for the shares they take at the
    reference price below, and the player goes live on the Exchange for
    everyone else to buy. The prices are demo figures, not valuations. */
 var ELIGIBLE=[
- {t:'FCR7',n:'Cristiano Ronaldo',aka:'CR7',p:34.60,pos:'FWD',club:'Al Nassr',lg:'Saudi Pro League'},
- {t:'FLM10',n:'Lionel Messi',p:38.20,pos:'FWD',club:'Inter Miami',lg:'MLS'},
- {t:'FKANE',n:'Harry Kane',p:62.40,pos:'FWD',club:'Bayern Munich',lg:'Bundesliga'},
- {t:'FRICE',n:'Declan Rice',p:49.60,pos:'MID',club:'Arsenal',lg:'Premier League'},
- {t:'FVVD',n:'Virgil van Dijk',aka:'VVD',p:29.80,pos:'DEF',club:'Liverpool',lg:'Premier League'},
- {t:'FOSIM',n:'Victor Osimhen',p:41.30,pos:'FWD',club:'Galatasaray',lg:'Süper Lig'},
- {t:'FSALH',n:'Mohamed Salah',aka:'Mo Salah',p:27.90,pos:'FWD',club:'Trabzonspor',lg:'Süper Lig'},
- {t:'FLOOK',n:'Ademola Lookman',p:18.40,pos:'FWD',club:'Atlético Madrid',lg:'La Liga'},
- {t:'FCHUK',n:'Samuel Chukwueze',p:1.85,pos:'FWD',club:'AC Milan',lg:'Serie A'},
- {t:'FSHAW',n:'Khadija Shaw',aka:'Bunny Shaw',p:32.50,pos:'FWD',club:'Manchester City',lg:'WSL',w:1},
- {t:'FPAJR',n:'Ewa Pajor',p:30.10,pos:'FWD',club:'Barcelona',lg:'Liga F',w:1},
- {t:'FRODM',n:'Trinity Rodman',p:26.40,pos:'FWD',club:'Washington Spirit',lg:'NWSL',w:1},
- {t:'FKELY',n:'Chloe Kelly',p:22.80,pos:'FWD',club:'Arsenal',lg:'WSL',w:1},
- {t:'FAJBD',n:'Rasheedat Ajibade',p:1.60,pos:'FWD',club:'Paris Saint-Germain',lg:'Première Ligue',w:1},
- {t:'FALOZ',n:'Michelle Alozie',p:1.20,pos:'DEF',club:'Chicago Stars',lg:'NWSL',w:1}
+ {t:'FCR7',n:'Cristiano Ronaldo',aka:'CR7',p:0.5732,v:11464000,pos:'FWD',club:'Al Nassr',lg:'Saudi Pro League'},
+ {t:'FLM10',n:'Lionel Messi',p:0.8598,v:17196000,pos:'FWD',club:'Inter Miami',lg:'MLS'},
+ {t:'FKANE',n:'Harry Kane',p:3.4392,v:68784000,pos:'FWD',club:'Bayern Munich',lg:'Bundesliga'},
+ {t:'FRICE',n:'Declan Rice',p:6.8784,v:137568000,pos:'MID',club:'Arsenal',lg:'Premier League'},
+ {t:'FVVD',n:'Virgil van Dijk',aka:'VVD',p:1.60496,v:32099200,pos:'DEF',club:'Liverpool',lg:'Premier League'},
+ {t:'FOSIM',n:'Victor Osimhen',p:4.299,v:85980000,pos:'FWD',club:'Galatasaray',lg:'Süper Lig'},
+ {t:'FSALH',n:'Mohamed Salah',aka:'Mo Salah',p:1.26104,v:25220800,pos:'FWD',club:'Trabzonspor',lg:'Süper Lig'},
+ {t:'FLOOK',n:'Ademola Lookman',p:2.2928,v:45856000,pos:'FWD',club:'Atlético Madrid',lg:'La Liga'},
+ {t:'FCHUK',n:'Samuel Chukwueze',p:1.1464,v:22928000,pos:'FWD',club:'AC Milan',lg:'Serie A'},
+ {t:'FSHAW',n:'Khadija Shaw',aka:'Bunny Shaw',p:0.041557,v:831140,pos:'FWD',club:'Manchester City',lg:'WSL',w:1},
+ {t:'FPAJR',n:'Ewa Pajor',p:0.022928,v:458560,pos:'FWD',club:'Barcelona',lg:'Liga F',w:1},
+ {t:'FRODM',n:'Trinity Rodman',p:0.020062,v:401240,pos:'FWD',club:'Washington Spirit',lg:'NWSL',w:1},
+ {t:'FKELY',n:'Chloe Kelly',p:0.051588,v:1031760,pos:'FWD',club:'Arsenal',lg:'WSL',w:1},
+ {t:'FAJBD',n:'Rasheedat Ajibade',p:0.024361,v:487220,pos:'FWD',club:'Paris Saint-Germain',lg:'Première Ligue',w:1},
+ {t:'FALOZ',n:'Michelle Alozie',p:0.004586,v:91712,pos:'DEF',club:'Chicago Stars',lg:'NWSL',w:1}
 ];
-/* 1 $FTR = $0.10, the rate the Exchange shows. */
-var FTR_USD=0.1;
+/* The $FTR economy. $FTR is capped at 10,000,000 and priced by the market
+   (start: $2). Every player has 10,000,000 shares; a share is worth their
+   dollar valuation (v) / 10,000,000, and costs that in $FTR at the current
+   $FTR price, so when $FTR moves, every $FTR price moves with it. The live
+   price is fetched by fantrade-supabase.js and cached on this device. */
+var FTR_USD=2, FTR_MAX_SUPPLY=10000000;
+function ftReprice(){
+  [ASSETS, typeof ELIGIBLE !== 'undefined' ? ELIGIBLE : []].forEach(function(list){ list.forEach(function(a){
+    if(!(a.v > 0)) return;
+    var np = +(a.v / 1e7 / FTR_USD).toFixed(6), old = Number(a.p) || np;
+    if(a.h) a.h = +(a.h * np / old).toFixed(6);
+    if(a.low) a.low = +(a.low * np / old).toFixed(6);
+    a.p = np; a.cap = (np * 10 >= 1 ? (np * 10).toFixed(1) + 'M' : Math.round(np * 1e7).toLocaleString('en-US'));
+  }); });
+}
+try { var _ftM = JSON.parse(localStorage.getItem('ft_market_v1') || 'null'); if(_ftM && Number(_ftM.ftr_usd) > 0) FTR_USD = Number(_ftM.ftr_usd); } catch(e){}
+ftReprice();
+window.addEventListener('fantrade:market', function(ev){
+  if(ev.detail && Number(ev.detail.ftr_usd) > 0 && Number(ev.detail.ftr_usd) !== FTR_USD){ FTR_USD = Number(ev.detail.ftr_usd); ftReprice(); }
+});
+/* Share prices run from tens of $FTR down to fractions of a cent, so they get
+   as many decimals as they need: 12.61, 0.0917, 0.004586. */
+function pxFix(n){ n = Number(n) || 0; var a = Math.abs(n); return n.toFixed(a >= 1 || a === 0 ? 2 : a >= 0.01 ? 4 : 6); }
+function pxFmt(n){ n = Number(n) || 0; var a = Math.abs(n), d = a >= 1 || a === 0 ? 2 : a >= 0.01 ? 4 : 6;
+  return n.toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d }); }
+function usdFmt(ftr){ var d = (Number(ftr) || 0) * FTR_USD, a = Math.abs(d);
+  if(a >= 1e6) return '$' + (d / 1e6).toFixed(2).replace(/\.?0+$/, '') + 'M';
+  return '$' + pxFmt(d); }
 /* Filled in at build time from assets/players/attribution.json: a picture
    is only used when its source and licence are on record. */
 var PLAYER_IMAGES={"alisson":"assets/players/alisson.webp","arta":"assets/players/arta.webp","arteta":"assets/players/arteta.webp","bellingham":"assets/players/bellingham.webp","bonmati":"assets/players/bonmati.webp","brn":"assets/players/brn.webp","bruno":"assets/players/bruno.webp","davies":"assets/players/davies.webp","earps":"assets/players/earps.webp","foden":"assets/players/foden.webp","gabriel":"assets/players/gabriel.webp","haaland":"assets/players/haaland.webp","hlnd":"assets/players/hlnd.webp","jackson":"assets/players/jackson.webp","james":"assets/players/james.webp","kerr":"assets/players/kerr.webp","maresca":"assets/players/maresca.webp","mbappe":"assets/players/mbappe.webp","mus":"assets/players/mus.webp","musiala":"assets/players/musiala.webp","odegaard":"assets/players/odegaard.webp","palmer":"assets/players/palmer.webp","pedri":"assets/players/pedri.webp","pep":"assets/players/pep.webp","putellas":"assets/players/putellas.webp","raya":"assets/players/raya.webp","rice":"assets/players/rice.webp","rodri":"assets/players/rodri.webp","russo":"assets/players/russo.webp","saka":"assets/players/saka.webp","sali":"assets/players/sali.webp","saliba":"assets/players/saliba.webp","vandijk":"assets/players/vandijk.webp","vinicius":"assets/players/vinicius.webp","white":"assets/players/white.webp","wiegman":"assets/players/wiegman.webp","williamson":"assets/players/williamson.webp","wirtz":"assets/players/wirtz.webp","yamal":"assets/players/yamal.webp"};
@@ -2066,11 +2092,12 @@ function applyProfiles(rows){
     if(!p || !p.t) return;
     PLAYER_PROFILES[p.t] = p;
     var a = ASSETS.filter(function(x){ return x.t === p.t; })[0];
-    if(a){ if(p.club) a.club = p.club; if(p.lg) a.lg = p.lg; if(p.gender === 'W') a.w = 1; }
+    if(a){ if(p.club) a.club = p.club; if(p.lg) a.lg = p.lg; if(p.gender === 'W') a.w = 1; if(Number(p.v) > 0) a.v = Number(p.v); }
     var e = (typeof ELIGIBLE !== 'undefined') ? ELIGIBLE.filter(function(x){ return x.t === p.t; })[0] : null;
     if(e){ if(p.club) e.club = p.club; if(p.lg) e.lg = p.lg; if(p.about) e.about = p.about; if(p.country) e.country = p.country;
-           if(p.known_as) e.aka = p.known_as; if(p.gender === 'W') e.w = 1; }
+           if(p.known_as) e.aka = p.known_as; if(p.gender === 'W') e.w = 1; if(Number(p.v) > 0) e.v = Number(p.v); }
   });
+  if(typeof ftReprice === 'function') ftReprice();
 }
 try { var _ftProfiles = JSON.parse(localStorage.getItem('ft_profiles_v1') || 'null'); if(_ftProfiles && _ftProfiles.rows) applyProfiles(_ftProfiles.rows); } catch(e){}
 window.addEventListener('fantrade:profiles', function(ev){ applyProfiles(ev.detail); });
@@ -2128,19 +2155,19 @@ var FT = (function(){
         msg:"Zero FC finished 18th of 1,420 clubs with 812 FP. Your Elite-tier stake returned at 2.48x.",
         time:"09:14 · 2h ago", amt:"+6,200 $FTR", tone:"up" },
       { id:"n-2", kind:"order", icon:"candle", title:"Buy order filled", read:false, day:"Today",
-        msg:"10,000 FSAKA filled at an average of 48.20 $FTR. Average cost basis moved to 31.40.",
-        time:"08:02 · 3h ago", amt:"-483,928 $FTR", tone:"down" },
+        msg:"10,000 FSAKA filled at an average of 6.31 $FTR ($12.61). Average cost basis moved to 4.11.",
+        time:"08:02 · 3h ago", amt:"-63,304 $FTR", tone:"down" },
       { id:"n-3", kind:"club", icon:"whistle", title:"Teamsheet risk on Zero FC", read:false, day:"Today",
         msg:"W. Saliba is listed as a late fitness test. Auto-sub will field Gabriel if he is withdrawn.",
         time:"07:40 · 4h ago", amt:"", tone:"" },
       { id:"n-4", kind:"settle", icon:"coin", title:"Dividend distributed", read:true, day:"Yesterday",
         msg:"FSAKA clean sheet and man-of-the-match distribution paid to all holders on the ledger.",
-        time:"Yesterday · 22:10", amt:"+420 $FTR", tone:"up" },
+        time:"Yesterday · 22:10", amt:"+21 $FTR", tone:"up" },
       { id:"n-5", kind:"club", icon:"bolt", title:"Coach synergy unlocked", read:true, day:"Yesterday",
         msg:"FARTA now matches your 4-3-3 shape. Club multiplier rose from 10.0% to 15.0%.",
         time:"Yesterday · 19:22", amt:"", tone:"" },
       { id:"n-6", kind:"order", icon:"swap", title:"Limit order expired", read:true, day:"Yesterday",
-        msg:"Your limit buy for 2,000 FPEDR at 38.00 $FTR expired unfilled. Nothing was charged.",
+        msg:"Your limit buy for 2,000 FPEDR at 8.40 $FTR expired unfilled. Nothing was charged.",
         time:"Yesterday · 11:05", amt:"", tone:"" },
       { id:"n-7", kind:"system", icon:"shield", title:"New sign-in on Chrome, London", read:true, day:"Sep 12",
         msg:"If this was not you, change your password and revoke the session from Settings → Security.",
@@ -2153,13 +2180,13 @@ var FT = (function(){
       balance: 1000000,
       locked: 0,
       seasonEarned: 19640,
-      gbpRate: 12.40
+      gbpRate: 0.6686   // £1 = $1.3372 = 0.6686 $FTR at $2
     },
     holdings: {
-      'FSAKA': { n: 'Bukayo Saka', shares: 10000, avg: 31.40, p: 48.20, c: false, inClub: 'RW' },
-      'FBRN': { n: 'Bruno Fernandes', shares: 5000, avg: 38.00, p: 39.75, c: false, inClub: 'CAM' },
-      'FHLND': { n: 'Erling Haaland', shares: 3000, avg: 68.50, p: 71.40, c: false, inClub: 'ST' },
-      'FARTA': { n: 'Mikel Arteta', shares: 1000, avg: 20.50, p: 22.05, c: true, inClub: 'COACH' }
+      'FSAKA': { n: 'Bukayo Saka', shares: 10000, avg: 4.1075, p: 6.3052, c: false, inClub: 'RW' },
+      'FBRN': { n: 'Bruno Fernandes', shares: 5000, avg: 1.9179, p: 2.0062, c: false, inClub: 'CAM' },
+      'FHLND': { n: 'Erling Haaland', shares: 3000, avg: 12.0981, p: 12.6104, c: false, inClub: 'ST' },
+      'FARTA': { n: 'Mikel Arteta', shares: 1000, avg: 1.025, p: 1.1025, c: true, inClub: 'COACH' }
     },
     club: {
       id: "c-1", name: "Zero FC", stadium: "Emirates of the North",
@@ -2173,10 +2200,10 @@ var FT = (function(){
       ]
     },
     transactions: [
-      { type: "BUY", asset: "FSAKA", shares: 10000, price: 48.20, total: 483928, time: "Today, 14:22" },
-      { type: "STAKE", asset: "FanPlay MD 07", shares: 1, price: 2500, total: 2500, time: "Yesterday, 19:10" },
-      { type: "PAYOUT", asset: "Matchday 06 Settle", shares: 1, price: 6200, total: 6200, time: "Sep 08, 02:15" },
-      { type: "CONVERT", asset: "GBP Deposit (£1,000)", shares: 1000, price: 12.40, total: 12338, time: "Sep 07, 11:45" }
+      { type: "BUY", asset: "FSAKA", shares: 10000, price: 6.3052, total: 63304, time: "Today, 14:22" },
+      { type: "STAKE", asset: "FanPlay MD 07", shares: 1, price: 125, total: 125, time: "Yesterday, 19:10" },
+      { type: "PAYOUT", asset: "Matchday 06 Settle", shares: 1, price: 310, total: 310, time: "Sep 08, 02:15" },
+      { type: "CONVERT", asset: "GBP Deposit (£1,000)", shares: 1000, price: 0.6686, total: 665.26, time: "Sep 07, 11:45" }
     ]
   };
 
@@ -2195,6 +2222,17 @@ var FT = (function(){
       st.demoGrant1M = true;
     }
     st.listedAssets = st.listedAssets || [];
+    if(!st.econV2){
+      Object.keys(st.holdings || {}).forEach(function(t){
+        var h = st.holdings[t], a = ASSETS.filter(function(x){ return x.t === t; })[0];
+        var np = a ? a.p : (Number(h.p) || 0) * 0.05;
+        if(Number(h.p) > 0){ h.avg = +(Number(h.avg || h.p) * np / Number(h.p)).toFixed(6); } else h.avg = np;
+        h.p = np;
+      });
+      st.listedAssets.forEach(function(a){ if(!a.v && Number(a.p) > 0){ a.v = Math.round(Number(a.p) * 0.10 * 1e7); } });
+      if(st.wallet){ st.wallet.gbpRate = 0.6686; }
+      st.econV2 = true;
+    }
     delete st.clubs;
     delete st.activeClub;
     st.fanplay = st.fanplay || {};
@@ -2532,7 +2570,7 @@ var FT = (function(){
         throw new Error('You need ' + q.short.toLocaleString('en-US') + ' more $FTR to claim ' + q.percent + '% of ' + e.n + '.');
       }
       var coach = e.pos === 'MGR';
-      var asset = { t: e.t, n: e.n, p: e.p, d: 0, c: coach, cap: (e.p * 10).toFixed(1) + 'M', h: e.p, low: e.p,
+      var asset = { t: e.t, n: e.n, p: e.p, v: e.v, d: 0, c: coach, cap: (e.p * 10).toFixed(1) + 'M', h: e.p, low: e.p,
                     q: 'FTR', vol: '0', tag: coach ? 'COACH' : '10x', pos: e.pos, club: e.club, lg: e.lg,
                     launched: Date.now(), launchedBy: state.user.handle || '' };
       if(e.w) asset.w = 1;

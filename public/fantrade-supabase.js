@@ -39,7 +39,7 @@
      screens themselves. */
   var IN_APP = ['account', 'activity', 'asset', 'buy', 'club-builder', 'clubs',
     'dashboard', 'divisions', 'exchange', 'fanplay', 'ftr', 'liveboard', 'notifications',
-    'onboarding', 'portfolio', 'receive', 'send', 'settings', 'settings-alerts',
+    'onboarding', 'receive', 'send', 'settings', 'settings-alerts',
     'settings-club', 'settings-data', 'settings-play', 'settings-profile',
     'settings-security', 'settings-wallet', 'swap', 'trade', 'wallet', 'withdraw'];
 
@@ -243,6 +243,17 @@
       window.dispatchEvent(new CustomEvent('fantrade:profiles', { detail: res.data || [] }));
       return res.data;
     },
+    /* The $FTR market: its dollar price, supply and treasury. Every $FTR
+       price in the app follows it; cached so the next page draws with it. */
+    market: async function () {
+      await load();
+      if (!client) return null;
+      var res = await client.rpc('ft_market');
+      if (res.error || !res.data) return null;
+      try { window.localStorage.setItem('ft_market_v1', JSON.stringify(res.data)); } catch (e) {}
+      window.dispatchEvent(new CustomEvent('fantrade:market', { detail: res.data }));
+      return res.data;
+    },
     listings: async function () {
       await load();
       if (!client || !FTDB.signedIn()) return null;
@@ -293,5 +304,6 @@
 
   window.FTDB = FTDB;
   load();
+  FTDB.market().catch(function () {});
   FTDB.profiles().catch(function () {});
 })(window);

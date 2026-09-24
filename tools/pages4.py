@@ -46,7 +46,7 @@ function param(k){
 var SYM = ftSym(param('a') || 'FSAKA');
 var A = ASSETS.filter(function(x){ return x.t.toLowerCase() === SYM.toLowerCase() || ftSym(x.t).toLowerCase() === SYM.toLowerCase(); })[0] || ASSETS[0];
 function fmt(n){ return Math.round(n).toLocaleString('en-US'); }
-function money(n){ return n.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}); }
+function money(n){ return pxFmt(n); }
 function held(){ return FT.getState().holdings[A.t] || null; }
 
 // Order book, built deterministically around the last price so the same
@@ -66,9 +66,9 @@ function book2(box, side, count, onPick){
   if(side === 'ask') rows.reverse();
   var host = document.getElementById(box);
   host.innerHTML = rows.map(function(r){
-    return '<div class="b2row ' + side + '" data-px="' + r.p.toFixed(2) + '">'
+    return '<div class="b2row ' + side + '" data-px="' + pxFix(r.p) + '">'
       + '<i style="width:' + (r.t / max * 100).toFixed(0) + '%"></i>'
-      + '<span>' + r.p.toFixed(2) + '</span><span>' + fmt(r.s) + '</span></div>';
+      + '<span>' + pxFix(r.p) + '</span><span>' + fmt(r.s) + '</span></div>';
   }).join('');
   if(onPick) host.querySelectorAll('.b2row').forEach(function(el){
     el.tabIndex = 0;
@@ -337,21 +337,21 @@ if(el('tChart')) el('tChart').href = 'asset.html?a=' + encodeURIComponent(A.t);
 el('tDelta').textContent = (A.d >= 0 ? '+' : '') + A.d.toFixed(2) + '%';
 el('tDelta').classList.toggle('down', A.d < 0);
 el('tDelta').style.color = A.d >= 0 ? 'var(--lime)' : 'var(--red)';
-el('tLimit').value = A.p.toFixed(2);
-el('tStop').value = (A.p * 0.96).toFixed(2);
+el('tLimit').value = pxFix(A.p);
+el('tStop').value = pxFix(A.p * 0.96);
 
 function drawBook(){
-  book2('tAsks', 'ask', 8, function(px){ el('tLimit').value = px.toFixed(2); calc(); });
-  book2('tBids', 'bid', 8, function(px){ el('tLimit').value = px.toFixed(2); calc(); });
+  book2('tAsks', 'ask', 8, function(px){ el('tLimit').value = pxFix(px); calc(); });
+  book2('tBids', 'bid', 8, function(px){ el('tLimit').value = pxFix(px); calc(); });
 }
 drawBook();
 el('tTick').addEventListener('change', function(){
   TICK = parseFloat(el('tTick').value) || 1;
   drawBook();
 });
-el('tLast').textContent = A.p.toFixed(2);
+el('tLast').textContent = pxFmt(A.p);
 el('tLast').style.color = A.d >= 0 ? 'var(--lime)' : 'var(--red)';
-el('tLastSub').textContent = '≈ £' + (A.p / 12.4).toFixed(2);
+el('tLastSub').textContent = '≈ ' + usdFmt(A.p);
 (function(){
   var b = Math.max(12, Math.min(88, Math.round(48 + A.d)));
   el('tdBid').style.width = b + '%'; el('tdAsk').style.width = (100 - b) + '%';
@@ -370,7 +370,7 @@ document.querySelectorAll('[data-step]').forEach(function(b){
     var step = isQty ? 100 : Math.max(0.01, A.p * 0.001);
     var v = num(t.value) + dir * step;
     v = Math.max(isQty ? 0 : 0.01, v);
-    t.value = isQty ? Math.round(v).toLocaleString('en-US') : v.toFixed(2);
+    t.value = isQty ? Math.round(v).toLocaleString('en-US') : pxFix(v);
     isQty ? (calc(), swapCalc()) : calc();
   });
 });
@@ -487,7 +487,7 @@ el('tGo').addEventListener('click', function(){
   OPEN.unshift({ side: mode, q: q, px: price(), t: 'Just now', type: otype });
   renderLedger();
   showToast((mode === 'buy' ? 'Bid' : 'Ask') + ' for ' + q.toLocaleString('en-US') + ' ' + A.t
-    + ' at ' + price().toFixed(2) + ' is on the book.', 'success');
+    + ' at ' + pxFmt(price()) + ' is on the book.', 'success');
 });
 
 // ── swap ──
@@ -516,7 +516,7 @@ function fillSwap(){
       + ' shares</option>';
   }).join('') || '<option value="">Nothing held yet</option>';
   to.innerHTML = Object.keys(all).map(function(k){
-    return '<option value="' + k + '">' + ftSym(k) + ' · ' + all[k].toFixed(2) + ' $FTR</option>';
+    return '<option value="' + k + '">' + ftSym(k) + ' · ' + pxFmt(all[k]) + ' $FTR</option>';
   }).join('');
   if(kf && s.holdings[kf]) from.value = kf;
   if(kt && all[kt]) to.value = kt;
@@ -528,7 +528,7 @@ function swapCalc(){
   syncTradeSwapPicks();
   if(!h){ ['swGive','swFee','swGet','swDust'].forEach(function(i){ el(i).textContent = '—'; });
     el('swHold').textContent = 'Buy something on the exchange first.'; return; }
-  el('swHold').textContent = 'You hold ' + h.shares.toLocaleString('en-US') + ' at ' + h.p.toFixed(2) + ' $FTR.';
+  el('swHold').textContent = 'You hold ' + h.shares.toLocaleString('en-US') + ' at ' + pxFmt(h.p) + ' $FTR.';
   var q = Math.min(Math.round(num(el('swQty').value)), h.shares);
   var gross = q * h.p, fee = gross * 0.004, net = gross - fee;
   var tp = PRICES[tk] || 0, got = tp ? Math.floor(net / tp) : 0;
@@ -588,7 +588,7 @@ function renderLedger(){
           + '<div><span class="tag ' + (o.side === 'buy' ? 'lime' : 'red') + '">'
           + (o.side === 'buy' ? 'bid' : 'ask') + '</span></div>'
           + '<div class="num" style="font-size:12px">' + o.q.toLocaleString('en-US') + '</div>'
-          + '<div class="num" style="font-size:12px">' + o.px.toFixed(2) + '</div>'
+          + '<div class="num" style="font-size:12px">' + pxFmt(o.px) + '</div>'
           + '<div style="color:var(--dim);font-size:11px">' + o.t + '</div>'
           + '<div style="text-align:right"><button class="tradebtn" data-cancel="' + i + '" '
           + 'style="width:auto;padding:5px 12px">Cancel</button></div></div>';
@@ -634,7 +634,7 @@ function renderLedger(){
       return '<div class="dr" style="' + cols + '">'
         + '<div><span class="tag ' + (down ? 'lime' : 'red') + '">' + t.type + '</span></div>'
         + '<div class="num" style="font-size:12px">' + t.shares.toLocaleString('en-US') + '</div>'
-        + '<div class="num" style="font-size:12px">' + t.price.toFixed(2) + '</div>'
+        + '<div class="num" style="font-size:12px">' + pxFmt(t.price) + '</div>'
         + '<div style="color:var(--dim);font-size:11px">' + t.time + '</div>'
         + '<div class="pl ' + (down ? 'down' : 'up') + '" style="text-align:right">'
         + (down ? '-' : '+') + fmt(t.total) + '</div></div>';

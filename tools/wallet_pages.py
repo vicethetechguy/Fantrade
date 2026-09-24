@@ -62,7 +62,7 @@ SWAP_HTML = workflow('Swap players', 'Move between player and coach shares in on
 <span class="wallet-label">Estimated shares received</span><div class="wallet-estimate" id="swGet">—</div>
 <dl class="wallet-summary"><div><dt>Swap fee · 0.4%</dt><dd id="swFee">—</dd></div><div><dt>Change returned to wallet</dt><dd id="swDust">—</dd></div></dl>
 <button class="app-primary wallet-submit" type="submit" id="swapGo">Review swap</button></form>''' + STATUS + DEMO + '''
-<a class="utility-back" href="portfolio.html">View your portfolio</a>
+<a class="utility-back" href="wallet.html">View your wallet</a>
 <dialog id="swapPicker" class="asset-picker" aria-labelledby="swapPickerTitle">
 <div class="asset-picker-heading"><h2 id="swapPickerTitle">Choose your shares.</h2><button type="button" id="swapPickerClose" aria-label="Close player search">''' + ic('cross', 'ic') + '''</button></div>
 <label for="swapSearch">Search players, coaches or clubs</label>
@@ -262,7 +262,7 @@ activity();window.addEventListener('fantrade:statechange',activity);
 '''
 
 WITHDRAW_JS = r'''
-var RATES={GBP:1,NGN:2050,EUR:1.17,USD:1.27},SYMBOL={GBP:'£',NGN:'₦',EUR:'€',USD:'$'},
+var RATES={GBP:1,NGN:2050,EUR:1.1664,USD:1.3372},SYMBOL={GBP:'£',NGN:'₦',EUR:'€',USD:'$'},
 CURS={GBP:{n:'British pound',sub:'GBP payout account'},NGN:{n:'Nigerian naira',sub:'NGN bank account'},EUR:{n:'Euro',sub:'EUR or IBAN account'},USD:{n:'US dollar',sub:'USD payout account'}};
 function wdQuote(){var n=amount('wdAmount'),fee=valid(n)?Math.max(50,Math.round(n*.005)):0,cur=el('wdCurrency').value,
   gbp=valid(n)?n/FT.getState().wallet.gbpRate:0;return {n:n,fee:fee,total:n+fee,cur:cur,out:gbp*RATES[cur]};}

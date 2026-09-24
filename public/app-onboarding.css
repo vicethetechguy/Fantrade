@@ -226,7 +226,7 @@ body.app.calm .btn{border:0!important;box-shadow:none!important;border-radius:99
  body.app.calm .app-intro h1{font-size:30px}
  body.app.calm .app-intro p{font-size:13px;margin-top:10px}
  body.app.calm .app-intro>.app-text-link{font-size:11px;white-space:nowrap;margin-top:8px}
- body.app.calm .home-layout,body.app.calm .wallet-layout{grid-template-columns:1fr;gap:30px}
+ body.app.calm .home-layout,body.app.calm .wallet-layout{grid-template-columns:minmax(0,1fr);gap:30px}
  body.app.calm .home-next{padding:24px}.home-next h2{font-size:24px}
  body.app.calm .kc-bal-val,body.app.calm .kc-card-bal{font-size:36px!important}
  body.app.calm .kc-home-bal-card{padding:0!important}

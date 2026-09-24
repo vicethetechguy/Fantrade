@@ -104,7 +104,7 @@ f.append(T('<div class="kc-assets-card">'
            '<div class="kc-pnl-pill" id="walDelta">+2.35% (+2,940)</div>'
            '</div>'
            '<div class="kc-card-bal"><span id="walBal">1,000,000.00</span><small>$FTR</small></div>'
-           '<div class="kc-card-sub"><span id="walGbp">≈ $10,358.80 USD</span></div>'
+           '<div class="kc-card-sub"><span id="walGbp">≈ $2,000,000.00 USD</span></div>'
            '<div class="kc-actions-grid">'
            '<a class="kc-act-btn" href="buy.html"><div class="kc-act-icon">@@</div><span class="kc-act-lbl">Deposit</span></a>'
            '<a class="kc-act-btn" href="withdraw.html"><div class="kc-act-icon">@@</div><span class="kc-act-lbl">Withdraw</span></a>'
@@ -279,7 +279,7 @@ function syncWallet(){
     el('walBal').textContent = hidden ? '••••••' : bal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   }
   if(el('walGbp')){
-    el('walGbp').textContent = hidden ? '≈ $•••••• USD' : '≈ $' + (bal * 0.0806).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' USD';
+    el('walGbp').textContent = hidden ? '≈ $•••••• USD' : '≈ $' + (bal * FTR_USD).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' USD';
   }
   renderAssets();
 }

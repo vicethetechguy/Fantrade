@@ -209,7 +209,7 @@ function renderMarketRows(){
     var quote = a.q || 'FTR';
     var sym = ftSym(a.t);
     var up = a.d >= 0;
-    var subPrice = (a.p * 0.1).toFixed(2) + ' USD';
+    var subPrice = pxFmt(a.p * FTR_USD) + ' USD';
 
     return "<a class='kc-row' href='" + to + "'>"
       + "<div class='kc-row-left'>"

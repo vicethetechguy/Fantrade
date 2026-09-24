@@ -1,6 +1,6 @@
 """Onboarding-inspired presentation for the refreshed app destinations."""
 PAGES = {'dashboard.html', 'exchange.html', 'fanplay.html', 'leaderboard.html', 'account.html', 'ftr.html', 'wallet.html', 'asset.html', 'trade.html'}
-COMMUNITY_PAGES = {'portfolio.html', 'clubs.html', 'club-builder.html', 'liveboard.html', 'divisions.html'}
+COMMUNITY_PAGES = {'clubs.html', 'club-builder.html', 'liveboard.html', 'divisions.html'}
 PAGES |= COMMUNITY_PAGES
 UTILITY_PAGES = {'notifications.html', 'send.html', 'receive.html', 'swap.html', 'buy.html', 'withdraw.html', 'activity.html'}
 PAGES |= UTILITY_PAGES

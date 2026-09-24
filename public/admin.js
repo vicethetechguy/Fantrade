@@ -15,7 +15,8 @@ const CONFIG = {
   anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFqandvZG5qY25ta3pndW9zcGF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAwOTI3NjMsImV4cCI6MjEwNTY2ODc2M30.7KUEO-9rzcWcvCezLw26WMyDQWvbCCy15zzk-wyTnrg',
   cdn: 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'
 };
-const FTR_USD = 0.1;                       // 1 $FTR = $0.10, as the app shows it
+let FTR_USD = 2;                           // live $FTR price in dollars; refreshed from the database
+const SHARES = 10000000;                    // every player and coach has 10,000,000 Activity Shares
 const LEVEL_SHARES = { 1: 500000, 2: 1000000 };
 
 const app = document.getElementById('app');
@@ -55,6 +56,13 @@ function avatar(name, size) {
   return `<span class="av" style="background:${hues[h % hues.length]}${dim}">${esc(initials(name))}</span>`;
 }
 function claimCost(price, level) { return Math.round((Number(price) || 0) * LEVEL_SHARES[level || 1]); }
+/* A player's share is worth valuation ÷ 10,000,000 dollars, and costs that in
+   $FTR at the current $FTR price. */
+const shareUsd = val => (Number(val) || 0) / SHARES;
+const shareFtr = val => shareUsd(val) / FTR_USD;
+function usdBig(n) { n = Number(n) || 0; const a = Math.abs(n); if (a >= 1e6) return '$' + compact(n); if (a >= 1) return '$' + num(n, a >= 1000 ? 0 : 2); return '$' + n.toFixed(a >= 0.01 ? 4 : 6); }
+function px(n) { n = Number(n) || 0; const a = Math.abs(n); return num(n, a >= 1 || a === 0 ? 2 : a >= 0.01 ? 4 : 6); }
+function setFx(v) { if (Number(v) > 0) FTR_USD = Number(v); }
 function greeting() { const h = new Date().getHours(); return h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening'; }
 function debounce(fn, ms) { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); }; }
 function store(k, v) { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) { return null; } }
@@ -279,6 +287,7 @@ VIEWS.overview = async view => {
   const who = (me.name || '').split(' ')[0];
   loading(view, 'Overview');
   const o = cache.overview = await api('ft_admin_overview');
+  const m = o.ftr || null; if (m) setFx(m.ftr_usd);
   setCount('players', o.open_to_claim); setCount('fanplay', o.fanplay_pending);
   const attn = [
     [o.fanplay_pending, 'FanPlay entries waiting on results', '#/fanplay'],
@@ -295,6 +304,7 @@ VIEWS.overview = async view => {
       <div class="kpi"><span class="kpi-label">${ic('overview')}Players trading</span><span class="kpi-val num">${num(o.trading)}</span><span class="kpi-sub">${num(o.claims)} launched by claims</span></div>
       <div class="kpi"><span class="kpi-label">${ic('fanplay')}FanPlay live</span><span class="kpi-val num">${num(o.fanplay_active)}</span><span class="kpi-sub">${num(o.fanplay_pending)} awaiting settlement</span></div>
     </div>
+    ${m ? marketCard(m) : ''}
     <div class="two">
       <section class="card"><div class="card-head"><div><h2>Claims, last 14 days</h2><p>Players launched each day by a manager's claim</p></div></div>
         <div class="chart" id="chart"></div></section>
@@ -307,9 +317,46 @@ VIEWS.overview = async view => {
       ${(o.recent || []).length ? `<div class="feed">${o.recent.map(feedRow).join('')}</div>` : `<div class="empty"><b>Quiet so far.</b>Activity shows up here as it happens.</div>`}
     </section>`;
   wireBanner();
+  const sm = document.getElementById('setMarket'); if (sm) sm.onclick = () => setMarketDialog(m);
   const ch = document.getElementById('chart'); drawBars(ch, o.claims_by_day || []);
   window.onresize = debounce(() => { if (document.body.contains(ch)) drawBars(ch, o.claims_by_day || []); }, 150);
 };
+/* The $FTR market: one capped supply, split between wallets, the treasury
+   and what has been burned. */
+function marketCard(m) {
+  const max = Number(m.max_supply) || 1e7, circ = Number(m.circulating) || 0, burned = Number(m.burned) || 0, tre = Math.max(0, Number(m.treasury) || 0);
+  const pc = v => Math.max(0, Math.min(100, v / max * 100)).toFixed(2) + '%';
+  return `<section class="card market-card"><div class="card-head"><div><h2>$FTR market</h2><p>Capped at ${compact(max)} $FTR. Every player's $FTR price follows this.</p></div>
+      ${me.role !== 'viewer' ? `<button class="btn btn-sm" id="setMarket">${ic('edit')}Set price</button>` : ''}</div>
+    <div class="market-top"><div><span class="kpi-label">1 $FTR</span><span class="market-price num">$${px(m.ftr_usd)}</span>
+      <span class="kpi-sub">Market cap ≈ ${usdBig(max * m.ftr_usd)} · £1 buys ${px(m.gbp_usd / m.ftr_usd)} $FTR</span></div>
+      <dl class="market-stats">
+        <div><dt><i class="sw circ"></i>In wallets</dt><dd class="num">${compact(circ)}</dd></div>
+        <div><dt><i class="sw tre"></i>Treasury</dt><dd class="num">${compact(tre)}</dd></div>
+        <div><dt><i class="sw burn"></i>Burned</dt><dd class="num">${compact(burned)}</dd></div>
+        <div><dt>Welcome grant</dt><dd class="num">${compact(m.welcome_grant)}</dd></div>
+      </dl></div>
+    <div class="supply-bar" role="img" aria-label="${compact(circ)} in wallets, ${compact(tre)} in the treasury, ${compact(burned)} burned, of ${compact(max)}">
+      <i class="circ" style="width:${pc(circ)}"></i><i class="tre" style="width:${pc(tre)}"></i><i class="burn" style="width:${pc(burned)}"></i></div>
+  </section>`;
+}
+function setMarketDialog(m) {
+  const box = openDialog(`<h2>Set the $FTR price</h2>
+    <p>Until the $FTR exchange is live, this is the price every share and claim is worked out at. Changing it reprices every player in $FTR straight away; their dollar values stay the same.</p>
+    <div class="grid-2"><div class="field"><label for="mk-p">1 $FTR in US$</label><input class="input num" id="mk-p" inputmode="decimal" value="${esc(m.ftr_usd)}"></div>
+      <div class="field"><label for="mk-g">£1 in US$</label><input class="input num" id="mk-g" inputmode="decimal" value="${esc(m.gbp_usd)}"></div></div>
+    <div class="field"><label for="mk-w">Welcome grant for new accounts ($FTR, paid from the treasury)</label><input class="input num" id="mk-w" inputmode="numeric" value="${esc(Math.round(m.welcome_grant))}"></div>
+    <p class="form-error" id="mk-err"></p>
+    <div class="dialog-actions"><button class="btn btn-ghost" data-v="0">Cancel</button><button class="btn btn-primary" id="mk-save">Save</button></div>`);
+  box.querySelector('[data-v="0"]').onclick = closeDialog;
+  box.querySelector('#mk-save').onclick = async () => {
+    const pr = parseFloat(box.querySelector('#mk-p').value), g = parseFloat(box.querySelector('#mk-g').value), w = parseFloat(box.querySelector('#mk-w').value);
+    if (!(pr > 0)) { box.querySelector('#mk-err').textContent = 'Enter a price above $0.'; return; }
+    try { await api('ft_admin_set_market', { p_ftr_usd: pr, p_gbp_usd: g > 0 ? g : null, p_welcome: w >= 0 ? w : null });
+      setFx(pr); toast(`$FTR set to $${px(pr)}. Every player is repriced.`); closeDialog(); delete cache.overview; delete cache.players; route(); }
+    catch (e) { box.querySelector('#mk-err').textContent = e.message; }
+  };
+}
 function feedRow(r) {
   const icon = r.kind === 'claim' ? 'claims' : r.kind === 'signup' ? 'managers' : 'edit';
   return `<div class="feed-row"><span class="feed-dot ${r.kind}">${ic(icon)}</span>
@@ -349,7 +396,8 @@ function drawBars(el, rows) {
 }
 function humanAction(a) {
   const map = { 'players.upsert': 'updated the player list', 'player.pause': 'paused a player', 'player.reopen': 'reopened a player',
-    'player.remove': 'removed a player', 'manager.suspend': 'suspended a manager', 'manager.reinstate': 'reinstated a manager' };
+    'player.remove': 'removed a player', 'manager.suspend': 'suspended a manager', 'manager.reinstate': 'reinstated a manager',
+    'market.set': 'set the $FTR price' };
   const [act, ...rest] = String(a || '').replace(/lst-/g, '').split(' · ');
   return (map[act] || act) + (rest.length ? ' · ' + rest.join(' · ') : '');
 }
@@ -377,9 +425,9 @@ function drawPlayers(view) {
         `<button class="chip" data-s="${k}" aria-pressed="${st.status === k}">${k === 'all' ? 'All' : STATUS_LABEL[k]} <i>${counts[k]}</i></button>`).join('')}</div>
     </div>
     <div class="table-wrap"><div class="table-scroll"><table class="t">
-      <thead><tr><th>Player</th><th>Club</th><th>Pos</th><th class="r">Price</th><th class="r">5% claim costs</th><th>Status</th><th class="r"><span class="sr">Actions</span></th></tr></thead>
+      <thead><tr><th>Player</th><th>Club</th><th>Pos</th><th class="r">Valuation</th><th class="r">5% claim costs</th><th>Status</th><th class="r"><span class="sr">Actions</span></th></tr></thead>
       <tbody>${rows.map(p => playerRow(p, canWrite)).join('') || `<tr><td colspan="7"><div class="empty"><b>No players here.</b>${all.length ? 'Try another filter or search.' : 'Upload a CSV or add your first player.'}</div></td></tr>`}</tbody>
-    </table></div><div class="table-foot">${rows.length} of ${all.length} players · Prices in $FTR, 1 $FTR = $0.10</div></div>`;
+    </table></div><div class="table-foot">${rows.length} of ${all.length} players · 10,000,000 shares each · priced at 1 $FTR = $${px(FTR_USD)}</div></div>`;
   wireBanner();
   const pq = document.getElementById('pq');
   pq.oninput = debounce(() => { st.q = pq.value; drawPlayers(view); const n = document.getElementById('pq'); n.focus(); n.setSelectionRange(n.value.length, n.value.length); }, 180);
@@ -412,14 +460,15 @@ function playerRow(p, canWrite) {
     <button class="icon-btn" data-act="remove" data-id="${id}" title="Remove" aria-label="Remove ${esc(p.name)}">${ic('trash')}</button>`;
   const bits = [p.country, p.gender === 'W' ? "Women's" : '', p.kind === 'COACH' ? 'Coach' : '', ageFrom(p.date_of_birth) ? ageFrom(p.date_of_birth) + ' yrs' : ''].filter(Boolean).join(' · ');
   const missing = !p.photo_url || !p.about || !p.country;
-  const price = launched ? (p.price || p.reference_value) : p.reference_value;
+  if (p.ftr_usd) setFx(p.ftr_usd);
+  const val = Number(p.valuation_usd) || 0, price = val ? shareFtr(val) : (Number(p.price) || 0);
   return `<tr>
     <td><div class="who">${playerAvatar(p)}<div class="who-text"><b>${esc(p.known_as || p.name)}${missing ? ` <span class="dot-warn" title="Profile incomplete: ${[!p.photo_url && 'photo', !p.about && 'about', !p.country && 'country'].filter(Boolean).join(', ')}"></span>` : ''}</b>
       <small><span class="tick">${esc(p.ticker)}</span>${bits ? ' ' + esc(bits) : ''}</small></div></div></td>
     <td><div class="who-text"><b>${esc(p.club || '—')}</b><small>${esc(p.league || '')}</small></div></td>
     <td>${esc(p.position || '—')}${p.shirt_number ? ` <small class="faint">#${esc(p.shirt_number)}</small>` : ''}</td>
-    <td class="r money num"><b>${num(price, 2)}</b><small>${usd(price)} a share</small></td>
-    <td class="r money num">${launched ? '<span class="faint">—</span>' : `<b>${compact(claimCost(p.reference_value, 1))}</b><small>≈ ${usd(claimCost(p.reference_value, 1))}</small>`}</td>
+    <td class="r money num"><b>${val ? usdBig(val) : '<span class="dot-warn" title="No valuation"></span> —'}</b><small>${px(price)} $FTR · ${usdBig(shareUsd(val))} a share</small></td>
+    <td class="r money num">${launched ? '<span class="faint">—</span>' : `<b>${compact(claimCost(price, 1))}</b><small>≈ ${usd(claimCost(price, 1))}</small>`}</td>
     <td><span class="pill ${p.status}">${STATUS_LABEL[p.status]}</span>${p.status === 'claimed' && p.claimed_by ? `<small class="faint" style="display:block;margin-top:4px">by @${esc(p.claimed_by)}</small>` : ''}</td>
     <td class="r"><div class="row-actions">${acts}</div></td></tr>`;
 }
@@ -461,7 +510,7 @@ async function uploadPhoto(blob, ticker) {
 }
 function editPlayer(p) {
   const isNew = !p;
-  p = p || { ticker: 'F', name: '', known_as: '', kind: 'PLAYER', gender: 'M', club: '', league: '', position: 'FWD', reference_value: '', status: 'new' };
+  p = p || { ticker: 'F', name: '', known_as: '', kind: 'PLAYER', gender: 'M', club: '', league: '', position: 'FWD', valuation_usd: '', status: 'new' };
   const launched = p.status === 'claimed' || p.status === 'trading';
   const photo = { url: p.photo_url || '', blob: null, removed: false };
   const opt = (list, cur) => list.map(([v, l]) => `<option value="${v}"${cur === v ? ' selected' : ''}>${l}</option>`).join('');
@@ -511,7 +560,10 @@ function editPlayer(p) {
         </div>
       </div>
       <div class="section"><h3>Market</h3>
-        <div class="field"><label for="f-price">Reference price ($FTR a share)</label><input class="input num" id="f-price" inputmode="decimal" value="${esc(p.reference_value)}" placeholder="e.g. 32.50" ${launched ? 'readonly' : ''}></div>
+        <div class="grid-2">
+          <div class="field"><label for="f-price">Real-world valuation (US$)</label><input class="input num" id="f-price" inputmode="decimal" value="${esc(p.valuation_usd ? Math.round(p.valuation_usd) : '')}" placeholder="e.g. 85980000"></div>
+          <div class="field"><label for="f-vsrc">Valuation source</label><input class="input" id="f-vsrc" value="${esc(p.valuation_source || '')}" placeholder="e.g. Transfermarkt, 3 Sep 2026"></div>
+        </div>
         <div class="callout" id="f-calc">${ic('info')}<span></span></div>
       </div>
       <div class="section"><h3>About</h3>
@@ -544,11 +596,12 @@ function editPlayer(p) {
   ['dragleave', 'drop'].forEach(t => drop.addEventListener(t, e => { e.preventDefault(); drop.classList.remove('over'); }));
   drop.addEventListener('drop', e => takeFile(e.dataTransfer.files[0]));
   const calc = () => {
-    const v = parseFloat($('#f-price').value);
-    $('#f-calc span').innerHTML = launched
-      ? `Trading at <b>${num(p.price || p.reference_value, 2)} $FTR</b> (≈ ${usd(p.price || p.reference_value)}) a share. The market sets this price now.`
-      : v > 0 ? `≈ <b>${usd(v)}</b> a share. A 5% claim (500,000 shares) costs <b>${num(claimCost(v, 1))} $FTR</b> (≈ ${usd(claimCost(v, 1))}); 10% costs ${num(claimCost(v, 2))} $FTR.`
-        : 'Set a reference price to see what claiming this player will cost.';
+    const v = parseFloat(String($('#f-price').value).replace(/[$,\s]/g, '')), f = shareFtr(v);
+    $('#f-calc span').innerHTML = v > 0
+      ? `One share: <b>${usdBig(shareUsd(v))}</b> = <b>${px(f)} $FTR</b> at $${px(FTR_USD)} a $FTR. ` + (launched
+        ? 'Trading now: until the share order book is live, a new valuation moves its share price.'
+        : `A 5% claim (500,000 shares) costs <b>${num(claimCost(f, 1))} $FTR</b> (≈ ${usd(claimCost(f, 1))}); 10% costs ${num(claimCost(f, 2))} $FTR.`)
+      : 'Enter the player\'s real-world valuation in dollars. A share is worth that ÷ 10,000,000.';
   };
   const age = () => { const a = ageFrom($('#f-dob').value); $('#f-age').textContent = a ? `· ${a} years old` : ''; };
   const count = () => { $('#f-count').textContent = `· ${$('#f-about').value.length}/800`; };
@@ -563,7 +616,8 @@ function editPlayer(p) {
       gender: $('#f-gender').value, position: $('#f-pos').value, country: v('#f-country'), date_of_birth: v('#f-dob'),
       shirt_number: v('#f-num'), height_cm: v('#f-height'), preferred_foot: $('#f-foot').value, club: v('#f-club'), league: v('#f-league'),
       about: v('#f-about'), photo_credit: v('#f-credit'), photo_source: v('#f-source') };
-    if (!launched) row.reference_value = v('#f-price');
+    row.valuation_usd = v('#f-price').replace(/[$,\s]/g, ''); row.valuation_source = v('#f-vsrc');
+    if (launched && !row.valuation_usd) delete row.valuation_usd;
     const hasPhoto = (photo.blob || photo.url) && !photo.removed;
     let problem = validateRow(row, launched);
     if (!problem && hasPhoto && row.photo_credit.length < 3) problem = 'Add a photo credit: who took it, and the licence.';
@@ -587,9 +641,10 @@ function validateRow(r, launched) {
   if (!/^F[A-Z0-9]{2,6}$/.test(r.ticker)) return 'Ticker must be F plus 2–6 letters or digits, e.g. FOSIM.';
   if (!r.name || r.name.length < 2) return 'Add the player\'s name.';
   if (!['PLAYER', 'COACH'].includes(r.kind)) return 'Type must be Player or Coach.';
-  if (!launched || r.reference_value) {
-    const v = parseFloat(String(r.reference_value).replace(/[$,\s]/g, ''));
-    if (!(v > 0)) return 'Reference price must be above 0.';
+  const val = r.valuation_usd != null && r.valuation_usd !== '' ? r.valuation_usd : r.reference_value;
+  if (!launched || (val != null && val !== '')) {
+    const v = parseFloat(String(val == null ? '' : val).replace(/[$,\s]/g, ''));
+    if (!(v > 0)) return 'Add a real-world valuation in dollars, above $0.';
   }
   if (r.position && !POSITIONS.some(([p]) => p === r.position)) return 'Position must be GK, DEF, MID, FWD or MGR.';
   if (r.gender && !['M', 'W'].includes(r.gender)) return "Game must be M (men's) or W (women's).";
@@ -606,10 +661,10 @@ function validateRow(r, launched) {
 
 /* ── CSV upload ────────────────────────────────────────────────────── */
 const CSV_COLS = ['ticker', 'name', 'known_as', 'kind', 'gender', 'position', 'country', 'date_of_birth', 'shirt_number', 'height_cm',
-  'preferred_foot', 'club', 'league', 'reference_value', 'about', 'photo_url', 'photo_credit', 'photo_source'];
+  'preferred_foot', 'club', 'league', 'valuation_usd', 'valuation_source', 'about', 'photo_url', 'photo_credit', 'photo_source'];
 const TEMPLATE = CSV_COLS.join(',') + '\n'
-  + 'FOSIM,Victor Osimhen,,PLAYER,M,FWD,Nigeria,1998-12-29,45,186,Right,Galatasaray,Süper Lig,41.30,"Explosive centre-forward, 2023 Serie A top scorer.",,,\n'
-  + 'FSHAW,Khadija Shaw,Bunny Shaw,PLAYER,W,FWD,Jamaica,1997-01-31,21,180,Left,Manchester City,WSL,32.50,"WSL Golden Boot winner and Jamaica\'s record scorer.",,,\n';
+  + 'FOSIM,Victor Osimhen,,PLAYER,M,FWD,Nigeria,1998-12-29,45,186,Right,Galatasaray,Süper Lig,85980000,"Transfermarkt, Sep 2026","Explosive centre-forward, 2023 Serie A top scorer.",,,\n'
+  + 'FSHAW,Khadija Shaw,Bunny Shaw,PLAYER,W,FWD,Jamaica,1997-01-31,21,180,Left,Manchester City,WSL,831140,Soccerdonna,"WSL Golden Boot winner and Jamaica\'s record scorer.",,,\n';
 function downloadFile(name, text) {
   const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob(['﻿' + text], { type: 'text/csv;charset=utf-8' }));
   a.download = name; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
@@ -632,13 +687,14 @@ const HEADERS = { ticker: ['ticker', 'symbol', 'fticker'], name: ['name', 'playe
   kind: ['kind', 'type'], gender: ['gender', 'game', 'sex'], club: ['club', 'team', 'currentclub'], league: ['league', 'competition'],
   position: ['position', 'pos'], country: ['country', 'nationality', 'nation'], date_of_birth: ['dateofbirth', 'dob', 'birthdate', 'born'],
   shirt_number: ['shirtnumber', 'number', 'squadnumber', 'no'], height_cm: ['heightcm', 'height'], preferred_foot: ['preferredfoot', 'foot', 'strongerfoot'],
-  reference_value: ['referencevalue', 'reference', 'referenceprice', 'price', 'value'], about: ['about', 'bio', 'description'],
+  valuation_usd: ['valuationusd', 'valuation', 'marketvalue', 'marketvalueusd', 'valueusd', 'value'], valuation_source: ['valuationsource', 'valuesource'],
+  reference_value: ['referencevalue', 'reference', 'referenceprice', 'price'], about: ['about', 'bio', 'description'],
   photo_url: ['photourl', 'photo', 'image', 'imageurl'], photo_credit: ['photocredit', 'credit'], photo_source: ['photosource', 'source'] };
 function rowsFromCsv(text) {
   const grid = parseCsv(text); if (!grid.length) throw new Error('That file is empty.');
   const hdr = grid[0].map(h => h.toLowerCase().replace(/[^a-z]/g, ''));
   const idx = {}; for (const [k, names] of Object.entries(HEADERS)) idx[k] = hdr.findIndex(h => names.includes(h));
-  if (idx.ticker < 0 || idx.name < 0 || idx.reference_value < 0) throw new Error('The first row needs at least these columns: ticker, name, reference_value.');
+  if (idx.ticker < 0 || idx.name < 0 || (idx.valuation_usd < 0 && idx.reference_value < 0)) throw new Error('The first row needs at least these columns: ticker, name, valuation_usd.');
   const seen = new Set(), existing = new Map((cache.players || []).map(p => [p.ticker, p]));
   return grid.slice(1).map((cells, i) => {
     const get = k => idx[k] >= 0 ? String(cells[idx[k]] || '').trim() : '';
@@ -647,7 +703,9 @@ function rowsFromCsv(text) {
     let gender = get('gender').toUpperCase(); gender = { MEN: 'M', MENS: "M", "MEN'S": 'M', MALE: 'M', WOMEN: 'W', WOMENS: 'W', "WOMEN'S": 'W', FEMALE: 'W', F: 'W' }[gender] || gender;
     const foot = get('preferred_foot'), ft = foot ? foot[0].toUpperCase() + foot.slice(1).toLowerCase() : '';
     const r = { line: i + 2, ticker: get('ticker').toUpperCase(), name: get('name'), kind, position: pos,
-      reference_value: get('reference_value').replace(/[$,\s]/g, '') };
+      valuation_usd: get('valuation_usd').replace(/[$,\s]/g, '') };
+    if (idx.valuation_usd < 0) { delete r.valuation_usd; r.reference_value = get('reference_value').replace(/[$,\s]/g, ''); }
+    if (idx.valuation_source >= 0) r.valuation_source = get('valuation_source');
     // Only columns that are in the file are sent, so a short file never blanks a longer profile.
     const extra = { known_as: get('known_as'), gender, club: get('club'), league: get('league'), country: get('country'),
       date_of_birth: get('date_of_birth'), shirt_number: get('shirt_number'), height_cm: get('height_cm').replace(/cm$/i, '').trim(),
@@ -667,7 +725,7 @@ function openUpload() {
   const box = openDialog(`<h2>Upload players</h2><p>Add or update the players managers can claim, from a CSV file.</p>
     <div class="upload-body" id="ub">
       <label class="drop" id="drop" tabindex="0">${ic('upload')}<b>Drop a CSV here, or choose a file</b>
-        <span>Needs ticker, name and reference_value. Optional: known_as, gender, position, country, date_of_birth, shirt_number, height_cm, preferred_foot, club, league, about, photo_url, photo_credit</span>
+        <span>Needs ticker, name and valuation_usd (the real-world valuation in dollars). Optional: valuation_source, known_as, gender, position, country, date_of_birth, shirt_number, height_cm, preferred_foot, club, league, about, photo_url, photo_credit</span>
         <input type="file" id="file" accept=".csv,text/csv" hidden></label>
       <p class="hint" style="margin-top:12px">Players already on the list are updated. Anyone who has already launched is left alone. <button class="btn btn-ghost btn-sm" id="tmpl2">${ic('download')}Download the template</button></p>
     </div>
@@ -693,14 +751,14 @@ function openUpload() {
       <div class="upload-sum"><span class="pill plain file">${ic('file')} ${esc(name)}</span>
         <span class="pill open">${adds} new</span>${ups ? `<span class="pill paused">${ups} to update</span>` : ''}${bad.length ? `<span class="pill bad">${bad.length} with problems</span>` : ''}</div>
       <div class="table-wrap" style="background:var(--panel-2)"><div class="table-scroll"><table class="t" style="min-width:680px">
-        <thead><tr><th>Row</th><th>Player</th><th>Club</th><th>Pos</th><th class="r">Price</th><th>Check</th></tr></thead>
+        <thead><tr><th>Row</th><th>Player</th><th>Club</th><th>Pos</th><th class="r">Valuation</th><th>Check</th></tr></thead>
         <tbody>${rows.map(r => `<tr>
           <td class="faint num">${r.line}</td>
           <td><div class="who-text"><b>${esc(r.name || '—')}</b><small><span class="tick">${esc(r.ticker || '—')}</span></small></div></td>
           <td><div class="who-text"><b>${esc(r.club || '—')}</b><small>${esc(r.league)}</small></div></td>
           <td>${esc(r.position)}</td>
-          <td class="r money num"><b>${r.reference_value ? num(r.reference_value, 2) : '—'}</b>${r.reference_value > 0 ? `<small>${usd(r.reference_value)}</small>` : ''}</td>
-          <td>${r.problem ? `<span class="issue">${esc(r.problem)}</span>` : r.launched ? '<span class="note-up">Updates the profile (price stays with the market)</span>' : r.update ? '<span class="note-up">Updates the listed player</span>' : '<span class="note-ok">Ready to add</span>'}</td></tr>`).join('')}</tbody>
+          <td class="r money num"><b>${r.valuation_usd > 0 ? usdBig(r.valuation_usd) : r.reference_value > 0 ? px(r.reference_value) + ' $FTR' : '—'}</b>${r.valuation_usd > 0 ? `<small>${px(shareFtr(r.valuation_usd))} $FTR a share</small>` : ''}</td>
+          <td>${r.problem ? `<span class="issue">${esc(r.problem)}</span>` : r.launched ? '<span class="note-up">Updates the profile and valuation</span>' : r.update ? '<span class="note-up">Updates the listed player</span>' : '<span class="note-ok">Ready to add</span>'}</td></tr>`).join('')}</tbody>
       </table></div></div>`;
     box.querySelector('#ua').innerHTML = `<button class="btn btn-ghost" id="again">Choose another file</button>
       <button class="btn btn-primary" id="pub" ${good.length ? '' : 'disabled'}>Publish ${good.length} ${good.length === 1 ? 'player' : 'players'}</button>`;
@@ -910,6 +968,7 @@ VIEWS.log = async view => {
 function logDetail(r) {
   const d = r.detail || {};
   if (r.action === 'players.upsert') return `${d.added || 0} added, ${d.updated || 0} updated${d.skipped ? `, ${d.skipped} skipped` : ''}`;
+  if (r.action === 'market.set') return `$${px(d.from)} → $${px(d.to)}`;
   if (d.reason) return esc(d.reason);
   if (d.name) return esc(d.name);
   return '';
@@ -948,24 +1007,26 @@ const SAMPLE = (() => {
     FLM10: { country: 'Argentina', date_of_birth: '1987-06-24', shirt_number: 10, height_cm: 170, preferred_foot: 'Left' },
     FCHUK: { country: 'Nigeria', date_of_birth: '1999-05-22', preferred_foot: 'Left' }
   };
+  const VAL = {FSAKA: 126104000, FHLND: 252208000, FKM7: 229280000, FVJR: 160496000, FBEL: 183424000, FPLMR: 114640000, FYAML: 252208000, FMUS: 114640000, FWRTZ: 114640000, FRODR: 57320000, FFODN: 91712000, FPEDR: 171960000, FSALI: 114640000, FBRN: 40124000, FJACK: 45856000, FCR7: 11464000, FLM10: 17196000, FKANE: 68784000, FRICE: 137568000, FVVD: 32099200, FOSIM: 85980000, FSALH: 25220800, FLOOK: 45856000, FCHUK: 22928000, FAITN: 1834240, FPUTL: 1375680, FRUSS: 1490320, FLJMS: 802480, FKERR: 573200, FWILM: 859800, FEARP: 137568, FSHAW: 831140, FPAJR: 458560, FRODM: 401240, FKELY: 1031760, FAJBD: 487220, FALOZ: 91712, FARTA: 22050000, FPEP: 29600000, FMARS: 18300000, FWIEG: 26800000};
+  const valOf = (t, v) => VAL[t] || v * 1e6;
   const players = P.map(([t, n, c, l, pos, v]) => Object.assign({ listing_id: 'lst-' + t, asset_id: '$' + t, ticker: t, name: n, known_as: '', kind: 'PLAYER',
-    gender: WOMEN.includes(t) ? 'W' : 'M', club: c, league: l, position: pos, reference_value: v, price: v, status: 'open', claimed_by: null, claimed_at: null,
+    gender: WOMEN.includes(t) ? 'W' : 'M', club: c, league: l, position: pos, valuation_usd: valOf(t, v), valuation_source: 'Transfermarkt / Soccerdonna, Sep 2026', status: 'open', claimed_by: null, claimed_at: null,
     created_at: iso(now - 20 * D) }, PROFILE[t] || {}));
   [['FSAKA', 'Bukayo Saka', 'Arsenal', 'Premier League', 'FWD', 48.2, 'assets/players/saka.webp', 'England'],
    ['FHLND', 'Erling Haaland', 'Manchester City', 'Premier League', 'FWD', 71.4, 'assets/players/haaland.webp', 'Norway'],
    ['FAITN', 'Aitana Bonmatí', 'Barcelona', 'Liga F', 'MID', 44.8, '', 'Spain'],
    ['FRUSS', 'Alessia Russo', 'Arsenal', 'WSL', 'FWD', 38.9, '', 'England']].forEach(([t, n, c, l, pos, v, ph, co]) => players.push({
     listing_id: null, asset_id: '$' + t, ticker: t, name: n, known_as: '', kind: 'PLAYER', gender: WOMEN.includes(t) ? 'W' : 'M', club: c, league: l,
-    position: pos, reference_value: v, price: v, status: 'trading', country: co, photo_url: ph, photo_credit: ph ? 'Wikimedia Commons (see attribution.json)' : '' }));
+    position: pos, valuation_usd: valOf(t, v), valuation_source: 'Transfermarkt, Sep 2026', status: 'trading', country: co, photo_url: ph, photo_credit: ph ? 'Wikimedia Commons (see attribution.json)' : '' }));
   const byT = t => players.find(p => p.ticker === t), byH = h => M.find(m => m.handle === h);
   const claims = [];
   claimsDef.forEach(([t, h, lvl, yrs, daysAgo]) => {
     const p = byT(t); if (!h) { p.status = 'paused'; return; }
-    const m = byH(h), shares = LEVEL_SHARES[lvl], paid = Math.round(shares * p.reference_value), at = now - daysAgo * D - 3600e3 * (daysAgo + 2);
+    const m = byH(h), shares = LEVEL_SHARES[lvl], paid = Math.round(shares * shareFtr(p.valuation_usd)), at = now - daysAgo * D - 3600e3 * (daysAgo + 2);
     p.status = 'claimed'; p.claimed_by = h; p.claimed_at = iso(at);
     claims.push({ listing_id: p.listing_id, ticker: t, name: p.name, club: p.club, handle: h, display_name: m.display_name, user_id: m.id, claim_level: lvl,
       shares, vesting_years: yrs, fee_paid: paid, fee_burned: Math.round(paid * .02), daily_limit: shares / 100, claimed_at: iso(at),
-      vesting_until: iso(at + yrs * 365 * D), reference_value: p.reference_value });
+      vesting_until: iso(at + yrs * 365 * D), reference_value: shareFtr(p.valuation_usd) });
   });
   const fixtures = [['Arsenal', 'Chelsea'], ['Galatasaray', 'Fenerbahçe'], ['Barcelona', 'Real Madrid'], ['Manchester City', 'Liverpool'], ['AC Milan', 'Inter']];
   const targets = [['FCHUK', 'Samuel Chukwueze'], ['FSAKA', 'Bukayo Saka'], ['FHLND', 'Erling Haaland'], ['FAJBD', 'Rasheedat Ajibade'], ['FKM7', 'Kylian Mbappé']];
@@ -984,10 +1045,11 @@ const SAMPLE = (() => {
     { id: 4, action: 'player.pause', target: 'lst-FALOZ', detail: {}, created_at: iso(now - 4 * D), handle: 'sample_admin' },
     { id: 3, action: 'players.upsert', target: null, detail: { added: 15, updated: 0, skipped: 0 }, created_at: iso(now - 20 * D), handle: 'sample_admin' }
   ];
+  const market = { ftr_usd: 2, gbp_usd: 1.3372, welcome_grant: 1000 };
   const note = (action, target, detail) => log.unshift({ id: log.length + 1, action, target, detail: detail || {}, created_at: iso(Date.now()), handle: 'sample_admin' });
   const clone = x => JSON.parse(JSON.stringify(x));
-  const holdingsFor = m => claims.filter(c => c.handle === m.handle).map(c => ({ ticker: c.ticker, name: c.name, shares: c.shares, locked: 0, avg_cost: c.reference_value, price: c.reference_value, value: c.shares * c.reference_value }))
-    .concat(m.handle === 'sample_admin' ? [] : [{ ticker: 'FSAKA', name: 'Bukayo Saka', shares: 1000 + m.handle.length * 150, locked: 0, avg_cost: 44, price: 48.2, value: (1000 + m.handle.length * 150) * 48.2 }]);
+  const holdingsFor = m => claims.filter(c => c.handle === m.handle).map(c => ({ ticker: c.ticker, name: c.name, shares: c.shares, locked: 0, avg_cost: c.reference_value, price: shareFtr(byT(c.ticker).valuation_usd), value: c.shares * shareFtr(byT(c.ticker).valuation_usd) }))
+    .concat(m.handle === 'sample_admin' ? [] : [{ ticker: 'FSAKA', name: 'Bukayo Saka', shares: 1000 + m.handle.length * 150, locked: 0, avg_cost: 5.9, price: shareFtr(VAL.FSAKA), value: (1000 + m.handle.length * 150) * shareFtr(VAL.FSAKA) }]);
   const fn = {
     ft_admin_whoami: () => ({ is_admin: true, role: 'admin', handle: 'sample_admin', name: 'Sample admin', email: 'sample@fantrade.app' }),
     ft_admin_overview: () => {
@@ -1000,14 +1062,17 @@ const SAMPLE = (() => {
         const cs = claims.filter(c => new Date(c.claimed_at).toDateString() === k);
         days.push({ day: d0.toISOString(), claims: cs.length, paid: cs.reduce((t, c) => t + c.fee_paid, 0) });
       }
-      return { managers: M.length, managers_7d: M.filter(m => now - new Date(m.created_at) < 7 * D).length, suspended: M.filter(m => m.suspended).length,
+      const burnedAll = claims.reduce((t, c) => t + c.fee_burned, 0), circ = M.reduce((t, m) => t + m.balance + m.locked, 0);
+      return { ftr: { ftr_usd: market.ftr_usd, gbp_usd: market.gbp_usd, max_supply: 10000000, burned: burnedAll, circulating: circ,
+                      treasury: 10000000 - burnedAll - circ, welcome_grant: market.welcome_grant },
+        managers: M.length, managers_7d: M.filter(m => now - new Date(m.created_at) < 7 * D).length, suspended: M.filter(m => m.suspended).length,
         wallet_ftr: M.reduce((t, m) => t + m.balance, 0), locked_ftr: 0,
         open_to_claim: players.filter(p => p.status === 'open').length, paused: players.filter(p => p.status === 'paused').length,
         trading: 26 + claims.length, claims: claims.length, claims_paid: claims.reduce((t, c) => t + c.fee_paid, 0), claims_burned: claims.reduce((t, c) => t + c.fee_burned, 0),
         fanplay_active: entries.filter(e => ['ACTIVE', 'LIVE'].includes(e.status)).length, fanplay_pending: entries.filter(e => e.status === 'PENDING_SETTLEMENT').length,
         claims_by_day: days, recent };
     },
-    ft_admin_players: () => clone(players).sort((a, b) => ({ open: 0, paused: 1, claimed: 2, trading: 3 }[a.status] - { open: 0, paused: 1, claimed: 2, trading: 3 }[b.status]) || a.name.localeCompare(b.name)),
+    ft_admin_players: () => clone(players).map(p => Object.assign(p, { ftr_usd: market.ftr_usd })).sort((a, b) => ({ open: 0, paused: 1, claimed: 2, trading: 3 }[a.status] - { open: 0, paused: 1, claimed: 2, trading: 3 }[b.status]) || a.name.localeCompare(b.name)),
     ft_admin_upsert_players: ({ p_rows }) => {
       let added = 0, updated = 0; const skipped = [], notes = [];
       const FIELDS = ['known_as', 'gender', 'club', 'league', 'country', 'date_of_birth', 'shirt_number', 'height_cm', 'preferred_foot', 'about', 'photo_url', 'photo_credit', 'photo_source'];
@@ -1015,15 +1080,16 @@ const SAMPLE = (() => {
         const ex = byT(r.ticker), launched = ex && (ex.status === 'claimed' || ex.status === 'trading');
         const problem = validateRow(Object.assign({}, r, { photo_url: '' }), launched);
         if (problem) { skipped.push({ ticker: r.ticker, name: r.name, reason: problem }); return; }
-        const v = parseFloat(r.reference_value);
+        const v = parseFloat(r.valuation_usd) || (parseFloat(r.reference_value) * FTR_USD * SHARES) || 0;
         if (ex) {
           ex.name = r.name; FIELDS.forEach(k => { if (k in r) ex[k] = r[k]; }); if (r.position) ex.position = r.position;
-          if (!launched) { ex.kind = r.kind; if (v > 0) { ex.reference_value = v; ex.price = v; } }
-          else if (v > 0 && v !== ex.price) notes.push({ ticker: r.ticker, name: r.name, note: 'Already trading, so the market sets its price. Profile updated, price left as it was.' });
+          if (!launched) ex.kind = r.kind;
+          if (v > 0) { ex.valuation_usd = v; ex.valuation_source = r.valuation_source || 'Set in the admin';
+            if (launched) notes.push({ ticker: r.ticker, name: r.name, note: 'Trading now: the new valuation moves its share price to ' + usdBig(v / SHARES) + '.' }); }
           updated++;
         } else {
           const np = { listing_id: 'lst-' + r.ticker, asset_id: '$' + r.ticker, ticker: r.ticker, name: r.name, kind: r.kind, position: r.position || 'FWD',
-            gender: 'M', reference_value: v, price: v, status: 'open', claimed_by: null, claimed_at: null, created_at: iso(Date.now()) };
+            gender: 'M', valuation_usd: v, valuation_source: r.valuation_source || 'Set in the admin', status: 'open', claimed_by: null, claimed_at: null, created_at: iso(Date.now()) };
           FIELDS.forEach(k => { if (k in r) np[k] = r[k]; }); players.push(np); added++;
         }
       });
@@ -1056,6 +1122,9 @@ const SAMPLE = (() => {
           settled: es.filter(e => e.status === 'SETTLED').length, shares_staked: es.reduce((t, e) => t + e.staked_shares, 0), projected_fp: es.reduce((t, e) => t + e.projected_fp, 0) }; });
       return { by_status: by, matchdays: mds, entries: clone(entries) };
     },
+    ft_admin_set_market: ({ p_ftr_usd, p_gbp_usd, p_welcome }) => { const before = market.ftr_usd;
+      market.ftr_usd = p_ftr_usd; if (p_gbp_usd) market.gbp_usd = p_gbp_usd; if (p_welcome != null) market.welcome_grant = p_welcome;
+      note('market.set', '$FTR', { from: before, to: p_ftr_usd }); return clone(market); },
     ft_admin_log: () => clone(log)
   };
   return { call: async (name, args) => { await new Promise(r => setTimeout(r, 120)); if (!fn[name]) throw new Error('Not available in sample mode'); return fn[name](args); } };

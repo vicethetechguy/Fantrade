@@ -20,6 +20,7 @@ HTML = '''<main><div class="asset-page">
       <section class="asset-market" aria-label="Share price and chart">
         <p class="asset-label">Price per share · FTR</p>
         <div class="asset-price" id="assetPrice"></div>
+        <p class="asset-price-usd" id="assetPriceUsd"></p>
         <p class="asset-movement"><strong id="assetChange"></strong><span>past 24 hours</span></p>
         <div class="asset-chart-controls">
           <div class="asset-periods" id="assetPeriods" role="group" aria-label="Chart period">
@@ -41,7 +42,7 @@ HTML = '''<main><div class="asset-page">
         </dl>
       </section>
       <aside class="asset-position" aria-labelledby="assetPositionTitle">
-        <div class="asset-section-heading"><h2 id="assetPositionTitle">Your position</h2><a href="portfolio.html">Portfolio</a></div>
+        <div class="asset-section-heading"><h2 id="assetPositionTitle">Your position</h2><a href="wallet.html">Wallet</a></div>
         <div id="assetHolding" aria-live="polite"></div>
         <div class="asset-trade-actions">
           <a class="app-primary" id="assetBuy" href="trade.html">Buy shares</a>
@@ -92,7 +93,7 @@ JS = r'''
   var requested = new URLSearchParams(location.search).get('a') || 'FSAKA';
   var asset = ASSETS.find(function(a){ return a.t.toLowerCase() === requested.toLowerCase() || ftSym(a.t).toLowerCase() === requested.toLowerCase(); });
   var picker = byId('assetPicker');
-  function money(value){ return Number(value).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}); }
+  function money(value){ return pxFmt(value); }
   function escapeText(value){ var node = document.createElement('span'); node.textContent = value; return node.innerHTML; }
   function renderSearch(){
     var query = byId('assetSearch').value.trim().toLowerCase();
@@ -125,6 +126,7 @@ JS = r'''
   byId('assetSubtitle').textContent=ftSym(asset.t) + ' · ' + asset.club;
   byId('assetPortrait').innerHTML=playerPhoto(asset.t,asset.n);
   byId('assetPrice').textContent=money(asset.p);
+  if(byId('assetPriceUsd')) byId('assetPriceUsd').textContent = '≈ ' + usdFmt(asset.p) + ' a share' + (asset.v ? ' · valuation $' + (asset.v >= 1e6 ? (asset.v / 1e6).toFixed(1) + 'M' : Math.round(asset.v).toLocaleString('en-US')) : '');
   byId('assetChange').textContent=(asset.d>=0?'+':'') + asset.d.toFixed(2) + '%';
   byId('assetChange').className=asset.d>=0?'asset-up':'asset-down';
   byId('assetHigh').textContent=money(asset.h);
@@ -195,7 +197,7 @@ JS = r'''
     function y(p){return bottom-(p-low)/span*(bottom-top);}
     var line=data.map(function(d,i){return (i?'L':'M')+x(i).toFixed(1)+','+y(d.c).toFixed(1);}).join(' ');
     var color=asset.d>=0?'#24c86b':'#ff5668', markup='';
-    [high,(high+low)/2,low].forEach(function(p){markup+='<text x="638" y="'+(y(p)+4).toFixed(1)+'" text-anchor="end" fill="#979c96" font-size="11">'+p.toFixed(2)+'</text>';});
+    [high,(high+low)/2,low].forEach(function(p){markup+='<text x="638" y="'+(y(p)+4).toFixed(1)+'" text-anchor="end" fill="#979c96" font-size="11">'+pxFix(p)+'</text>';});
     if(candles){
       data.forEach(function(d,i){var c=d.c>=d.o?'#24c86b':'#ff5668';markup+='<line x1="'+x(i)+'" x2="'+x(i)+'" y1="'+y(d.h)+'" y2="'+y(d.l)+'" stroke="'+c+'" stroke-width="1.5"/><rect x="'+(x(i)-3)+'" y="'+y(Math.max(d.o,d.c))+'" width="6" height="'+Math.max(2,Math.abs(y(d.o)-y(d.c)))+'" rx="1" fill="'+c+'"/>';});
     }else{

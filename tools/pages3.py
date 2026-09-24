@@ -217,7 +217,7 @@ si.append('</main>')
 SIGNIN_JS = AUTH_JS + r"""
 var AFTER_SIGNIN = ['account','activity','asset','buy','club-builder','clubs',
   'dashboard','divisions','exchange','fanplay','ftr','liveboard','notifications',
-  'onboarding','portfolio','receive','send','settings','settings-alerts',
+  'onboarding','receive','send','settings','settings-alerts',
   'settings-club','settings-data','settings-play','settings-profile',
   'settings-security','settings-wallet','swap','trade','wallet','withdraw'];
 function nextPage(){
@@ -696,7 +696,7 @@ DASH_CSS = """
 .home-claim-card{margin-top:20px;padding:26px;border-radius:24px;border:0;color:#fff;
   background:radial-gradient(120% 78% at 100% 0%,rgba(255,255,255,.18),transparent 58%),var(--lime);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.16),0 20px 44px rgba(24,0,173,.34);
-  display:grid;gap:18px;min-height:388px;align-content:start}
+  display:grid;grid-template-columns:minmax(0,1fr);gap:18px;min-height:388px;align-content:start}
 .home-claim-head{display:grid;gap:10px}
 .home-claim-top{display:flex;align-items:center;gap:10px}
 /* The mark sits straight on the blue with nothing behind it, in white:
@@ -970,7 +970,7 @@ CLAIM_SEARCH_HTML = (
     + '</div></div></div>')
 
 da = ['<main><div class="kc-home-wrap home-layout">', tab_intro('Home'),
-      '<section class="kc-home-bal-card" aria-label="Portfolio balance"><div class="kc-bal-header">Your portfolio'
+      '<section class="kc-home-bal-card" aria-label="Total value"><div class="kc-bal-header">Total value'
       '<button type="button" class="kc-eye-btn" id="balEyeBtn" aria-label="Toggle balance visibility">'+'<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="fill:none"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>'+'</button></div>'
       '<div class="kc-bal-val"><span id="homeBalVal" data-bind="net">—</span> <small>$FTR</small></div>'
       '<div class="kc-bal-sub" id="homeBalSub">—</div>',
@@ -1133,7 +1133,7 @@ DASH_JS = r"""
       if(!rows || !rows.length) return;
       cloudRows = rows.filter(function(r){ return !r.claimed; }).map(function(r){
         var t = ftSym(r.ticker || r.asset_id), local = ELIGIBLE.filter(function(e){ return e.t === t; })[0] || {};
-        return { t: t, n: r.name || local.n, p: Number(r.price) || local.p, pos: r.position || local.pos || (r.kind === 'COACH' ? 'MGR' : 'FWD'),
+        return { t: t, n: r.name || local.n, p: Number(r.price) || local.p, v: Number(r.valuation_usd) || local.v, pos: r.position || local.pos || (r.kind === 'COACH' ? 'MGR' : 'FWD'),
                  club: r.club || local.club, lg: r.league || local.lg, w: r.gender ? (r.gender === 'W' ? 1 : 0) : local.w,
                  aka: r.known_as || local.aka, about: r.about || local.about, country: r.country || local.country, listingId: r.id,
                  _photo: r.photo_url };
@@ -1161,7 +1161,7 @@ DASH_JS = r"""
     if(r.listed){
       return '<a class="home-claim-row is-listed" href="asset.html?a=' + encodeURIComponent(a.t) + '">' + playerPhoto(a.t, a.n)
         + '<span class="home-claim-who"><b>' + esc(a.n) + '</b>' + meta
-        + '<span class="home-claim-val"><strong>' + usd(a.p) + '</strong> a share &middot; ' + Number(a.p).toFixed(2) + ' $FTR</span></span>'
+        + '<span class="home-claim-val"><strong>' + usd(a.p) + '</strong> a share &middot; ' + pxFmt(a.p) + ' $FTR</span></span>'
         + '<span class="home-claim-action">Buy</span></a>';
     }
     var q = FT.claimQuote(a, 1);
@@ -1210,7 +1210,7 @@ DASH_JS = r"""
     bar('claimSplitYou', q.shares); bar('claimSplitMkt', market);
     set('claimDailyLimitTxt', num(q.shares * 0.01));
     set('claimFpTxt', '+' + num(q.shares / 100));
-    set('claimPriceTxt', Number(active.p).toFixed(2) + ' $FTR <small>(' + usd(active.p) + ')</small>');
+    set('claimPriceTxt', pxFmt(active.p) + ' $FTR <small>(' + usd(active.p) + ')</small>');
     set('claimSharesTxt', num(q.shares) + ' <small>(' + q.percent + '%)</small>');
     set('claimBurnTxt', num(q.burn) + ' $FTR');
     set('claimTotalTxt', num(q.cost) + ' $FTR');
@@ -1352,7 +1352,7 @@ DASH_JS = r"""
       var s = FT.getState();
       var net = FT.holdingsValue() + s.wallet.balance + s.wallet.locked;
       bVal.textContent = net.toLocaleString('en-US');
-      if(bSub) bSub.textContent = '≈ $' + (net * 0.1).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' USD';
+      if(bSub) bSub.textContent = '≈ $' + (net * FTR_USD).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' USD';
     }
   }
   if(eye){
@@ -1420,8 +1420,8 @@ DASH_JS = r"""
         + "  </div>"
         + "</div>"
         + "<div class='kc-row-mid'>"
-        + "  <div class='kc-price-main'>" + (a.p > 999 ? a.p.toLocaleString('en-US', {minimumFractionDigits: 1, maximumFractionDigits: 2}) : a.p.toFixed(2)) + " <span style='font-size:10px;color:#767c82'>FTR</span></div>"
-        + "  <div class='kc-price-sub'>≈ $" + (a.p * 0.1).toFixed(2) + " USD</div>"
+        + "  <div class='kc-price-main'>" + pxFmt(a.p) + " <span style='font-size:10px;color:#767c82'>FTR</span></div>"
+        + "  <div class='kc-price-sub'>≈ " + usdFmt(a.p) + " USD</div>"
         + "</div>"
         + "<div class='kc-row-right'>"
         + "  <div class='kc-pill" + (up ? "" : " down") + "'>" + (up ? "+" : "") + a.d.toFixed(2) + "%</div>"
@@ -1448,9 +1448,6 @@ print("built dashboard.html")
 # ══════════════════════════════════════════════════════════════════
 # PORTFOLIO & LEDGER
 # ══════════════════════════════════════════════════════════════════
-from portfolio_page import HTML as PORTFOLIO_HTML, JS as PORTFOLIO_JS
-page("portfolio.html", "Portfolio — Fantrade", PORTFOLIO_HTML, PORTFOLIO_JS)
-print("built portfolio.html")
 
 # ══════════════════════════════════════════════════════════════════
 # LEADERBOARD — global Dream Club standings
@@ -2123,9 +2120,9 @@ SECTIONS["play"] = T('<div class="bezel flat sec-card" data-reveal><div class="c
 SECTIONS["data"] = T('<div class="bezel flat sec-card" data-reveal><div class="core pad">'
             '<div class="sec-title"><span class="ibox">@@</span><div><h3>Data &amp; account</h3>'
             '<p>Take your records with you, or close the account entirely.</p></div></div>'
-            '<div class="rowlink">@@ Full ledger export (CSV)<b><a href="portfolio.html" '
+            '<div class="rowlink">@@ Full ledger export (CSV)<b><a href="wallet.html" '
             'class="app-text-link">Download</a></b></div>'
-            '<div class="rowlink">@@ Gains summary for this tax year<b><a href="portfolio.html" '
+            '<div class="rowlink">@@ Gains summary for this tax year<b><a href="wallet.html" '
             'class="app-text-link">Download</a></b></div>'
             '<div class="rowlink">@@ Account data request (GDPR)<b><a href="#" id="stGdpr" '
             'class="app-text-link">Request</a></b></div>'
