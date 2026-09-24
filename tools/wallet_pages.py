@@ -86,9 +86,10 @@ WITHDRAW_HTML = workflow('Withdraw to bank', 'Move $FTR out of Fantrade and into
 <div class="wallet-quick"><button class="wallet-chip" type="button" data-wd="5000">5,000</button>
 <button class="wallet-chip" type="button" data-wd="25000">25,000</button><button class="wallet-chip" type="button" id="wdMax">Max</button></div>
 <h2 class="wallet-section-title">Bank account</h2>
-<div class="wallet-field"><label for="wdCurrency">Currency</label><select id="wdCurrency">
+<div class="wallet-field"><span class="wallet-label" id="wdCurrencyLabel">Currency</span><select id="wdCurrency" hidden tabindex="-1" aria-hidden="true">
 <option value="GBP">British pound · GBP</option><option value="NGN">Nigerian naira · NGN</option>
-<option value="EUR">Euro · EUR</option><option value="USD">US dollar · USD</option></select></div>
+<option value="EUR">Euro · EUR</option><option value="USD">US dollar · USD</option></select>
+<button type="button" class="swap-pick" id="wdCurrencyBtn" aria-haspopup="dialog" aria-labelledby="wdCurrencyLabel wdCurrencyBtn"></button></div>
 <div class="wallet-field"><label for="wdName">Account holder name</label><input id="wdName" autocomplete="name" placeholder="As shown on your bank account" required maxlength="80"></div>
 <div class="wallet-field"><label for="wdBank">Bank name</label><input id="wdBank" autocomplete="off" placeholder="e.g. Barclays" required maxlength="60"></div>
 <div class="wallet-row"><div class="wallet-field"><label for="wdSort" id="wdSortLabel">Sort code</label><input id="wdSort" inputmode="numeric" autocomplete="off" placeholder="00-00-00" maxlength="11"></div>
@@ -99,7 +100,11 @@ WITHDRAW_HTML = workflow('Withdraw to bank', 'Move $FTR out of Fantrade and into
 <div><dt>Arrives</dt><dd>1–2 working days</dd></div></dl>
 <button class="app-primary wallet-submit" type="submit">Review withdrawal</button></form>''' + STATUS + '''
 <p class="wallet-note">Demo withdrawal. Your preview balance updates; no real money is sent and no bank details leave this browser.</p>
-<section class="wallet-followup"><h2>Recent withdrawals</h2><div id="wdLog"></div></section>''')
+<section class="wallet-followup"><h2>Recent withdrawals</h2><div id="wdLog"></div></section>
+<dialog id="wdCurrencyPicker" class="asset-picker" aria-labelledby="wdCurrencyPickerTitle">
+<div class="asset-picker-heading"><h2 id="wdCurrencyPickerTitle">Choose currency.</h2><button type="button" id="wdCurrencyPickerClose" aria-label="Close currency picker">''' + ic('cross', 'ic') + '''</button></div>
+<p id="wdCurrencyStatus" class="asset-search-status" role="status"></p>
+<div id="wdCurrencyResults" class="asset-search-results"></div></dialog>''')
 
 ACTIVITY_HTML = ('<main><div class="utility-page">' + intro('Wallet activity', 'Follow your trades, transfers and FanPlay entries.')
                  + BALANCE + '''<div class="wallet-actions"><a class="app-primary" href="buy.html">Add funds</a>
@@ -257,7 +262,8 @@ activity();window.addEventListener('fantrade:statechange',activity);
 '''
 
 WITHDRAW_JS = r'''
-var RATES={GBP:1,NGN:2050,EUR:1.17,USD:1.27},SYMBOL={GBP:'£',NGN:'₦',EUR:'€',USD:'$'};
+var RATES={GBP:1,NGN:2050,EUR:1.17,USD:1.27},SYMBOL={GBP:'£',NGN:'₦',EUR:'€',USD:'$'},
+CURS={GBP:{n:'British pound',sub:'GBP payout account'},NGN:{n:'Nigerian naira',sub:'NGN bank account'},EUR:{n:'Euro',sub:'EUR or IBAN account'},USD:{n:'US dollar',sub:'USD payout account'}};
 function wdQuote(){var n=amount('wdAmount'),fee=valid(n)?Math.max(50,Math.round(n*.005)):0,cur=el('wdCurrency').value,
   gbp=valid(n)?n/FT.getState().wallet.gbpRate:0;return {n:n,fee:fee,total:n+fee,cur:cur,out:gbp*RATES[cur]};}
 function wdCalc(){var q=wdQuote(),bal=FT.getState().wallet.balance;
@@ -266,11 +272,22 @@ function wdCalc(){var q=wdQuote(),bal=FT.getState().wallet.balance;
   el('wdReceive').textContent=valid(q.n)?'≈ '+SYMBOL[q.cur]+fmt(Math.round(q.out*100)/100):'—';}
 function wdBankFields(){var gb=el('wdCurrency').value==='GBP';el('wdSortLabel').textContent=gb?'Sort code':'Bank code (optional)';
   el('wdSort').placeholder=gb?'00-00-00':'Optional';el('wdAcct').placeholder=gb?'8 digits':el('wdCurrency').value==='NGN'?'10 digits (NUBAN)':'Account number or IBAN';}
+function currencyCard(code){var cur=CURS[code];return '<span class="wallet-currency-dot">'+SYMBOL[code]+'</span><span class="swap-pick-text"><b>'+esc(cur.n)+'</b><small>'+code+' · '+cur.sub+'</small></span><svg class="ic swap-pick-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>';}
+function syncCurrencyPick(){el('wdCurrencyBtn').innerHTML=currencyCard(el('wdCurrency').value);}
+var wdCurrencyPicker=el('wdCurrencyPicker');
+function currencyRows(){var current=el('wdCurrency').value,keys=Object.keys(CURS);el('wdCurrencyStatus').textContent=keys.length+' payout currencies';
+  el('wdCurrencyResults').innerHTML=keys.map(function(code){var cur=CURS[code];return '<button type="button" class="asset-search-row" data-currency="'+code+'"'+(code===current?' aria-current="true"':'')+'><span class="wallet-currency-dot">'+SYMBOL[code]+'</span><span><b>'+esc(cur.n)+'</b><small>'+code+' · '+esc(cur.sub)+'</small></span><span class="asset-search-price">'+code+'</span></button>';}).join('');}
+function openCurrencyPicker(){currencyRows();wdCurrencyPicker.showModal();document.body.classList.add('asset-picker-open');}
 var saved=(FT.getState().prefs||{}).payoutBank;
 if(saved){['Currency','Name','Bank','Sort','Acct'].forEach(function(k){if(saved[k]!=null)el('wd'+k).value=saved[k];});}
-wdBankFields();
+wdBankFields();syncCurrencyPick();
 ['wdAmount'].forEach(id=>el(id).addEventListener('input',wdCalc));
-el('wdCurrency').addEventListener('change',function(){wdBankFields();wdCalc();});
+el('wdCurrency').addEventListener('change',function(){wdBankFields();syncCurrencyPick();wdCalc();});
+el('wdCurrencyBtn').addEventListener('click',openCurrencyPicker);
+el('wdCurrencyResults').addEventListener('click',function(e){var row=e.target.closest('[data-currency]');if(!row)return;el('wdCurrency').value=row.dataset.currency;el('wdCurrency').dispatchEvent(new Event('change'));wdCurrencyPicker.close();});
+el('wdCurrencyPickerClose').addEventListener('click',function(){wdCurrencyPicker.close();});
+wdCurrencyPicker.addEventListener('close',function(){document.body.classList.remove('asset-picker-open');el('wdCurrencyBtn').focus();});
+wdCurrencyPicker.addEventListener('click',function(e){var r=wdCurrencyPicker.getBoundingClientRect();if(e.target===wdCurrencyPicker&&(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom))wdCurrencyPicker.close();});
 document.querySelectorAll('[data-wd]').forEach(b=>b.onclick=function(){el('wdAmount').value=b.dataset.wd;wdCalc();});
 el('wdMax').onclick=function(){var bal=FT.getState().wallet.balance,n=Math.floor(Math.max(0,bal-Math.max(50,bal*.005))/1.005);el('wdAmount').value=n>0?n:'';wdCalc();};
 function digits(v){return (v||'').replace(/[\s-]/g,'');}

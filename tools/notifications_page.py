@@ -7,13 +7,13 @@ HTML = '''<main><div class="utility-page inbox-page"><div class="inbox-sticky">
 <button class="wallet-chip" data-k="all" aria-pressed="true">All</button><button class="wallet-chip" data-k="settle" aria-pressed="false">Settlements</button>
 <button class="wallet-chip" data-k="order" aria-pressed="false">Orders</button><button class="wallet-chip" data-k="club" aria-pressed="false">Club</button>
 <button class="wallet-chip" data-k="system" aria-pressed="false">Account</button></div>
-<div class="inbox-tools"><span id="ntTotal" role="status" aria-live="polite"></span><button class="inbox-read" id="ntRead" type="button">Mark all as read</button></div></div>
+<div class="inbox-tools"><span id="ntTotal" role="status" aria-live="polite"></span><span><button class="inbox-read" id="ntRead" type="button">Mark all as read</button><button class="inbox-read" id="ntClear" type="button">Clear all</button></span></div></div>
 <div id="ntFeed"></div></div></main>'''
 
 JS = r'''
 var kind='all';
 function esc(value){var span=document.createElement('span');span.textContent=String(value==null?'':value);return span.innerHTML.replace(/"/g,'&quot;');}
-function unreadCount(){var count=FT.getState().notifications.filter(n=>!n.read).length;document.getElementById('ntTotal').textContent=count?count+' unread':'You’re all caught up';document.getElementById('ntRead').disabled=count===0;}
+function unreadCount(){var notes=FT.getState().notifications||[],count=notes.filter(n=>!n.read).length;document.getElementById('ntTotal').textContent=count?count+' unread':'You’re all caught up';document.getElementById('ntRead').disabled=count===0;document.getElementById('ntClear').disabled=notes.length===0;}
 function renderFeed(){var list=FT.getState().notifications.filter(n=>kind==='all'||n.kind===kind),day=null,out=[];unreadCount();
   list.forEach(function(n){if(n.day!==day){day=n.day;out.push('<h2 class="inbox-day">'+esc(day)+'</h2>');}
     out.push('<button type="button" class="inbox-row '+(n.read?'':'unread')+'" data-id="'+esc(n.id)+'" aria-label="'+esc(n.title)+(n.read?'':', unread. Mark as read')+'">'
@@ -25,5 +25,6 @@ function renderFeed(){var list=FT.getState().notifications.filter(n=>kind==='all
 }
 document.querySelectorAll('[data-k]').forEach(function(b){b.onclick=function(){kind=b.dataset.k;document.querySelectorAll('[data-k]').forEach(x=>x.setAttribute('aria-pressed',x===b));renderFeed();};});
 document.getElementById('ntRead').onclick=function(){FT.readAll();renderFeed();};
+document.getElementById('ntClear').onclick=function(){FT.clearNotifications('all');renderFeed();};
 window.addEventListener('fantrade:statechange',renderFeed);renderFeed();
 '''

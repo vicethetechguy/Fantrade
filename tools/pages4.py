@@ -221,11 +221,11 @@ trade.append(T('<div class="trade-ticket">'
 
                # buy / sell ticket
                '<div class="pane on" data-pane="order">'
-               '<label class="trade-field-label" for="tType">Order type</label><div class="otype" id="tTypeWrap">@@'
-               '<select id="tType" aria-describedby="tradeTypeHelp"><option value="limit">Limit</option>'
+               '<label class="trade-field-label" for="tTypeBtn" id="tTypeLabel">Order type</label><div class="otype" id="tTypeWrap">'
+               '<select id="tType" hidden tabindex="-1" aria-hidden="true" aria-describedby="tradeTypeHelp"><option value="limit">Limit</option>'
                '<option value="market">Market</option>'
                '</select>'
-               '<span class="chev"></span></div><p class="trade-help" id="tradeTypeHelp"></p>'
+               '<button type="button" class="trade-pick-card" id="tTypeBtn" aria-haspopup="dialog" aria-labelledby="tTypeLabel tTypeBtn"></button></div><p class="trade-help" id="tradeTypeHelp"></p>'
 
                '<div class="tfield" id="tStopWrap" hidden><div class="bd">'
                '<label class="lbl" for="tStop">Stop price · FTR</label><input id="tStop" inputmode="decimal"></div>'
@@ -272,8 +272,8 @@ trade.append(T('<div class="trade-ticket">'
 
                # swap
                '<div class="pane" data-pane="swap">'
-               '<div class="tf" id="f-swFrom"><label for="swFrom">From</label><div class="inp">@@'
-               '<select id="swFrom"></select><span class="chev"></span></div>'
+               '<div class="tf" id="f-swFrom"><label for="swFromBtn" id="swFromLabel">From</label>'
+               '<select id="swFrom" hidden tabindex="-1" aria-hidden="true"></select><button type="button" class="swap-pick trade-swap-pick" id="swFromBtn" data-trade-pick="from" aria-haspopup="dialog" aria-labelledby="swFromLabel swFromBtn"></button>'
                '<div class="hint" id="swHold">—</div></div>'
                '<div class="tfield"><div class="bd"><label class="lbl" for="swQty">Shares to swap</label>'
                '<input id="swQty" inputmode="numeric" placeholder="Enter quantity" value=""></div>'
@@ -281,8 +281,8 @@ trade.append(T('<div class="trade-ticket">'
                'aria-label="Fewer shares">&minus;</button>'
                '<button type="button" data-step="1" data-for="swQty" aria-label="More shares">+</button>'
                '</span></div>'
-               '<div class="tf" style="margin-top:12px"><label for="swTo">To</label><div class="inp">@@'
-               '<select id="swTo"></select><span class="chev"></span></div></div>'
+               '<div class="tf" style="margin-top:12px"><label for="swToBtn" id="swToLabel">To</label>'
+               '<select id="swTo" hidden tabindex="-1" aria-hidden="true"></select><button type="button" class="swap-pick trade-swap-pick" id="swToBtn" data-trade-pick="to" aria-haspopup="dialog" aria-labelledby="swToLabel swToBtn"></button></div>'
                '<div class="tline"><span>You give</span><b id="swGive">—</b></div>'
                '<div class="tline"><span>Fee (0.4%)</span><b id="swFee">—</b></div>'
                '<div class="tline"><span>You receive</span><b id="swGet">—</b></div>'
@@ -305,12 +305,21 @@ trade.append('<div class="flat-sep" data-reveal>'
              '<span id="tcAssets">(0)</span></button>'
              '</div><div id="tLedger"></div></div>')
 
-trade.append('</div></main>')
+trade.append('''</div>
+<dialog id="tradeOptionPicker" class="asset-picker" aria-labelledby="tradeOptionPickerTitle">
+<div class="asset-picker-heading"><h2 id="tradeOptionPickerTitle">Choose order type.</h2><button type="button" id="tradeOptionPickerClose" aria-label="Close order type picker">''' + ic("cross", "ic") + '''</button></div>
+<p id="tradeOptionStatus" class="asset-search-status" role="status"></p><div id="tradeOptionResults" class="asset-search-results"></div></dialog>
+<dialog id="tradeAssetPicker" class="asset-picker" aria-labelledby="tradeAssetPickerTitle">
+<div class="asset-picker-heading"><h2 id="tradeAssetPickerTitle">Choose shares.</h2><button type="button" id="tradeAssetPickerClose" aria-label="Close share picker">''' + ic("cross", "ic") + '''</button></div>
+<label for="tradeAssetSearch">Search players, coaches or clubs</label><input id="tradeAssetSearch" type="search" placeholder="Try Saka or Arsenal" autocomplete="off">
+<p id="tradeAssetStatus" class="asset-search-status" role="status"></p><div id="tradeAssetResults" class="asset-search-results"></div></dialog>
+</main>''')
 
 TRADE_JS = PICK_JS + r"""
 document.title = 'Trade ' + ftSym(A.t) + ' Activity Shares — Fantrade';
 var el = function(id){ return document.getElementById(id); };
 var mode = param('side') === 'sell' ? 'sell' : 'buy', otype = 'limit', view = 'open';
+function safeText(v){var span=document.createElement('span');span.textContent=String(v == null ? '' : v);return span.innerHTML.replace(/"/g,'&quot;');}
 
 if(el('tBack')) el('tBack').href = 'asset.html?a=' + encodeURIComponent(A.t);
 if(el('tCoin')){
@@ -407,6 +416,26 @@ function calc(){
     : 'Choose your price per share. Limit orders on this preview are kept for this visit only.';
 }
 
+var ORDER_TYPES = {
+  limit: { n:'Limit', sub:'Choose your price and rest the order on the book.' },
+  market: { n:'Market', sub:'Trade at the best available market price.' }
+};
+function orderTypeCard(value){
+  var item = ORDER_TYPES[value] || ORDER_TYPES.limit;
+  return '<span class="wallet-currency-dot"><svg class="ic" aria-hidden="true"><use href="#i-candle"/></svg></span><span class="swap-pick-text"><b>'+safeText(item.n)+'</b><small>'+safeText(item.sub)+'</small></span><svg class="ic swap-pick-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>';
+}
+function syncOrderTypeCard(){ el('tTypeBtn').innerHTML = orderTypeCard(el('tType').value); }
+var tradeOptionPicker = el('tradeOptionPicker');
+function orderTypeRows(){
+  var current = el('tType').value, keys = Object.keys(ORDER_TYPES);
+  el('tradeOptionStatus').textContent = 'Choose how this order should execute.';
+  el('tradeOptionResults').innerHTML = keys.map(function(key){
+    var item = ORDER_TYPES[key];
+    return '<button type="button" class="asset-search-row" data-order-type="'+key+'"'+(key===current?' aria-current="true"':'')+'><span class="wallet-currency-dot"><svg class="ic" aria-hidden="true"><use href="#i-candle"/></svg></span><span><b>'+safeText(item.n)+'</b><small>'+safeText(item.sub)+'</small></span><span class="asset-search-price">'+safeText(item.n)+'</span></button>';
+  }).join('');
+}
+function openOrderTypePicker(){orderTypeRows();tradeOptionPicker.showModal();document.body.classList.add('asset-picker-open');}
+
 document.querySelectorAll('#tMode button').forEach(function(b){
   b.addEventListener('click', function(){
     document.querySelectorAll('#tMode button').forEach(function(x){ x.setAttribute('aria-pressed','false'); });
@@ -422,7 +451,21 @@ el('tType').addEventListener('change', function(){
   otype = el('tType').value;
   el('tLimitWrap').hidden = otype === 'market';
   el('tStopWrap').hidden = otype !== 'stop';
+  syncOrderTypeCard();
   calc();
+});
+el('tTypeBtn').addEventListener('click', openOrderTypePicker);
+el('tradeOptionResults').addEventListener('click', function(event){
+  var row = event.target.closest('[data-order-type]'); if(!row) return;
+  el('tType').value = row.dataset.orderType;
+  el('tType').dispatchEvent(new Event('change'));
+  tradeOptionPicker.close();
+});
+el('tradeOptionPickerClose').addEventListener('click', function(){ tradeOptionPicker.close(); });
+tradeOptionPicker.addEventListener('close', function(){ document.body.classList.remove('asset-picker-open'); el('tTypeBtn').focus(); });
+tradeOptionPicker.addEventListener('click', function(event){
+  var r = tradeOptionPicker.getBoundingClientRect();
+  if(event.target === tradeOptionPicker && (event.clientX < r.left || event.clientX > r.right || event.clientY < r.top || event.clientY > r.bottom)) tradeOptionPicker.close();
 });
 ['tQty','tLimit','tStop'].forEach(function(id){
   el(id).addEventListener('input', calc);
@@ -449,6 +492,17 @@ el('tGo').addEventListener('click', function(){
 
 // ── swap ──
 var PRICES = {};
+function clubOfTrade(k){var a=ASSETS.filter(function(x){return x.t===k;})[0];return a&&a.club?a.club:(PRICES[k+':coach']?'Coach':'');}
+function swapPickCard(k,sub){
+  if(!k || !PRICES[k+':name']) return '<span class="swap-pick-empty">Choose shares</span><svg class="ic swap-pick-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>';
+  return playerPhoto(k,PRICES[k+':name'])+'<span class="swap-pick-text"><b>'+safeText(PRICES[k+':name'])+'</b><small>'+safeText(sub)+'</small></span><svg class="ic swap-pick-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>';
+}
+function syncTradeSwapPicks(){
+  var s=FT.getState(),fk=el('swFrom').value,tk=el('swTo').value,h=s.holdings[fk];
+  el('swFromBtn').innerHTML=h?swapPickCard(fk,ftSym(fk)+' · '+h.shares.toLocaleString('en-US')+' shares available'):'<span class="swap-pick-empty">No shares held yet</span>';
+  el('swFromBtn').disabled=!h;
+  el('swToBtn').innerHTML=swapPickCard(tk,ftSym(tk)+' · '+(PRICES[tk]?money(PRICES[tk])+' FTR per share':''));
+}
 function fillSwap(){
   var s = FT.getState(), from = el('swFrom'), to = el('swTo');
   var held_ = Object.keys(s.holdings), all = {};
@@ -458,11 +512,11 @@ function fillSwap(){
     PRICES[k + ':name'] = s.holdings[k].n; });
   var kf = from.value, kt = to.value;
   from.innerHTML = held_.map(function(k){
-    return '<option value="' + k + '">' + k + ' · ' + s.holdings[k].shares.toLocaleString('en-US')
+    return '<option value="' + k + '">' + ftSym(k) + ' · ' + s.holdings[k].shares.toLocaleString('en-US')
       + ' shares</option>';
   }).join('') || '<option value="">Nothing held yet</option>';
   to.innerHTML = Object.keys(all).map(function(k){
-    return '<option value="' + k + '">' + k + ' · ' + all[k].toFixed(2) + ' $FTR</option>';
+    return '<option value="' + k + '">' + ftSym(k) + ' · ' + all[k].toFixed(2) + ' $FTR</option>';
   }).join('');
   if(kf && s.holdings[kf]) from.value = kf;
   if(kt && all[kt]) to.value = kt;
@@ -471,27 +525,46 @@ function fillSwap(){
 }
 function swapCalc(){
   var s = FT.getState(), fk = el('swFrom').value, tk = el('swTo').value, h = s.holdings[fk];
+  syncTradeSwapPicks();
   if(!h){ ['swGive','swFee','swGet','swDust'].forEach(function(i){ el(i).textContent = '—'; });
     el('swHold').textContent = 'Buy something on the exchange first.'; return; }
   el('swHold').textContent = 'You hold ' + h.shares.toLocaleString('en-US') + ' at ' + h.p.toFixed(2) + ' $FTR.';
   var q = Math.min(Math.round(num(el('swQty').value)), h.shares);
   var gross = q * h.p, fee = gross * 0.004, net = gross - fee;
   var tp = PRICES[tk] || 0, got = tp ? Math.floor(net / tp) : 0;
-  el('swGive').textContent = q.toLocaleString('en-US') + ' ' + fk + ' · ' + fmt(gross) + ' $FTR';
+  el('swGive').textContent = q.toLocaleString('en-US') + ' ' + ftSym(fk) + ' · ' + fmt(gross) + ' $FTR';
   el('swFee').textContent = fmt(fee) + ' $FTR';
-  el('swGet').textContent = got.toLocaleString('en-US') + ' ' + tk;
+  el('swGet').textContent = got.toLocaleString('en-US') + ' ' + ftSym(tk);
   el('swDust').textContent = fmt(Math.max(0, net - got * tp)) + ' $FTR';
 }
 ['swQty'].forEach(function(i){ el(i).addEventListener('input', swapCalc); });
 ['swFrom','swTo'].forEach(function(i){ el(i).addEventListener('change', swapCalc); });
+var tradeAssetPicker=el('tradeAssetPicker'),tradePickMode='from';
+function tradeAssetRows(){
+  var s=FT.getState(),q=el('tradeAssetSearch').value.trim().toLowerCase(),rows;
+  if(tradePickMode==='from') rows=Object.keys(s.holdings).filter(function(k){return s.holdings[k].shares>0;}).map(function(k){var h=s.holdings[k];return {t:k,n:h.n,sub:ftSym(k)+(clubOfTrade(k)?' · '+clubOfTrade(k):''),v:h.shares.toLocaleString('en-US'),u:'shares'};});
+  else {var from=el('swFrom').value;rows=ASSETS.map(function(a){return a.t;}).concat(Object.keys(s.holdings)).filter(function(k,i,a){return a.indexOf(k)===i&&k!==from&&PRICES[k];}).map(function(k){return {t:k,n:PRICES[k+':name'],sub:ftSym(k)+(clubOfTrade(k)?' · '+clubOfTrade(k):''),v:money(PRICES[k]),u:'FTR'};});}
+  rows=rows.filter(function(r){return (r.n+' '+r.sub).toLowerCase().indexOf(q)>-1;});
+  var current=el(tradePickMode==='from'?'swFrom':'swTo').value;
+  el('tradeAssetStatus').textContent=rows.length?rows.length+(tradePickMode==='from'?' holdings':' shares'):'No matches. Try another name or club.';
+  el('tradeAssetResults').innerHTML=rows.map(function(r){return '<button type="button" class="asset-search-row" data-sym="'+safeText(r.t)+'"'+(r.t===current?' aria-current="true"':'')+'>'+playerPhoto(r.t,r.n)
+    +'<span><b>'+safeText(r.n)+'</b><small>'+safeText(r.sub)+'</small></span><span class="asset-search-price">'+safeText(r.v)+'<small>'+safeText(r.u)+'</small></span></button>';}).join('');
+}
+function openTradeAssetPicker(which){tradePickMode=which;el('tradeAssetPickerTitle').textContent=which==='from'?'Choose shares to swap.':'Choose what to receive.';el('tradeAssetSearch').value='';tradeAssetRows();tradeAssetPicker.showModal();document.body.classList.add('asset-picker-open');el('tradeAssetSearch').focus();}
+document.querySelectorAll('[data-trade-pick]').forEach(function(button){button.addEventListener('click',function(){openTradeAssetPicker(button.dataset.tradePick);});});
+el('tradeAssetSearch').addEventListener('input',tradeAssetRows);
+el('tradeAssetResults').addEventListener('click',function(event){var row=event.target.closest('[data-sym]');if(!row)return;var sel=el(tradePickMode==='from'?'swFrom':'swTo');sel.value=row.dataset.sym;if(tradePickMode==='from'&&el('swTo').value===sel.value){var alt=Array.prototype.slice.call(el('swTo').options).map(function(o){return o.value;}).filter(function(v){return v!==sel.value;})[0];if(alt)el('swTo').value=alt;}sel.dispatchEvent(new Event('change'));tradeAssetPicker.close();});
+el('tradeAssetPickerClose').addEventListener('click',function(){tradeAssetPicker.close();});
+tradeAssetPicker.addEventListener('close',function(){document.body.classList.remove('asset-picker-open');el(tradePickMode==='from'?'swFromBtn':'swToBtn').focus();});
+tradeAssetPicker.addEventListener('click',function(event){var r=tradeAssetPicker.getBoundingClientRect();if(event.target===tradeAssetPicker&&(event.clientX<r.left||event.clientX>r.right||event.clientY<r.top||event.clientY>r.bottom))tradeAssetPicker.close();});
 el('swGo').addEventListener('click', function(){
   var fk = el('swFrom').value, tk = el('swTo').value;
   if(!fk){ showToast('Nothing to swap yet.', 'error'); return; }
   if(fk === tk){ showToast('Pick two different assets.', 'error'); return; }
   try {
     var r = FT.swapAssets(fk, tk, Math.round(num(el('swQty').value)), PRICES);
-    showToast(r.spent.toLocaleString('en-US') + ' ' + fk + ' swapped for '
-      + r.received.toLocaleString('en-US') + ' ' + tk + '.', 'success');
+    showToast(r.spent.toLocaleString('en-US') + ' ' + ftSym(fk) + ' swapped for '
+      + r.received.toLocaleString('en-US') + ' ' + ftSym(tk) + '.', 'success');
   } catch(e){ showToast(e.message, 'error'); }
 });
 
@@ -583,7 +656,7 @@ document.querySelectorAll('#tLedgerTabs button').forEach(function(b){
 });
 
 if(mode === 'sell') document.querySelector('#tMode button[data-m="sell"]').click();
-paintSlider(0); calc(); fillSwap(); renderLedger(); counts();
+syncOrderTypeCard(); paintSlider(0); calc(); fillSwap(); renderLedger(); counts();
 window.addEventListener('fantrade:statechange', function(){
   calc(); fillSwap(); renderLedger(); counts();
 });

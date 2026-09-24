@@ -97,7 +97,7 @@ f = ['<main><div class="kc-assets-wrap wallet-layout">', tab_intro('Wallet')]
 # Total Assets Card
 f.append(T('<div class="kc-assets-card">'
            '<div class="kc-card-top">'
-           '<div class="kc-card-lbl">Available balance'
+           '<div class="kc-card-lbl">Total balance'
            '<button type="button" class="kc-eye-btn" id="walEyeBtn" title="Toggle balance visibility">'
            '<svg class="ic" id="walEyeIcon" viewBox="0 0 24 24" style="fill:none" stroke="currentColor" stroke-width="1.8"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></button></div>'
            '<div class="kc-pnl-pill" id="walDelta">+2.35% (+2,940)</div>'
@@ -175,15 +175,16 @@ function renderAssets(){
     var h = s.holdings[k];
     var val = h.shares * (h.p || h.avg || 10);
     totalSharesVal += val;
-    var meta = WASSETS.filter(function(a){ return a.t === k; })[0]
+    var sym = ftSym(k);
+    var meta = WASSETS.filter(function(a){ return a.t === sym || a.t === k; })[0]
       || { i: h.c ? 'whistle' : 'boot', c: h.c ? 'coach' : '', d: 0, s: 0 };
     var up = meta.d >= 0;
 
-    rows.push('<a class="kc-asset-row" href="asset.html?a=' + encodeURIComponent(k) + '">'
+    rows.push('<a class="kc-asset-row" href="asset.html?a=' + encodeURIComponent(sym) + '">'
       + '<div class="kc-asset-left">'
       + '<div class="kc-asset-icon ' + (meta.c || '') + '">' + playerPhoto(k,h.n) + '</div>'
-      + '<div><div class="kc-asset-name">' + k + ' <span style="font-weight:400;color:#8E9AA8;font-size:12px">' + h.n + '</span></div>'
-      + '<div class="kc-asset-sub">' + (hidden ? '••••' : h.shares.toLocaleString('en-US') + ' shares') + '</div></div>'
+      + '<div><div class="kc-asset-name">' + sym + ' <span style="font-weight:400;color:#8E9AA8;font-size:12px">' + h.n + '</span></div>'
+      + '<div class="kc-asset-sub">' + (hidden ? '••••' : h.shares.toLocaleString('en-US') + (h.c ? ' coach activity shares' : ' player activity shares')) + '</div></div>'
       + '</div>'
       + '<div class="kc-asset-right">'
       + '<div class="kc-asset-val">' + (hidden ? '••••••' : money(val) + ' FTR') + '</div>'
@@ -272,7 +273,7 @@ function syncWallet(){
   renderFanplay();
   renderActivity();
   var s = FT.getState();
-  var bal = s.wallet.balance || 0;
+  var bal = (s.wallet.balance || 0) + (s.wallet.locked || 0) + FT.holdingsValue();
   if(el('walBal')){
     el('walBal').textContent = hidden ? '••••••' : bal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   }

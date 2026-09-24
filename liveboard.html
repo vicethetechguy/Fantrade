@@ -2471,6 +2471,14 @@ var FT = (function(){
       var n = (state.notifications || []).filter(function(x){ return x.id === id; })[0];
       if(n && !n.read){ n.read = true; save(state); FT.syncUI(); }
     },
+    clearNotifications: function(kind){
+      var scope = kind || 'all';
+      state.notifications = (state.notifications || []).filter(function(n){
+        return scope !== 'all' && n.kind !== scope;
+      });
+      save(state); FT.syncUI();
+      window.dispatchEvent(new CustomEvent('fantrade:statechange', { detail: state }));
+    },
     executeTrade: function(side, assetSymbol, assetName, shares, price, isCoach){
       if(side === 'sell' && state.listerClaims && state.listerClaims.length){
         var today = new Date().toISOString().slice(0, 10);

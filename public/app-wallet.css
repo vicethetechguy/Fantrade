@@ -67,7 +67,9 @@ body.app.calm .wallet-review h2{font-size:25px!important;margin:0 0 12px}
 body.app.calm .inbox-settings{display:grid;place-items:center;width:44px;min-width:44px;height:44px;border:0;border-radius:50%;background:#121411;color:var(--ink)}
 .inbox-settings .ic{width:21px;height:21px;fill:none!important}
 .inbox-tools{display:flex;justify-content:space-between;align-items:center;gap:12px;color:var(--faint);font-size:12px;margin-bottom:12px}
+.inbox-tools>span:last-child{display:flex;gap:14px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
 body.app.calm .utility-page .inbox-read{background:none;border:0;color:var(--ink);padding:8px 0;min-height:40px;cursor:pointer;font-size:12px}
+body.app.calm .utility-page .inbox-read:disabled{opacity:.4;cursor:default}
 body.app.calm .utility-page .inbox-day{color:var(--faint);font-size:12px!important;font-weight:500;margin:24px 0 4px}
 body.app.calm .utility-page .inbox-row{display:grid;grid-template-columns:24px minmax(0,1fr) auto;gap:14px;width:100%;padding:22px 0;margin:0;background:transparent;border:0;border-radius:0;box-shadow:none;text-align:left;color:var(--ink);font:inherit;cursor:pointer}
 .inbox-row>.ic{width:20px;height:20px;margin-top:2px;color:var(--dim)}
@@ -130,6 +132,8 @@ body.app.calm .asset-search-row[aria-current=true]{background:#242821}
 .swap-pick-text small{display:block;font-size:12px;color:var(--dim);margin-top:3px;overflow-wrap:anywhere}
 .swap-pick-empty{flex:1;color:var(--dim);font-size:14px}
 .swap-pick-chev{width:20px;height:20px;color:var(--dim);flex:none}
+.wallet-currency-dot{display:grid;place-items:center;width:44px;height:44px;border-radius:50%;background:#242821;color:#fff;font-size:18px;font-weight:700;flex:none}
+.wallet-currency-dot .ic{width:20px;height:20px}
 .swap-preview:empty{display:none}
 /* Review card: a premium summary before any wallet action is confirmed. */
 body.app.calm .wallet-review{width:min(520px,calc(100vw - 32px));padding:28px;border-radius:28px;background:radial-gradient(120% 60% at 50% 0%,rgba(24,0,173,.22),transparent 60%),#121411;box-shadow:0 30px 90px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.05)}
