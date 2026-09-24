@@ -13,8 +13,59 @@
 --     buy what is left on the exchange. Fantrade's 1,000,000 are set aside.
 -- A listing is claimed once, by one manager. After that it is closed.
 
+-- Ensure tables and columns exist even if 06_listings was skipped or partially applied
+create table if not exists public.listings (
+  id             text primary key,
+  asset_id       text not null references public.assets(id),
+  title          text not null default '',
+  shares_level1  bigint not null default 500000,
+  shares_level2  bigint not null default 1000000,
+  fee_level1     numeric(20,2) not null default 50000.00,
+  fee_level2     numeric(20,2) not null default 100000.00,
+  is_active      boolean not null default true,
+  created_at     timestamptz not null default now()
+);
+
+alter table public.listings add column if not exists shares_level1 bigint not null default 500000;
+alter table public.listings add column if not exists shares_level2 bigint not null default 1000000;
+alter table public.listings add column if not exists fee_level1 numeric(20,2) not null default 50000.00;
+alter table public.listings add column if not exists fee_level2 numeric(20,2) not null default 100000.00;
 alter table public.listings add column if not exists claimed_by uuid references auth.users(id);
 alter table public.listings add column if not exists claimed_at timestamptz;
+
+create table if not exists public.claims (
+  listing_id     text not null references public.listings(id) on delete cascade,
+  user_id        uuid not null references auth.users(id) on delete cascade,
+  claim_level    int not null default 1 check (claim_level in (1, 2)),
+  shares         bigint not null default 500000,
+  vesting_years  int not null default 1 check (vesting_years in (1, 2, 3)),
+  fee_paid       numeric(20,2) not null default 50000.00,
+  fee_burned     numeric(20,2) not null default 1000.00,
+  daily_limit    bigint not null default 5000,
+  vesting_until  timestamptz not null default (now() + interval '1 year'),
+  claimed_at     timestamptz not null default now(),
+  primary key (listing_id, user_id)
+);
+
+alter table public.claims add column if not exists claim_level int not null default 1;
+alter table public.claims add column if not exists shares bigint not null default 500000;
+alter table public.claims add column if not exists vesting_years int not null default 1;
+alter table public.claims add column if not exists fee_paid numeric(20,2) not null default 50000.00;
+alter table public.claims add column if not exists fee_burned numeric(20,2) not null default 1000.00;
+alter table public.claims add column if not exists daily_limit bigint not null default 5000;
+alter table public.claims add column if not exists vesting_until timestamptz not null default (now() + interval '1 year');
+
+alter table public.listings enable row level security;
+alter table public.claims enable row level security;
+
+drop policy if exists listings_readable on public.listings;
+create policy listings_readable on public.listings for select using (true);
+
+drop policy if exists claims_select_own on public.claims;
+create policy claims_select_own on public.claims for select using (auth.uid() = user_id);
+
+alter table public.assets add column if not exists reference_value numeric(12,2);
+alter table public.assets add column if not exists reference_at timestamptz default now();
 
 -- Players already trading were never open to claim: close their old drops.
 update public.listings l set is_active = false
