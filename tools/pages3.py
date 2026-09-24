@@ -1068,11 +1068,13 @@ DASH_JS = r"""
     var claimed = FT.getState().claimedListings || [];
     return [
       { id:'lst-saka-drop', asset_id:'FSAKA', ticker:'FSAKA', name:'Bukayo Saka', title:'Arsenal Star Drop', shares:500000 },
-      { id:'lst-mbappe-drop', asset_id:'FKM7', ticker:'FKM7', name:'Kylian Mbappé', title:'Galáctico Drop', shares:500000 },
-      { id:'lst-yamal-drop', asset_id:'FYAML', ticker:'FYAML', name:'Lamine Yamal', title:'Golden Boy Drop', shares:500000 },
+      { id:'lst-bonmati-drop', asset_id:'FAITN', ticker:'FAITN', name:'Aitana Bonmatí', title:'Ballon d\'Or Drop', shares:500000 },
       { id:'lst-haaland-drop', asset_id:'FHLND', ticker:'FHLND', name:'Erling Haaland', title:'Goal Machine Drop', shares:500000 },
-      { id:'lst-bonmati-drop', asset_id:'FAITN', ticker:'FAITN', name:'Aitana Bonmatí', title:'Ballon d\'Or Féminin Drop', shares:500000 },
-      { id:'lst-kerr-drop', asset_id:'FKERR', ticker:'FKERR', name:'Sam Kerr', title:'Chelsea Queen Drop', shares:500000 }
+      { id:'lst-russo-drop', asset_id:'FRUSS', ticker:'FRUSS', name:'Alessia Russo', title:'Lioness Drop', shares:500000 },
+      { id:'lst-mbappe-drop', asset_id:'FKM7', ticker:'FKM7', name:'Kylian Mbappé', title:'Galáctico Drop', shares:500000 },
+      { id:'lst-kerr-drop', asset_id:'FKERR', ticker:'FKERR', name:'Sam Kerr', title:'NWSL Striker Drop', shares:500000 },
+      { id:'lst-yamal-drop', asset_id:'FYAML', ticker:'FYAML', name:'Lamine Yamal', title:'Golden Boy Drop', shares:500000 },
+      { id:'lst-putellas-drop', asset_id:'FPUTL', ticker:'FPUTL', name:'Alexia Putellas', title:'London City Drop', shares:500000 }
     ].map(function(row){ row.claimed = claimed.indexOf(row.id) > -1; return row; });
   }
   function setStatus(text){ if(statusEl) statusEl.textContent = text || ''; }

@@ -123,6 +123,7 @@ ex = [T('<main><div class="kc-ex-wrap">' + tab_intro('Exchange') +
         '<div class="kc-cat-tabs" id="kcCatTabs">'
         '  <button type="button" class="kc-cat-tab" data-cat="fav">Favorites</button>'
         '  <button type="button" class="kc-cat-tab on" data-cat="markets">All shares</button>'
+        '  <button type="button" class="kc-cat-tab" data-cat="women">Women</button>'
         '  <button type="button" class="kc-cat-tab" data-cat="alpha">Trending</button>'
         '  <button type="button" class="kc-cat-tab" data-cat="fwd">Forwards</button>'
         '  <button type="button" class="kc-cat-tab" data-cat="mid">Midfielders</button>'
@@ -135,6 +136,7 @@ ex = [T('<main><div class="kc-ex-wrap">' + tab_intro('Exchange') +
         '    <button type="button" class="kc-sub-tab" data-sub="holdings">Holdings</button>'
         '    <button type="button" class="kc-sub-tab" data-sub="epl">Premier League</button>'
         '    <button type="button" class="kc-sub-tab" data-sub="laliga">La Liga</button>'
+        '    <button type="button" class="kc-sub-tab" data-sub="wsl">WSL</button>'
         '    <button type="button" class="kc-sub-tab" data-sub="gainers">Top Gainers</button>'
         '  </div>'
         '</div>'
@@ -161,7 +163,7 @@ function getFilteredList(){
   var s = FT.getState();
   var list = ASSETS.filter(function(a){
     // Search filter
-    if(q && (a.t + ' ' + ftSym(a.t) + ' ' + a.n).toLowerCase().indexOf(q) < 0) return false;
+    if(q && (a.t + ' ' + ftSym(a.t) + ' ' + a.n + ' ' + (a.club || '') + ' ' + (a.lg || '')).toLowerCase().indexOf(q) < 0) return false;
 
     // Category filter
     if(cat === 'fav' && favs.indexOf(a.t) < 0) return false;
@@ -169,11 +171,13 @@ function getFilteredList(){
     if(cat === 'fwd' && a.pos !== 'FWD') return false;
     if(cat === 'mid' && a.pos !== 'MID') return false;
     if(cat === 'coaches' && !a.c) return false;
+    if(cat === 'women' && !a.w) return false;
 
     // Sub-tab filter
     if(sub === 'holdings' && !s.holdings[a.t]) return false;
-    if(sub === 'epl' && (a.club || '').indexOf('Arsenal') < 0 && (a.club || '').indexOf('Manchester') < 0 && (a.club || '').indexOf('Chelsea') < 0) return false;
-    if(sub === 'laliga' && (a.club || '').indexOf('Madrid') < 0 && (a.club || '').indexOf('Barcelona') < 0) return false;
+    if(sub === 'epl' && a.lg !== 'Premier League') return false;
+    if(sub === 'laliga' && a.lg !== 'La Liga') return false;
+    if(sub === 'wsl' && a.lg !== 'WSL') return false;
     if(sub === 'gainers' && a.d <= 2.0) return false;
 
     return true;
@@ -384,16 +388,73 @@ FP_CSS = """
 .fp-nav-btns{display:flex;gap:12px;margin-top:20px}
 .fp-btn-back{flex:1;padding:14px 0;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:#fff;border-radius:12px;font-family:Space Grotesk,sans-serif;font-weight:700;font-size:13px;text-transform:uppercase;cursor:pointer;text-align:center}
 .fp-btn-next{flex:2;padding:14px 0;background:var(--lime);border:0;color:#fff;border-radius:12px;font-family:Space Grotesk,sans-serif;font-weight:700;font-size:13.5px;text-transform:uppercase;cursor:pointer;text-align:center;box-shadow:0 0 20px rgba(24,0,173,.3)}
+
+/* ── Your entries: Active and History ─────────────────────────────────
+   The same construction as the home and profile cards: one surface, no
+   border, figures in a well, and one status the eye can find first. */
+.fpx-list{display:grid;gap:14px}
+.fpx-lede{margin:0 0 4px;font-size:12.5px;line-height:1.6;color:var(--dim)}
+.fpx-lede b{color:var(--ink);font-weight:600}
+.fpx-card{background:#121411;border-radius:22px;padding:20px;box-shadow:inset 0 1px 0 rgba(255,255,255,.05);display:grid;gap:16px}
+.fpx-head{display:grid;grid-template-columns:48px minmax(0,1fr) auto;gap:13px;align-items:center}
+.fpx-photo,.fpx-crest{width:48px;height:48px;border-radius:50%;object-fit:cover;object-position:50% 18%;background:#1b1e1a;display:grid;place-items:center}
+.fpx-crest{background:var(--lime);color:#fff;font:700 15px 'Space Grotesk',Montserrat,sans-serif}
+.fpx-who{min-width:0}
+.fpx-who b{display:block;font-family:'Space Grotesk',Montserrat,sans-serif;font-weight:700;font-size:16px;letter-spacing:-.015em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fpx-who small{display:flex;align-items:center;gap:7px;margin-top:4px;font-size:12px;color:var(--dim);white-space:nowrap;overflow:hidden}
+.fpx-who small span{overflow:hidden;text-overflow:ellipsis}
+.fpx-who small i{font-style:normal;font:700 10.5px 'Space Grotesk',Montserrat,sans-serif;letter-spacing:.04em;color:var(--ink);background:rgba(255,255,255,.08);border-radius:6px;padding:2px 6px;flex:none}
+.fpx-who .fpx-when{display:block;color:var(--faint);font-size:11px;margin-top:3px}
+/* A status you can read: solid fill, white text. */
+.fpx-chip{font:600 11px Montserrat,sans-serif;letter-spacing:.02em;padding:6px 11px;border-radius:999px;white-space:nowrap}
+.fpx-chip.soon{background:rgba(255,255,255,.09);color:var(--ink)}
+.fpx-chip.live{background:var(--lime);color:#fff}
+.fpx-chip.wait{background:rgba(255,189,82,.16);color:#ffbd52}
+.fpx-result{font:700 15px 'Space Grotesk',Montserrat,sans-serif;letter-spacing:-.01em;white-space:nowrap}
+.fpx-result.up{color:#24c86b}
+.fpx-result.down{color:#ff5e5e}
+.fpx-result.off{font:600 11px Montserrat,sans-serif;padding:6px 11px;border-radius:999px;background:rgba(255,255,255,.08);color:var(--dim)}
+.fpx-figs{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin:0;border-radius:16px;overflow:hidden;background:rgba(255,255,255,.06)}
+.fpx-figs>div{background:#0c0e0b;padding:12px 13px}
+.fpx-figs dt{font-size:10.5px;color:var(--faint);margin-bottom:5px;line-height:1.3}
+.fpx-figs dd{margin:0;font:700 14px 'Space Grotesk',Montserrat,sans-serif;letter-spacing:-.01em;overflow-wrap:anywhere}
+.fpx-picks{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.fpx-picks li{display:grid;grid-template-columns:16px minmax(0,1fr) auto;gap:10px;align-items:start;font-size:13px}
+.fpx-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.22);margin:5px 0 0 4px}
+.fpx-mark{font-weight:700;font-size:13px;color:var(--faint);text-align:center}
+.fpx-picks li.ok .fpx-mark{color:#24c86b}
+.fpx-picks li.no .fpx-mark{color:#ff5e5e}
+.fpx-pick{color:var(--ink);line-height:1.45}
+.fpx-pick small{display:block;color:var(--faint);font-size:11px;margin-top:2px}
+.fpx-picks em{font-style:normal;font-size:11.5px;color:var(--dim);white-space:nowrap}
+.fpx-picks li.ok em{color:#24c86b;font-weight:600}
+.fpx-picks li.no em{color:#ff5e5e;font-weight:600}
+.fpx-actions{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
+.fpx-btn{min-height:40px;padding:9px 18px;border:0;border-radius:999px;background:var(--lime);color:#fff;font:600 13px Montserrat,sans-serif;cursor:pointer;transition:filter .18s ease,background .18s ease}
+.fpx-btn:hover{filter:brightness(1.12)}
+.fpx-btn.ghost{background:rgba(255,255,255,.08);color:var(--ink)}
+.fpx-btn.ghost[data-armed]{background:rgba(255,94,94,.16);color:#ff7a7a}
+.fpx-sim{margin:0;font-size:11.5px;color:var(--faint)}
+.fpx-empty{background:#121411;border-radius:22px;padding:32px 22px;text-align:center}
+.fpx-empty b{display:block;font:700 17px 'Space Grotesk',Montserrat,sans-serif;margin-bottom:6px}
+.fpx-empty p{margin:0 auto 18px;max-width:340px;font-size:13px;line-height:1.6;color:var(--dim)}
+@media(max-width:420px){
+  .fpx-card{padding:17px;border-radius:20px}
+  .fpx-head{grid-template-columns:42px minmax(0,1fr) auto;gap:11px}
+  .fpx-photo,.fpx-crest{width:42px;height:42px}
+  .fpx-figs dd{font-size:13px}
+  .fpx-actions .fpx-btn{flex:1}
+}
 """
 
 fp = ['<main><div class="kc-home-wrap fanplay-layout">', tab_intro('FanPlay')]
 
 # 4 Key Metrics Dashboard Chips (§80)
 fp.append('<div class="fp-metrics-grid">'
-          '<div class="fp-metric-card"><span class="fp-metric-lbl">Locked Shares</span><span class="fp-metric-val lime" id="mLockedShares">0</span></div>'
-          '<div class="fp-metric-card"><span class="fp-metric-lbl">Active Positions</span><span class="fp-metric-val" id="mActiveCount">0</span></div>'
-          '<div class="fp-metric-card"><span class="fp-metric-lbl">Provisional FP</span><span class="fp-metric-val lime" id="mProvFP">0 FP</span></div>'
-          '<div class="fp-metric-card"><span class="fp-metric-lbl">Settled Earnings</span><span class="fp-metric-val amber" id="mSettledFTR">0.00 $FTR</span></div>'
+          '<div class="fp-metric-card"><span class="fp-metric-lbl">Shares locked</span><span class="fp-metric-val" id="mLockedShares">0</span></div>'
+          '<div class="fp-metric-card"><span class="fp-metric-lbl">Live entries</span><span class="fp-metric-val" id="mActiveCount">0</span></div>'
+          '<div class="fp-metric-card"><span class="fp-metric-lbl">Projected FP</span><span class="fp-metric-val" id="mProvFP">0 FP</span></div>'
+          '<div class="fp-metric-card"><span class="fp-metric-lbl">Results</span><span class="fp-metric-val" id="mSettledFTR">0</span></div>'
           '</div>')
 
 # Tab Switcher: Wizard vs Active vs History
@@ -511,14 +572,14 @@ fp.append('<div class="fp-panel" id="stepBox7" style="display:none;text-align:ce
 # VIEW 2: ACTIVE & LIVE POSITIONS (§29, §45, §46)
 # ══════════════════════════════════════════════════════════
 fp.append('<div id="fpViewActive" style="display:none">'
-          '<div id="activeList" style="display:flex;flex-direction:column;gap:14px"></div>'
+          '<div id="activeList" class="fpx-list"></div>'
           '</div>')
 
 # ══════════════════════════════════════════════════════════
 # VIEW 3: SETTLED HISTORY (§45, §46, §81)
 # ══════════════════════════════════════════════════════════
 fp.append('<div id="fpViewHistory" style="display:none">'
-          '<div id="historyList" style="display:flex;flex-direction:column;gap:14px"></div>'
+          '<div id="historyList" class="fpx-list"></div>'
           '</div>')
 
 fp.append('</div></main>')
@@ -677,6 +738,10 @@ function resetWizard(){
   selMarket = null;
   selOptionIds = [];
   stakeShares = 100;
+  // The last activation left this disabled mid-"Locking…"; a new entry
+  // needs it back, or "Create another" leads to a button that never works.
+  var btn = document.getElementById('btnActivate');
+  if(btn){ btn.disabled = false; btn.innerHTML = 'Lock Shares &amp; Activate FanPlay'; }
   updateStepUI();
   switchFPView('wizard');
   loadInitialData();
@@ -1081,7 +1146,7 @@ function submitActivation(){
         match: { homeTeam: selMatch.homeTeam, awayTeam: selMatch.awayTeam, status: selMatch.status || 'SCHEDULED' },
         market: { name: selMarket.name },
         stakedShares: stakeShares,
-        totalFP: projectedFP,
+        projectedFP: projectedFP,
         status: 'ACTIVE',
         createdAt: new Date().toISOString(),
         selections: selectedOpts.map(function(o){
@@ -1089,21 +1154,16 @@ function submitActivation(){
         })
       });
 
-      // Deduct wallet balance and lock the $FTR value of staked shares
-      if(stakeFTR > 0){
-        s.wallet = s.wallet || { balance: 0, locked: 0 };
-        s.wallet.balance = Math.max(0, (s.wallet.balance || 0) - stakeFTR);
-        s.wallet.locked = (s.wallet.locked || 0) + stakeFTR;
-      }
-
-      // Record transaction in ledger so wallet activity shows the entry
+      // FanPlay stakes shares you own, not $FTR (white paper §14): the shares
+      // are locked until full time and nothing leaves your balance. The
+      // ledger line records the entry at its current value, for reference.
       s.transactions = s.transactions || [];
       s.transactions.unshift({
         type: "STAKE",
-        asset: "FanPlay MD 07 (" + (selMarket.name || 'Solo') + ")",
+        asset: selAsset.symbol + " · FanPlay (" + (selMarket.name || 'Solo') + ")",
         shares: stakeShares,
         price: assetPrice,
-        total: stakeFTR,
+        total: 0,
         time: "Just now"
       });
 
@@ -1113,7 +1173,7 @@ function submitActivation(){
       // Lock the shares on the account too, keyed so a resubmit cannot lock
       // a second set. Signed out or offline, this is simply a no-op.
       if(typeof FT.stakeShares === 'function'){
-        FT.stakeShares({ asset: selAsset.symbol, shares: stakeShares,
+        FT.stakeShares({ localId: entryId, asset: selAsset.symbol, shares: stakeShares,
           match: { homeTeam: selMatch.homeTeam, awayTeam: selMatch.awayTeam,
                    status: selMatch.status || 'SCHEDULED' },
           market: { name: selMarket.name, tier: selMarket.tier || selMarket.id },
@@ -1156,298 +1216,234 @@ function isFanPlaySettled(st){
   return s === 'SETTLED' || s === 'CANCELLED' || s === 'VOID' || s.indexOf('SETTLE') !== -1 || s.indexOf('CANCEL') !== -1;
 }
 
+/* ── Your entries: Active and History ─────────────────────────────────
+   Only what you actually entered is shown. Nothing here invents a fixture,
+   a prediction or a result to fill a gap; a missing detail is left out. */
+var FP_PER_FTR = 1000;   // white paper §14.3: 1,000 FP = 1 $FTR
+
+function fpEsc(v){ return String(v == null ? '' : v).replace(/[&<>"']/g, function(c){
+  return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+function fpNum(n){ return Math.round(Number(n) || 0).toLocaleString('en-US'); }
+function fpSigned(n){ n = Math.round(Number(n) || 0); return (n > 0 ? '+' : n < 0 ? '−' : '') + Math.abs(n).toLocaleString('en-US'); }
+function fpFtr(fp){ var v = (Number(fp) || 0) / FP_PER_FTR; return (v > 0 ? '+' : v < 0 ? '−' : '') + Math.abs(v).toFixed(2) + ' $FTR'; }
+function fpState(){ return (typeof FT !== 'undefined' && typeof FT.getState === 'function') ? FT.getState() : null; }
+function fpAsset(sym){ return (typeof ASSETS !== 'undefined' ? ASSETS : []).filter(function(a){ return a.t === sym; })[0] || null; }
+
+/* One shape for every entry, whichever store it came from. */
+function normaliseEntry(e, fromHistory){
+  var sym = (e.asset && (e.asset.symbol || e.asset.ticker)) || (e.mode === 'Dream Club' ? '' : e.target) || '';
+  var known = fpAsset(sym);
+  var shares = Number(e.stakedShares) || 0;
+  var picks = (e.selections || []).map(function(p){
+    return { label: p.optionLabel || p.label || 'Prediction',
+             result: String(p.evaluationResult || 'PENDING').toUpperCase(),
+             win: Number(p.successFP) || 0, loss: Number(p.failureFP) || 0,
+             earned: p.earnedFP != null ? Number(p.earnedFP) : null,
+             reason: p.evaluationReason || '' };
+  });
+  var isClub = e.mode === 'Dream Club' || (!sym && !!e.target);
+  var projected = isClub ? (Number(e.projectedFP) || 0)
+    : picks.reduce(function(t, p){ return t + p.win * shares; }, 0);
+  var raw = String(e.status || (fromHistory ? 'SETTLED' : 'ACTIVE')).toUpperCase();
+  var status = /CANCEL|VOID/.test(raw) ? 'CANCELLED' : /SETTLE/.test(raw) ? 'SETTLED' : 'ACTIVE';
+  var m = e.match || null;
+  return {
+    id: e.id, isClub: isClub, symbol: sym,
+    title: isClub ? (e.target || 'Your club') : ((e.asset && e.asset.name) || (known && known.n) || sym),
+    fixture: m && m.homeTeam ? (m.homeTeam + ' v ' + m.awayTeam) : (e.matchday ? 'Matchday ' + ('0' + e.matchday).slice(-2) : ''),
+    matchStatus: m ? String(m.status || 'SCHEDULED').toUpperCase() : 'SCHEDULED',
+    market: (e.market && e.market.name) || e.tier || '',
+    shares: shares, stakeFTR: Number(e.stake) || 0,
+    picks: picks, projectedFP: projected,
+    resultFP: e.resultFP != null ? Number(e.resultFP) : (e.totalFP != null && status === 'SETTLED' ? Number(e.totalFP) : null),
+    simulated: !!e.simulated, status: status,
+    createdAt: e.createdAt || null, settledAt: e.settledAt || null
+  };
+}
+
+function localEntries(){
+  var s = fpState();
+  if(!s || !s.fanplay) return [];
+  return (s.fanplay.activeEntries || []).map(function(e){ return normaliseEntry(e, false); })
+    .concat((s.fanplay.history || []).map(function(e){ return normaliseEntry(e, true); }));
+}
+
+/* Your entries from this device and from the Fantrade service, together.
+   Neither store hides the other; an entry both know about is shown once. */
 function loadUserFanPlays(){
-  function getLocalEntries(){
-    var s = (typeof FT !== 'undefined' && typeof FT.getState === 'function') ? FT.getState() : null;
-    var result = [];
-    if(s && s.fanplay){
-      var activeList = (s.fanplay.activeEntries || []).map(function(e){
-        var fp = e.totalFP || 0;
-        if(fp === 0 && e.selections && e.selections.length > 0){
-          var shares = e.stakedShares || e.stake || 100;
-          fp = e.selections.reduce(function(acc, sel){
-            return acc + ((sel.successFP || 0) * shares);
-          }, 0);
-        } else if(fp === 0 && (e.projectedFP || e.stake)){
-          fp = e.projectedFP || Math.round((e.stake || 100) * 0.08);
-        }
-        var projectedFP = e.projectedFP || fp;
-        var rawStatus = e.status || 'ACTIVE';
-        var normStatus = isFanPlaySettled(rawStatus) ? 'SETTLED' : 'ACTIVE';
-        return {
-          id: e.id,
-          status: normStatus,
-          displayStatus: rawStatus,
-          mode: e.mode || 'Individual',
-          asset: e.asset || { symbol: e.target || 'FSAKA' },
-          match: e.match || { homeTeam: 'Arsenal', awayTeam: 'Chelsea', status: 'SCHEDULED' },
-          market: e.market || { name: e.tier || 'Solo' },
-          stakedShares: e.stakedShares || e.stake || 100,
-          totalFP: fp,
-          projectedFP: projectedFP,
-          createdAt: e.createdAt || new Date().toISOString(),
-          selections: e.selections && e.selections.length ? e.selections : [
-            { optionLabel: 'Matchday performance & win', evaluationResult: 'PENDING', successFP: 100, failureFP: -50 }
-          ]
-        };
-      });
-      result = result.concat(activeList);
-
-      // Load settled history entries
-      var historyList = (s.fanplay.history || s.fanplay.settledEntries || []).map(function(h){
-        return {
-          id: h.id,
-          status: h.status || 'SETTLED',
-          asset: h.asset || { symbol: h.target || 'FSAKA' },
-          match: h.match || { homeTeam: 'Arsenal', awayTeam: 'Chelsea', status: 'FINISHED' },
-          market: h.market || { name: h.tier || 'Elite' },
-          stakedShares: h.stakedShares || h.stake || 2500,
-          totalFP: h.totalFP || 812,
-          ftrSettlement: h.ftrSettlement != null ? h.ftrSettlement : 6200,
-          settledAt: h.settledAt || '2026-09-23T09:14:00Z',
-          selections: h.selections || [
-            { optionLabel: 'Scores a goal', evaluationResult: 'SUCCESS', optionFP: 100 },
-            { optionLabel: 'Creates 3+ chances', evaluationResult: 'SUCCESS', optionFP: 110 },
-            { optionLabel: 'Clean sheet or win', evaluationResult: 'SUCCESS', optionFP: 75 }
-          ]
-        };
-      });
-
-      // If user has no history yet, supply default settled matchday positions matching the platform history (Matchday 06 and Matchday 05)
-      if(historyList.length === 0){
-        historyList = [
-          {
-            id: 'hist-md06',
-            status: 'SETTLED',
-            asset: { symbol: 'FSAKA', name: 'Bukayo Saka', team: 'Arsenal' },
-            match: { homeTeam: 'Arsenal', awayTeam: 'Chelsea', status: 'FINISHED' },
-            market: { name: 'Elite' },
-            stakedShares: 2500,
-            totalFP: 812,
-            ftrSettlement: 6200,
-            settledAt: '2026-09-23T09:14:00Z',
-            selections: [
-              { optionLabel: 'Bukayo Saka scores a goal', evaluationResult: 'SUCCESS', optionFP: 100, evaluationReason: 'Goal scored (34\')' },
-              { optionLabel: 'Creates 3+ chances', evaluationResult: 'SUCCESS', optionFP: 110, evaluationReason: '4 key chances created' },
-              { optionLabel: 'Arsenal clean sheet or win', evaluationResult: 'SUCCESS', optionFP: 75, evaluationReason: 'Arsenal won 3-1' }
-            ]
-          },
-          {
-            id: 'hist-md05',
-            status: 'SETTLED',
-            asset: { symbol: 'FHLND', name: 'Erling Haaland', team: 'Manchester City' },
-            match: { homeTeam: 'Manchester City', awayTeam: 'Newcastle', status: 'FINISHED' },
-            market: { name: 'Pro' },
-            stakedShares: 1500,
-            totalFP: 420,
-            ftrSettlement: 3150,
-            settledAt: '2026-09-16T18:30:00Z',
-            selections: [
-              { optionLabel: 'Erling Haaland scores a goal', evaluationResult: 'SUCCESS', optionFP: 100, evaluationReason: 'Goal scored (19\')' },
-              { optionLabel: '2+ shots on target', evaluationResult: 'SUCCESS', optionFP: 80, evaluationReason: '3 shots on target' }
-            ]
-          }
-        ];
-      }
-      result = result.concat(historyList);
-    }
-    return result;
+  var local = localEntries();
+  function show(remote){
+    var seen = {}, all = [];
+    local.concat(remote || []).forEach(function(e){ if(e && e.id && !seen[e.id]){ seen[e.id] = 1; all.push(e); } });
+    userFanPlays = all;
+    updateDashboardMetrics(); renderActiveList(); renderHistoryList();
   }
-
+  show([]);   // never a blank screen while the service is slow to answer
   if(window.FantradeAPI && FantradeAPI.getFanPlays){
     FantradeAPI.getFanPlays().then(function(res){
-      if(res && res.success && res.data && res.data.length > 0){
-        userFanPlays = res.data;
-      } else {
-        userFanPlays = getLocalEntries();
+      if(res && res.success && Array.isArray(res.data) && res.data.length){
+        show(res.data.map(function(e){ return normaliseEntry(e, isFanPlaySettled(e.status)); }));
       }
-      updateDashboardMetrics();
-      renderActiveList();
-      renderHistoryList();
-    }).catch(function(e){
-      userFanPlays = getLocalEntries();
-      updateDashboardMetrics();
-      renderActiveList();
-      renderHistoryList();
-    });
-  } else {
-    userFanPlays = getLocalEntries();
-    updateDashboardMetrics();
-    renderActiveList();
-    renderHistoryList();
+    }).catch(function(){ /* offline: what this device holds is already on screen */ });
   }
 }
 
 function updateDashboardMetrics(){
-  var active = userFanPlays.filter(function(fp){ return isFanPlayActive(fp.status); });
-  var settled = userFanPlays.filter(function(fp){ return isFanPlaySettled(fp.status); });
+  var active = userFanPlays.filter(function(e){ return e.status === 'ACTIVE'; });
+  var done = userFanPlays.filter(function(e){ return e.status !== 'ACTIVE'; });
+  function set(id, text){ var el = document.getElementById(id); if(el) el.textContent = text; }
+  set('mLockedShares', fpNum(active.reduce(function(t, e){ return t + e.shares; }, 0)));
+  set('mActiveCount', active.length);
+  set('tabActiveCount', active.length);
+  set('mProvFP', fpSigned(active.reduce(function(t, e){ return t + e.projectedFP; }, 0)) + ' FP');
+  set('mSettledFTR', done.length);
+}
 
-  var totalLocked = active.reduce(function(acc, fp){ return acc + (fp.stakedShares || 0); }, 0);
-  var provFP = active.reduce(function(acc, fp){ return acc + (fp.totalFP || 0); }, 0);
-  var settledFTR = settled.reduce(function(acc, fp){ return acc + (fp.ftrSettlement || 0); }, 0);
-
-  if(document.getElementById('mLockedShares')) document.getElementById('mLockedShares').textContent = totalLocked.toLocaleString();
-  if(document.getElementById('mActiveCount')) document.getElementById('mActiveCount').textContent = active.length;
-  if(document.getElementById('tabActiveCount')) document.getElementById('tabActiveCount').textContent = active.length;
-  if(document.getElementById('mProvFP')) document.getElementById('mProvFP').textContent = (provFP >= 0 ? '+' : '') + provFP.toLocaleString() + ' FP';
-  if(document.getElementById('mSettledFTR')) document.getElementById('mSettledFTR').textContent = (settledFTR >= 0 ? '+' : '') + settledFTR.toFixed(2) + ' $FTR';
+function entryPhoto(e){
+  if(e.isClub){
+    var ini = String(e.title).split(/\s+/).map(function(w){ return w.charAt(0); }).join('').slice(0, 2).toUpperCase();
+    return '<span class="fpx-crest">' + fpEsc(ini) + '</span>';
+  }
+  return playerPhoto(e.symbol, e.title, 'fpx-photo');
+}
+function entryWho(e, when){
+  return '<div class="fpx-who"><b>' + fpEsc(e.title) + '</b><small>'
+    + (e.symbol ? '<i>' + fpEsc(e.symbol) + '</i>' : '<i>Dream Club</i>')
+    + '<span>' + fpEsc([e.fixture, e.market].filter(Boolean).join(' · ')) + '</span></small>'
+    + (when ? '<small class="fpx-when">' + fpEsc(when) + '</small>' : '') + '</div>';
 }
 
 function renderActiveList(){
-  var container = document.getElementById('activeList');
-  if(!container) return;
-  var active = userFanPlays.filter(function(fp){ return isFanPlayActive(fp.status); });
-  if(active.length === 0){
-    container.innerHTML = '<div style="padding:40px 20px;text-align:center;color:#8E9AA8;background:rgba(255,255,255,.02);border-radius:14px">'
-      + '<div style="font-size:32px;margin-bottom:8px">⚽</div>'
-      + '<div style="font-weight:700;color:#fff;margin-bottom:4px">No Active Positions</div>'
-      + '<div style="font-size:12px;margin-bottom:16px">You currently have no shares locked in active matchday FanPlays.</div>'
-      + '<button type="button" class="fp-btn-next" style="padding:10px 20px;font-size:12px" onclick="window.switchFPView(&quot;wizard&quot;)">Create New Position</button>'
-      + '</div>';
+  var host = document.getElementById('activeList');
+  if(!host) return;
+  var active = userFanPlays.filter(function(e){ return e.status === 'ACTIVE'; });
+  if(!active.length){
+    host.innerHTML = '<div class="fpx-empty"><b>No live entries</b>'
+      + '<p>When you stake shares on a match they sit here, locked, until full time.</p>'
+      + '<button type="button" class="fpx-btn" onclick="window.switchFPView(\'wizard\')">Start an entry</button></div>';
     return;
   }
-  container.innerHTML = active.map(function(fp){
-    var assetSym = fp.asset ? fp.asset.symbol : (fp.target || '$ASSET');
-    var matchName = fp.match ? (fp.match.homeTeam + ' vs ' + fp.match.awayTeam) : 'Matchday Fixture';
-    var tierName = fp.market ? fp.market.name : 'FanPlay';
-    var canSettle = fp.match && (fp.match.status === 'FINISHED' || fp.match.status === 'FINAL');
-    var canCancel = isFanPlayActive(fp.status) && fp.match && (fp.match.status === 'SCHEDULED' || !fp.match.status);
-
-    return '<div class="fp-panel" style="padding:18px;margin-bottom:12px">'
-      + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">'
-      + '  <div>'
-      + '    <span style="font-family:Space Grotesk,sans-serif;font-weight:700;font-size:17px;color:#fff">' + assetSym + '</span>'
-      + '    <span style="font-size:12px;color:#8E9AA8;margin-left:8px">' + matchName + '</span>'
-      + '  </div>'
-      + '  <span style="font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px;background:rgba(24,0,173,.12);color:var(--lime)">' + (fp.displayStatus || fp.status) + '</span>'
-      + '</div>'
-      + '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;background:rgba(255,255,255,.02);padding:10px;border-radius:10px;margin-bottom:12px">'
-      + '  <div><div style="font-size:10px;color:#8E9AA8;text-transform:uppercase">Market Tier</div><b style="font-size:12px;color:#fff">' + tierName + '</b></div>'
-      + '  <div><div style="font-size:10px;color:#8E9AA8;text-transform:uppercase">Locked Shares</div><b style="font-size:12px;color:var(--lime)">' + (fp.stakedShares || 0).toLocaleString() + '</b></div>'
-      + '  <div><div style="font-size:10px;color:#8E9AA8;text-transform:uppercase">Live Prov. FP</div><b style="font-size:12px;color:var(--amber)">' + (fp.totalFP || 0).toLocaleString() + ' FP</b></div>'
-      + '</div>'
-      + '<div style="display:flex;flex-direction:column;gap:4px;margin-bottom:12px">'
-      + (fp.selections || []).map(function(s){
-          return '<div style="display:flex;justify-content:space-between;font-size:12px;color:#CAD2C5">'
-            + '<span>' + s.optionLabel + '</span>'
-            + '<span style="font-weight:600;' + (s.evaluationResult === 'SUCCESS' ? 'color:var(--lime)' : s.evaluationResult === 'FAILURE' ? 'color:#FF5E5E' : 'color:#8E9AA8') + '">' + (s.evaluationResult || 'PENDING') + '</span>'
-            + '</div>';
-        }).join('')
-      + '</div>'
-      + '<div style="display:flex;gap:10px;justify-content:flex-end">'
-      + (canCancel ? '<button type="button" class="fp-btn-back" style="padding:6px 14px;font-size:11px" onclick="window.cancelFanPlay(&quot;' + fp.id + '&quot;)">Cancel Position</button>' : '')
-      + (canSettle ? '<button type="button" class="fp-btn-next" style="padding:6px 14px;font-size:11px" onclick="window.settleFanPlay(&quot;' + fp.id + '&quot;)">Execute Final Settlement</button>' : '')
-      + '</div>'
-      + '</div>';
-  }).join('');
+  host.innerHTML = '<p class="fpx-lede">Results settle from verified match data at full time. '
+    + 'In this prototype, <b>Simulate result</b> plays one out so you can see how it reads.</p>'
+    + active.map(function(e){
+      var chip = e.matchStatus === 'LIVE' ? ['live', 'Live'] : /FINISH|FINAL/.test(e.matchStatus) ? ['wait', 'Awaiting result'] : ['soon', 'Upcoming'];
+      var canCancel = chip[0] === 'soon';
+      var figs = e.isClub
+        ? [['Staked', fpNum(e.stakeFTR) + ' $FTR'], ['Projected', fpSigned(e.projectedFP) + ' FP'], ['Worth', fpFtr(e.projectedFP)]]
+        : [['Shares locked', fpNum(e.shares)], ['Best case', fpSigned(e.projectedFP) + ' FP'], ['Worth', fpFtr(e.projectedFP)]];
+      return '<article class="fpx-card">'
+        + '<div class="fpx-head">' + entryPhoto(e) + entryWho(e)
+        + '<span class="fpx-chip ' + chip[0] + '">' + chip[1] + '</span></div>'
+        + '<dl class="fpx-figs">' + figs.map(function(f){ return '<div><dt>' + f[0] + '</dt><dd>' + f[1] + '</dd></div>'; }).join('') + '</dl>'
+        + (e.picks.length ? '<ul class="fpx-picks">' + e.picks.map(function(p){
+            return '<li><span class="fpx-dot"></span><span class="fpx-pick">' + fpEsc(p.label) + '</span>'
+              + '<em>' + fpSigned(p.win) + ' / ' + fpSigned(p.loss) + ' FP a share</em></li>';
+          }).join('') + '</ul>' : '')
+        + '<div class="fpx-actions">'
+        + (canCancel ? '<button type="button" class="fpx-btn ghost" data-cancel="' + fpEsc(e.id) + '">Cancel entry</button>' : '')
+        + '<button type="button" class="fpx-btn" data-simulate="' + fpEsc(e.id) + '">Simulate result</button>'
+        + '</div></article>';
+    }).join('');
 }
 
 function renderHistoryList(){
-  var container = document.getElementById('historyList');
-  if(!container) return;
-  var settled = userFanPlays.filter(function(fp){ return isFanPlaySettled(fp.status); });
-  if(settled.length === 0){
-    container.innerHTML = '<div style="padding:40px 20px;text-align:center;color:#8E9AA8;background:rgba(255,255,255,.02);border-radius:14px">'
-      + '<div style="font-weight:700;color:#fff;margin-bottom:4px">No History</div>'
-      + '<div style="font-size:12px">Settled matchday positions and $FTR ledger payouts will appear here.</div>'
-      + '</div>';
+  var host = document.getElementById('historyList');
+  if(!host) return;
+  var done = userFanPlays.filter(function(e){ return e.status !== 'ACTIVE'; })
+    .sort(function(a, b){ return String(b.settledAt || b.createdAt).localeCompare(String(a.settledAt || a.createdAt)); });
+  if(!done.length){
+    host.innerHTML = '<div class="fpx-empty"><b>No results yet</b>'
+      + '<p>Every entry lands here when it settles or you cancel it — each prediction, the FP it earned and what that was worth.</p></div>';
     return;
   }
-  container.innerHTML = settled.map(function(fp){
-    var assetSym = fp.asset ? (fp.asset.symbol || fp.asset.name) : (fp.target || '$ASSET');
-    var matchName = fp.match ? (fp.match.homeTeam + ' vs ' + fp.match.awayTeam) : 'Matchday Fixture';
-    var isWin = (fp.ftrSettlement || 0) >= 0;
-    var dt = new Date(fp.settledAt || fp.createdAt || Date.now()).toLocaleDateString();
-
-    return '<div class="fp-panel" style="padding:18px;margin-bottom:12px">'
-      + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">'
-      + '  <div>'
-      + '    <span style="font-family:Space Grotesk,sans-serif;font-weight:700;font-size:17px;color:#fff">' + assetSym + '</span>'
-      + '    <span style="font-size:12px;color:#8E9AA8;margin-left:8px">' + matchName + ' · ' + dt + '</span>'
-      + '  </div>'
-      + '  <span style="font-size:14px;font-weight:800;color:' + (isWin ? 'var(--lime)' : '#FF5E5E') + '">'
-      + (isWin ? '+' : '') + (fp.ftrSettlement || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' $FTR'
-      + '  </span>'
-      + '</div>'
-      + '<div style="display:flex;gap:14px;font-size:11.5px;color:#8E9AA8;margin-bottom:12px">'
-      + '  <span>Staked: <b>' + (fp.stakedShares || 0).toLocaleString() + ' shares</b> (Unlocked ✓)</span>'
-      + '  <span>Total FP: <b style="color:#fff">' + (fp.totalFP || 0).toLocaleString() + ' FP</b></span>'
-      + '  <span>Status: <b>' + fp.status + '</b></span>'
-      + '</div>'
-      + '<div style="display:flex;flex-direction:column;gap:6px;border-top:1px solid rgba(255,255,255,.05);padding-top:10px">'
-      + (fp.selections || []).map(function(s){
-          var res = s.evaluationResult;
-          var resColor = res === 'SUCCESS' ? 'var(--lime)' : res === 'FAILURE' ? '#FF5E5E' : '#8E9AA8';
-          var optFp = s.optionFP != null ? s.optionFP : (s.successFP || 100);
-          return '<div style="display:flex;justify-content:space-between;align-items:center;font-size:12px">'
-            + '<div><span style="color:#CAD2C5">• ' + s.optionLabel + '</span>'
-            + (s.evaluationReason ? '<div style="font-size:10.5px;color:#8E9AA8;padding-left:12px">' + s.evaluationReason + '</div>' : '')
-            + '</div>'
-            + '<div style="text-align:right">'
-            + '<span style="font-weight:700;color:' + resColor + '">' + (res || 'SUCCESS') + '</span> '
-            + '<span style="color:#8E9AA8;font-size:11px">(+' + optFp + ' FP)</span>'
-            + '</div>'
-            + '</div>';
-        }).join('')
-      + '</div>'
-      + '</div>';
+  host.innerHTML = done.map(function(e){
+    var when = e.settledAt ? new Date(e.settledAt).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' }) : '';
+    var cancelled = e.status === 'CANCELLED';
+    var fp = e.resultFP || 0;
+    var chip = cancelled ? '<span class="fpx-result off">Cancelled</span>'
+      : '<span class="fpx-result ' + (fp >= 0 ? 'up' : 'down') + '">' + fpFtr(fp) + '</span>';
+    var figs = cancelled
+      ? [[e.isClub ? 'Returned' : 'Shares returned', e.isClub ? fpNum(e.stakeFTR) + ' $FTR' : fpNum(e.shares)], ['FP', '—'], ['Result', 'Cancelled']]
+      : [[e.isClub ? 'Stake returned' : 'Shares unlocked', e.isClub ? fpNum(e.stakeFTR) + ' $FTR' : fpNum(e.shares)], ['FP earned', fpSigned(fp)], ['Worth', fpFtr(fp)]];
+    return '<article class="fpx-card done">'
+      + '<div class="fpx-head">' + entryPhoto(e) + entryWho(e, when) + chip + '</div>'
+      + '<dl class="fpx-figs">' + figs.map(function(f){ return '<div><dt>' + f[0] + '</dt><dd>' + f[1] + '</dd></div>'; }).join('') + '</dl>'
+      + (!cancelled && e.picks.length ? '<ul class="fpx-picks">' + e.picks.map(function(p){
+          var ok = p.result === 'SUCCESS', bad = p.result === 'FAILURE';
+          var earned = p.earned != null ? p.earned : (ok ? p.win * e.shares : bad ? p.loss * e.shares : 0);
+          return '<li class="' + (ok ? 'ok' : bad ? 'no' : '') + '"><span class="fpx-mark">' + (ok ? '✓' : bad ? '✕' : '·') + '</span>'
+            + '<span class="fpx-pick">' + fpEsc(p.label) + (p.reason ? '<small>' + fpEsc(p.reason) + '</small>' : '') + '</span>'
+            + '<em>' + fpSigned(earned) + ' FP</em></li>';
+        }).join('') + '</ul>' : '')
+      + (e.simulated ? '<p class="fpx-sim">Simulated result — no $FTR was paid out.</p>' : '')
+      + '</article>';
   }).join('');
 }
 
-function cancelFanPlay(id){
-  if(!confirm('Are you sure you want to cancel this FanPlay position and unlock your shares?')) return;
-  var s = (typeof FT !== 'undefined' && typeof FT.getState === 'function') ? FT.getState() : null;
-  if(s && s.fanplay && s.fanplay.activeEntries){
-    var entry = s.fanplay.activeEntries.find(function(e){ return e.id === id; });
-    s.fanplay.activeEntries = s.fanplay.activeEntries.filter(function(e){ return e.id !== id; });
-    if(entry){
-      s.fanplay.history = s.fanplay.history || [];
-      entry.status = 'CANCELLED';
-      entry.ftrSettlement = 0;
-      s.fanplay.history.unshift(entry);
-    }
-    if(typeof FT.cancelEntry === 'function') FT.cancelEntry(id);
-    if(typeof FT.save === 'function') FT.save();
-    if(typeof FT.syncUI === 'function') FT.syncUI();
-    window.dispatchEvent(new CustomEvent('fantrade:statechange', { detail: s }));
+/* Move an entry from Active to History on this device. */
+function retireEntry(id, patch){
+  var s = fpState();
+  if(!s || !s.fanplay) return null;
+  var list = s.fanplay.activeEntries || [];
+  var i = list.findIndex(function(e){ return e.id === id; });
+  if(i < 0) return null;
+  var entry = Object.assign(list.splice(i, 1)[0], patch, { settledAt: new Date().toISOString() });
+  // A Dream Club entry staked $FTR; it comes back when the entry ends.
+  if(entry.mode === 'Dream Club' && entry.stake && s.wallet){
+    s.wallet.locked = Math.max(0, (s.wallet.locked || 0) - entry.stake);
+    s.wallet.balance = (s.wallet.balance || 0) + entry.stake;
   }
-  showToast('FanPlay position cancelled. Shares unlocked.', 'success');
+  s.fanplay.history = s.fanplay.history || [];
+  s.fanplay.history.unshift(entry);
+  if(typeof FT.save === 'function') FT.save();
+  if(typeof FT.syncUI === 'function') FT.syncUI();
+  window.dispatchEvent(new CustomEvent('fantrade:statechange', { detail: s }));
+  return entry;
+}
+
+function cancelFanPlay(id){
+  var entry = retireEntry(id, { status: 'CANCELLED' });
+  if(!entry) return;
+  if(typeof FT.cancelEntry === 'function') FT.cancelEntry(id);
+  showToast('Entry cancelled. Your shares are unlocked.', 'success');
   loadUserFanPlays();
 }
 
+/* Prototype only. Real results come from verified match data (§14.6, §20),
+   never from a button. This plays one out by the white paper's rules — each
+   pick earns its FP for every share staked, 1,000 FP is 1 $FTR — and records
+   it as simulated. No $FTR is paid. */
 function settleFanPlay(id){
-  var s = (typeof FT !== 'undefined' && typeof FT.getState === 'function') ? FT.getState() : null;
-  if(s && s.fanplay && s.fanplay.activeEntries){
-    var idx = s.fanplay.activeEntries.findIndex(function(e){ return e.id === id; });
-    if(idx !== -1){
-      var entry = s.fanplay.activeEntries.splice(idx, 1)[0];
-      entry.status = 'SETTLED';
-      entry.ftrSettlement = Math.round((entry.stakedShares || entry.stake || 100) * 2.1);
-      entry.settledAt = new Date().toISOString();
-      s.fanplay.history = s.fanplay.history || [];
-      s.fanplay.history.unshift(entry);
-      if(s.wallet){
-        s.wallet.balance = (s.wallet.balance || 0) + entry.ftrSettlement;
-        s.wallet.locked = Math.max(0, (s.wallet.locked || 0) - (entry.stakedShares || entry.stake || 0));
-        s.wallet.seasonEarned = (s.wallet.seasonEarned || 0) + entry.ftrSettlement;
-      }
-      s.transactions = s.transactions || [];
-      s.transactions.unshift({
-        type: 'PAYOUT',
-        asset: 'FanPlay Settlement (' + (entry.market ? entry.market.name : 'Solo') + ')',
-        shares: entry.stakedShares || 1,
-        price: entry.ftrSettlement,
-        total: entry.ftrSettlement,
-        time: 'Just now'
-      });
-      if(typeof FT.save === 'function') FT.save();
-      if(typeof FT.syncUI === 'function') FT.syncUI();
-      window.dispatchEvent(new CustomEvent('fantrade:statechange', { detail: s }));
-    }
-  }
-  showToast('Final match settlement complete! Shares unlocked and ledger updated.', 'success');
+  var s = fpState();
+  var raw = s && s.fanplay && (s.fanplay.activeEntries || []).filter(function(e){ return e.id === id; })[0];
+  if(!raw) return;
+  var seed = 0; String(id).split('').forEach(function(c){ seed = (seed * 31 + c.charCodeAt(0)) >>> 0; });
+  function roll(){ seed = (seed * 1103515245 + 12345) >>> 0; return (seed >>> 8) / 16777216; }
+  var shares = Number(raw.stakedShares) || 0, total = 0;
+  var picks = (raw.selections || []).map(function(p){
+    var ok = roll() < 0.6;
+    var earned = (ok ? Number(p.successFP) || 0 : Number(p.failureFP) || 0) * shares;
+    total += earned;
+    return Object.assign({}, p, { evaluationResult: ok ? 'SUCCESS' : 'FAILURE', earnedFP: earned });
+  });
+  if(!picks.length) total = Math.round((Number(raw.projectedFP) || 0) * (0.4 + roll()));
+  retireEntry(id, { status: 'SETTLED', selections: picks, resultFP: total, simulated: true });
+  showToast('Result simulated: ' + fpSigned(total) + ' FP (' + fpFtr(total) + ').', total >= 0 ? 'success' : 'info');
   loadUserFanPlays();
 }
+
+/* Cancelling asks twice rather than opening a browser dialog. */
+document.addEventListener('click', function(ev){
+  var c = ev.target.closest && ev.target.closest('[data-cancel]');
+  if(c){
+    if(c.dataset.armed){ cancelFanPlay(c.dataset.cancel); return; }
+    c.dataset.armed = '1'; c.textContent = 'Tap again to cancel';
+    setTimeout(function(){ if(c.isConnected){ delete c.dataset.armed; c.textContent = 'Cancel entry'; } }, 3500);
+    return;
+  }
+  var r = ev.target.closest && ev.target.closest('[data-simulate]');
+  if(r) settleFanPlay(r.dataset.simulate);
+});
 
 window.switchFPView = switchFPView;
 window.resetWizard = resetWizard;

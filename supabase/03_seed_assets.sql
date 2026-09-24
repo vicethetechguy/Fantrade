@@ -34,7 +34,16 @@ insert into public.assets (id, ticker, name, kind, club, league, position, price
   ('$Jackson', 'FJACK', 'Nicolas Jackson', 'PLAYER', 'Chelsea', 'Premier League', 'FWD', 14.85, 14.85, now()),
   ('$Arteta', 'FARTA', 'Mikel Arteta', 'COACH', 'Arsenal', 'Premier League', 'MGR', 22.05, 22.05, now()),
   ('$Pep', 'FPEP', 'Pep Guardiola', 'COACH', 'Manchester City', 'Premier League', 'MGR', 29.60, 29.60, now()),
-  ('$Maresca', 'FMARS', 'Enzo Maresca', 'COACH', 'Chelsea', 'Premier League', 'MGR', 18.30, 18.30, now())
+  ('$Maresca', 'FMARS', 'Enzo Maresca', 'COACH', 'Chelsea', 'Premier League', 'MGR', 18.30, 18.30, now()),
+  -- The women's game. Clubs as of the 2026-27 season.
+  ('$Bonmati', 'FAITN', 'Aitana Bonmatí', 'PLAYER', 'Barcelona', 'Liga F', 'MID', 44.80, 44.80, now()),
+  ('$Putellas', 'FPUTL', 'Alexia Putellas', 'PLAYER', 'London City Lionesses', 'WSL', 'MID', 36.40, 36.40, now()),
+  ('$Russo', 'FRUSS', 'Alessia Russo', 'PLAYER', 'Arsenal', 'WSL', 'FWD', 38.90, 38.90, now()),
+  ('$LJames', 'FLJMS', 'Lauren James', 'PLAYER', 'Chelsea', 'WSL', 'FWD', 35.70, 35.70, now()),
+  ('$Kerr', 'FKERR', 'Sam Kerr', 'PLAYER', 'Gotham FC', 'NWSL', 'FWD', 31.20, 31.20, now()),
+  ('$Williamson', 'FWILM', 'Leah Williamson', 'PLAYER', 'Arsenal', 'WSL', 'DEF', 27.50, 27.50, now()),
+  ('$Earps', 'FEARP', 'Mary Earps', 'PLAYER', 'London City Lionesses', 'WSL', 'GK', 24.30, 24.30, now()),
+  ('$Wiegman', 'FWIEG', 'Sarina Wiegman', 'COACH', 'England', 'International', 'MGR', 26.80, 26.80, now())
 on conflict (id) do update set
   ticker = excluded.ticker, name = excluded.name, kind = excluded.kind,
   club = excluded.club, league = excluded.league, position = excluded.position,

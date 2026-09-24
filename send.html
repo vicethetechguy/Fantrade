@@ -1968,52 +1968,67 @@ function ftSym(value){
     return FT_TICKERS[id] || (id.charAt(1) === 'F' ? id.slice(1) : 'F' + id.slice(1).toUpperCase());
   }).replace(/^\$/, '');
 }
+/* `lg` is the league an asset plays in; the Exchange filters on it rather
+   than guessing from the club name, which would file Arsenal's women
+   under the Premier League. `w` marks the women's game. */
 var ASSETS=[
- {t:'FSAKA',n:'Bukayo Saka',p:48.20,d:6.4,c:false,cap:'482.0M',h:51.2,low:46.8,q:'FTR',vol:'12.4M',tag:'10x',pos:'FWD',club:'Arsenal'},
- {t:'FHLND',n:'Erling Haaland',p:71.40,d:-1.8,c:false,cap:'714.0M',h:74.0,low:70.1,q:'FTR',vol:'18.6M',tag:'10x',pos:'FWD',club:'Manchester City'},
- {t:'FKM7',n:'Kylian Mbappé',p:78.50,d:4.8,c:false,cap:'785.0M',h:81.0,low:76.2,q:'FTR',vol:'24.8M',tag:'10x',pos:'FWD',club:'Real Madrid'},
- {t:'FVJR',n:'Vinícius Júnior',p:63.10,d:0.7,c:false,cap:'631.0M',h:65.0,low:62.0,q:'FTR',vol:'15.2M',tag:'10x',pos:'FWD',club:'Real Madrid'},
- {t:'FBEL',n:'Jude Bellingham',p:58.90,d:3.3,c:false,cap:'589.0M',h:61.0,low:57.2,q:'FTR',vol:'14.1M',tag:'10x',pos:'MID',club:'Real Madrid'},
- {t:'FPLMR',n:'Cole Palmer',p:52.80,d:8.2,c:false,cap:'528.0M',h:54.5,low:49.1,q:'FTR',vol:'16.5M',tag:'10x',pos:'MID',club:'Chelsea'},
- {t:'FYAML',n:'Lamine Yamal',p:66.20,d:9.4,c:false,cap:'662.0M',h:68.0,low:61.5,q:'FTR',vol:'22.1M',tag:'10x',pos:'FWD',club:'Barcelona'},
- {t:'FMUS',n:'Jamal Musiala',p:46.70,d:5.1,c:false,cap:'467.0M',h:48.5,low:44.2,q:'FTR',vol:'11.5M',tag:'10x',pos:'MID',club:'Bayern Munich'},
- {t:'FWRTZ',n:'Florian Wirtz',p:44.60,d:3.8,c:false,cap:'446.0M',h:46.2,low:43.0,q:'FTR',vol:'10.9M',tag:'10x',pos:'MID',club:'Bayer Leverkusen'},
- {t:'FRODR',n:'Rodri',p:61.30,d:1.4,c:false,cap:'613.0M',h:62.5,low:60.1,q:'FTR',vol:'13.7M',tag:'10x',pos:'MID',club:'Manchester City'},
- {t:'FFODN',n:'Phil Foden',p:54.10,d:-1.2,c:false,cap:'541.0M',h:56.0,low:53.2,q:'FTR',vol:'11.8M',tag:'10x',pos:'FWD',club:'Manchester City'},
- {t:'FPEDR',n:'Pedri González',p:41.15,d:-0.9,c:false,cap:'411.5M',h:42.5,low:40.1,q:'FTR',vol:'8.9M',tag:'10x',pos:'MID',club:'Barcelona'},
- {t:'FSALI',n:'William Saliba',p:33.80,d:2.7,c:false,cap:'338.0M',h:35.0,low:32.4,q:'FTR',vol:'7.2M',tag:'10x',pos:'DEF',club:'Arsenal'},
- {t:'FBRN',n:'Bruno Fernandes',p:39.75,d:2.1,c:false,cap:'397.5M',h:41.8,low:38.5,q:'FTR',vol:'9.8M',tag:'10x',pos:'MID',club:'Manchester United'},
- {t:'FJACK',n:'Nicolas Jackson',p:14.85,d:11.2,c:false,cap:'148.5M',h:15.5,low:13.2,q:'FTR',vol:'5.4M',tag:'10x',pos:'FWD',club:'Chelsea'},
- {t:'FARTA',n:'Mikel Arteta',p:22.05,d:4.9,c:true,cap:'220.5M',h:23.5,low:21.0,q:'FTR',vol:'6.1M',tag:'COACH',pos:'MGR',club:'Arsenal'},
- {t:'FPEP',n:'Pep Guardiola',p:29.60,d:-0.4,c:true,cap:'296.0M',h:30.8,low:28.9,q:'FTR',vol:'7.8M',tag:'COACH',pos:'MGR',club:'Manchester City'},
- {t:'FMARS',n:'Enzo Maresca',p:18.30,d:1.2,c:true,cap:'183.0M',h:19.2,low:17.8,q:'FTR',vol:'4.5M',tag:'COACH',pos:'MGR',club:'Chelsea'}
+ {t:'FSAKA',n:'Bukayo Saka',p:48.20,d:6.4,c:false,cap:'482.0M',h:51.2,low:46.8,q:'FTR',vol:'12.4M',tag:'10x',pos:'FWD',club:'Arsenal',lg:'Premier League'},
+ {t:'FHLND',n:'Erling Haaland',p:71.40,d:-1.8,c:false,cap:'714.0M',h:74.0,low:70.1,q:'FTR',vol:'18.6M',tag:'10x',pos:'FWD',club:'Manchester City',lg:'Premier League'},
+ {t:'FKM7',n:'Kylian Mbappé',p:78.50,d:4.8,c:false,cap:'785.0M',h:81.0,low:76.2,q:'FTR',vol:'24.8M',tag:'10x',pos:'FWD',club:'Real Madrid',lg:'La Liga'},
+ {t:'FVJR',n:'Vinícius Júnior',p:63.10,d:0.7,c:false,cap:'631.0M',h:65.0,low:62.0,q:'FTR',vol:'15.2M',tag:'10x',pos:'FWD',club:'Real Madrid',lg:'La Liga'},
+ {t:'FBEL',n:'Jude Bellingham',p:58.90,d:3.3,c:false,cap:'589.0M',h:61.0,low:57.2,q:'FTR',vol:'14.1M',tag:'10x',pos:'MID',club:'Real Madrid',lg:'La Liga'},
+ {t:'FPLMR',n:'Cole Palmer',p:52.80,d:8.2,c:false,cap:'528.0M',h:54.5,low:49.1,q:'FTR',vol:'16.5M',tag:'10x',pos:'MID',club:'Chelsea',lg:'Premier League'},
+ {t:'FYAML',n:'Lamine Yamal',p:66.20,d:9.4,c:false,cap:'662.0M',h:68.0,low:61.5,q:'FTR',vol:'22.1M',tag:'10x',pos:'FWD',club:'Barcelona',lg:'La Liga'},
+ {t:'FMUS',n:'Jamal Musiala',p:46.70,d:5.1,c:false,cap:'467.0M',h:48.5,low:44.2,q:'FTR',vol:'11.5M',tag:'10x',pos:'MID',club:'Bayern Munich',lg:'Bundesliga'},
+ {t:'FWRTZ',n:'Florian Wirtz',p:44.60,d:3.8,c:false,cap:'446.0M',h:46.2,low:43.0,q:'FTR',vol:'10.9M',tag:'10x',pos:'MID',club:'Bayer Leverkusen',lg:'Bundesliga'},
+ {t:'FRODR',n:'Rodri',p:61.30,d:1.4,c:false,cap:'613.0M',h:62.5,low:60.1,q:'FTR',vol:'13.7M',tag:'10x',pos:'MID',club:'Manchester City',lg:'Premier League'},
+ {t:'FFODN',n:'Phil Foden',p:54.10,d:-1.2,c:false,cap:'541.0M',h:56.0,low:53.2,q:'FTR',vol:'11.8M',tag:'10x',pos:'FWD',club:'Manchester City',lg:'Premier League'},
+ {t:'FPEDR',n:'Pedri González',p:41.15,d:-0.9,c:false,cap:'411.5M',h:42.5,low:40.1,q:'FTR',vol:'8.9M',tag:'10x',pos:'MID',club:'Barcelona',lg:'La Liga'},
+ {t:'FSALI',n:'William Saliba',p:33.80,d:2.7,c:false,cap:'338.0M',h:35.0,low:32.4,q:'FTR',vol:'7.2M',tag:'10x',pos:'DEF',club:'Arsenal',lg:'Premier League'},
+ {t:'FBRN',n:'Bruno Fernandes',p:39.75,d:2.1,c:false,cap:'397.5M',h:41.8,low:38.5,q:'FTR',vol:'9.8M',tag:'10x',pos:'MID',club:'Manchester United',lg:'Premier League'},
+ {t:'FJACK',n:'Nicolas Jackson',p:14.85,d:11.2,c:false,cap:'148.5M',h:15.5,low:13.2,q:'FTR',vol:'5.4M',tag:'10x',pos:'FWD',club:'Chelsea',lg:'Premier League'},
+ {t:'FAITN',n:'Aitana Bonmatí',p:44.80,d:1.9,c:false,cap:'448.0M',h:46.1,low:43.2,q:'FTR',vol:'6.8M',tag:'10x',pos:'MID',club:'Barcelona',lg:'Liga F',w:1},
+ {t:'FPUTL',n:'Alexia Putellas',p:36.40,d:5.6,c:false,cap:'364.0M',h:37.2,low:34.1,q:'FTR',vol:'7.9M',tag:'10x',pos:'MID',club:'London City Lionesses',lg:'WSL',w:1},
+ {t:'FRUSS',n:'Alessia Russo',p:38.90,d:2.4,c:false,cap:'389.0M',h:39.8,low:37.6,q:'FTR',vol:'6.1M',tag:'10x',pos:'FWD',club:'Arsenal',lg:'WSL',w:1},
+ {t:'FLJMS',n:'Lauren James',p:35.70,d:4.2,c:false,cap:'357.0M',h:36.9,low:34.0,q:'FTR',vol:'5.9M',tag:'10x',pos:'FWD',club:'Chelsea',lg:'WSL',w:1},
+ {t:'FKERR',n:'Sam Kerr',p:31.20,d:3.1,c:false,cap:'312.0M',h:32.0,low:30.1,q:'FTR',vol:'5.2M',tag:'10x',pos:'FWD',club:'Gotham FC',lg:'NWSL',w:1},
+ {t:'FWILM',n:'Leah Williamson',p:27.50,d:0.8,c:false,cap:'275.0M',h:28.1,low:27.0,q:'FTR',vol:'3.4M',tag:'10x',pos:'DEF',club:'Arsenal',lg:'WSL',w:1},
+ {t:'FEARP',n:'Mary Earps',p:24.30,d:-0.6,c:false,cap:'243.0M',h:24.9,low:23.8,q:'FTR',vol:'3.1M',tag:'10x',pos:'GK',club:'London City Lionesses',lg:'WSL',w:1},
+ {t:'FARTA',n:'Mikel Arteta',p:22.05,d:4.9,c:true,cap:'220.5M',h:23.5,low:21.0,q:'FTR',vol:'6.1M',tag:'COACH',pos:'MGR',club:'Arsenal',lg:'Premier League'},
+ {t:'FPEP',n:'Pep Guardiola',p:29.60,d:-0.4,c:true,cap:'296.0M',h:30.8,low:28.9,q:'FTR',vol:'7.8M',tag:'COACH',pos:'MGR',club:'Manchester City',lg:'Premier League'},
+ {t:'FMARS',n:'Enzo Maresca',p:18.30,d:1.2,c:true,cap:'183.0M',h:19.2,low:17.8,q:'FTR',vol:'4.5M',tag:'COACH',pos:'MGR',club:'Chelsea',lg:'Premier League'},
+ {t:'FWIEG',n:'Sarina Wiegman',p:26.80,d:1.5,c:true,cap:'268.0M',h:27.4,low:26.1,q:'FTR',vol:'4.0M',tag:'COACH',pos:'MGR',club:'England',lg:'International',w:1}
 ];
-var PLAYER_IMAGES={
-  saka:'assets/players/saka.webp',haaland:'assets/players/haaland.webp',mbappe:'assets/players/mbappe.webp',
-  vinicius:'assets/players/vinicius.webp',bellingham:'assets/players/bellingham.webp',palmer:'assets/players/palmer.webp',
-  yamal:'assets/players/yamal.webp',musiala:'assets/players/musiala.webp',wirtz:'assets/players/wirtz.webp',
-  rodri:'assets/players/rodri.webp',foden:'assets/players/foden.webp',pedri:'assets/players/pedri.webp',
-  saliba:'assets/players/saliba.webp',bruno:'assets/players/bruno.webp',jackson:'assets/players/jackson.webp',
-  arteta:'assets/players/arteta.webp',pep:'assets/players/pep.webp',maresca:'assets/players/maresca.webp',
-  bonmati:'assets/players/bonmati.webp',putellas:'assets/players/putellas.webp',
-  kerr:'assets/players/kerr.webp',russo:'assets/players/russo.webp',
-  james:'assets/players/james.webp',williamson:'assets/players/williamson.webp',
-  earps:'assets/players/earps.webp',wiegman:'assets/players/wiegman.webp',
-  rice:'assets/players/rice.webp',odegaard:'assets/players/odegaard.webp',davies:'assets/players/davies.webp',
-  vandijk:'assets/players/vandijk.webp',white:'assets/players/white.webp',raya:'assets/players/raya.webp',
-  alisson:'assets/players/alisson.webp',gabriel:'assets/players/gabriel.webp'
-};
+/* Filled in at build time from assets/players/attribution.json: a picture
+   is only used when its source and licence are on record. */
+var PLAYER_IMAGES={"alisson":"assets/players/alisson.webp","arteta":"assets/players/arteta.webp","bellingham":"assets/players/bellingham.webp","bruno":"assets/players/bruno.webp","davies":"assets/players/davies.webp","foden":"assets/players/foden.webp","gabriel":"assets/players/gabriel.webp","haaland":"assets/players/haaland.webp","jackson":"assets/players/jackson.webp","maresca":"assets/players/maresca.webp","mbappe":"assets/players/mbappe.webp","musiala":"assets/players/musiala.webp","odegaard":"assets/players/odegaard.webp","palmer":"assets/players/palmer.webp","pedri":"assets/players/pedri.webp","pep":"assets/players/pep.webp","raya":"assets/players/raya.webp","rice":"assets/players/rice.webp","rodri":"assets/players/rodri.webp","saka":"assets/players/saka.webp","saliba":"assets/players/saliba.webp","vandijk":"assets/players/vandijk.webp","vinicius":"assets/players/vinicius.webp","white":"assets/players/white.webp","wirtz":"assets/players/wirtz.webp","yamal":"assets/players/yamal.webp"};
+/* Initials on a tint picked from the name, as an SVG the <img> can load, so
+   every place that shows a photo can show this instead without changes. */
+function monogram(name){
+  var words = String(name || '?').replace(/[^A-Za-zÀ-ɏ ]/g, ' ').trim().split(/\s+/);
+  var ini = ((words[0] || '?').charAt(0) + (words.length > 1 ? words[words.length - 1].charAt(0) : '')).toUpperCase();
+  var hues = ['#1800ad', '#3a1fbf', '#0b5fae', '#5a2d9c', '#14418f', '#2c2396'];
+  var h = 0; for (var i = 0; i < ini.length + String(name).length; i++) h = (h * 31 + String(name).charCodeAt(i % String(name).length)) >>> 0;
+  var svg = "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'>"
+    + "<rect width='100' height='100' fill='" + hues[h % hues.length] + "'/>"
+    + "<text x='50' y='50' dy='.36em' text-anchor='middle' font-family='Montserrat,Arial,sans-serif' "
+    + "font-weight='700' font-size='38' fill='#ffffff'>" + ini + "</text></svg>";
+  // encodeURIComponent leaves ' alone, and photos are written into
+  // single-quoted src attributes, so it has to be encoded by hand.
+  return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg).replace(/'/g, '%27');
+}
 function playerPhoto(symbol,name,className){
   var raw = String(symbol||'').replace(/^\$/, '');
   var sLower = raw.toLowerCase();
   var key = sLower;
   if(sLower.startsWith('f') && sLower.length > 3){
-    var map = { fsaka:'saka', fhlnd:'haaland', fkm7:'mbappe', fvjr:'vinicius', fbel:'bellingham', fplmr:'palmer', fyaml:'yamal', fmus:'musiala', fwrtz:'wirtz', frodr:'rodri', ffodn:'foden', fpedr:'pedri', fsali:'saliba', fbrn:'bruno', fjack:'jackson', farta:'arteta', fpep:'pep', fmars:'maresca', faitn:'bonmati', fputl:'putellas', fkerr:'kerr', fruss:'russo', fljms:'james', fwilm:'williamson', fearp:'earps', fwieg:'wiegman', fcr7:'saka', flm10:'saka' };
+    var map = { fsaka:'saka', fhlnd:'haaland', fkm7:'mbappe', fvjr:'vinicius', fbel:'bellingham', fplmr:'palmer', fyaml:'yamal', fmus:'musiala', fwrtz:'wirtz', frodr:'rodri', ffodn:'foden', fpedr:'pedri', fsali:'saliba', fbrn:'bruno', fjack:'jackson', farta:'arteta', fpep:'pep', fmars:'maresca', faitn:'bonmati', fputl:'putellas', fkerr:'kerr', fruss:'russo', fljms:'james', fwilm:'williamson', fearp:'earps', fwieg:'wiegman' };
     if(map[sLower]) key = map[sLower];
     else key = sLower.slice(1);
   }
   var label=String(name||symbol||'Player').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
-  var src=PLAYER_IMAGES[key]||PLAYER_IMAGES.saka;
+  // No verified photo: show their initials. Never another person's face.
+  var src=PLAYER_IMAGES[key]||monogram(name||symbol);
   return "<img class='"+(className||'player-photo')+"' src='"+src+"' alt='"+label+"' loading='lazy' decoding='async'>";
 }
 function liveTicks(sel){
@@ -2093,7 +2108,7 @@ var FT = (function(){
     ],
     wallet: {
       balance: 128450,
-      locked: 5000,
+      locked: 0,
       seasonEarned: 19640,
       gbpRate: 12.40
     },
@@ -2110,9 +2125,8 @@ var FT = (function(){
       division: "Apex"
     },
     fanplay: {
-      activeEntries: [
-        { id: "e-1", mode: "Dream Club", clubId: "c-1", target: "Zero FC", tier: "Elite", mult: 2.0, stake: 2500, projectedFP: 230, status: "Active in MD 07" },
-        { id: "e-2", mode: "Individual", clubId: "", target: "FSAKA", tier: "PRO", mult: 1.4, stake: 2500, projectedFP: 140, status: "Active in MD 07" }
+      activeEntries: [],
+      history: [
       ]
     },
     transactions: [
@@ -2133,6 +2147,15 @@ var FT = (function(){
     if(!st.club.id) st.club.id = 'c-1';
     delete st.clubs;
     delete st.activeClub;
+    st.fanplay = st.fanplay || {};
+    st.fanplay.activeEntries = st.fanplay.activeEntries || [];
+    st.fanplay.history = st.fanplay.history || [];
+    // The two seeded demo entries (e-1, e-2) were never placed by anyone.
+    var seeded = st.fanplay.activeEntries.filter(function(e){ return e.id === 'e-1' || e.id === 'e-2'; });
+    if(seeded.length){
+      st.fanplay.activeEntries = st.fanplay.activeEntries.filter(function(e){ return seeded.indexOf(e) < 0; });
+      if(st.wallet) st.wallet.locked = Math.max(0, (st.wallet.locked || 0) - seeded.reduce(function(t, e){ return t + (Number(e.stake) || 0); }, 0));
+    }
     return st;
   }
   function load(){
@@ -2215,9 +2238,14 @@ var FT = (function(){
       link(state);
     }
     if(snap.entries){
+      // Entries made on this device carry a local id until the account has
+      // confirmed them. Replacing the list wholesale threw those away — which
+      // is how an entry you had just placed vanished from Active whenever the
+      // save to the account failed. They are kept until the account answers.
+      var unconfirmed = (state.fanplay.activeEntries || []).filter(function(e){ return !serverId(e.id); });
       // Two kinds of entry read this list — a $FTR stake on a Dream Club and
       // shares locked against a market — so a row carries both vocabularies.
-      state.fanplay.activeEntries = snap.entries.map(function(e){
+      state.fanplay.activeEntries = unconfirmed.concat(snap.entries.map(function(e){
         var held = state.holdings[e.asset_id] || {};
         return { id: e.id, mode: e.mode, clubId: e.club_id || '', target: e.target,
                  tier: e.tier || '', mult: Number(e.multiplier) || 1,
@@ -2229,8 +2257,9 @@ var FT = (function(){
                  totalFP: Number(e.scored_fp) || 0,
                  projectedFP: Number(e.projected_fp) || 0,
                  createdAt: e.created_at,
-                 status: 'Active in MD ' + ('0' + e.matchday).slice(-2) };
-      });
+                 matchday: e.matchday,
+                 status: 'ACTIVE' };
+      }));
     }
     if(snap.transactions){
       state.transactions = snap.transactions.map(function(t){
@@ -2255,7 +2284,13 @@ var FT = (function(){
              p_colors: c.colors, p_color_name: c.colorName, p_coach: c.coach };
   }
   var pending = 0;
-  function push(fn, args, onResult){
+  /* The account could not be reached, or is missing a function it needs:
+     nothing was decided, so nothing local should be undone. */
+  function isOutage(error){
+    return /schema cache|could not find the function|reach the server|failed to fetch|networkerror|timed? ?out|jwt|PGRST20/i
+      .test(String((error && (error.code || '')) + ' ' + ((error && error.message) || error)));
+  }
+  function push(fn, args, onResult, onRefused){
     var db = cloud(); if(!db) return;
     pending += 1;
     db.call(fn, args).then(function(res){
@@ -2264,6 +2299,14 @@ var FT = (function(){
     }).then(function(snap){
       if(applySnapshot(snap)) announce();
     }).catch(function(error){
+      if(isOutage(error)){
+        if(typeof showToast === 'function')
+          showToast('Saved on this device. Your account could not be reached, so it has not synced yet.', 'info');
+        return;
+      }
+      // The account said no. Undo what this device did, say why, then take
+      // the account's figures as the truth.
+      if(onRefused) onRefused(error);
       if(typeof showToast === 'function') showToast(error.message + ' Your balance has been re-checked.', 'error');
       return db.snapshot().then(function(snap){ if(applySnapshot(snap)) announce(); });
     }).finally(function(){ pending -= 1; });
@@ -2654,7 +2697,15 @@ var FT = (function(){
     stakeShares: function(o){
       push('ft_enter_fanplay_shares', { p_asset: o.asset, p_shares: o.shares,
         p_match: o.match || null, p_market: o.market || null,
-        p_selections: o.selections || null, p_action_key: o.key || null });
+        p_selections: o.selections || null, p_action_key: o.key || null },
+        null,
+        function(){
+          if(!o.localId) return;
+          state.fanplay.activeEntries = (state.fanplay.activeEntries || [])
+            .filter(function(e){ return e.id !== o.localId; });
+          save(state);
+          window.dispatchEvent(new CustomEvent('fantrade:statechange', { detail: state }));
+        });
     },
     /* Pulling out before the whistle: the shares come straight back. */
     cancelEntry: function(id){

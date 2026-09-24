@@ -46,6 +46,15 @@ PLAYERS = {
     "raya": "David Raya",
     "alisson": "Alisson Becker",
     "gabriel": "Gabriel Magalhães",
+    # The women's game
+    "bonmati": "Aitana Bonmatí",
+    "putellas": "Alexia Putellas",
+    "russo": "Alessia Russo",
+    "james": "Lauren James",
+    "kerr": "Sam Kerr",
+    "williamson": "Leah Williamson",
+    "earps": "Mary Earps",
+    "wiegman": "Sarina Wiegman",
 }
 
 
@@ -83,6 +92,12 @@ def main() -> None:
     manifest: dict[str, dict[str, str]] = {}
     if MANIFEST.exists():
         manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
+    # A file with no record of where it came from is not kept: it is replaced
+    # by the Wikimedia portrait, so the record written below always describes
+    # the picture that is actually on disk.
+    sourced = {slug for slug, entry in manifest.items()
+               if entry.get("source") and entry.get("license")}
+    missing: list[str] = []
 
     for slug, article in PLAYERS.items():
         data = request_json(
@@ -101,10 +116,14 @@ def main() -> None:
         thumbnail = page.get("thumbnail", {}).get("source")
         image_name = page.get("pageimage")
         if not thumbnail or not image_name:
-            raise RuntimeError(f"No portrait found for {article}")
+            # Not every article has a usable portrait. Leave this one to the
+            # app's initials rather than stopping the whole run.
+            print(f"no portrait on Wikipedia for {article}; skipped")
+            missing.append(article)
+            continue
 
         target = OUT / f"{slug}.webp"
-        if not target.exists():
+        if not target.exists() or slug not in sourced:
             image = Image.open(io.BytesIO(request_bytes(thumbnail))).convert("RGB")
             image.thumbnail((480, 480), Image.Resampling.LANCZOS)
             image.save(target, "WEBP", quality=84, method=6)
@@ -141,6 +160,9 @@ def main() -> None:
     MANIFEST.write_text(
         json.dumps(manifest, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
     )
+    if missing:
+        print("no portrait found for: " + ", ".join(missing))
+    print("done. Rebuild the pages so the new photos are picked up.")
 
 
 if __name__ == "__main__":
