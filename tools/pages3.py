@@ -699,9 +699,9 @@ DASH_CSS = """
   display:grid;gap:18px;min-height:388px;align-content:start}
 .home-claim-head{display:grid;gap:10px}
 .home-claim-top{display:flex;align-items:center;gap:10px}
-/* The mark sits straight on the blue with nothing behind it, in black:
-   brightness(0) keeps the logo's shape and takes it to solid black. */
-.home-claim-mark{width:34px;height:34px;object-fit:contain;flex-shrink:0;filter:brightness(0)}
+/* The mark sits straight on the blue with nothing behind it, in white:
+   brightness(0) takes the logo to solid black, invert(1) turns that white. */
+.home-claim-mark{width:34px;height:34px;object-fit:contain;flex-shrink:0;filter:brightness(0) invert(1)}
 .home-claim-eyebrow{font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
   color:rgba(255,255,255,.72)}
 .home-claim-card h2{font-size:25px!important;margin:0 0 8px;color:#fff;letter-spacing:-.022em}
@@ -766,30 +766,33 @@ DASH_CSS = """
 body.app.calm .home-card-stats dd{overflow-wrap:anywhere}
 body.app.calm .home-card .app-primary[aria-pressed="true"]{background:rgba(255,255,255,.1)}
 
-/* Claim Modal Dialog */
-.claim-modal-backdrop{position:fixed;inset:0;background:rgba(3,2,8,.82);backdrop-filter:blur(8px);
-  z-index:9999;display:none;place-items:center;padding:16px;overflow-y:auto;scrollbar-width:none}
-.claim-modal-backdrop::-webkit-scrollbar{display:none}
-.claim-modal-backdrop.open{display:grid}
-/* No border: depth comes from the fill and the shadow, like every other
-   surface in the app. */
-.claim-modal-dialog{background:#12101a;border:0;border-radius:28px;width:100%;max-width:470px;
-  padding:26px;color:#fff;box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 28px 70px rgba(0,0,0,.66);
-  position:relative;animation:kcPop .22s cubic-bezier(.16,1,.3,1);margin:auto;
-  max-height:calc(100dvh - 32px);overflow-y:auto;scrollbar-width:none}
+/* The claim sheet is built exactly like "Switch player" on a player's page:
+   a native dialog on the same surface, radius, padding, heading and round
+   close button, with the same raised fill for everything inside it. */
+body.claim-open{overflow:hidden}
+.claim-modal-dialog{position:fixed;inset:0;box-sizing:border-box;width:min(560px,calc(100% - 32px));
+  max-height:min(720px,calc(100dvh - 48px));margin:auto;border:0;border-radius:28px;padding:28px;
+  background:#121411;color:var(--ink);box-shadow:0 24px 80px #0008;overflow-y:auto;overscroll-behavior:contain;
+  scrollbar-width:none}
 .claim-modal-dialog::-webkit-scrollbar{display:none}
-@keyframes kcPop{from{opacity:0;transform:scale(.96) translateY(8px)}to{opacity:1;transform:none}}
-.claim-modal-close{position:absolute;top:20px;right:20px;background:rgba(255,255,255,.08);border:0;
-  color:#fff;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:17px;
-  display:grid;place-items:center;transition:background .15s ease}
-.claim-modal-close:hover{background:rgba(255,255,255,.16)}
-.claim-modal-head{display:flex;align-items:center;gap:14px;margin-bottom:22px;padding:0;border:0}
-.claim-modal-head .player-photo{width:56px;height:56px;border-radius:50%;object-fit:cover;
-  object-position:50% 18%;border:0;box-shadow:0 0 0 2px var(--lime)}
-.claim-modal-title{margin:0;font-family:Space Grotesk,sans-serif;font-weight:700;font-size:20px;
-  letter-spacing:-.022em}
-.claim-modal-sub{font-size:12px;color:var(--dim);margin-top:3px}
+.claim-modal-dialog::backdrop{background:#000b;backdrop-filter:blur(6px)}
+.claim-modal-dialog[open]{animation:kcPop .22s cubic-bezier(.16,1,.3,1)}
+@keyframes kcPop{from{opacity:0;transform:scale(.97) translateY(8px)}to{opacity:1;transform:none}}
+.claim-picker-heading{display:flex;align-items:center;justify-content:space-between;gap:20px;margin-bottom:24px}
+.claim-picker-heading h2{font-size:25px;margin:0}
+.claim-picker-heading button{display:grid;place-items:center;border:0;background:#242821;color:#fff;
+  border-radius:50%;width:44px;height:44px;flex:none;cursor:pointer}
+.claim-picker-heading .ic{width:18px;height:18px}
+/* The player sits in a row like the picker's chosen result. */
+.claim-modal-head{display:flex;align-items:center;gap:14px;padding:14px;border-radius:14px;background:#242821;margin-bottom:12px}
+.claim-modal-head .player-photo{width:44px;height:44px;border-radius:50%;object-fit:cover;object-position:50% 18%;flex:none;border:0}
+.claim-modal-head > div:last-child{min-width:0}
+.claim-modal-title{margin:0;font-family:Montserrat,sans-serif;font-weight:600;font-size:14px;letter-spacing:0;overflow-wrap:anywhere}
+.claim-modal-sub{font-size:11px;color:var(--dim);margin-top:4px;overflow-wrap:anywhere}
 .claim-modal-sub b{color:#fff;font-weight:600}
+.claim-about{margin:0 0 22px;padding:0 4px;font-size:12.5px;line-height:1.65;color:var(--dim)}
+.claim-about[hidden]{display:none}
+.claim-modal-dialog .claim-step:first-of-type{margin-top:22px}
 .claim-section-lbl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;
   color:var(--faint);margin:0 0 10px}
 .claim-step{margin-bottom:18px}
@@ -798,9 +801,9 @@ body.app.calm .home-card .app-primary[aria-pressed="true"]{background:rgba(255,2
    shows that share rather than making you read it off a number. */
 .claim-opt-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .claim-opt-btn{position:relative;border:0;border-radius:18px;padding:14px 13px 13px;
-  background:rgba(255,255,255,.05);color:#fff;text-align:left;cursor:pointer;font:inherit;
+  background:#242821;color:#fff;text-align:left;cursor:pointer;font:inherit;
   display:grid;gap:7px;align-content:start;transition:background .18s ease,transform .18s ease}
-.claim-opt-btn:hover:not(.on){background:rgba(255,255,255,.09);transform:translateY(-1px)}
+.claim-opt-btn:hover:not(.on){background:#2d3229;transform:translateY(-1px)}
 .claim-opt-btn.on{background:var(--lime);box-shadow:0 10px 26px rgba(24,0,173,.42)}
 .claim-opt-lvl{display:flex;align-items:baseline;gap:7px}
 .claim-opt-lvl b{font-family:Space Grotesk,sans-serif;font-weight:700;font-size:14px;letter-spacing:-.01em}
@@ -812,7 +815,7 @@ body.app.calm .home-card .app-primary[aria-pressed="true"]{background:rgba(255,2
 .claim-opt-btn.on .claim-opt-fee{color:#fff}
 
 /* Where the 10,000,000 goes. One bar beats three numbers. */
-.claim-split{margin-top:12px;padding:14px 16px;border-radius:18px;background:rgba(0,0,0,.3)}
+.claim-split{margin-top:10px;padding:14px 16px;border-radius:14px;background:#242821}
 .claim-split-bar{display:flex;height:10px;border-radius:999px;overflow:hidden;gap:2px;margin-bottom:12px}
 .claim-split-bar i{display:block;transition:flex-basis .25s ease}
 .claim-split-bar i.cs-ft{background:#a596ed}
@@ -831,9 +834,9 @@ body.app.calm .home-card .app-primary[aria-pressed="true"]{background:rgba(255,2
 
 /* Vesting */
 .claim-vest-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.claim-vest-btn{border:0;border-radius:14px;padding:13px 8px;background:rgba(255,255,255,.05);
+.claim-vest-btn{border:0;border-radius:14px;padding:13px 8px;background:#242821;
   color:#fff;text-align:center;cursor:pointer;font:inherit;transition:background .18s ease,transform .18s ease}
-.claim-vest-btn:hover:not(.on){background:rgba(255,255,255,.09);transform:translateY(-1px)}
+.claim-vest-btn:hover:not(.on){background:#2d3229;transform:translateY(-1px)}
 .claim-vest-btn.on{background:var(--lime);box-shadow:0 8px 20px rgba(24,0,173,.38)}
 .claim-vest-btn b{display:block;font-family:Space Grotesk,sans-serif;font-weight:700;font-size:14px;
   letter-spacing:-.01em}
@@ -841,9 +844,8 @@ body.app.calm .home-card .app-primary[aria-pressed="true"]{background:rgba(255,2
 .claim-vest-btn.on small{color:rgba(255,255,255,.8)}
 
 /* The terms, as three readable facts rather than a paragraph of bold text. */
-.claim-terms{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;margin-top:12px;
-  border-radius:16px;overflow:hidden;background:rgba(255,255,255,.06)}
-.claim-term{background:#15131f;padding:12px 11px;display:grid;gap:3px}
+.claim-terms{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+.claim-term{background:#242821;border-radius:14px;padding:12px 11px;display:grid;gap:3px}
 .claim-term dt{font-size:10.5px;color:var(--faint);text-transform:uppercase;letter-spacing:.05em}
 .claim-term dd{margin:0;font-family:Space Grotesk,sans-serif;font-weight:700;font-size:14px;
   color:#fff;letter-spacing:-.01em}
@@ -851,7 +853,7 @@ body.app.calm .home-card .app-primary[aria-pressed="true"]{background:rgba(255,2
   color:var(--dim);margin-top:2px;letter-spacing:0}
 
 /* What you pay */
-.claim-fee-breakdown{margin-top:20px;background:rgba(0,0,0,.3);border:0;border-radius:18px;
+.claim-fee-breakdown{margin-top:10px;background:#242821;border:0;border-radius:14px;
   padding:16px 18px;display:grid;gap:9px;font-size:12.5px}
 .claim-fee-row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;color:var(--dim)}
 .claim-fee-row b{color:#fff;font-weight:600}
@@ -876,7 +878,8 @@ body.app.calm .home-card .app-primary[aria-pressed="true"]{background:rgba(255,2
 .claim-submit-btn:hover:not([disabled]){transform:translateY(-1px);filter:brightness(1.12)}
 .claim-submit-btn[disabled]{opacity:.45;cursor:not-allowed;box-shadow:none}
 @media(max-width:420px){
-  .claim-modal-dialog{padding:20px;border-radius:24px}
+  .claim-modal-dialog{padding:20px 16px}
+  .claim-picker-heading h2{font-size:22px}
   .claim-opt-btn{padding:13px 11px 12px}
   .claim-opt-pct{font-size:23px}
   .claim-opt-btn small{font-size:10.5px}
@@ -979,10 +982,12 @@ da = ['<main><div class="kc-home-wrap home-layout">', tab_intro('Home'),
         '<p>Search any footballer. If they already trade, see what a share costs. If nobody has claimed '
         'them yet, take 5% or 10% of their shares and launch them on the Exchange.</p></div></div>',
       CLAIM_SEARCH_HTML + '</div>'
-      '<div class="claim-modal-backdrop" id="claimModalBackdrop" role="dialog" aria-modal="true" aria-labelledby="claimModalTitle">'
-      '<div class="claim-modal-dialog"><button type="button" class="claim-modal-close" id="claimModalClose" aria-label="Close">&times;</button>'
-      '<div class="claim-modal-head"><div id="claimModalPhoto"></div><div><h3 class="claim-modal-title" id="claimModalTitle">Launch Player Shares</h3>'
-      '<div class="claim-modal-sub" id="claimModalSub">Whitepaper Section 7 & 8 Lister Program</div></div></div>'
+      '<dialog class="claim-modal-dialog" id="claimModalBackdrop" aria-labelledby="claimPickerTitle">'
+      '<div class="claim-picker-heading"><h2 id="claimPickerTitle">Claim this player.</h2>'
+      '<button type="button" id="claimModalClose" aria-label="Close">' + ic('cross', 'ic') + '</button></div>'
+      '<div class="claim-modal-head"><div id="claimModalPhoto"></div><div><h3 class="claim-modal-title" id="claimModalTitle"></h3>'
+      '<div class="claim-modal-sub" id="claimModalSub"></div></div></div>'
+      '<p class="claim-about" id="claimAbout" hidden></p>'
       '<div class="claim-step"><div class="claim-section-lbl">1 &middot; Your allocation</div>'
       '<div class="claim-opt-grid">'
       '<button type="button" class="claim-opt-btn on" data-level="1">'
@@ -1027,7 +1032,7 @@ da = ['<main><div class="kc-home-wrap home-layout">', tab_intro('Home'),
       '<p class="claim-short" id="claimShort" hidden>You need <b id="claimShortAmt"></b> more to claim at this level.'
       '<a href="buy.html">Add funds</a></p>'
       '<button type="button" class="claim-submit-btn" id="claimSubmitBtn">Pay &amp; launch</button>'
-      '</div></div></section>']
+      '</dialog></section>']
 HOME_CARDS = [
     # (badge html, title, copy, stats [(label, value html)], cta label, href or "action:<name>", icon)
     ("", "Follow every fixture live.",
@@ -1129,8 +1134,13 @@ DASH_JS = r"""
       cloudRows = rows.filter(function(r){ return !r.claimed; }).map(function(r){
         var t = ftSym(r.ticker || r.asset_id), local = ELIGIBLE.filter(function(e){ return e.t === t; })[0] || {};
         return { t: t, n: r.name || local.n, p: Number(r.price) || local.p, pos: r.position || local.pos || (r.kind === 'COACH' ? 'MGR' : 'FWD'),
-                 club: r.club || local.club, lg: r.league || local.lg, w: local.w, aka: local.aka, listingId: r.id };
+                 club: r.club || local.club, lg: r.league || local.lg, w: r.gender ? (r.gender === 'W' ? 1 : 0) : local.w,
+                 aka: r.known_as || local.aka, about: r.about || local.about, country: r.country || local.country, listingId: r.id,
+                 _photo: r.photo_url };
       }).filter(function(e){ return e.p > 0; });
+      cloudRows.forEach(function(e){
+        if(e._photo && typeof PLAYER_PROFILES !== 'undefined') PLAYER_PROFILES[e.t] = Object.assign(PLAYER_PROFILES[e.t] || {}, { photo: e._photo });
+      });
       if(input.value.trim()) search(input.value);
     }).catch(function(){});
   }
@@ -1220,18 +1230,28 @@ DASH_JS = r"""
     if(!a || !modal) return;
     active = a; level = 1; years = 1;
     set('claimModalTitle', esc(a.n));
-    set('claimModalSub', '<b>' + esc(a.t) + '</b> &middot; ' + esc(a.club || '') + ' &middot; 10,000,000 Activity Shares');
+    var prof = (typeof PLAYER_PROFILES !== 'undefined' && PLAYER_PROFILES[a.t]) || {};
+    var about = a.about || prof.about || '', country = a.country || prof.country || '';
+    set('claimModalSub', '<b>' + esc(a.t) + '</b> &middot; ' + esc([a.club, country].filter(Boolean).join(' · ')) + ' &middot; 10,000,000 Activity Shares');
     set('claimModalPhoto', playerPhoto(a.t, a.n));
+    var ab = document.getElementById('claimAbout'); if(ab){ ab.textContent = about; ab.hidden = !about; }
     pick('.claim-opt-btn', 'level', 1); pick('.claim-vest-btn', 'years', 1);
     refresh();
-    modal.classList.add('open');
-    if(closeBtn) closeBtn.focus();
+    if(modal.showModal){ if(!modal.open) modal.showModal(); } else modal.setAttribute('open', '');
+    document.body.classList.add('claim-open');
+    modal.scrollTop = 0;
   }
-  function close(){ if(modal) modal.classList.remove('open'); active = null; }
+  function close(){ if(modal && modal.open){ if(modal.close) modal.close(); else modal.removeAttribute('open'); } document.body.classList.remove('claim-open'); active = null; }
   if(closeBtn) closeBtn.addEventListener('click', close);
   if(modal){
-    modal.addEventListener('click', function(e){ if(e.target === modal) close(); });
-    document.addEventListener('keydown', function(e){ if(e.key === 'Escape' && modal.classList.contains('open')) close(); });
+    // Like the player picker: a click outside the sheet closes it; Escape
+    // closes it natively and lands here through the close event.
+    modal.addEventListener('click', function(e){
+      if(e.target !== modal) return;
+      var r = modal.getBoundingClientRect();
+      if(e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) close();
+    });
+    modal.addEventListener('close', function(){ document.body.classList.remove('claim-open'); active = null; });
     modal.querySelectorAll('.claim-opt-btn').forEach(function(b){
       b.addEventListener('click', function(){ level = Number(b.dataset.level) || 1; pick('.claim-opt-btn', 'level', level); refresh(); });
     });

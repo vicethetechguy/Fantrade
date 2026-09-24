@@ -54,6 +54,11 @@ HTML = '''<main><div class="asset-page">
       </aside>
       <section class="asset-details" aria-labelledby="assetDetailsTitle">
         <h2 id="assetDetailsTitle">A closer look</h2>
+        <details open id="assetBio" hidden><summary>About the player</summary>
+          <p class="asset-detail-note" id="assetAbout"></p>
+          <dl class="asset-facts" id="assetBioFacts"></dl>
+          <p class="asset-photo-credit" id="assetCredit"></p>
+        </details>
         <details open><summary>About this share</summary>
           <dl class="asset-facts">
             <div><dt>Club</dt><dd id="assetClub"></dd></div>
@@ -126,6 +131,27 @@ JS = r'''
   byId('assetLow').textContent=money(asset.low);
   byId('assetVolume').textContent=asset.vol + ' shares';
   byId('assetClub').textContent=asset.club;
+  /* The admin's profile for this player, when there is one. */
+  function renderBio(){
+    var p = (typeof PLAYER_PROFILES !== 'undefined') && PLAYER_PROFILES[asset.t], box = byId('assetBio');
+    if(!p || !box) return;
+    if(p.photo) byId('assetPortrait').innerHTML = playerPhoto(asset.t, asset.n);
+    if(p.club) byId('assetClub').textContent = p.club;
+    var facts = [];
+    if(p.known_as) facts.push(['Known as', p.known_as]);
+    if(p.country) facts.push(['Country', p.country]);
+    if(p.dob){ var d = new Date(p.dob), n = new Date(), age = n.getFullYear() - d.getFullYear() - ((n.getMonth() < d.getMonth() || (n.getMonth() === d.getMonth() && n.getDate() < d.getDate())) ? 1 : 0);
+      if(!isNaN(age)) facts.push(['Age', age + ' · born ' + d.toLocaleDateString('en-GB', {day:'numeric', month:'short', year:'numeric'})]); }
+    if(p.number) facts.push(['Shirt number', '#' + p.number]);
+    if(p.height) facts.push(['Height', p.height + ' cm']);
+    if(p.foot) facts.push(['Stronger foot', p.foot]);
+    if(!facts.length && !p.about) return;
+    byId('assetAbout').textContent = p.about || ''; byId('assetAbout').hidden = !p.about;
+    byId('assetBioFacts').innerHTML = facts.map(function(f){ return '<div><dt>' + escapeText(f[0]) + '</dt><dd>' + escapeText(f[1]) + '</dd></div>'; }).join('');
+    byId('assetCredit').textContent = p.photo && p.credit ? 'Photo: ' + p.credit : '';
+    box.hidden = false;
+  }
+  renderBio(); window.addEventListener('fantrade:profiles', renderBio);
   byId('assetRole').textContent=asset.c?'Coach':({FWD:'Forward',MID:'Midfielder',DEF:'Defender',GK:'Goalkeeper'}[asset.pos]||asset.pos);
   byId('assetSymbol').textContent=ftSym(asset.t);
   byId('assetBuy').href='trade.html?a='+encodeURIComponent(asset.t)+'&side=buy';

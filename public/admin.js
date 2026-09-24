@@ -355,7 +355,7 @@ function humanAction(a) {
 }
 
 /* ── Players (eligibility) ─────────────────────────────────────────── */
-const STATUS_LABEL = { open: 'Open to claim', paused: 'Paused', claimed: 'Claimed' };
+const STATUS_LABEL = { open: 'Open to claim', paused: 'Paused', claimed: 'Claimed', trading: 'Trading' };
 VIEWS.players = async view => {
   loading(view, 'Players');
   cache.players = await api('ft_admin_players');
@@ -363,21 +363,21 @@ VIEWS.players = async view => {
 };
 function drawPlayers(view) {
   const all = cache.players || [], st = ui.players;
-  const counts = { all: all.length, open: 0, paused: 0, claimed: 0 }; all.forEach(p => counts[p.status]++);
+  const counts = { all: all.length, open: 0, paused: 0, claimed: 0, trading: 0 }; all.forEach(p => counts[p.status]++);
   const q = st.q.toLowerCase();
   const rows = all.filter(p => (st.status === 'all' || p.status === st.status)
-    && (!q || [p.name, p.ticker, p.club, p.league].join(' ').toLowerCase().includes(q)));
+    && (!q || [p.name, p.known_as, p.ticker, p.club, p.league, p.country].join(' ').toLowerCase().includes(q)));
   const canWrite = me.role !== 'viewer';
-  view.innerHTML = head('Players', 'Who managers are allowed to claim. A player has to be on this list before anyone can launch their Activity Shares.',
+  view.innerHTML = head('Players', 'Every footballer on Fantrade: their profile, photo and price. A player has to be on this list, open to claim, before anyone can launch their Activity Shares.',
     `<button class="btn" id="tmpl">${ic('download')}Template</button>
      ${canWrite ? `<button class="btn" id="upl">${ic('upload')}Upload CSV</button><button class="btn btn-primary" id="add">${ic('plus')}Add player</button>` : ''}`) + `
     <div class="toolbar">
       <label class="search">${ic('search')}<span class="sr">Search players</span><input class="input" id="pq" type="search" placeholder="Search name, ticker or club" value="${esc(st.q)}"></label>
-      <div class="chips" role="group" aria-label="Status">${['all', 'open', 'paused', 'claimed'].map(k =>
+      <div class="chips" role="group" aria-label="Status">${['all', 'open', 'paused', 'claimed', 'trading'].map(k =>
         `<button class="chip" data-s="${k}" aria-pressed="${st.status === k}">${k === 'all' ? 'All' : STATUS_LABEL[k]} <i>${counts[k]}</i></button>`).join('')}</div>
     </div>
     <div class="table-wrap"><div class="table-scroll"><table class="t">
-      <thead><tr><th>Player</th><th>Club</th><th>Pos</th><th class="r">Reference price</th><th class="r">5% claim costs</th><th>Status</th><th class="r"><span class="sr">Actions</span></th></tr></thead>
+      <thead><tr><th>Player</th><th>Club</th><th>Pos</th><th class="r">Price</th><th class="r">5% claim costs</th><th>Status</th><th class="r"><span class="sr">Actions</span></th></tr></thead>
       <tbody>${rows.map(p => playerRow(p, canWrite)).join('') || `<tr><td colspan="7"><div class="empty"><b>No players here.</b>${all.length ? 'Try another filter or search.' : 'Upload a CSV or add your first player.'}</div></td></tr>`}</tbody>
     </table></div><div class="table-foot">${rows.length} of ${all.length} players · Prices in $FTR, 1 $FTR = $0.10</div></div>`;
   wireBanner();
@@ -388,7 +388,7 @@ function drawPlayers(view) {
   if (canWrite) { document.getElementById('upl').onclick = openUpload; document.getElementById('add').onclick = () => editPlayer(null); }
   view.querySelector('tbody').onclick = async e => {
     const b = e.target.closest('[data-act]'); if (!b) return;
-    const p = all.find(x => x.listing_id === b.dataset.id); if (!p) return;
+    const p = all.find(x => (x.listing_id || x.ticker) === b.dataset.id); if (!p) return;
     if (b.dataset.act === 'edit') editPlayer(p);
     if (b.dataset.act === 'pause' || b.dataset.act === 'reopen') {
       try { await api('ft_admin_set_open', { p_listing: p.listing_id, p_open: b.dataset.act === 'reopen' });
@@ -405,84 +405,211 @@ function drawPlayers(view) {
 }
 async function reloadPlayers() { cache.players = await api('ft_admin_players'); const v = document.getElementById('view'); if (location.hash.startsWith('#/players')) drawPlayers(v); }
 function playerRow(p, canWrite) {
-  const claimed = p.status === 'claimed';
-  const acts = !canWrite ? '' : claimed ? `<a class="btn btn-ghost btn-sm" href="#/claims">View claim</a>` : `
-    <button class="icon-btn" data-act="edit" data-id="${esc(p.listing_id)}" title="Edit" aria-label="Edit ${esc(p.name)}">${ic('edit')}</button>
-    <button class="icon-btn" data-act="${p.status === 'open' ? 'pause' : 'reopen'}" data-id="${esc(p.listing_id)}" title="${p.status === 'open' ? 'Pause' : 'Reopen'}" aria-label="${p.status === 'open' ? 'Pause' : 'Reopen'} ${esc(p.name)}">${ic(p.status === 'open' ? 'pause' : 'play')}</button>
-    <button class="icon-btn" data-act="remove" data-id="${esc(p.listing_id)}" title="Remove" aria-label="Remove ${esc(p.name)}">${ic('trash')}</button>`;
+  const launched = p.status === 'claimed' || p.status === 'trading', id = esc(p.listing_id || p.ticker);
+  const edit = `<button class="icon-btn" data-act="edit" data-id="${id}" title="Edit profile" aria-label="Edit ${esc(p.name)}">${ic('edit')}</button>`;
+  const acts = !canWrite ? '' : launched ? edit : edit + `
+    <button class="icon-btn" data-act="${p.status === 'open' ? 'pause' : 'reopen'}" data-id="${id}" title="${p.status === 'open' ? 'Pause' : 'Reopen'}" aria-label="${p.status === 'open' ? 'Pause' : 'Reopen'} ${esc(p.name)}">${ic(p.status === 'open' ? 'pause' : 'play')}</button>
+    <button class="icon-btn" data-act="remove" data-id="${id}" title="Remove" aria-label="Remove ${esc(p.name)}">${ic('trash')}</button>`;
+  const bits = [p.country, p.gender === 'W' ? "Women's" : '', p.kind === 'COACH' ? 'Coach' : '', ageFrom(p.date_of_birth) ? ageFrom(p.date_of_birth) + ' yrs' : ''].filter(Boolean).join(' · ');
+  const missing = !p.photo_url || !p.about || !p.country;
+  const price = launched ? (p.price || p.reference_value) : p.reference_value;
   return `<tr>
-    <td><div class="who">${avatar(p.name)}<div class="who-text"><b>${esc(p.name)}</b><small><span class="tick">${esc(p.ticker)}</span>${p.kind === 'COACH' ? ' · Coach' : ''}</small></div></div></td>
+    <td><div class="who">${playerAvatar(p)}<div class="who-text"><b>${esc(p.known_as || p.name)}${missing ? ` <span class="dot-warn" title="Profile incomplete: ${[!p.photo_url && 'photo', !p.about && 'about', !p.country && 'country'].filter(Boolean).join(', ')}"></span>` : ''}</b>
+      <small><span class="tick">${esc(p.ticker)}</span>${bits ? ' ' + esc(bits) : ''}</small></div></div></td>
     <td><div class="who-text"><b>${esc(p.club || '—')}</b><small>${esc(p.league || '')}</small></div></td>
-    <td>${esc(p.position || '—')}</td>
-    <td class="r money num"><b>${num(p.reference_value, 2)}</b><small>${usd(p.reference_value)} a share</small></td>
-    <td class="r money num"><b>${compact(claimCost(p.reference_value, 1))}</b><small>≈ ${usd(claimCost(p.reference_value, 1))}</small></td>
-    <td><span class="pill ${p.status}">${STATUS_LABEL[p.status]}</span>${claimed && p.claimed_by ? `<small class="faint" style="display:block;margin-top:4px">by @${esc(p.claimed_by)}</small>` : ''}</td>
+    <td>${esc(p.position || '—')}${p.shirt_number ? ` <small class="faint">#${esc(p.shirt_number)}</small>` : ''}</td>
+    <td class="r money num"><b>${num(price, 2)}</b><small>${usd(price)} a share</small></td>
+    <td class="r money num">${launched ? '<span class="faint">—</span>' : `<b>${compact(claimCost(p.reference_value, 1))}</b><small>≈ ${usd(claimCost(p.reference_value, 1))}</small>`}</td>
+    <td><span class="pill ${p.status}">${STATUS_LABEL[p.status]}</span>${p.status === 'claimed' && p.claimed_by ? `<small class="faint" style="display:block;margin-top:4px">by @${esc(p.claimed_by)}</small>` : ''}</td>
     <td class="r"><div class="row-actions">${acts}</div></td></tr>`;
 }
 const POSITIONS = [['GK', 'Goalkeeper'], ['DEF', 'Defender'], ['MID', 'Midfielder'], ['FWD', 'Forward'], ['MGR', 'Manager / coach']];
+const COUNTRIES = ['Algeria', 'Argentina', 'Australia', 'Austria', 'Belgium', 'Brazil', 'Cameroon', 'Canada', 'Chile', 'Colombia', 'Croatia',
+  'Czechia', 'Denmark', 'Ecuador', 'Egypt', 'England', 'France', 'Germany', 'Ghana', 'Greece', 'Guinea', 'Hungary', 'Ireland', 'Italy',
+  'Ivory Coast', 'Jamaica', 'Japan', 'Mali', 'Mexico', 'Morocco', 'Netherlands', 'New Zealand', 'Nigeria', 'Northern Ireland', 'Norway',
+  'Poland', 'Portugal', 'Saudi Arabia', 'Scotland', 'Senegal', 'Serbia', 'South Africa', 'South Korea', 'Spain', 'Sweden', 'Switzerland',
+  'Tunisia', 'Turkey', 'Ukraine', 'United States', 'Uruguay', 'Wales', 'Zambia'];
+const FOOT = ['Left', 'Right', 'Both'];
+function playerAvatar(p, size) {
+  if (!p.photo_url) return avatar(p.known_as || p.name, size);
+  const dim = size ? ` style="width:${size}px;height:${size}px"` : '';
+  return `<img class="av" src="${esc(p.photo_url)}" alt=""${dim} loading="lazy">`;
+}
+function ageFrom(dob) {
+  if (!dob) return ''; const d = new Date(dob); if (isNaN(d)) return '';
+  const n = new Date(); let a = n.getFullYear() - d.getFullYear(); if (n < new Date(n.getFullYear(), d.getMonth(), d.getDate())) a--; return a;
+}
+/* Photos are redrawn here before upload: at most 720px, WebP where the
+   browser can, which also drops any location data a phone put in the file. */
+async function shrinkImage(file) {
+  if (!/^image\/(jpeg|png|webp)$/.test(file.type)) throw new Error('Use a JPG, PNG or WebP image.');
+  if (file.size > 12e6) throw new Error('That image is over 12 MB.');
+  const src = await new Promise((ok, no) => { const i = new Image(); i.onload = () => ok(i); i.onerror = () => no(new Error('That image could not be read.')); i.src = URL.createObjectURL(file); });
+  const k = Math.min(1, 720 / Math.max(src.naturalWidth, src.naturalHeight));
+  const c = document.createElement('canvas'); c.width = Math.round(src.naturalWidth * k); c.height = Math.round(src.naturalHeight * k);
+  c.getContext('2d').drawImage(src, 0, 0, c.width, c.height); URL.revokeObjectURL(src.src);
+  let blob = await new Promise(ok => c.toBlob(ok, 'image/webp', .86));
+  if (!blob || blob.type !== 'image/webp') blob = await new Promise(ok => c.toBlob(ok, 'image/jpeg', .88));
+  return blob;
+}
+async function uploadPhoto(blob, ticker) {
+  if (mode === 'sample') return await new Promise(ok => { const fr = new FileReader(); fr.onload = () => ok(fr.result); fr.readAsDataURL(blob); });
+  const ext = blob.type === 'image/webp' ? 'webp' : 'jpg', path = `${ticker}/${Date.now()}.${ext}`;
+  const { error } = await sb.storage.from('player-photos').upload(path, blob, { contentType: blob.type, cacheControl: '31536000', upsert: false });
+  if (error) throw new Error(/bucket/i.test(error.message) ? 'Photo storage is not set up yet. Run supabase/10_player_profiles.sql.' : error.message);
+  return sb.storage.from('player-photos').getPublicUrl(path).data.publicUrl;
+}
 function editPlayer(p) {
-  const isNew = !p; p = p || { ticker: 'F', name: '', kind: 'PLAYER', club: '', league: '', position: 'FWD', reference_value: '' };
+  const isNew = !p;
+  p = p || { ticker: 'F', name: '', known_as: '', kind: 'PLAYER', gender: 'M', club: '', league: '', position: 'FWD', reference_value: '', status: 'new' };
+  const launched = p.status === 'claimed' || p.status === 'trading';
+  const photo = { url: p.photo_url || '', blob: null, removed: false };
+  const opt = (list, cur) => list.map(([v, l]) => `<option value="${v}"${cur === v ? ' selected' : ''}>${l}</option>`).join('');
   const d = openDrawer(`
-    <div class="drawer-head"><div><h2>${isNew ? 'Add a player' : 'Edit ' + esc(p.name)}</h2>
-      <p>${isNew ? 'They go on the list open to claim straight away.' : 'Changes apply until someone claims them.'}</p></div>
+    <div class="drawer-head"><div><h2>${isNew ? 'Add a player' : esc(p.name)}</h2>
+      <p>${isNew ? 'They go on the list, open to claim, as soon as you save.' : launched ? 'Already launched: the profile can change, the price is set by the market.' : 'Changes apply straight away.'}</p></div>
       <button class="icon-btn" data-close aria-label="Close">${ic('x')}</button></div>
     <form class="drawer-body" id="pf" novalidate>
-      <div class="field"><label for="f-name">Full name</label><input class="input" id="f-name" required value="${esc(p.name)}" placeholder="e.g. Victor Osimhen"></div>
-      <div class="grid-2">
-        <div class="field"><label for="f-ticker">F-ticker</label><input class="input" id="f-ticker" required value="${esc(p.ticker)}" ${isNew ? '' : 'readonly'} maxlength="7" style="text-transform:uppercase"></div>
-        <div class="field"><label for="f-kind">Type</label><select class="select" id="f-kind"><option value="PLAYER"${p.kind !== 'COACH' ? ' selected' : ''}>Player</option><option value="COACH"${p.kind === 'COACH' ? ' selected' : ''}>Coach</option></select></div>
+      <div class="section" style="margin-top:4px"><h3>Photo</h3>
+        <div class="photo-row">
+          <label class="photo-drop" id="phDrop" tabindex="0" title="Upload a photo"><span id="phPrev"></span><input type="file" id="phFile" accept="image/jpeg,image/png,image/webp" hidden></label>
+          <div class="photo-side"><div class="photo-btns"><button type="button" class="btn btn-sm" id="phPick">${ic('upload')}<span id="phPickTxt">${photo.url ? 'Replace photo' : 'Upload photo'}</span></button>
+            <button type="button" class="btn btn-ghost btn-sm" id="phRemove"${photo.url ? '' : ' hidden'}>${ic('trash')}Remove</button></div>
+            <p class="hint" style="margin:8px 0 0">JPG, PNG or WebP. A head-and-shoulders shot works best. It's resized to 720px and location data is removed.</p></div>
+        </div>
+        <div class="field" style="margin-top:14px"><label for="f-credit">Photo credit</label><input class="input" id="f-credit" value="${esc(p.photo_credit || '')}" placeholder="e.g. Jane Smith / Wikimedia Commons, CC BY-SA 4.0"></div>
+        <div class="field"><label for="f-source">Where it came from (link, optional)</label><input class="input" id="f-source" value="${esc(p.photo_source || '')}" placeholder="https://"></div>
+        <label class="check" id="phRightsRow" hidden><input type="checkbox" id="f-rights"><span>Fantrade has the right to use this photo: we took it, bought it, or its licence allows this use with the credit above.</span></label>
       </div>
-      <p class="hint">${isNew ? 'F plus 2–6 letters or digits. It can never be changed once issued.' : 'Tickers are permanent once issued.'}</p>
-      <div class="grid-2">
-        <div class="field"><label for="f-club">Club</label><input class="input" id="f-club" value="${esc(p.club || '')}" placeholder="e.g. Galatasaray"></div>
-        <div class="field"><label for="f-league">League</label><input class="input" id="f-league" value="${esc(p.league || '')}" placeholder="e.g. Süper Lig"></div>
+      <div class="section"><h3>Identity</h3>
+        <div class="field"><label for="f-name">Full name</label><input class="input" id="f-name" required value="${esc(p.name)}" placeholder="e.g. Khadija Shaw"></div>
+        <div class="grid-2">
+          <div class="field"><label for="f-known">Known as <span class="faint">(optional)</span></label><input class="input" id="f-known" value="${esc(p.known_as || '')}" placeholder="e.g. Bunny Shaw"></div>
+          <div class="field"><label for="f-ticker">F-ticker</label><input class="input" id="f-ticker" required value="${esc(p.ticker)}" ${isNew ? '' : 'readonly'} maxlength="7" style="text-transform:uppercase"></div>
+        </div>
+        <p class="hint">${isNew ? 'F plus 2–6 letters or digits, e.g. FSHAW. It can never change once issued.' : 'Tickers are permanent once issued.'}</p>
+        <div class="grid-3">
+          <div class="field"><label for="f-kind">Type</label><select class="select" id="f-kind" ${launched ? 'disabled' : ''}>${opt([['PLAYER', 'Player'], ['COACH', 'Coach']], p.kind)}</select></div>
+          <div class="field"><label for="f-gender">Game</label><select class="select" id="f-gender">${opt([['M', "Men's"], ['W', "Women's"]], p.gender || 'M')}</select></div>
+          <div class="field"><label for="f-pos">Position</label><select class="select" id="f-pos">${opt(POSITIONS, p.position || 'FWD')}</select></div>
+        </div>
+        <div class="grid-3">
+          <div class="field"><label for="f-country">Country</label><input class="input" id="f-country" list="countries" value="${esc(p.country || '')}" placeholder="e.g. Jamaica"></div>
+          <div class="field"><label for="f-dob">Date of birth <span class="faint" id="f-age"></span></label><input class="input" id="f-dob" type="date" value="${esc(p.date_of_birth || '')}"></div>
+          <div class="field"><label for="f-num">Shirt number</label><input class="input num" id="f-num" inputmode="numeric" value="${esc(p.shirt_number || '')}" placeholder="e.g. 21"></div>
+        </div>
+        <div class="grid-2">
+          <div class="field"><label for="f-height">Height (cm)</label><input class="input num" id="f-height" inputmode="numeric" value="${esc(p.height_cm || '')}" placeholder="e.g. 180"></div>
+          <div class="field"><label for="f-foot">Stronger foot</label><select class="select" id="f-foot"><option value="">Not set</option>${opt(FOOT.map(f => [f, f]), p.preferred_foot)}</select></div>
+        </div>
+        <datalist id="countries">${COUNTRIES.map(c => `<option value="${c}">`).join('')}</datalist>
       </div>
-      <div class="grid-2">
-        <div class="field"><label for="f-pos">Position</label><select class="select" id="f-pos">${POSITIONS.map(([v, l]) => `<option value="${v}"${p.position === v ? ' selected' : ''}>${l}</option>`).join('')}</select></div>
-        <div class="field"><label for="f-price">Reference price ($FTR a share)</label><input class="input num" id="f-price" inputmode="decimal" value="${esc(p.reference_value)}" placeholder="e.g. 41.30"></div>
+      <div class="section"><h3>Club</h3>
+        <div class="grid-2">
+          <div class="field"><label for="f-club">Current club</label><input class="input" id="f-club" value="${esc(p.club || '')}" placeholder="e.g. Manchester City"></div>
+          <div class="field"><label for="f-league">League</label><input class="input" id="f-league" value="${esc(p.league || '')}" placeholder="e.g. WSL"></div>
+        </div>
       </div>
-      <div class="callout" id="f-calc">${ic('info')}<span></span></div>
+      <div class="section"><h3>Market</h3>
+        <div class="field"><label for="f-price">Reference price ($FTR a share)</label><input class="input num" id="f-price" inputmode="decimal" value="${esc(p.reference_value)}" placeholder="e.g. 32.50" ${launched ? 'readonly' : ''}></div>
+        <div class="callout" id="f-calc">${ic('info')}<span></span></div>
+      </div>
+      <div class="section"><h3>About</h3>
+        <div class="field"><label for="f-about">What fans should know <span class="faint" id="f-count"></span></label>
+          <textarea class="textarea" id="f-about" maxlength="800" rows="5" placeholder="Two or three sentences: style of play, big moments, what makes them worth backing.">${esc(p.about || '')}</textarea></div>
+      </div>
       <p class="form-error" id="f-err"></p>
     </form>
     <div class="drawer-foot"><button class="btn btn-ghost" data-close>Cancel</button><button class="btn btn-primary" id="f-save">${isNew ? 'Add player' : 'Save changes'}</button></div>`);
-  const calc = () => {
-    const v = parseFloat(d.querySelector('#f-price').value);
-    d.querySelector('#f-calc span').innerHTML = v > 0
-      ? `≈ <b>${usd(v)}</b> a share. A 5% claim (500,000 shares) costs <b>${num(claimCost(v, 1))} $FTR</b> (≈ ${usd(claimCost(v, 1))}); 10% costs ${num(claimCost(v, 2))} $FTR.`
-      : 'Set a reference price to see what claiming this player will cost.';
+  d.classList.add('wide');
+  const $ = s => d.querySelector(s);
+  const paintPhoto = () => {
+    const name = $('#f-known').value || $('#f-name').value || 'New player';
+    $('#phPrev').innerHTML = photo.url && !photo.removed ? `<img src="${esc(photo.url)}" alt="">` : avatar(name, 96);
+    $('#phPickTxt').textContent = photo.url && !photo.removed ? 'Replace photo' : 'Upload photo';
+    $('#phRemove').hidden = !(photo.url && !photo.removed);
+    $('#phRightsRow').hidden = !photo.blob;
   };
-  calc(); d.querySelector('#f-price').oninput = calc;
+  const takeFile = async f => {
+    if (!f) return;
+    try { photo.blob = await shrinkImage(f); photo.url = URL.createObjectURL(photo.blob); photo.removed = false; paintPhoto(); $('#f-credit').focus(); }
+    catch (e) { toast(e.message, true); }
+  };
+  $('#phPick').onclick = () => $('#phFile').click();
+  $('#phFile').onchange = () => takeFile($('#phFile').files[0]);
+  $('#phRemove').onclick = () => { photo.removed = true; photo.blob = null; paintPhoto(); };
+  const drop = $('#phDrop');
+  drop.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); $('#phFile').click(); } };
+  ['dragenter', 'dragover'].forEach(t => drop.addEventListener(t, e => { e.preventDefault(); drop.classList.add('over'); }));
+  ['dragleave', 'drop'].forEach(t => drop.addEventListener(t, e => { e.preventDefault(); drop.classList.remove('over'); }));
+  drop.addEventListener('drop', e => takeFile(e.dataTransfer.files[0]));
+  const calc = () => {
+    const v = parseFloat($('#f-price').value);
+    $('#f-calc span').innerHTML = launched
+      ? `Trading at <b>${num(p.price || p.reference_value, 2)} $FTR</b> (≈ ${usd(p.price || p.reference_value)}) a share. The market sets this price now.`
+      : v > 0 ? `≈ <b>${usd(v)}</b> a share. A 5% claim (500,000 shares) costs <b>${num(claimCost(v, 1))} $FTR</b> (≈ ${usd(claimCost(v, 1))}); 10% costs ${num(claimCost(v, 2))} $FTR.`
+        : 'Set a reference price to see what claiming this player will cost.';
+  };
+  const age = () => { const a = ageFrom($('#f-dob').value); $('#f-age').textContent = a ? `· ${a} years old` : ''; };
+  const count = () => { $('#f-count').textContent = `· ${$('#f-about').value.length}/800`; };
+  calc(); age(); count(); paintPhoto();
+  $('#f-price').oninput = calc; $('#f-dob').oninput = age; $('#f-about').oninput = count;
+  $('#f-name').oninput = $('#f-known').oninput = () => { if (!photo.url || photo.removed) paintPhoto(); };
   d.querySelectorAll('[data-close]').forEach(b => b.onclick = e => { e.preventDefault(); closeDrawer(); });
   const save = async e => {
     e && e.preventDefault();
-    const row = { ticker: d.querySelector('#f-ticker').value.trim().toUpperCase(), name: d.querySelector('#f-name').value.trim(),
-      kind: d.querySelector('#f-kind').value, club: d.querySelector('#f-club').value.trim(), league: d.querySelector('#f-league').value.trim(),
-      position: d.querySelector('#f-pos').value, reference_value: d.querySelector('#f-price').value.trim() };
-    const problem = validateRow(row); const err = d.querySelector('#f-err');
+    const v = id => $(id).value.trim(), err = $('#f-err');
+    const row = { ticker: v('#f-ticker').toUpperCase(), name: v('#f-name'), known_as: v('#f-known'), kind: $('#f-kind').value,
+      gender: $('#f-gender').value, position: $('#f-pos').value, country: v('#f-country'), date_of_birth: v('#f-dob'),
+      shirt_number: v('#f-num'), height_cm: v('#f-height'), preferred_foot: $('#f-foot').value, club: v('#f-club'), league: v('#f-league'),
+      about: v('#f-about'), photo_credit: v('#f-credit'), photo_source: v('#f-source') };
+    if (!launched) row.reference_value = v('#f-price');
+    const hasPhoto = (photo.blob || photo.url) && !photo.removed;
+    let problem = validateRow(row, launched);
+    if (!problem && hasPhoto && row.photo_credit.length < 3) problem = 'Add a photo credit: who took it, and the licence.';
+    if (!problem && photo.blob && !$('#f-rights').checked) problem = 'Confirm that Fantrade has the right to use this photo.';
+    if (!problem && row.photo_source && !/^https:\/\//.test(row.photo_source)) problem = 'The photo link must start with https://';
     if (problem) { err.textContent = problem; return; }
-    const btn = d.querySelector('#f-save'); btn.disabled = true; err.textContent = '';
+    const btn = $('#f-save'); btn.disabled = true; err.textContent = '';
     try {
+      if (photo.blob) { btn.textContent = 'Uploading photo…'; row.photo_url = await uploadPhoto(photo.blob, row.ticker); }
+      else row.photo_url = photo.removed ? '' : (p.photo_url || '');
+      if (!row.photo_url) { row.photo_credit = ''; row.photo_source = ''; }
+      btn.textContent = 'Saving…';
       const res = await api('ft_admin_upsert_players', { p_rows: [row] });
-      if (res.skipped && res.skipped.length) { err.textContent = res.skipped[0].reason; btn.disabled = false; return; }
-      toast(isNew ? `${row.name} is open to claim` : `${row.name} updated`); closeDrawer(); delete cache.overview; await reloadPlayers(); refreshCounts();
-    } catch (x) { err.textContent = x.message; btn.disabled = false; }
+      if (res.skipped && res.skipped.length) { err.textContent = res.skipped[0].reason; btn.disabled = false; btn.textContent = isNew ? 'Add player' : 'Save changes'; return; }
+      toast(isNew ? `${row.name} is open to claim` : `${row.name} saved`); closeDrawer(); delete cache.overview; await reloadPlayers(); refreshCounts();
+    } catch (x) { err.textContent = x.message; btn.disabled = false; btn.textContent = isNew ? 'Add player' : 'Save changes'; }
   };
-  d.querySelector('#f-save').onclick = save; d.querySelector('#pf').onsubmit = save;
+  $('#f-save').onclick = save; $('#pf').onsubmit = save;
 }
-function validateRow(r) {
+function validateRow(r, launched) {
   if (!/^F[A-Z0-9]{2,6}$/.test(r.ticker)) return 'Ticker must be F plus 2–6 letters or digits, e.g. FOSIM.';
   if (!r.name || r.name.length < 2) return 'Add the player\'s name.';
   if (!['PLAYER', 'COACH'].includes(r.kind)) return 'Type must be Player or Coach.';
-  const v = parseFloat(String(r.reference_value).replace(/[$,\s]/g, ''));
-  if (!(v > 0)) return 'Reference price must be above 0.';
+  if (!launched || r.reference_value) {
+    const v = parseFloat(String(r.reference_value).replace(/[$,\s]/g, ''));
+    if (!(v > 0)) return 'Reference price must be above 0.';
+  }
   if (r.position && !POSITIONS.some(([p]) => p === r.position)) return 'Position must be GK, DEF, MID, FWD or MGR.';
+  if (r.gender && !['M', 'W'].includes(r.gender)) return "Game must be M (men's) or W (women's).";
+  if (r.preferred_foot && !FOOT.includes(r.preferred_foot)) return 'Foot must be Left, Right or Both.';
+  if (r.date_of_birth) { const d = new Date(r.date_of_birth), a = ageFrom(r.date_of_birth);
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(r.date_of_birth) || isNaN(d) || a < 14 || a > 95) return 'Date of birth must be a real date, YYYY-MM-DD.'; }
+  if (r.shirt_number && !(/^\d{1,2}$/.test(r.shirt_number) && +r.shirt_number >= 1)) return 'Shirt number must be 1 to 99.';
+  if (r.height_cm && !(+r.height_cm >= 140 && +r.height_cm <= 220)) return 'Height must be in centimetres, 140 to 220.';
+  if (r.about && r.about.length > 800) return 'About is longer than 800 characters.';
+  if (r.photo_url && !/^https:\/\//.test(r.photo_url)) return 'Photo link must start with https://';
+  if (r.photo_url && !r.photo_credit) return 'A photo needs a photo_credit.';
   return '';
 }
 
 /* ── CSV upload ────────────────────────────────────────────────────── */
-const TEMPLATE = 'ticker,name,kind,club,league,position,reference_value\n'
-  + 'FOSIM,Victor Osimhen,PLAYER,Galatasaray,Süper Lig,FWD,41.30\n'
-  + 'FSHAW,Khadija Shaw,PLAYER,Manchester City,WSL,FWD,32.50\n';
+const CSV_COLS = ['ticker', 'name', 'known_as', 'kind', 'gender', 'position', 'country', 'date_of_birth', 'shirt_number', 'height_cm',
+  'preferred_foot', 'club', 'league', 'reference_value', 'about', 'photo_url', 'photo_credit', 'photo_source'];
+const TEMPLATE = CSV_COLS.join(',') + '\n'
+  + 'FOSIM,Victor Osimhen,,PLAYER,M,FWD,Nigeria,1998-12-29,45,186,Right,Galatasaray,Süper Lig,41.30,"Explosive centre-forward, 2023 Serie A top scorer.",,,\n'
+  + 'FSHAW,Khadija Shaw,Bunny Shaw,PLAYER,W,FWD,Jamaica,1997-01-31,21,180,Left,Manchester City,WSL,32.50,"WSL Golden Boot winner and Jamaica\'s record scorer.",,,\n';
 function downloadFile(name, text) {
   const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob(['﻿' + text], { type: 'text/csv;charset=utf-8' }));
   a.download = name; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
@@ -501,9 +628,12 @@ function parseCsv(text) {
   if (cell || row.length) { row.push(cell); rows.push(row); }
   return rows.filter(r => r.some(c => c.trim() !== ''));
 }
-const HEADERS = { ticker: ['ticker', 'symbol', 'fticker'], name: ['name', 'player', 'fullname', 'playername'], kind: ['kind', 'type'],
-  club: ['club', 'team'], league: ['league', 'competition'], position: ['position', 'pos'],
-  reference_value: ['referencevalue', 'reference', 'referenceprice', 'price', 'value'] };
+const HEADERS = { ticker: ['ticker', 'symbol', 'fticker'], name: ['name', 'player', 'fullname', 'playername'], known_as: ['knownas', 'nickname', 'displayname'],
+  kind: ['kind', 'type'], gender: ['gender', 'game', 'sex'], club: ['club', 'team', 'currentclub'], league: ['league', 'competition'],
+  position: ['position', 'pos'], country: ['country', 'nationality', 'nation'], date_of_birth: ['dateofbirth', 'dob', 'birthdate', 'born'],
+  shirt_number: ['shirtnumber', 'number', 'squadnumber', 'no'], height_cm: ['heightcm', 'height'], preferred_foot: ['preferredfoot', 'foot', 'strongerfoot'],
+  reference_value: ['referencevalue', 'reference', 'referenceprice', 'price', 'value'], about: ['about', 'bio', 'description'],
+  photo_url: ['photourl', 'photo', 'image', 'imageurl'], photo_credit: ['photocredit', 'credit'], photo_source: ['photosource', 'source'] };
 function rowsFromCsv(text) {
   const grid = parseCsv(text); if (!grid.length) throw new Error('That file is empty.');
   const hdr = grid[0].map(h => h.toLowerCase().replace(/[^a-z]/g, ''));
@@ -514,14 +644,22 @@ function rowsFromCsv(text) {
     const get = k => idx[k] >= 0 ? String(cells[idx[k]] || '').trim() : '';
     let kind = get('kind').toUpperCase(); if (['MANAGER', 'MGR', 'COACH'].includes(kind)) kind = 'COACH'; if (!kind) kind = 'PLAYER';
     let pos = get('position').toUpperCase(); pos = { GOALKEEPER: 'GK', DEFENDER: 'DEF', MIDFIELDER: 'MID', FORWARD: 'FWD', STRIKER: 'FWD', MANAGER: 'MGR', COACH: 'MGR' }[pos] || pos || (kind === 'COACH' ? 'MGR' : 'FWD');
-    const r = { line: i + 2, ticker: get('ticker').toUpperCase(), name: get('name'), kind, club: get('club'), league: get('league'), position: pos,
+    let gender = get('gender').toUpperCase(); gender = { MEN: 'M', MENS: "M", "MEN'S": 'M', MALE: 'M', WOMEN: 'W', WOMENS: 'W', "WOMEN'S": 'W', FEMALE: 'W', F: 'W' }[gender] || gender;
+    const foot = get('preferred_foot'), ft = foot ? foot[0].toUpperCase() + foot.slice(1).toLowerCase() : '';
+    const r = { line: i + 2, ticker: get('ticker').toUpperCase(), name: get('name'), kind, position: pos,
       reference_value: get('reference_value').replace(/[$,\s]/g, '') };
-    r.problem = validateRow(r);
+    // Only columns that are in the file are sent, so a short file never blanks a longer profile.
+    const extra = { known_as: get('known_as'), gender, club: get('club'), league: get('league'), country: get('country'),
+      date_of_birth: get('date_of_birth'), shirt_number: get('shirt_number'), height_cm: get('height_cm').replace(/cm$/i, '').trim(),
+      preferred_foot: ft, about: get('about'), photo_url: get('photo_url'), photo_credit: get('photo_credit'), photo_source: get('photo_source') };
+    for (const [k, val] of Object.entries(extra)) if (idx[k] >= 0) r[k] = val;
+    const ex0 = existing.get(r.ticker), launchedRow = ex0 && (ex0.status === 'claimed' || ex0.status === 'trading');
+    r.problem = validateRow(r, launchedRow);
     if (!r.problem && seen.has(r.ticker)) r.problem = 'This ticker is in the file twice.';
     seen.add(r.ticker);
     const ex = existing.get(r.ticker);
-    if (!r.problem && ex && ex.status === 'claimed') r.problem = 'Already launched, so it will be skipped.';
     r.update = !r.problem && !!ex;
+    r.launched = !r.problem && !!launchedRow;
     return r;
   });
 }
@@ -529,7 +667,7 @@ function openUpload() {
   const box = openDialog(`<h2>Upload players</h2><p>Add or update the players managers can claim, from a CSV file.</p>
     <div class="upload-body" id="ub">
       <label class="drop" id="drop" tabindex="0">${ic('upload')}<b>Drop a CSV here, or choose a file</b>
-        <span>Columns: ticker, name, kind, club, league, position, reference_value</span>
+        <span>Needs ticker, name and reference_value. Optional: known_as, gender, position, country, date_of_birth, shirt_number, height_cm, preferred_foot, club, league, about, photo_url, photo_credit</span>
         <input type="file" id="file" accept=".csv,text/csv" hidden></label>
       <p class="hint" style="margin-top:12px">Players already on the list are updated. Anyone who has already launched is left alone. <button class="btn btn-ghost btn-sm" id="tmpl2">${ic('download')}Download the template</button></p>
     </div>
@@ -562,7 +700,7 @@ function openUpload() {
           <td><div class="who-text"><b>${esc(r.club || '—')}</b><small>${esc(r.league)}</small></div></td>
           <td>${esc(r.position)}</td>
           <td class="r money num"><b>${r.reference_value ? num(r.reference_value, 2) : '—'}</b>${r.reference_value > 0 ? `<small>${usd(r.reference_value)}</small>` : ''}</td>
-          <td>${r.problem ? `<span class="issue">${esc(r.problem)}</span>` : r.update ? '<span class="note-up">Updates the listed player</span>' : '<span class="note-ok">Ready to add</span>'}</td></tr>`).join('')}</tbody>
+          <td>${r.problem ? `<span class="issue">${esc(r.problem)}</span>` : r.launched ? '<span class="note-up">Updates the profile (price stays with the market)</span>' : r.update ? '<span class="note-up">Updates the listed player</span>' : '<span class="note-ok">Ready to add</span>'}</td></tr>`).join('')}</tbody>
       </table></div></div>`;
     box.querySelector('#ua').innerHTML = `<button class="btn btn-ghost" id="again">Choose another file</button>
       <button class="btn btn-primary" id="pub" ${good.length ? '' : 'disabled'}>Publish ${good.length} ${good.length === 1 ? 'player' : 'players'}</button>`;
@@ -570,8 +708,9 @@ function openUpload() {
     box.querySelector('#pub').onclick = async () => {
       const btn = box.querySelector('#pub'); btn.disabled = true; btn.textContent = 'Publishing…';
       try {
-        const res = await api('ft_admin_upsert_players', { p_rows: good.map(({ line, problem, update, ...r }) => r) });
+        const res = await api('ft_admin_upsert_players', { p_rows: good.map(({ line, problem, update, launched, ...r }) => r) });
         box.querySelector('#ub').innerHTML = `<div class="callout">${ic('check')}<span>Added <b>${res.added}</b> and updated <b>${res.updated}</b>. They're open to claim now.</span></div>
+          ${(res.notes || []).length ? `<div class="list" style="margin-bottom:10px">${res.notes.map(n => `<div class="list-row"><span><b>${esc(n.name || n.ticker)}</b></span><span class="note-up">${esc(n.note)}</span></div>`).join('')}</div>` : ''}
           ${res.skipped && res.skipped.length ? `<h3 style="font-size:14px;margin:8px 0">Skipped by the database</h3><div class="list">${res.skipped.map(s =>
             `<div class="list-row"><span><b>${esc(s.name || s.ticker)}</b> <small>${esc(s.ticker)}</small></span><span class="issue">${esc(s.reason)}</span></div>`).join('')}</div>` : ''}`;
         box.querySelector('#ua').innerHTML = `<button class="btn btn-primary" data-close>Done</button>`;
@@ -800,8 +939,24 @@ const SAMPLE = (() => {
     balance: [75000, 216000, 1000000, 640500, 1000000, 412000, 88000, 1000000, 530000, 12000, 1000000, 1000000][i], locked: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0][i] }));
   const claimsDef = [['FCHUK', 'amaka_fc', 1, 2, 1], ['FAJBD', 'tobi_eleven', 1, 1, 3], ['FALOZ', null, 0, 0, 0], ['FLOOK', 'kwame_m', 1, 3, 5],
     ['FKELY', 'gooner_jess', 1, 2, 6], ['FRODM', 'sofi_r', 2, 3, 9], ['FPAJR', 'priya_fc', 1, 1, 12]];
-  const players = P.map(([t, n, c, l, pos, v]) => ({ listing_id: 'lst-' + t, asset_id: '$' + t, ticker: t, name: n, kind: 'PLAYER', club: c, league: l, position: pos,
-    reference_value: v, status: 'open', claimed_by: null, claimed_at: null, created_at: iso(now - 20 * D) }));
+  const WOMEN = ['FSHAW', 'FPAJR', 'FRODM', 'FKELY', 'FAJBD', 'FALOZ', 'FAITN', 'FRUSS'];
+  const PROFILE = {
+    FOSIM: { country: 'Nigeria', date_of_birth: '1998-12-29', shirt_number: 45, height_cm: 186, preferred_foot: 'Right', about: 'Explosive centre-forward who won Serie A with Napoli and finished as the league\'s top scorer, now leading the line in Istanbul.' },
+    FSHAW: { known_as: 'Bunny Shaw', country: 'Jamaica', date_of_birth: '1997-01-31', shirt_number: 21, height_cm: 180, preferred_foot: 'Left', about: 'WSL Golden Boot winner and Jamaica\'s record scorer. Strong in the air, clinical in the box.' },
+    FRICE: { country: 'England', date_of_birth: '1999-01-14', shirt_number: 41, height_cm: 188, preferred_foot: 'Right', photo_url: 'assets/players/rice.webp', photo_credit: 'Wikimedia Commons (see attribution.json)' },
+    FVVD: { country: 'Netherlands', date_of_birth: '1991-07-08', shirt_number: 4, height_cm: 193, preferred_foot: 'Right', photo_url: 'assets/players/vandijk.webp', photo_credit: 'Wikimedia Commons (see attribution.json)' },
+    FLM10: { country: 'Argentina', date_of_birth: '1987-06-24', shirt_number: 10, height_cm: 170, preferred_foot: 'Left' },
+    FCHUK: { country: 'Nigeria', date_of_birth: '1999-05-22', preferred_foot: 'Left' }
+  };
+  const players = P.map(([t, n, c, l, pos, v]) => Object.assign({ listing_id: 'lst-' + t, asset_id: '$' + t, ticker: t, name: n, known_as: '', kind: 'PLAYER',
+    gender: WOMEN.includes(t) ? 'W' : 'M', club: c, league: l, position: pos, reference_value: v, price: v, status: 'open', claimed_by: null, claimed_at: null,
+    created_at: iso(now - 20 * D) }, PROFILE[t] || {}));
+  [['FSAKA', 'Bukayo Saka', 'Arsenal', 'Premier League', 'FWD', 48.2, 'assets/players/saka.webp', 'England'],
+   ['FHLND', 'Erling Haaland', 'Manchester City', 'Premier League', 'FWD', 71.4, 'assets/players/haaland.webp', 'Norway'],
+   ['FAITN', 'Aitana Bonmatí', 'Barcelona', 'Liga F', 'MID', 44.8, '', 'Spain'],
+   ['FRUSS', 'Alessia Russo', 'Arsenal', 'WSL', 'FWD', 38.9, '', 'England']].forEach(([t, n, c, l, pos, v, ph, co]) => players.push({
+    listing_id: null, asset_id: '$' + t, ticker: t, name: n, known_as: '', kind: 'PLAYER', gender: WOMEN.includes(t) ? 'W' : 'M', club: c, league: l,
+    position: pos, reference_value: v, price: v, status: 'trading', country: co, photo_url: ph, photo_credit: ph ? 'Wikimedia Commons (see attribution.json)' : '' }));
   const byT = t => players.find(p => p.ticker === t), byH = h => M.find(m => m.handle === h);
   const claims = [];
   claimsDef.forEach(([t, h, lvl, yrs, daysAgo]) => {
@@ -852,20 +1007,28 @@ const SAMPLE = (() => {
         fanplay_active: entries.filter(e => ['ACTIVE', 'LIVE'].includes(e.status)).length, fanplay_pending: entries.filter(e => e.status === 'PENDING_SETTLEMENT').length,
         claims_by_day: days, recent };
     },
-    ft_admin_players: () => clone(players).sort((a, b) => ({ open: 0, paused: 1, claimed: 2 }[a.status] - { open: 0, paused: 1, claimed: 2 }[b.status]) || a.name.localeCompare(b.name)),
+    ft_admin_players: () => clone(players).sort((a, b) => ({ open: 0, paused: 1, claimed: 2, trading: 3 }[a.status] - { open: 0, paused: 1, claimed: 2, trading: 3 }[b.status]) || a.name.localeCompare(b.name)),
     ft_admin_upsert_players: ({ p_rows }) => {
-      let added = 0, updated = 0; const skipped = [];
+      let added = 0, updated = 0; const skipped = [], notes = [];
+      const FIELDS = ['known_as', 'gender', 'club', 'league', 'country', 'date_of_birth', 'shirt_number', 'height_cm', 'preferred_foot', 'about', 'photo_url', 'photo_credit', 'photo_source'];
       p_rows.forEach(r => {
-        const problem = validateRow(r); if (problem) { skipped.push({ ticker: r.ticker, name: r.name, reason: problem }); return; }
-        if (['FSAKA', 'FHLND', 'FKM7', 'FYAML', 'FAITN'].includes(r.ticker)) { skipped.push({ ticker: r.ticker, name: r.name, reason: 'Already launched, so it can no longer be edited here' }); return; }
-        const ex = byT(r.ticker), v = parseFloat(r.reference_value);
-        if (ex) { if (ex.status === 'claimed') { skipped.push({ ticker: r.ticker, name: r.name, reason: 'Already launched, so it can no longer be edited here' }); return; }
-          Object.assign(ex, { name: r.name, kind: r.kind, club: r.club, league: r.league, position: r.position, reference_value: v }); updated++; }
-        else { players.push({ listing_id: 'lst-' + r.ticker, asset_id: '$' + r.ticker, ticker: r.ticker, name: r.name, kind: r.kind, club: r.club, league: r.league,
-          position: r.position, reference_value: v, status: 'open', claimed_by: null, claimed_at: null, created_at: iso(Date.now()) }); added++; }
+        const ex = byT(r.ticker), launched = ex && (ex.status === 'claimed' || ex.status === 'trading');
+        const problem = validateRow(Object.assign({}, r, { photo_url: '' }), launched);
+        if (problem) { skipped.push({ ticker: r.ticker, name: r.name, reason: problem }); return; }
+        const v = parseFloat(r.reference_value);
+        if (ex) {
+          ex.name = r.name; FIELDS.forEach(k => { if (k in r) ex[k] = r[k]; }); if (r.position) ex.position = r.position;
+          if (!launched) { ex.kind = r.kind; if (v > 0) { ex.reference_value = v; ex.price = v; } }
+          else if (v > 0 && v !== ex.price) notes.push({ ticker: r.ticker, name: r.name, note: 'Already trading, so the market sets its price. Profile updated, price left as it was.' });
+          updated++;
+        } else {
+          const np = { listing_id: 'lst-' + r.ticker, asset_id: '$' + r.ticker, ticker: r.ticker, name: r.name, kind: r.kind, position: r.position || 'FWD',
+            gender: 'M', reference_value: v, price: v, status: 'open', claimed_by: null, claimed_at: null, created_at: iso(Date.now()) };
+          FIELDS.forEach(k => { if (k in r) np[k] = r[k]; }); players.push(np); added++;
+        }
       });
       note('players.upsert', null, { added, updated, skipped: skipped.length });
-      return { added, updated, skipped };
+      return { added, updated, skipped, notes };
     },
     ft_admin_set_open: ({ p_listing, p_open }) => { const p = players.find(x => x.listing_id === p_listing); if (!p) throw new Error('No such listing');
       if (p.status === 'claimed') throw new Error('This player has been claimed and is trading'); p.status = p_open ? 'open' : 'paused';

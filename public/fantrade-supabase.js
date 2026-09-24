@@ -232,6 +232,17 @@
     /* The rows an admin listed from the Table Editor, each flagged with
        whether this manager has already claimed it. Null when the database
        has no 06_listings.sql yet — the page shows its fallback copy. */
+    /* Every player's public profile (photo, club, country, about...), for
+       anyone, signed in or not. Cached so the next page draws with it. */
+    profiles: async function () {
+      await load();
+      if (!client) return null;
+      var res = await client.rpc('ft_player_profiles');
+      if (res.error) return null;
+      try { window.localStorage.setItem('ft_profiles_v1', JSON.stringify({ at: Date.now(), rows: res.data || [] })); } catch (e) {}
+      window.dispatchEvent(new CustomEvent('fantrade:profiles', { detail: res.data || [] }));
+      return res.data;
+    },
     listings: async function () {
       await load();
       if (!client || !FTDB.signedIn()) return null;
@@ -282,4 +293,5 @@
 
   window.FTDB = FTDB;
   load();
+  FTDB.profiles().catch(function () {});
 })(window);

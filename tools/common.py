@@ -2258,9 +2258,27 @@ function playerPhoto(symbol,name,className){
     }
   }
   var label=String(name||symbol||'Player').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
-  var src=PLAYER_IMAGES[key]||monogram(name||symbol);
+  var up=(typeof PLAYER_PROFILES!=='undefined')&&PLAYER_PROFILES[raw.toUpperCase()];
+  var src=(up&&up.photo?String(up.photo).replace(/'/g,'%27'):'')||PLAYER_IMAGES[key]||monogram(name||symbol);
   return "<img class='"+(className||'player-photo')+"' src='"+src+"' alt='"+label+"' loading='lazy' decoding='async'>";
 }
+/* Profiles kept in the admin (photo, club, country, about and the rest).
+   fantrade-supabase.js fetches them and caches them on this device, so they
+   are applied here before any page draws, and again when a fresh copy lands. */
+var PLAYER_PROFILES = {};
+function applyProfiles(rows){
+  (rows || []).forEach(function(p){
+    if(!p || !p.t) return;
+    PLAYER_PROFILES[p.t] = p;
+    var a = ASSETS.filter(function(x){ return x.t === p.t; })[0];
+    if(a){ if(p.club) a.club = p.club; if(p.lg) a.lg = p.lg; if(p.gender === 'W') a.w = 1; }
+    var e = (typeof ELIGIBLE !== 'undefined') ? ELIGIBLE.filter(function(x){ return x.t === p.t; })[0] : null;
+    if(e){ if(p.club) e.club = p.club; if(p.lg) e.lg = p.lg; if(p.about) e.about = p.about; if(p.country) e.country = p.country;
+           if(p.known_as) e.aka = p.known_as; if(p.gender === 'W') e.w = 1; }
+  });
+}
+try { var _ftProfiles = JSON.parse(localStorage.getItem('ft_profiles_v1') || 'null'); if(_ftProfiles && _ftProfiles.rows) applyProfiles(_ftProfiles.rows); } catch(e){}
+window.addEventListener('fantrade:profiles', function(ev){ applyProfiles(ev.detail); });
 function liveTicks(sel){
   if(reduce) return;
   setInterval(function(){

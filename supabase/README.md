@@ -24,6 +24,7 @@ order, each in its own query:
 | 7 | `07_profile_photo.sql` | `profiles.avatar_url` and an `ft_snapshot()` that carries it, so a profile photo uploaded on one device shows on the next |
 | 8 | `08_claim_by_value.sql` | Cleared players that are not trading yet, and first-come claiming: the claimer pays for 5% or 10% of the shares at the reference value, and the player goes live for everyone else |
 | 9 | `09_admin.sql` | The admin at /admin: the admins list, an activity log, account suspension, and the `ft_admin_*` functions it calls, each refusing anyone not on the list. Re-run it after re-running `02_functions.sql` |
+| 10 | `10_player_profiles.sql` | Player profiles kept in the admin (known-as name, men's or women's game, country, date of birth, shirt number, height, foot, about, photo and its credit), the public `player-photos` Storage bucket that only admins can write to, and `ft_player_profiles()` that the app reads |
 
 They are safe to re-run: the tables use `if not exists`, the functions are
 `create or replace`, and the seed upserts on the asset (and listing) id. Re-run them in
