@@ -2060,7 +2060,7 @@ var ASSETS=[
 ];
 /* Filled in at build time from assets/players/attribution.json: a picture
    is only used when its source and licence are on record. */
-var PLAYER_IMAGES={"alisson":"assets/players/alisson.webp","arteta":"assets/players/arteta.webp","bellingham":"assets/players/bellingham.webp","bruno":"assets/players/bruno.webp","davies":"assets/players/davies.webp","foden":"assets/players/foden.webp","gabriel":"assets/players/gabriel.webp","haaland":"assets/players/haaland.webp","jackson":"assets/players/jackson.webp","maresca":"assets/players/maresca.webp","mbappe":"assets/players/mbappe.webp","musiala":"assets/players/musiala.webp","odegaard":"assets/players/odegaard.webp","palmer":"assets/players/palmer.webp","pedri":"assets/players/pedri.webp","pep":"assets/players/pep.webp","raya":"assets/players/raya.webp","rice":"assets/players/rice.webp","rodri":"assets/players/rodri.webp","saka":"assets/players/saka.webp","saliba":"assets/players/saliba.webp","vandijk":"assets/players/vandijk.webp","vinicius":"assets/players/vinicius.webp","white":"assets/players/white.webp","wirtz":"assets/players/wirtz.webp","yamal":"assets/players/yamal.webp"};
+var PLAYER_IMAGES={"alisson":"assets/players/alisson.webp","arta":"assets/players/arta.webp","arteta":"assets/players/arteta.webp","bellingham":"assets/players/bellingham.webp","bonmati":"assets/players/bonmati.webp","brn":"assets/players/brn.webp","bruno":"assets/players/bruno.webp","davies":"assets/players/davies.webp","earps":"assets/players/earps.webp","foden":"assets/players/foden.webp","gabriel":"assets/players/gabriel.webp","haaland":"assets/players/haaland.webp","hlnd":"assets/players/hlnd.webp","jackson":"assets/players/jackson.webp","james":"assets/players/james.webp","kerr":"assets/players/kerr.webp","maresca":"assets/players/maresca.webp","mbappe":"assets/players/mbappe.webp","mus":"assets/players/mus.webp","musiala":"assets/players/musiala.webp","odegaard":"assets/players/odegaard.webp","palmer":"assets/players/palmer.webp","pedri":"assets/players/pedri.webp","pep":"assets/players/pep.webp","putellas":"assets/players/putellas.webp","raya":"assets/players/raya.webp","rice":"assets/players/rice.webp","rodri":"assets/players/rodri.webp","russo":"assets/players/russo.webp","saka":"assets/players/saka.webp","sali":"assets/players/sali.webp","saliba":"assets/players/saliba.webp","vandijk":"assets/players/vandijk.webp","vinicius":"assets/players/vinicius.webp","white":"assets/players/white.webp","wiegman":"assets/players/wiegman.webp","williamson":"assets/players/williamson.webp","wirtz":"assets/players/wirtz.webp","yamal":"assets/players/yamal.webp"};
 /* Initials on a tint picked from the name, as an SVG the <img> can load, so
    every place that shows a photo can show this instead without changes. */
 function monogram(name){
@@ -2085,8 +2085,13 @@ function playerPhoto(symbol,name,className){
     if(map[sLower]) key = map[sLower];
     else key = sLower.slice(1);
   }
+  if(!PLAYER_IMAGES[key] && name){
+    var nLower = String(name).toLowerCase();
+    for(var k in PLAYER_IMAGES){
+      if(nLower.indexOf(k) !== -1){ key = k; break; }
+    }
+  }
   var label=String(name||symbol||'Player').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
-  // No verified photo: show their initials. Never another person's face.
   var src=PLAYER_IMAGES[key]||monogram(name||symbol);
   return "<img class='"+(className||'player-photo')+"' src='"+src+"' alt='"+label+"' loading='lazy' decoding='async'>";
 }

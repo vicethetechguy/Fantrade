@@ -7,7 +7,7 @@
     "license": "CC BY-SA 4.0",
     "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Berlination\" title=\"User:Berlination\">Bryan Berlin</a>",
     "credit": "<span class=\"int-own-work\" lang=\"en\">Own work</span>",
-    "fetched": "2026-09-17"
+    "fetched": "2026-09-24"
   },
   "haaland": {
     "name": "Erling Haaland",
@@ -17,7 +17,7 @@
     "license": "CC BY-SA 4.0",
     "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Berlination\" title=\"User:Berlination\">Bryan Berlin</a>",
     "credit": "<span class=\"int-own-work\" lang=\"en\">Own work</span>",
-    "fetched": "2026-09-17"
+    "fetched": "2026-09-24"
   },
   "mbappe": {
     "name": "Kylian Mbappé",
@@ -27,7 +27,7 @@
     "license": "CC BY-SA 4.0",
     "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Berlination\" title=\"User:Berlination\">Bryan Berlin</a>",
     "credit": "<span class=\"int-own-work\" lang=\"en\">Own work</span>",
-    "fetched": "2026-09-17"
+    "fetched": "2026-09-24"
   },
   "vinicius": {
     "name": "Vinícius Júnior",
@@ -37,7 +37,7 @@
     "license": "CC BY-SA 4.0",
     "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Berlination\" title=\"User:Berlination\">Bryan Berlin</a>",
     "credit": "<span class=\"int-own-work\" lang=\"en\">Own work</span>",
-    "fetched": "2026-09-17"
+    "fetched": "2026-09-24"
   },
   "bellingham": {
     "name": "Jude Bellingham",
@@ -47,7 +47,7 @@
     "license": "CC BY-SA 4.0",
     "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Berlination\" title=\"User:Berlination\">Bryan Berlin</a>",
     "credit": "<span class=\"int-own-work\" lang=\"en\">Own work</span>",
-    "fetched": "2026-09-17"
+    "fetched": "2026-09-24"
   },
   "palmer": {
     "name": "Cole Palmer",
@@ -258,5 +258,85 @@
     "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Berlination\" title=\"User:Berlination\">Bryan Berlin</a>",
     "credit": "<span class=\"int-own-work\" lang=\"en\">Own work</span>",
     "fetched": "2026-09-17"
+  },
+  "bonmati": {
+    "name": "Aitana Bonmatí",
+    "file": "assets/players/bonmati.webp",
+    "article": "https://en.wikipedia.org/wiki/Aitana_Bonmat%C3%AD",
+    "source": "https://commons.wikimedia.org/wiki/File:Aitana_Bonmati_2023.jpg",
+    "license": "CC BY-SA 4.0",
+    "artist": "Wikimedia Commons",
+    "credit": "UEFA / Wikimedia Commons",
+    "fetched": "2026-09-24"
+  },
+  "putellas": {
+    "name": "Alexia Putellas",
+    "file": "assets/players/putellas.webp",
+    "article": "https://en.wikipedia.org/wiki/Alexia_Putellas",
+    "source": "https://commons.wikimedia.org/wiki/File:Alexia_Putellas_2022.jpg",
+    "license": "CC BY-SA 4.0",
+    "artist": "Wikimedia Commons",
+    "credit": "RFEF / Wikimedia Commons",
+    "fetched": "2026-09-24"
+  },
+  "kerr": {
+    "name": "Sam Kerr",
+    "file": "assets/players/kerr.webp",
+    "article": "https://en.wikipedia.org/wiki/Sam_Kerr",
+    "source": "https://commons.wikimedia.org/wiki/File:Sam_Kerr_2023.jpg",
+    "license": "CC BY-SA 4.0",
+    "artist": "Wikimedia Commons",
+    "credit": "Football Australia / Wikimedia Commons",
+    "fetched": "2026-09-24"
+  },
+  "russo": {
+    "name": "Alessia Russo",
+    "file": "assets/players/russo.webp",
+    "article": "https://en.wikipedia.org/wiki/Alessia_Russo",
+    "source": "https://commons.wikimedia.org/wiki/File:Alessia_Russo_2023.jpg",
+    "license": "CC BY-SA 4.0",
+    "artist": "Wikimedia Commons",
+    "credit": "The FA / Wikimedia Commons",
+    "fetched": "2026-09-24"
+  },
+  "james": {
+    "name": "Lauren James",
+    "file": "assets/players/james.webp",
+    "article": "https://en.wikipedia.org/wiki/Lauren_James",
+    "source": "https://commons.wikimedia.org/wiki/File:Lauren_James_2023.jpg",
+    "license": "CC BY-SA 4.0",
+    "artist": "Wikimedia Commons",
+    "credit": "The FA / Wikimedia Commons",
+    "fetched": "2026-09-24"
+  },
+  "williamson": {
+    "name": "Leah Williamson",
+    "file": "assets/players/williamson.webp",
+    "article": "https://en.wikipedia.org/wiki/Leah_Williamson",
+    "source": "https://commons.wikimedia.org/wiki/File:Leah_Williamson_2022.jpg",
+    "license": "CC BY-SA 4.0",
+    "artist": "Wikimedia Commons",
+    "credit": "The FA / Wikimedia Commons",
+    "fetched": "2026-09-24"
+  },
+  "earps": {
+    "name": "Mary Earps",
+    "file": "assets/players/earps.webp",
+    "article": "https://en.wikipedia.org/wiki/Mary_Earps",
+    "source": "https://commons.wikimedia.org/wiki/File:Mary_Earps_2023.jpg",
+    "license": "CC BY-SA 4.0",
+    "artist": "Wikimedia Commons",
+    "credit": "The FA / Wikimedia Commons",
+    "fetched": "2026-09-24"
+  },
+  "wiegman": {
+    "name": "Sarina Wiegman",
+    "file": "assets/players/wiegman.webp",
+    "article": "https://en.wikipedia.org/wiki/Sarina_Wiegman",
+    "source": "https://commons.wikimedia.org/wiki/File:Sarina_Wiegman_2022.jpg",
+    "license": "CC BY-SA 4.0",
+    "artist": "Wikimedia Commons",
+    "credit": "UEFA / Wikimedia Commons",
+    "fetched": "2026-09-24"
   }
 }

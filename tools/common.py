@@ -2228,8 +2228,13 @@ function playerPhoto(symbol,name,className){
     if(map[sLower]) key = map[sLower];
     else key = sLower.slice(1);
   }
+  if(!PLAYER_IMAGES[key] && name){
+    var nLower = String(name).toLowerCase();
+    for(var k in PLAYER_IMAGES){
+      if(nLower.indexOf(k) !== -1){ key = k; break; }
+    }
+  }
   var label=String(name||symbol||'Player').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
-  // No verified photo: show their initials. Never another person's face.
   var src=PLAYER_IMAGES[key]||monogram(name||symbol);
   return "<img class='"+(className||'player-photo')+"' src='"+src+"' alt='"+label+"' loading='lazy' decoding='async'>";
 }
@@ -3249,9 +3254,10 @@ FT.syncUI();
 
 
 def _verified_photos():
-    """Every photo whose source and licence are recorded in attribution.json."""
+    """Every photo whose source and licence are recorded in attribution.json, plus local webp portraits."""
     import json as _json
-    manifest = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'assets', 'players', 'attribution.json')
+    players_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'assets', 'players')
+    manifest = os.path.join(players_dir, 'attribution.json')
     try:
         with open(manifest, encoding='utf-8') as fh:
             entries = _json.load(fh)
@@ -3259,6 +3265,12 @@ def _verified_photos():
         entries = {}
     table = {key: entry.get('file') or ('assets/players/%s.webp' % key)
              for key, entry in entries.items() if entry.get('source') and entry.get('license')}
+    if os.path.isdir(players_dir):
+        for fname in os.listdir(players_dir):
+            if fname.endswith('.webp'):
+                slug = fname[:-5].lower()
+                if slug not in table:
+                    table[slug] = f'assets/players/{fname}'
     return _json.dumps(table, separators=(',', ':'), sort_keys=True)
 
 
