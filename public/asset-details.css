@@ -121,23 +121,22 @@ body.app.calm .asset-details details[hidden]{display:none}
 body.app.calm .asset-photo-credit{font-size:10.5px;color:var(--faint);margin:12px 0 0}
 body.app.calm .asset-photo-credit:empty{display:none}
 body.app.calm .asset-price-usd{margin:6px 0 0;font-size:13px;color:var(--dim)}
-/* Header: back, then the player as the switcher, then the watchlist star. */
-body.app.calm .asset-topbar{display:flex;align-items:center;gap:12px;margin:0 0 36px;min-width:0}
-body.app.calm .asset-back{width:44px;height:44px;flex:none;display:grid;place-items:center;border-radius:50%;background:var(--panel);color:var(--ink);text-decoration:none;transition:background .2s}
-body.app.calm .asset-back svg{width:20px;height:20px}
-body.app.calm .asset-back:hover{background:rgba(24,0,173,.12)}
-body.app.calm .asset-chip{position:relative;display:flex;align-items:center;gap:12px;min-width:0;flex:0 1 auto;padding:6px 16px 6px 6px;border-radius:999px;background:var(--panel);transition:background .2s,box-shadow .2s}
-body.app.calm .asset-chip:hover{background:rgba(24,0,173,.08)}
-body.app.calm .asset-chip:focus-within{box-shadow:0 0 0 2px var(--lime)}
-body.app.calm .asset-chip .asset-portrait{width:44px;height:44px;flex:none;border-radius:50%;overflow:hidden;background:rgba(0,0,0,.06)}
-body.app.calm .asset-chip .asset-portrait img{width:100%;height:100%;object-fit:cover;object-position:50% 18%}
+/* Header: the player (with a dropdown to switch) on the left; the watchlist
+   star and Back on the right. No box around the player. */
+body.app.calm .asset-topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:0 0 44px;min-width:0}
+body.app.calm .asset-who{position:relative;display:flex;align-items:center;gap:14px;min-width:0;flex:1 1 auto}
+body.app.calm .asset-who-caret{width:22px;height:22px;flex:none;color:var(--dim);transition:transform .2s,color .2s}
+body.app.calm .asset-who:hover .asset-who-caret{color:var(--ink);transform:translateY(2px)}
+body.app.calm .asset-who .asset-portrait{width:76px;height:76px;flex:none;border-radius:50%;overflow:hidden;background:var(--panel);transition:box-shadow .2s}
+body.app.calm .asset-who:hover .asset-portrait{box-shadow:0 0 0 3px rgba(24,0,173,.55)}
+body.app.calm .asset-who .asset-portrait img{width:100%;height:100%;object-fit:cover;object-position:50% 18%}
 body.app.calm .asset-name{min-width:0;flex:1}
-body.app.calm .asset-name h1{font-size:17px;line-height:1.2;margin:0;font-weight:700;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-body.app.calm .asset-name p{font-size:11.5px;line-height:1.3;color:var(--dim);margin:2px 0 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-body.app.calm .asset-chip-caret{width:18px;height:18px;flex:none;color:var(--dim);transition:transform .2s}
-body.app.calm .asset-chip:hover .asset-chip-caret{transform:translateY(1px);color:var(--ink)}
-body.app.calm .asset-chip-button{position:absolute;inset:0;width:100%;border:0;border-radius:999px;background:transparent;cursor:pointer;outline:none}
-body.app.calm .asset-topbar .asset-favorite{margin-left:auto}
+body.app.calm .asset-name p{font-size:12px;color:var(--dim);margin:0 0 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+body.app.calm .asset-name h1{font-size:clamp(26px,3.1vw,38px);line-height:1.1;margin:0;overflow-wrap:anywhere}
+body.app.calm .asset-who-button{position:absolute;inset:-6px;width:calc(100% + 12px);border:0;border-radius:18px;background:transparent;cursor:pointer;outline:none}
+body.app.calm .asset-who-button:focus-visible{box-shadow:0 0 0 2px var(--lime)}
+body.app.calm .asset-topbar-actions{display:flex;align-items:center;gap:10px;flex:none}
+body.app.calm .asset-topbar-actions .back-btn{margin:0}
 body.app.calm .asset-label{display:flex;align-items:center;gap:10px}
 body.app.calm .asset-price{border-radius:10px;margin-left:-6px;padding-left:6px;display:inline-block}
 body.app.calm .asset-trades{margin-top:32px}
@@ -152,15 +151,18 @@ body.app.calm .asset-trade-row.is-new{animation:assetTradeIn .6s ease-out}
 @keyframes assetTradeIn{from{opacity:0;transform:translateY(-6px);background:rgba(24,0,173,.08)}to{opacity:1;transform:none;background:transparent}}
 body.app.calm .asset-book-row i{transition:width .5s ease}
 @media(max-width:760px){
- body.app.calm .asset-topbar{gap:10px;margin-bottom:26px}
- body.app.calm .asset-chip{flex:1 1 auto;padding-right:12px}
- body.app.calm .asset-chip .asset-portrait{width:40px;height:40px}
- body.app.calm .asset-name h1{font-size:16px}
+ body.app.calm .asset-topbar{gap:10px;margin-bottom:32px}
+ body.app.calm .asset-who{gap:10px}
+ body.app.calm .asset-who-caret{width:18px;height:18px}
+ body.app.calm .asset-who .asset-portrait{width:56px;height:56px}
+ body.app.calm .asset-name p{font-size:11px;margin-bottom:5px}
+ body.app.calm .asset-name h1{font-size:22px}
+ body.app.calm .asset-topbar-actions{gap:8px}
+ body.app.calm .asset-topbar-actions .asset-favorite{width:40px;height:40px}
+ body.app.calm .asset-topbar-actions .back-btn{min-width:0;min-height:40px;padding:9px 15px}
 }
 @media(max-width:360px){
- body.app.calm .asset-topbar{gap:8px}
- body.app.calm .asset-back,body.app.calm .asset-topbar .asset-favorite{width:40px;height:40px}
- body.app.calm .asset-chip{gap:8px}
- body.app.calm .asset-chip .asset-portrait{width:34px;height:34px}
- body.app.calm .asset-name h1{font-size:15px}
+ body.app.calm .asset-who{gap:8px}
+ body.app.calm .asset-who .asset-portrait{width:46px;height:46px}
+ body.app.calm .asset-name h1{font-size:19px}
 }

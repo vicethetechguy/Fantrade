@@ -3,14 +3,16 @@ from common import ic
 
 HTML = '''<main><div class="asset-page">
   <header class="asset-topbar">
-    <a class="asset-back" id="assetBack" href="exchange.html" aria-label="Back"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
-    <div class="asset-chip">
+    <div class="asset-who">
+      <svg class="asset-who-caret" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9.5l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
       <div class="asset-portrait" id="assetPortrait"></div>
-      <div class="asset-name"><h1 id="assetName">Find a player</h1><p id="assetSubtitle">Search the exchange</p></div>
-      <svg class="asset-chip-caret" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9.5l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      <button type="button" class="asset-chip-button" id="assetSwitch" aria-haspopup="dialog" aria-label="Switch player"></button>
+      <div class="asset-name"><p id="assetSubtitle">Search the exchange</p><h1 id="assetName">Find a player</h1></div>
+      <button type="button" class="asset-who-button" id="assetSwitch" aria-haspopup="dialog" aria-label="Switch player"></button>
     </div>
-    <button type="button" id="assetFavorite" class="asset-favorite" aria-label="Add to watchlist" aria-pressed="false">''' + ic('star', 'ic') + '''</button>
+    <div class="asset-topbar-actions">
+      <button type="button" id="assetFavorite" class="asset-favorite" aria-label="Add to watchlist" aria-pressed="false">''' + ic('star', 'ic') + '''</button>
+      <a class="back-btn asset-back" id="assetBack" href="exchange.html">Back</a>
+    </div>
   </header>
   <section class="asset-missing" id="assetMissing" hidden>
     <h1>Share not found</h1><p>Search the exchange for a player or coach.</p>
