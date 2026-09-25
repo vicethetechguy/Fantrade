@@ -2335,7 +2335,8 @@ var FT = (function(){
       var held = {};
       snap.holdings.forEach(function(h){
         var coach = h.kind === 'COACH';
-        held[h.asset_id] = { n: h.name, shares: Number(h.shares), avg: Number(h.avg_cost),
+        // Keyed by F-ticker, the name every page uses for a share.
+        held[h.ticker || ftSym(h.asset_id)] = { n: h.name, shares: Number(h.shares), avg: Number(h.avg_cost),
                              p: Number(h.price), c: coach,
                              // The slot travels with the account, so the side
                              // you set on one device is the side on the next.
@@ -2385,7 +2386,7 @@ var FT = (function(){
     }
     if(snap.transactions){
       state.transactions = snap.transactions.map(function(t){
-        return { type: t.type, asset: t.asset_id || t.label, shares: Number(t.shares) || 1,
+        return { type: t.type, asset: t.ticker || t.asset_id || t.label, shares: Number(t.shares) || 1,
                  price: Number(t.price) || 0, total: Number(t.total) || 0, time: shortTime(t.created_at) };
       });
     }
@@ -2429,7 +2430,7 @@ var FT = (function(){
       // The account said no. Undo what this device did, say why, then take
       // the account's figures as the truth.
       if(onRefused) onRefused(error);
-      if(typeof showToast === 'function') showToast(error.message + ' Your balance has been re-checked.', 'error');
+      if(typeof showToast === 'function') showToast(String(error.message || 'That did not go through').replace(/[.!?]?\s*$/, '.') + ' Your balance has been re-checked.', 'error');
       return db.snapshot().then(function(snap){ if(applySnapshot(snap)) announce(); });
     }).finally(function(){ pending -= 1; });
   }
