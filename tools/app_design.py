@@ -15,6 +15,8 @@ def apply_design(filename, html):
     styles = '<link rel="stylesheet" href="public/app-onboarding.css">'
     if filename == 'asset.html':
         styles += '<link rel="stylesheet" href="public/asset-details.css">'
+    if filename in ('wallet.html', 'ftr.html'):
+        styles += '<link rel="stylesheet" href="public/wallet-card.css">'
     if filename == 'trade.html':
         styles += '<link rel="stylesheet" href="public/app-secondary.css">'
     if filename in COMMUNITY_PAGES:

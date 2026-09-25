@@ -1,0 +1,34 @@
+/* Wallet card: total balance through the action row, in brand blue with the
+   Fantrade mark drawn into it. Portfolio Allocation sits below it. */
+body.app.calm .wallet-layout{grid-template-columns:minmax(0,1fr)!important}
+body.app.calm .wallet-layout .kc-assets-card{position:relative;overflow:hidden;isolation:isolate;margin:0;
+  border-radius:20px!important;padding:28px 28px 24px!important;color:#fff;
+  background:
+    radial-gradient(120% 140% at 0% 0%,rgba(92,78,255,.95) 0%,rgba(92,78,255,0) 46%),
+    radial-gradient(80% 120% at 100% 100%,rgba(6,2,64,.9) 0%,rgba(6,2,64,0) 62%),
+    linear-gradient(135deg,#2a17e6 0%,#1800ad 50%,#0e0680 100%)!important;
+  box-shadow:0 30px 60px -38px rgba(40,24,230,.75),0 2px 0 rgba(255,255,255,.08) inset,0 0 0 1px rgba(255,255,255,.12) inset!important}
+/* A soft sheen across the top-left, like light on a real card. */
+body.app.calm .wallet-layout .kc-assets-card::before{display:block!important;content:"";position:absolute;inset:0!important;top:0!important;right:0!important;width:auto!important;height:auto!important;
+  border-radius:inherit;background:linear-gradient(116deg,rgba(255,255,255,.17) 0%,rgba(255,255,255,.05) 26%,rgba(255,255,255,0) 44%)!important;z-index:1;pointer-events:none}
+body.app.calm .wallet-layout .kc-assets-card::after{content:"";position:absolute;left:-10%;right:-10%;bottom:-1px;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.35),transparent);z-index:1;pointer-events:none}
+body.app.calm .kc-wcard-art{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+body.app.calm .wallet-layout .kc-assets-card>*:not(.kc-wcard-art){position:relative;z-index:2}
+body.app.calm .wallet-layout .kc-assets-card .kc-card-lbl{color:rgba(255,255,255,.8)}
+body.app.calm .wallet-layout .kc-assets-card .kc-eye-btn{color:#fff;opacity:.85}
+body.app.calm .wallet-layout .kc-assets-card .kc-card-bal{color:#fff;text-shadow:0 2px 18px rgba(8,4,90,.35)}
+body.app.calm .wallet-layout .kc-assets-card .kc-card-bal small{color:rgba(255,255,255,.72)}
+body.app.calm .wallet-layout .kc-assets-card .kc-card-sub,body.app.calm .wallet-layout .kc-assets-card .kc-card-sub span{color:rgba(255,255,255,.78)}
+body.app.calm .wallet-layout .kc-assets-card .kc-pnl-pill{padding:6px 11px;border-radius:999px;background:rgba(255,255,255,.14);color:#a6ffd0;
+  box-shadow:0 0 0 1px rgba(255,255,255,.16) inset;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+body.app.calm .wallet-layout .kc-assets-card .kc-actions-grid{max-width:560px;margin-top:28px}
+body.app.calm .wallet-layout .kc-assets-card .kc-act-icon{background:rgba(255,255,255,.14)!important;color:#fff!important;
+  box-shadow:0 0 0 1px rgba(255,255,255,.18) inset!important;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);transition:background .2s,transform .2s}
+body.app.calm .wallet-layout .kc-assets-card .kc-act-btn:first-child .kc-act-icon{background:#fff!important;color:#1800ad!important;box-shadow:0 10px 24px -10px rgba(0,0,0,.5)!important}
+body.app.calm .wallet-layout .kc-assets-card .kc-act-btn:hover .kc-act-icon{background:rgba(255,255,255,.24)!important}
+body.app.calm .wallet-layout .kc-assets-card .kc-act-btn:first-child:hover .kc-act-icon{background:#fff!important}
+body.app.calm .wallet-layout .kc-assets-card .kc-act-lbl{color:rgba(255,255,255,.9)}
+@media(max-width:760px){
+ body.app.calm .wallet-layout .kc-assets-card{border-radius:18px!important;padding:22px 20px 20px!important}
+ body.app.calm .wallet-layout .kc-assets-card .kc-actions-grid{max-width:none;margin-top:22px}
+}
