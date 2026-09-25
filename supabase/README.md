@@ -27,6 +27,7 @@ order, each in its own query:
 | 10 | `10_player_profiles.sql` | Player profiles kept in the admin (known-as name, men's or women's game, country, date of birth, shirt number, height, foot, about, photo and its credit), the public `player-photos` Storage bucket that only admins can write to, and `ft_player_profiles()` that the app reads |
 | 11 | `11_ftr_economy.sql` | The $FTR economy: a 10,000,000 cap (wallets + treasury + burned), a market price in dollars (starts at $2, set in the admin), real-world player valuations in dollars (a share = valuation ÷ 10,000,000, paid in $FTR at the live price), and every buy, sell, swap, top-up, withdrawal, claim and welcome grant reworked to that maths. Moves existing balances across once, keeping their dollar value |
 | 12 | `12_dollars.sql` | Dollars everywhere: top-ups are bought in dollars at the live $FTR price (`ft_convert_usd`), withdrawals default to a dollar account, the wallet's rate is $FTR per $1, and the pound rate is gone |
+| 13 | `13_coaches_to_claim.sql` | Five coaches cleared for claiming (Luis Enrique, Diego Simeone, Hansi Flick, Carlo Ancelotti, Emma Hayes), each with an open listing, so they show under Coaches in the admin and in the home page claim search |
 
 They are safe to re-run: the tables use `if not exists`, the functions are
 `create or replace`, and the seed upserts on the asset (and listing) id. Re-run them in

@@ -208,6 +208,8 @@ table.t{width:100%;border-collapse:collapse;min-width:720px}
 .pill.bad{background:var(--bad-soft);color:var(--bad)}
 .pill.plain{background:var(--panel-3);color:var(--dim)}
 .row-actions{display:flex;justify-content:flex-end;gap:4px}
+.t tbody tr.row-link{cursor:pointer}
+.t tbody tr.row-link:focus-within td{background:rgba(255,255,255,.03)}
 .vest{display:grid;gap:5px;min-width:150px}
 .vest-bar{height:6px;border-radius:999px;background:var(--panel-3);overflow:hidden}
 .vest-bar i{display:block;height:100%;border-radius:999px;background:var(--lilac)}
