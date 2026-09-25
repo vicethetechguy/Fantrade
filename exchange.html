@@ -2224,7 +2224,7 @@ var FT = (function(){
       balance: 1000000,
       locked: 0,
       seasonEarned: 19640,
-      gbpRate: 0.6686   // £1 = $1.3372 = 0.6686 $FTR at $2
+      usdRate: 0.5      // $1 buys 0.5 $FTR at $2 a $FTR
     },
     holdings: {
       'FSAKA': { n: 'Bukayo Saka', shares: 10000, avg: 4.1075, p: 6.3052, c: false, inClub: 'RW' },
@@ -2247,7 +2247,7 @@ var FT = (function(){
       { type: "BUY", asset: "FSAKA", shares: 10000, price: 6.3052, total: 63304, time: "Today, 14:22" },
       { type: "STAKE", asset: "FanPlay MD 07", shares: 1, price: 125, total: 125, time: "Yesterday, 19:10" },
       { type: "PAYOUT", asset: "Matchday 06 Settle", shares: 1, price: 310, total: 310, time: "Sep 08, 02:15" },
-      { type: "CONVERT", asset: "GBP Deposit (£1,000)", shares: 1000, price: 0.6686, total: 665.26, time: "Sep 07, 11:45" }
+      { type: "CONVERT", asset: "USD Deposit ($1,000)", shares: 1000, price: 0.5, total: 497.5, time: "Sep 07, 11:45" }
     ]
   };
 
@@ -2266,6 +2266,7 @@ var FT = (function(){
       st.demoGrant1M = true;
     }
     st.listedAssets = st.listedAssets || [];
+    if(st.wallet){ delete st.wallet.gbpRate; st.wallet.usdRate = 1 / FTR_USD; }
     if(!st.econV2){
       Object.keys(st.holdings || {}).forEach(function(t){
         var h = st.holdings[t], a = ASSETS.filter(function(x){ return x.t === t; })[0];
@@ -2274,7 +2275,7 @@ var FT = (function(){
         h.p = np;
       });
       st.listedAssets.forEach(function(a){ if(!a.v && Number(a.p) > 0){ a.v = Math.round(Number(a.p) * 0.10 * 1e7); } });
-      if(st.wallet){ st.wallet.gbpRate = 0.6686; }
+      if(st.wallet){ delete st.wallet.gbpRate; }
       st.econV2 = true;
     }
     delete st.clubs;
@@ -2343,7 +2344,11 @@ var FT = (function(){
       state.wallet.balance = Number(snap.wallet.balance) || 0;
       state.wallet.locked = Number(snap.wallet.locked) || 0;
       state.wallet.seasonEarned = Number(snap.wallet.season_earned) || 0;
-      state.wallet.gbpRate = Number(snap.wallet.gbp_rate) || state.wallet.gbpRate;
+      state.wallet.usdRate = Number(snap.wallet.usd_rate) || (1 / FTR_USD);
+    }
+    if(snap.market && Number(snap.market.ftr_usd) > 0 && Number(snap.market.ftr_usd) !== FTR_USD){
+      FTR_USD = Number(snap.market.ftr_usd); ftReprice();
+      try { localStorage.setItem('ft_market_v1', JSON.stringify(snap.market)); } catch(e){}
     }
     if(snap.holdings){
       var held = {};
@@ -2990,20 +2995,22 @@ var FT = (function(){
       window.dispatchEvent(new CustomEvent('fantrade:statechange', { detail: state }));
       return newEntry;
     },
-    convertGbp: function(gbpAmount){
-      var grossFtr = gbpAmount * state.wallet.gbpRate;
-      var fee = grossFtr * 0.005;
-      var netFtr = Math.round(grossFtr - fee);
+    /* Top up in dollars: $FTR at the live $FTR price, less 0.5%. */
+    convertUsd: function(usdAmount){
+      var rate = 1 / FTR_USD; state.wallet.usdRate = rate;
+      var grossFtr = Math.round(usdAmount * rate * 100) / 100;
+      var fee = Math.round(grossFtr * 0.5) / 100;
+      var netFtr = Math.round((grossFtr - fee) * 100) / 100;
       state.wallet.balance += netFtr;
       state.transactions.unshift({
         type: "CONVERT",
-        asset: "GBP Deposit (£" + gbpAmount.toLocaleString('en-US') + ")",
-        shares: gbpAmount,
-        price: state.wallet.gbpRate,
+        asset: "USD Deposit ($" + usdAmount.toLocaleString('en-US') + ")",
+        shares: usdAmount,
+        price: rate,
         total: netFtr,
         time: "Just now"
       });
-      push('ft_convert_gbp', { p_gbp: gbpAmount });
+      push('ft_convert_usd', { p_usd: usdAmount });
       save(state);
       FT.syncUI();
       window.dispatchEvent(new CustomEvent('fantrade:statechange', { detail: state }));
@@ -3012,7 +3019,7 @@ var FT = (function(){
     /* `meta` carries the bank details for a withdrawal; a transfer routes by handle. */
     sendFtr: function(amount, dest, kind, meta){
       if(amount <= 0) throw new Error("Enter an amount to send.");
-      var fee = kind === 'withdraw' ? Math.max(50, Math.round(amount * 0.005)) : 0;
+      var fee = kind === 'withdraw' ? Math.max(Math.ceil(500 / FTR_USD) / 100, Math.round(amount * 0.5) / 100) : 0;   // 0.5%, at least $5
       if(state.wallet.balance < amount + fee){
         throw new Error("Insufficient $FTR. You have " + state.wallet.balance.toLocaleString('en-US')
           + " and this needs " + (amount + fee).toLocaleString('en-US') + ".");
@@ -3023,7 +3030,7 @@ var FT = (function(){
         asset: dest, shares: 1, price: amount, total: amount + fee, time: "Just now"
       });
       if(kind === 'withdraw' && meta){
-        push('ft_withdraw_to_bank', { p_amount: amount, p_currency: meta.currency || 'GBP',
+        push('ft_withdraw_to_bank', { p_amount: amount, p_currency: meta.currency || 'USD',
           p_holder: meta.holder, p_bank: meta.bank, p_account: meta.account, p_save: meta.save !== false });
       } else if(kind !== 'withdraw' && /^@/.test(String(dest))){
         push('ft_transfer_ftr', { p_handle: String(dest), p_amount: amount });

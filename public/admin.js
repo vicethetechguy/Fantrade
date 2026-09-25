@@ -329,7 +329,7 @@ function marketCard(m) {
   return `<section class="card market-card"><div class="card-head"><div><h2>$FTR market</h2><p>Capped at ${compact(max)} $FTR. Every player's $FTR price follows this.</p></div>
       ${me.role !== 'viewer' ? `<button class="btn btn-sm" id="setMarket">${ic('edit')}Set price</button>` : ''}</div>
     <div class="market-top"><div><span class="kpi-label">1 $FTR</span><span class="market-price num">$${px(m.ftr_usd)}</span>
-      <span class="kpi-sub">Market cap ≈ ${usdBig(max * m.ftr_usd)} · £1 buys ${px(m.gbp_usd / m.ftr_usd)} $FTR</span></div>
+      <span class="kpi-sub">Market cap ≈ ${usdBig(max * m.ftr_usd)} · $1 buys ${px(1 / m.ftr_usd)} $FTR</span></div>
       <dl class="market-stats">
         <div><dt><i class="sw circ"></i>In wallets</dt><dd class="num">${compact(circ)}</dd></div>
         <div><dt><i class="sw tre"></i>Treasury</dt><dd class="num">${compact(tre)}</dd></div>
@@ -343,16 +343,15 @@ function marketCard(m) {
 function setMarketDialog(m) {
   const box = openDialog(`<h2>Set the $FTR price</h2>
     <p>Until the $FTR exchange is live, this is the price every share and claim is worked out at. Changing it reprices every player in $FTR straight away; their dollar values stay the same.</p>
-    <div class="grid-2"><div class="field"><label for="mk-p">1 $FTR in US$</label><input class="input num" id="mk-p" inputmode="decimal" value="${esc(m.ftr_usd)}"></div>
-      <div class="field"><label for="mk-g">£1 in US$</label><input class="input num" id="mk-g" inputmode="decimal" value="${esc(m.gbp_usd)}"></div></div>
+    <div class="field"><label for="mk-p">1 $FTR in US$</label><input class="input num" id="mk-p" inputmode="decimal" value="${esc(m.ftr_usd)}"></div>
     <div class="field"><label for="mk-w">Welcome grant for new accounts ($FTR, paid from the treasury)</label><input class="input num" id="mk-w" inputmode="numeric" value="${esc(Math.round(m.welcome_grant))}"></div>
     <p class="form-error" id="mk-err"></p>
     <div class="dialog-actions"><button class="btn btn-ghost" data-v="0">Cancel</button><button class="btn btn-primary" id="mk-save">Save</button></div>`);
   box.querySelector('[data-v="0"]').onclick = closeDialog;
   box.querySelector('#mk-save').onclick = async () => {
-    const pr = parseFloat(box.querySelector('#mk-p').value), g = parseFloat(box.querySelector('#mk-g').value), w = parseFloat(box.querySelector('#mk-w').value);
+    const pr = parseFloat(box.querySelector('#mk-p').value), w = parseFloat(box.querySelector('#mk-w').value);
     if (!(pr > 0)) { box.querySelector('#mk-err').textContent = 'Enter a price above $0.'; return; }
-    try { await api('ft_admin_set_market', { p_ftr_usd: pr, p_gbp_usd: g > 0 ? g : null, p_welcome: w >= 0 ? w : null });
+    try { await api('ft_admin_set_market', { p_ftr_usd: pr, p_welcome: w >= 0 ? w : null });
       setFx(pr); toast(`$FTR set to $${px(pr)}. Every player is repriced.`); closeDialog(); delete cache.overview; delete cache.players; route(); }
     catch (e) { box.querySelector('#mk-err').textContent = e.message; }
   };
@@ -1045,7 +1044,7 @@ const SAMPLE = (() => {
     { id: 4, action: 'player.pause', target: 'lst-FALOZ', detail: {}, created_at: iso(now - 4 * D), handle: 'sample_admin' },
     { id: 3, action: 'players.upsert', target: null, detail: { added: 15, updated: 0, skipped: 0 }, created_at: iso(now - 20 * D), handle: 'sample_admin' }
   ];
-  const market = { ftr_usd: 2, gbp_usd: 1.3372, welcome_grant: 1000 };
+  const market = { ftr_usd: 2, welcome_grant: 1000 };
   const note = (action, target, detail) => log.unshift({ id: log.length + 1, action, target, detail: detail || {}, created_at: iso(Date.now()), handle: 'sample_admin' });
   const clone = x => JSON.parse(JSON.stringify(x));
   const holdingsFor = m => claims.filter(c => c.handle === m.handle).map(c => ({ ticker: c.ticker, name: c.name, shares: c.shares, locked: 0, avg_cost: c.reference_value, price: shareFtr(byT(c.ticker).valuation_usd), value: c.shares * shareFtr(byT(c.ticker).valuation_usd) }))
@@ -1063,7 +1062,7 @@ const SAMPLE = (() => {
         days.push({ day: d0.toISOString(), claims: cs.length, paid: cs.reduce((t, c) => t + c.fee_paid, 0) });
       }
       const burnedAll = claims.reduce((t, c) => t + c.fee_burned, 0), circ = M.reduce((t, m) => t + m.balance + m.locked, 0);
-      return { ftr: { ftr_usd: market.ftr_usd, gbp_usd: market.gbp_usd, max_supply: 10000000, burned: burnedAll, circulating: circ,
+      return { ftr: { ftr_usd: market.ftr_usd, max_supply: 10000000, burned: burnedAll, circulating: circ,
                       treasury: 10000000 - burnedAll - circ, welcome_grant: market.welcome_grant },
         managers: M.length, managers_7d: M.filter(m => now - new Date(m.created_at) < 7 * D).length, suspended: M.filter(m => m.suspended).length,
         wallet_ftr: M.reduce((t, m) => t + m.balance, 0), locked_ftr: 0,
@@ -1122,8 +1121,8 @@ const SAMPLE = (() => {
           settled: es.filter(e => e.status === 'SETTLED').length, shares_staked: es.reduce((t, e) => t + e.staked_shares, 0), projected_fp: es.reduce((t, e) => t + e.projected_fp, 0) }; });
       return { by_status: by, matchdays: mds, entries: clone(entries) };
     },
-    ft_admin_set_market: ({ p_ftr_usd, p_gbp_usd, p_welcome }) => { const before = market.ftr_usd;
-      market.ftr_usd = p_ftr_usd; if (p_gbp_usd) market.gbp_usd = p_gbp_usd; if (p_welcome != null) market.welcome_grant = p_welcome;
+    ft_admin_set_market: ({ p_ftr_usd, p_welcome }) => { const before = market.ftr_usd;
+      market.ftr_usd = p_ftr_usd; if (p_welcome != null) market.welcome_grant = p_welcome;
       note('market.set', '$FTR', { from: before, to: p_ftr_usd }); return clone(market); },
     ft_admin_log: () => clone(log)
   };

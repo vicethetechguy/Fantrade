@@ -1800,11 +1800,11 @@ body.app .settings-card:hover{transform:none!important;border-color:rgba(24,0,17
 <button class="wallet-chip" type="button" data-wd="25000">25,000</button><button class="wallet-chip" type="button" id="wdMax">Max</button></div>
 <h2 class="wallet-section-title">Bank account</h2>
 <div class="wallet-field"><span class="wallet-label" id="wdCurrencyLabel">Currency</span><select id="wdCurrency" hidden tabindex="-1" aria-hidden="true">
-<option value="GBP">British pound · GBP</option><option value="NGN">Nigerian naira · NGN</option>
-<option value="EUR">Euro · EUR</option><option value="USD">US dollar · USD</option></select>
+<option value="USD">US dollar · USD</option><option value="NGN">Nigerian naira · NGN</option>
+<option value="EUR">Euro · EUR</option><option value="GBP">British pound · GBP</option></select>
 <button type="button" class="swap-pick" id="wdCurrencyBtn" aria-haspopup="dialog" aria-labelledby="wdCurrencyLabel wdCurrencyBtn"></button></div>
 <div class="wallet-field"><label for="wdName">Account holder name</label><input id="wdName" autocomplete="name" placeholder="As shown on your bank account" required maxlength="80"></div>
-<div class="wallet-field"><label for="wdBank">Bank name</label><input id="wdBank" autocomplete="off" placeholder="e.g. Barclays" required maxlength="60"></div>
+<div class="wallet-field"><label for="wdBank">Bank name</label><input id="wdBank" autocomplete="off" placeholder="e.g. Chase" required maxlength="60"></div>
 <div class="wallet-row"><div class="wallet-field"><label for="wdSort" id="wdSortLabel">Sort code</label><input id="wdSort" inputmode="numeric" autocomplete="off" placeholder="00-00-00" maxlength="11"></div>
 <div class="wallet-field"><label for="wdAcct">Account number</label><input id="wdAcct" inputmode="numeric" autocomplete="off" placeholder="8 digits" required maxlength="34"></div></div>
 <label class="wallet-check"><input type="checkbox" id="wdSave" checked> Save this bank account for next time</label>
@@ -2196,7 +2196,7 @@ var FT = (function(){
       balance: 1000000,
       locked: 0,
       seasonEarned: 19640,
-      gbpRate: 0.6686   // £1 = $1.3372 = 0.6686 $FTR at $2
+      usdRate: 0.5      // $1 buys 0.5 $FTR at $2 a $FTR
     },
     holdings: {
       'FSAKA': { n: 'Bukayo Saka', shares: 10000, avg: 4.1075, p: 6.3052, c: false, inClub: 'RW' },
@@ -2219,7 +2219,7 @@ var FT = (function(){
       { type: "BUY", asset: "FSAKA", shares: 10000, price: 6.3052, total: 63304, time: "Today, 14:22" },
       { type: "STAKE", asset: "FanPlay MD 07", shares: 1, price: 125, total: 125, time: "Yesterday, 19:10" },
       { type: "PAYOUT", asset: "Matchday 06 Settle", shares: 1, price: 310, total: 310, time: "Sep 08, 02:15" },
-      { type: "CONVERT", asset: "GBP Deposit (£1,000)", shares: 1000, price: 0.6686, total: 665.26, time: "Sep 07, 11:45" }
+      { type: "CONVERT", asset: "USD Deposit ($1,000)", shares: 1000, price: 0.5, total: 497.5, time: "Sep 07, 11:45" }
     ]
   };
 
@@ -2238,6 +2238,7 @@ var FT = (function(){
       st.demoGrant1M = true;
     }
     st.listedAssets = st.listedAssets || [];
+    if(st.wallet){ delete st.wallet.gbpRate; st.wallet.usdRate = 1 / FTR_USD; }
     if(!st.econV2){
       Object.keys(st.holdings || {}).forEach(function(t){
         var h = st.holdings[t], a = ASSETS.filter(function(x){ return x.t === t; })[0];
@@ -2246,7 +2247,7 @@ var FT = (function(){
         h.p = np;
       });
       st.listedAssets.forEach(function(a){ if(!a.v && Number(a.p) > 0){ a.v = Math.round(Number(a.p) * 0.10 * 1e7); } });
-      if(st.wallet){ st.wallet.gbpRate = 0.6686; }
+      if(st.wallet){ delete st.wallet.gbpRate; }
       st.econV2 = true;
     }
     delete st.clubs;
@@ -2315,7 +2316,11 @@ var FT = (function(){
       state.wallet.balance = Number(snap.wallet.balance) || 0;
       state.wallet.locked = Number(snap.wallet.locked) || 0;
       state.wallet.seasonEarned = Number(snap.wallet.season_earned) || 0;
-      state.wallet.gbpRate = Number(snap.wallet.gbp_rate) || state.wallet.gbpRate;
+      state.wallet.usdRate = Number(snap.wallet.usd_rate) || (1 / FTR_USD);
+    }
+    if(snap.market && Number(snap.market.ftr_usd) > 0 && Number(snap.market.ftr_usd) !== FTR_USD){
+      FTR_USD = Number(snap.market.ftr_usd); ftReprice();
+      try { localStorage.setItem('ft_market_v1', JSON.stringify(snap.market)); } catch(e){}
     }
     if(snap.holdings){
       var held = {};
@@ -2962,20 +2967,22 @@ var FT = (function(){
       window.dispatchEvent(new CustomEvent('fantrade:statechange', { detail: state }));
       return newEntry;
     },
-    convertGbp: function(gbpAmount){
-      var grossFtr = gbpAmount * state.wallet.gbpRate;
-      var fee = grossFtr * 0.005;
-      var netFtr = Math.round(grossFtr - fee);
+    /* Top up in dollars: $FTR at the live $FTR price, less 0.5%. */
+    convertUsd: function(usdAmount){
+      var rate = 1 / FTR_USD; state.wallet.usdRate = rate;
+      var grossFtr = Math.round(usdAmount * rate * 100) / 100;
+      var fee = Math.round(grossFtr * 0.5) / 100;
+      var netFtr = Math.round((grossFtr - fee) * 100) / 100;
       state.wallet.balance += netFtr;
       state.transactions.unshift({
         type: "CONVERT",
-        asset: "GBP Deposit (£" + gbpAmount.toLocaleString('en-US') + ")",
-        shares: gbpAmount,
-        price: state.wallet.gbpRate,
+        asset: "USD Deposit ($" + usdAmount.toLocaleString('en-US') + ")",
+        shares: usdAmount,
+        price: rate,
         total: netFtr,
         time: "Just now"
       });
-      push('ft_convert_gbp', { p_gbp: gbpAmount });
+      push('ft_convert_usd', { p_usd: usdAmount });
       save(state);
       FT.syncUI();
       window.dispatchEvent(new CustomEvent('fantrade:statechange', { detail: state }));
@@ -2984,7 +2991,7 @@ var FT = (function(){
     /* `meta` carries the bank details for a withdrawal; a transfer routes by handle. */
     sendFtr: function(amount, dest, kind, meta){
       if(amount <= 0) throw new Error("Enter an amount to send.");
-      var fee = kind === 'withdraw' ? Math.max(50, Math.round(amount * 0.005)) : 0;
+      var fee = kind === 'withdraw' ? Math.max(Math.ceil(500 / FTR_USD) / 100, Math.round(amount * 0.5) / 100) : 0;   // 0.5%, at least $5
       if(state.wallet.balance < amount + fee){
         throw new Error("Insufficient $FTR. You have " + state.wallet.balance.toLocaleString('en-US')
           + " and this needs " + (amount + fee).toLocaleString('en-US') + ".");
@@ -2995,7 +3002,7 @@ var FT = (function(){
         asset: dest, shares: 1, price: amount, total: amount + fee, time: "Just now"
       });
       if(kind === 'withdraw' && meta){
-        push('ft_withdraw_to_bank', { p_amount: amount, p_currency: meta.currency || 'GBP',
+        push('ft_withdraw_to_bank', { p_amount: amount, p_currency: meta.currency || 'USD',
           p_holder: meta.holder, p_bank: meta.bank, p_account: meta.account, p_save: meta.save !== false });
       } else if(kind !== 'withdraw' && /^@/.test(String(dest))){
         push('ft_transfer_ftr', { p_handle: String(dest), p_amount: amount });
@@ -3247,16 +3254,17 @@ function ledgerRow(t){var down=['BUY','STAKE','SEND','WITHDRAW'].includes(t.type
   return '<div class="wallet-ledger-row"><span class="ledger-icon"><svg class="ic" aria-hidden="true"><use href="#i-'+(neutral?'swap':'arrow')+'"/></svg></span><div><b>'+esc(labels[t.type]||t.type)+'</b><small>'+esc(t.asset)+'</small><small>'+esc(t.time)+'</small></div><div class="ledger-amount '+(neutral?'':down?'':'positive')+'">'+(neutral?'Value ':down?'−':'+')+fmt(t.total)+' $FTR'+(neutral?'<small>No cash transfer</small>':'')+'</div></div>';
 }
 
-var RATES={GBP:1,NGN:2050,EUR:1.1664,USD:1.3372},SYMBOL={GBP:'£',NGN:'₦',EUR:'€',USD:'$'},
-CURS={GBP:{n:'British pound',sub:'GBP payout account'},NGN:{n:'Nigerian naira',sub:'NGN bank account'},EUR:{n:'Euro',sub:'EUR or IBAN account'},USD:{n:'US dollar',sub:'USD payout account'}};
-function wdQuote(){var n=amount('wdAmount'),fee=valid(n)?Math.max(50,Math.round(n*.005)):0,cur=el('wdCurrency').value,
-  gbp=valid(n)?n/FT.getState().wallet.gbpRate:0;return {n:n,fee:fee,total:n+fee,cur:cur,out:gbp*RATES[cur]};}
+/* Local currency per US dollar (Sept 2026: EUR/USD 1.1464, GBP/USD 1.3372). */
+var RATES={USD:1,NGN:1533,EUR:0.8723,GBP:0.7478},SYMBOL={GBP:'£',NGN:'₦',EUR:'€',USD:'$'},
+CURS={USD:{n:'US dollar',sub:'USD payout account'},NGN:{n:'Nigerian naira',sub:'NGN bank account'},EUR:{n:'Euro',sub:'EUR or IBAN account'},GBP:{n:'British pound',sub:'GBP payout account'}};
+function wdQuote(){var n=amount('wdAmount'),fee=valid(n)?Math.max(Math.ceil(500/FTR_USD)/100,Math.round(n*.5)/100):0,cur=el('wdCurrency').value,
+  usd=valid(n)?n*FTR_USD:0;return {n:n,fee:fee,total:n+fee,cur:cur,out:usd*RATES[cur]};}
 function wdCalc(){var q=wdQuote(),bal=FT.getState().wallet.balance;
   el('wdFee').textContent=valid(q.n)?fmt(q.fee)+' $FTR':'—';
   el('wdTotal').textContent=valid(q.n)?(q.total>bal?'More than your balance':fmt(q.total)+' $FTR'):'—';
   el('wdReceive').textContent=valid(q.n)?'≈ '+SYMBOL[q.cur]+fmt(Math.round(q.out*100)/100):'—';}
-function wdBankFields(){var gb=el('wdCurrency').value==='GBP';el('wdSortLabel').textContent=gb?'Sort code':'Bank code (optional)';
-  el('wdSort').placeholder=gb?'00-00-00':'Optional';el('wdAcct').placeholder=gb?'8 digits':el('wdCurrency').value==='NGN'?'10 digits (NUBAN)':'Account number or IBAN';}
+function wdBankFields(){var c=el('wdCurrency').value,gb=c==='GBP',us=c==='USD';el('wdSortLabel').textContent=gb?'Sort code':us?'Routing number (optional)':'Bank code (optional)';
+  el('wdSort').placeholder=gb?'00-00-00':us?'9 digits':'Optional';el('wdAcct').placeholder=gb?'8 digits':el('wdCurrency').value==='NGN'?'10 digits (NUBAN)':'Account number or IBAN';}
 function currencyCard(code){var cur=CURS[code];return '<span class="wallet-currency-dot">'+SYMBOL[code]+'</span><span class="swap-pick-text"><b>'+esc(cur.n)+'</b><small>'+code+' · '+cur.sub+'</small></span><svg class="ic swap-pick-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>';}
 function syncCurrencyPick(){el('wdCurrencyBtn').innerHTML=currencyCard(el('wdCurrency').value);}
 var wdCurrencyPicker=el('wdCurrencyPicker');
@@ -3274,7 +3282,7 @@ el('wdCurrencyPickerClose').addEventListener('click',function(){wdCurrencyPicker
 wdCurrencyPicker.addEventListener('close',function(){document.body.classList.remove('asset-picker-open');el('wdCurrencyBtn').focus();});
 wdCurrencyPicker.addEventListener('click',function(e){var r=wdCurrencyPicker.getBoundingClientRect();if(e.target===wdCurrencyPicker&&(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom))wdCurrencyPicker.close();});
 document.querySelectorAll('[data-wd]').forEach(b=>b.onclick=function(){el('wdAmount').value=b.dataset.wd;wdCalc();});
-el('wdMax').onclick=function(){var bal=FT.getState().wallet.balance,n=Math.floor(Math.max(0,bal-Math.max(50,bal*.005))/1.005);el('wdAmount').value=n>0?n:'';wdCalc();};
+el('wdMax').onclick=function(){var bal=FT.getState().wallet.balance,n=Math.floor(Math.max(0,bal-Math.max(5/FTR_USD,bal*.005))/1.005);el('wdAmount').value=n>0?n:'';wdCalc();};
 function digits(v){return (v||'').replace(/[\s-]/g,'');}
 el('withdrawForm').onsubmit=function(e){e.preventDefault();status('');var q=wdQuote(),cur=q.cur,
   name=el('wdName').value.trim(),bank=el('wdBank').value.trim(),sort=digits(el('wdSort').value),acct=digits(el('wdAcct').value);

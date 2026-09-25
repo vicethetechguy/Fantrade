@@ -2084,7 +2084,7 @@ SECTIONS["wallet"] = T('<div class="bezel flat sec-card" data-reveal><div class=
             '<div style="display:flex;gap:10px;margin-top:18px;flex-wrap:wrap">@@@@</div>'
             '</div></div>',
             ic("wallet", "ic-lg"),
-            sel("Payout currency", "stCur", ["*GBP · £", "NGN · ₦", "EUR · €", "USD · $"], "coin"),
+            sel("Payout currency", "stCur", ["*USD · $", "NGN · ₦", "EUR · €", "GBP · £"], "coin"),
             sel("Payout method", "stMethod", ["*Bank transfer", "Card refund", "On-chain wallet"], "bank"),
             tf("Payout account", "stAcct", "text", "Sort code and account number", "", "",
                "Prototype build — no real payout details are stored."),
@@ -2111,7 +2111,7 @@ SECTIONS["play"] = T('<div class="bezel flat sec-card" data-reveal><div class="c
             ic("scales", "ic-lg"),
             tf("Weekly stake cap ($FTR)", "stCap", "text", "5,000", "lock", "",
                "Enter a number between 100 and 100,000."),
-            sel("Deposit limit", "stDep", ["*No limit", "£250 per month", "£500 per month", "£1,000 per month"],
+            sel("Deposit limit", "stDep", ["*No limit", "$250 per month", "$500 per month", "$1,000 per month"],
                 "coin"),
             btn("Save limits", tag="button", extra='id="stSaveLimits"'),
             ARROW)
