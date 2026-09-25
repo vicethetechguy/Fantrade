@@ -29,6 +29,7 @@ order, each in its own query:
 | 12 | `12_dollars.sql` | Dollars everywhere: top-ups are bought in dollars at the live $FTR price (`ft_convert_usd`), withdrawals default to a dollar account, the wallet's rate is $FTR per $1, and the pound rate is gone |
 | 13 | `13_coaches_to_claim.sql` | Five coaches cleared for claiming (Luis Enrique, Diego Simeone, Hansi Flick, Carlo Ancelotti, Emma Hayes), each with an open listing, so they show under Coaches in the admin and in the home page claim search |
 | 14 | `14_trade_by_ticker.sql` | Trading from the app works: buy, sell, swap, Dream Club slots and FanPlay share stakes accept a share's F-ticker (FSAKA) as well as its id ($Saka), and the account snapshot carries the ticker. Without it every trade is refused with "That asset is not trading" |
+| 15 | `15_optional_photo_credit.sql` | Optional photo credits for player & coach profiles in the admin: removes mandatory credit/license validation so photos can be uploaded and saved friction-free |
 
 They are safe to re-run: the tables use `if not exists`, the functions are
 `create or replace`, and the seed upserts on the asset (and listing) id. Re-run them in

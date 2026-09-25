@@ -22,7 +22,7 @@ const LEVEL_SHARES = { 1: 500000, 2: 1000000 };
 const app = document.getElementById('app');
 let sb = null, mode = 'live', me = null, sessionEmail = '';
 const cache = {};
-const ui = { players: { status: 'all', q: '' }, claims: { q: '' }, managers: { q: '' }, fanplay: { status: 'all' } };
+const ui = { players: { status: 'all', q: '' }, coaches: { status: 'all', q: '' }, claims: { q: '' }, managers: { q: '' }, fanplay: { status: 'all' } };
 
 /* ── Small helpers ─────────────────────────────────────────────────── */
 const esc = v => String(v == null ? '' : v).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -75,6 +75,7 @@ const P = {
   managers: '<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.6 3.4-5.5 6.5-5.5s5.7 1.9 6.5 5.5"/><path d="M16 4.6a3.5 3.5 0 010 6.8M18 14.8c1.9.7 3.1 2.4 3.5 5.2"/>',
   fanplay: '<circle cx="12" cy="12" r="9"/><path d="M12 7.5l3.8 2.8-1.4 4.5H9.6l-1.4-4.5z"/><path d="M12 3v4.5M20.6 9.6l-4.8.7M17.3 19.3l-2.9-4.5M6.7 19.3l2.9-4.5M3.4 9.6l4.8.7"/>',
   log: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  coaches: '<path d="M4 9h9a4 4 0 110 8H9a5 5 0 01-5-5z"/><circle cx="13" cy="13" r="1.2"/><path d="M13 9V5h-3M4 9V6"/>',
   upload: '<path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2"/>',
   download: '<path d="M12 4v12M7 11l5 5 5-5"/><path d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2"/>',
   plus: '<path d="M12 5v14M5 12h14"/>',
@@ -225,7 +226,7 @@ async function signOut() {
 
 /* ── The shell ─────────────────────────────────────────────────────── */
 const NAV = [
-  ['overview', 'Overview', 'overview'], ['players', 'Players', 'players'], ['claims', 'Claims', 'claims'],
+  ['overview', 'Overview', 'overview'], ['players', 'Players', 'players'], ['coaches', 'Coaches', 'coaches'], ['claims', 'Claims', 'claims'],
   ['managers', 'Managers', 'managers'], ['fanplay', 'FanPlay', 'fanplay'], ['log', 'Activity log', 'log']
 ];
 function startShell() {
@@ -265,7 +266,9 @@ function wireBanner() { const b = document.getElementById('leaveSample'); if (b)
 async function refreshCounts() {
   try {
     const o = cache.overview || (cache.overview = await api('ft_admin_overview'));
-    setCount('players', o.open_to_claim); setCount('fanplay', o.fanplay_pending);
+    setCount('fanplay', o.fanplay_pending);
+    if (!cache.players) cache.players = await api('ft_admin_players');
+    kindCounts();
   } catch (e) { /* counts are a nicety */ }
 }
 function setCount(k, n) { const el = document.querySelector(`#nav a[data-k="${k}"] .count`); if (!el) return; el.hidden = !n; el.textContent = n; }
@@ -288,7 +291,7 @@ VIEWS.overview = async view => {
   loading(view, 'Overview');
   const o = cache.overview = await api('ft_admin_overview');
   const m = o.ftr || null; if (m) setFx(m.ftr_usd);
-  setCount('players', o.open_to_claim); setCount('fanplay', o.fanplay_pending);
+  setCount('fanplay', o.fanplay_pending); if (cache.players) kindCounts();
   const attn = [
     [o.fanplay_pending, 'FanPlay entries waiting on results', '#/fanplay'],
     [o.paused, o.paused === 1 ? 'player paused from claiming' : 'players paused from claiming', '#/players'],
@@ -329,7 +332,7 @@ function marketCard(m) {
   return `<section class="card market-card"><div class="card-head"><div><h2>$FTR market</h2><p>Capped at ${compact(max)} $FTR. Every player's $FTR price follows this.</p></div>
       ${me.role !== 'viewer' ? `<button class="btn btn-sm" id="setMarket">${ic('edit')}Set price</button>` : ''}</div>
     <div class="market-top"><div><span class="kpi-label">1 $FTR</span><span class="market-price num">$${px(m.ftr_usd)}</span>
-      <span class="kpi-sub">Market cap ≈ ${usdBig(max * m.ftr_usd)} · £1 buys ${px(m.gbp_usd / m.ftr_usd)} $FTR</span></div>
+      <span class="kpi-sub">Market cap ≈ ${usdBig(max * m.ftr_usd)} · $1 buys ${px(1 / m.ftr_usd)} $FTR</span></div>
       <dl class="market-stats">
         <div><dt><i class="sw circ"></i>In wallets</dt><dd class="num">${compact(circ)}</dd></div>
         <div><dt><i class="sw tre"></i>Treasury</dt><dd class="num">${compact(tre)}</dd></div>
@@ -343,16 +346,15 @@ function marketCard(m) {
 function setMarketDialog(m) {
   const box = openDialog(`<h2>Set the $FTR price</h2>
     <p>Until the $FTR exchange is live, this is the price every share and claim is worked out at. Changing it reprices every player in $FTR straight away; their dollar values stay the same.</p>
-    <div class="grid-2"><div class="field"><label for="mk-p">1 $FTR in US$</label><input class="input num" id="mk-p" inputmode="decimal" value="${esc(m.ftr_usd)}"></div>
-      <div class="field"><label for="mk-g">£1 in US$</label><input class="input num" id="mk-g" inputmode="decimal" value="${esc(m.gbp_usd)}"></div></div>
+    <div class="field"><label for="mk-p">1 $FTR in US$</label><input class="input num" id="mk-p" inputmode="decimal" value="${esc(m.ftr_usd)}"></div>
     <div class="field"><label for="mk-w">Welcome grant for new accounts ($FTR, paid from the treasury)</label><input class="input num" id="mk-w" inputmode="numeric" value="${esc(Math.round(m.welcome_grant))}"></div>
     <p class="form-error" id="mk-err"></p>
     <div class="dialog-actions"><button class="btn btn-ghost" data-v="0">Cancel</button><button class="btn btn-primary" id="mk-save">Save</button></div>`);
   box.querySelector('[data-v="0"]').onclick = closeDialog;
   box.querySelector('#mk-save').onclick = async () => {
-    const pr = parseFloat(box.querySelector('#mk-p').value), g = parseFloat(box.querySelector('#mk-g').value), w = parseFloat(box.querySelector('#mk-w').value);
+    const pr = parseFloat(box.querySelector('#mk-p').value), w = parseFloat(box.querySelector('#mk-w').value);
     if (!(pr > 0)) { box.querySelector('#mk-err').textContent = 'Enter a price above $0.'; return; }
-    try { await api('ft_admin_set_market', { p_ftr_usd: pr, p_gbp_usd: g > 0 ? g : null, p_welcome: w >= 0 ? w : null });
+    try { await api('ft_admin_set_market', { p_ftr_usd: pr, p_welcome: w >= 0 ? w : null });
       setFx(pr); toast(`$FTR set to $${px(pr)}. Every player is repriced.`); closeDialog(); delete cache.overview; delete cache.players; route(); }
     catch (e) { box.querySelector('#mk-err').textContent = e.message; }
   };
@@ -404,38 +406,62 @@ function humanAction(a) {
 
 /* ── Players (eligibility) ─────────────────────────────────────────── */
 const STATUS_LABEL = { open: 'Open to claim', paused: 'Paused', claimed: 'Claimed', trading: 'Trading' };
+/* Players and coaches share one list and one editor; each has its own page. */
+const isCoach = p => p.kind === 'COACH' || p.position === 'MGR';
+const KIND = {
+  PLAYER: { key: 'players', one: 'player', many: 'players', Title: 'Players', col: 'Player',
+    sub: 'Every footballer on Fantrade: their profile, photo and price. A player has to be on this list, open to claim, before anyone can launch their Activity Shares. Click anyone, claimed or not, to edit them.' },
+  COACH: { key: 'coaches', one: 'coach', many: 'coaches', Title: 'Coaches', col: 'Coach',
+    sub: 'Every coach on Fantrade: their profile, photo and price. Coaches are claimed and traded just like players. Click anyone, claimed or not, to edit them.' }
+};
+function kindCounts() {
+  const all = cache.players || [];
+  setCount('players', all.filter(p => !isCoach(p) && p.status === 'open').length);
+  setCount('coaches', all.filter(p => isCoach(p) && p.status === 'open').length);
+}
 VIEWS.players = async view => {
   loading(view, 'Players');
-  cache.players = await api('ft_admin_players');
-  drawPlayers(view);
+  cache.players = await api('ft_admin_players'); kindCounts();
+  drawPlayers(view, 'PLAYER');
 };
-function drawPlayers(view) {
-  const all = cache.players || [], st = ui.players;
+VIEWS.coaches = async view => {
+  loading(view, 'Coaches');
+  cache.players = await api('ft_admin_players'); kindCounts();
+  drawPlayers(view, 'COACH');
+};
+function drawPlayers(view, kind) {
+  kind = kind || (location.hash.startsWith('#/coaches') ? 'COACH' : 'PLAYER');
+  const K = KIND[kind], st = ui[K.key];
+  const all = (cache.players || []).filter(p => (kind === 'COACH') === isCoach(p));
   const counts = { all: all.length, open: 0, paused: 0, claimed: 0, trading: 0 }; all.forEach(p => counts[p.status]++);
   const q = st.q.toLowerCase();
   const rows = all.filter(p => (st.status === 'all' || p.status === st.status)
     && (!q || [p.name, p.known_as, p.ticker, p.club, p.league, p.country].join(' ').toLowerCase().includes(q)));
   const canWrite = me.role !== 'viewer';
-  view.innerHTML = head('Players', 'Every footballer on Fantrade: their profile, photo and price. A player has to be on this list, open to claim, before anyone can launch their Activity Shares.',
+  view.innerHTML = head(K.Title, K.sub,
     `<button class="btn" id="tmpl">${ic('download')}Template</button>
-     ${canWrite ? `<button class="btn" id="upl">${ic('upload')}Upload CSV</button><button class="btn btn-primary" id="add">${ic('plus')}Add player</button>` : ''}`) + `
+     ${canWrite ? `<button class="btn" id="upl">${ic('upload')}Upload CSV</button><button class="btn btn-primary" id="add">${ic('plus')}Add ${K.one}</button>` : ''}`) + `
     <div class="toolbar">
-      <label class="search">${ic('search')}<span class="sr">Search players</span><input class="input" id="pq" type="search" placeholder="Search name, ticker or club" value="${esc(st.q)}"></label>
+      <label class="search">${ic('search')}<span class="sr">Search ${K.many}</span><input class="input" id="pq" type="search" placeholder="Search name, ticker or club" value="${esc(st.q)}"></label>
       <div class="chips" role="group" aria-label="Status">${['all', 'open', 'paused', 'claimed', 'trading'].map(k =>
         `<button class="chip" data-s="${k}" aria-pressed="${st.status === k}">${k === 'all' ? 'All' : STATUS_LABEL[k]} <i>${counts[k]}</i></button>`).join('')}</div>
     </div>
     <div class="table-wrap"><div class="table-scroll"><table class="t">
-      <thead><tr><th>Player</th><th>Club</th><th>Pos</th><th class="r">Valuation</th><th class="r">5% claim costs</th><th>Status</th><th class="r"><span class="sr">Actions</span></th></tr></thead>
-      <tbody>${rows.map(p => playerRow(p, canWrite)).join('') || `<tr><td colspan="7"><div class="empty"><b>No players here.</b>${all.length ? 'Try another filter or search.' : 'Upload a CSV or add your first player.'}</div></td></tr>`}</tbody>
-    </table></div><div class="table-foot">${rows.length} of ${all.length} players · 10,000,000 shares each · priced at 1 $FTR = $${px(FTR_USD)}</div></div>`;
+      <thead><tr><th>${K.col}</th><th>${kind === 'COACH' ? 'Team' : 'Club'}</th><th>Pos</th><th class="r">Valuation</th><th class="r">5% claim costs</th><th>Status</th><th class="r"><span class="sr">Actions</span></th></tr></thead>
+      <tbody>${rows.map(p => playerRow(p, canWrite)).join('') || `<tr><td colspan="7"><div class="empty"><b>No ${K.many} here.</b>${all.length ? 'Try another filter or search.' : `Upload a CSV or add your first ${K.one}.`}</div></td></tr>`}</tbody>
+    </table></div><div class="table-foot">${rows.length} of ${all.length} ${K.many} · 10,000,000 shares each · priced at 1 $FTR = $${px(FTR_USD)}</div></div>`;
   wireBanner();
   const pq = document.getElementById('pq');
-  pq.oninput = debounce(() => { st.q = pq.value; drawPlayers(view); const n = document.getElementById('pq'); n.focus(); n.setSelectionRange(n.value.length, n.value.length); }, 180);
-  view.querySelectorAll('[data-s]').forEach(b => b.onclick = () => { st.status = b.dataset.s; drawPlayers(view); });
+  pq.oninput = debounce(() => { st.q = pq.value; drawPlayers(view, kind); const n = document.getElementById('pq'); n.focus(); n.setSelectionRange(n.value.length, n.value.length); }, 180);
+  view.querySelectorAll('[data-s]').forEach(b => b.onclick = () => { st.status = b.dataset.s; drawPlayers(view, kind); });
   document.getElementById('tmpl').onclick = downloadTemplate;
-  if (canWrite) { document.getElementById('upl').onclick = openUpload; document.getElementById('add').onclick = () => editPlayer(null); }
+  if (canWrite) { document.getElementById('upl').onclick = openUpload; document.getElementById('add').onclick = () => editPlayer(null, kind); }
   view.querySelector('tbody').onclick = async e => {
-    const b = e.target.closest('[data-act]'); if (!b) return;
+    // A click anywhere on a row opens the editor; the buttons do their own thing.
+    const tr = e.target.closest('tr[data-id]');
+    let b = e.target.closest('[data-act]');
+    if (!b && tr && !e.target.closest('a,button')) b = { dataset: { act: 'edit', id: tr.dataset.id } };
+    if (!b) return;
     const p = all.find(x => (x.listing_id || x.ticker) === b.dataset.id); if (!p) return;
     if (b.dataset.act === 'edit') editPlayer(p);
     if (b.dataset.act === 'pause' || b.dataset.act === 'reopen') {
@@ -451,18 +477,18 @@ function drawPlayers(view) {
     }
   };
 }
-async function reloadPlayers() { cache.players = await api('ft_admin_players'); const v = document.getElementById('view'); if (location.hash.startsWith('#/players')) drawPlayers(v); }
+async function reloadPlayers() { cache.players = await api('ft_admin_players'); kindCounts(); const v = document.getElementById('view'); if (location.hash.startsWith('#/players')) drawPlayers(v, 'PLAYER'); if (location.hash.startsWith('#/coaches')) drawPlayers(v, 'COACH'); }
 function playerRow(p, canWrite) {
   const launched = p.status === 'claimed' || p.status === 'trading', id = esc(p.listing_id || p.ticker);
   const edit = `<button class="icon-btn" data-act="edit" data-id="${id}" title="Edit profile" aria-label="Edit ${esc(p.name)}">${ic('edit')}</button>`;
   const acts = !canWrite ? '' : launched ? edit : edit + `
     <button class="icon-btn" data-act="${p.status === 'open' ? 'pause' : 'reopen'}" data-id="${id}" title="${p.status === 'open' ? 'Pause' : 'Reopen'}" aria-label="${p.status === 'open' ? 'Pause' : 'Reopen'} ${esc(p.name)}">${ic(p.status === 'open' ? 'pause' : 'play')}</button>
     <button class="icon-btn" data-act="remove" data-id="${id}" title="Remove" aria-label="Remove ${esc(p.name)}">${ic('trash')}</button>`;
-  const bits = [p.country, p.gender === 'W' ? "Women's" : '', p.kind === 'COACH' ? 'Coach' : '', ageFrom(p.date_of_birth) ? ageFrom(p.date_of_birth) + ' yrs' : ''].filter(Boolean).join(' · ');
+  const bits = [p.country, p.gender === 'W' ? "Women's" : '', ageFrom(p.date_of_birth) ? ageFrom(p.date_of_birth) + ' yrs' : ''].filter(Boolean).join(' · ');
   const missing = !p.photo_url || !p.about || !p.country;
   if (p.ftr_usd) setFx(p.ftr_usd);
   const val = Number(p.valuation_usd) || 0, price = val ? shareFtr(val) : (Number(p.price) || 0);
-  return `<tr>
+  return `<tr class="row-link" data-id="${id}" title="Edit ${esc(p.name)}">
     <td><div class="who">${playerAvatar(p)}<div class="who-text"><b>${esc(p.known_as || p.name)}${missing ? ` <span class="dot-warn" title="Profile incomplete: ${[!p.photo_url && 'photo', !p.about && 'about', !p.country && 'country'].filter(Boolean).join(', ')}"></span>` : ''}</b>
       <small><span class="tick">${esc(p.ticker)}</span>${bits ? ' ' + esc(bits) : ''}</small></div></div></td>
     <td><div class="who-text"><b>${esc(p.club || '—')}</b><small>${esc(p.league || '')}</small></div></td>
@@ -508,14 +534,15 @@ async function uploadPhoto(blob, ticker) {
   if (error) throw new Error(/bucket/i.test(error.message) ? 'Photo storage is not set up yet. Run supabase/10_player_profiles.sql.' : error.message);
   return sb.storage.from('player-photos').getPublicUrl(path).data.publicUrl;
 }
-function editPlayer(p) {
+function editPlayer(p, kind) {
   const isNew = !p;
-  p = p || { ticker: 'F', name: '', known_as: '', kind: 'PLAYER', gender: 'M', club: '', league: '', position: 'FWD', valuation_usd: '', status: 'new' };
+  kind = kind || (p && isCoach(p) ? 'COACH' : 'PLAYER');
+  p = p || { ticker: 'F', name: '', known_as: '', kind, gender: 'M', club: '', league: '', position: kind === 'COACH' ? 'MGR' : 'FWD', valuation_usd: '', status: 'new' };
   const launched = p.status === 'claimed' || p.status === 'trading';
   const photo = { url: p.photo_url || '', blob: null, removed: false };
   const opt = (list, cur) => list.map(([v, l]) => `<option value="${v}"${cur === v ? ' selected' : ''}>${l}</option>`).join('');
   const d = openDrawer(`
-    <div class="drawer-head"><div><h2>${isNew ? 'Add a player' : esc(p.name)}</h2>
+    <div class="drawer-head"><div><h2>${isNew ? (kind === 'COACH' ? 'Add a coach' : 'Add a player') : esc(p.name)}</h2>
       <p>${isNew ? 'They go on the list, open to claim, as soon as you save.' : launched ? 'Already launched: the profile can change, the price is set by the market.' : 'Changes apply straight away.'}</p></div>
       <button class="icon-btn" data-close aria-label="Close">${ic('x')}</button></div>
     <form class="drawer-body" id="pf" novalidate>
@@ -526,9 +553,6 @@ function editPlayer(p) {
             <button type="button" class="btn btn-ghost btn-sm" id="phRemove"${photo.url ? '' : ' hidden'}>${ic('trash')}Remove</button></div>
             <p class="hint" style="margin:8px 0 0">JPG, PNG or WebP. A head-and-shoulders shot works best. It's resized to 720px and location data is removed.</p></div>
         </div>
-        <div class="field" style="margin-top:14px"><label for="f-credit">Photo credit</label><input class="input" id="f-credit" value="${esc(p.photo_credit || '')}" placeholder="e.g. Jane Smith / Wikimedia Commons, CC BY-SA 4.0"></div>
-        <div class="field"><label for="f-source">Where it came from (link, optional)</label><input class="input" id="f-source" value="${esc(p.photo_source || '')}" placeholder="https://"></div>
-        <label class="check" id="phRightsRow" hidden><input type="checkbox" id="f-rights"><span>Fantrade has the right to use this photo: we took it, bought it, or its licence allows this use with the credit above.</span></label>
       </div>
       <div class="section"><h3>Identity</h3>
         <div class="field"><label for="f-name">Full name</label><input class="input" id="f-name" required value="${esc(p.name)}" placeholder="e.g. Khadija Shaw"></div>
@@ -580,11 +604,10 @@ function editPlayer(p) {
     $('#phPrev').innerHTML = photo.url && !photo.removed ? `<img src="${esc(photo.url)}" alt="">` : avatar(name, 96);
     $('#phPickTxt').textContent = photo.url && !photo.removed ? 'Replace photo' : 'Upload photo';
     $('#phRemove').hidden = !(photo.url && !photo.removed);
-    $('#phRightsRow').hidden = !photo.blob;
   };
   const takeFile = async f => {
     if (!f) return;
-    try { photo.blob = await shrinkImage(f); photo.url = URL.createObjectURL(photo.blob); photo.removed = false; paintPhoto(); $('#f-credit').focus(); }
+    try { photo.blob = await shrinkImage(f); photo.url = URL.createObjectURL(photo.blob); photo.removed = false; paintPhoto(); }
     catch (e) { toast(e.message, true); }
   };
   $('#phPick').onclick = () => $('#phFile').click();
@@ -615,14 +638,10 @@ function editPlayer(p) {
     const row = { ticker: v('#f-ticker').toUpperCase(), name: v('#f-name'), known_as: v('#f-known'), kind: $('#f-kind').value,
       gender: $('#f-gender').value, position: $('#f-pos').value, country: v('#f-country'), date_of_birth: v('#f-dob'),
       shirt_number: v('#f-num'), height_cm: v('#f-height'), preferred_foot: $('#f-foot').value, club: v('#f-club'), league: v('#f-league'),
-      about: v('#f-about'), photo_credit: v('#f-credit'), photo_source: v('#f-source') };
+      about: v('#f-about'), photo_credit: p.photo_credit || 'Official', photo_source: p.photo_source || '' };
     row.valuation_usd = v('#f-price').replace(/[$,\s]/g, ''); row.valuation_source = v('#f-vsrc');
     if (launched && !row.valuation_usd) delete row.valuation_usd;
-    const hasPhoto = (photo.blob || photo.url) && !photo.removed;
     let problem = validateRow(row, launched);
-    if (!problem && hasPhoto && row.photo_credit.length < 3) problem = 'Add a photo credit: who took it, and the licence.';
-    if (!problem && photo.blob && !$('#f-rights').checked) problem = 'Confirm that Fantrade has the right to use this photo.';
-    if (!problem && row.photo_source && !/^https:\/\//.test(row.photo_source)) problem = 'The photo link must start with https://';
     if (problem) { err.textContent = problem; return; }
     const btn = $('#f-save'); btn.disabled = true; err.textContent = '';
     try {
@@ -655,7 +674,6 @@ function validateRow(r, launched) {
   if (r.height_cm && !(+r.height_cm >= 140 && +r.height_cm <= 220)) return 'Height must be in centimetres, 140 to 220.';
   if (r.about && r.about.length > 800) return 'About is longer than 800 characters.';
   if (r.photo_url && !/^https:\/\//.test(r.photo_url)) return 'Photo link must start with https://';
-  if (r.photo_url && !r.photo_credit) return 'A photo needs a photo_credit.';
   return '';
 }
 
@@ -1018,6 +1036,16 @@ const SAMPLE = (() => {
    ['FRUSS', 'Alessia Russo', 'Arsenal', 'WSL', 'FWD', 38.9, '', 'England']].forEach(([t, n, c, l, pos, v, ph, co]) => players.push({
     listing_id: null, asset_id: '$' + t, ticker: t, name: n, known_as: '', kind: 'PLAYER', gender: WOMEN.includes(t) ? 'W' : 'M', club: c, league: l,
     position: pos, valuation_usd: valOf(t, v), valuation_source: 'Transfermarkt, Sep 2026', status: 'trading', country: co, photo_url: ph, photo_credit: ph ? 'Wikimedia Commons (see attribution.json)' : '' }));
+  // Coaches: five cleared to claim, four already trading.
+  [['FLENR', 'Luis Enrique', 'Paris Saint-Germain', 'Ligue 1', 'Spain', 26e6, 'M'], ['FSIME', 'Diego Simeone', 'Atlético Madrid', 'La Liga', 'Argentina', 20e6, 'M'],
+   ['FFLCK', 'Hansi Flick', 'Barcelona', 'La Liga', 'Germany', 24e6, 'M'], ['FANCE', 'Carlo Ancelotti', 'Brazil', 'International', 'Italy', 22e6, 'M'],
+   ['FHAYS', 'Emma Hayes', 'United States', 'International', 'England', 9e6, 'W']].forEach(([t, n, c, l, co, v, g]) => players.push({
+    listing_id: 'lst-' + t, asset_id: '$' + t, ticker: t, name: n, known_as: '', kind: 'COACH', gender: g, club: c, league: l, position: 'MGR', country: co,
+    valuation_usd: v, valuation_source: 'Fantrade estimate: coaches have no transfer-market value', status: 'open', claimed_by: null, claimed_at: null, created_at: iso(now - 6 * D) }));
+  [['FARTA', 'Mikel Arteta', 'Arsenal', 'Premier League', 'Spain', 22.05e6, 'M'], ['FPEP', 'Pep Guardiola', 'Manchester City', 'Premier League', 'Spain', 29.6e6, 'M'],
+   ['FMARS', 'Enzo Maresca', 'Chelsea', 'Premier League', 'Italy', 18.3e6, 'M'], ['FWIEG', 'Sarina Wiegman', 'England', 'International', 'Netherlands', 26.8e6, 'W']].forEach(([t, n, c, l, co, v, g]) => players.push({
+    listing_id: null, asset_id: '$' + t, ticker: t, name: n, known_as: '', kind: 'COACH', gender: g, club: c, league: l, position: 'MGR', country: co,
+    valuation_usd: v, valuation_source: 'Fantrade estimate: coaches have no transfer-market value', status: 'trading' }));
   const byT = t => players.find(p => p.ticker === t), byH = h => M.find(m => m.handle === h);
   const claims = [];
   claimsDef.forEach(([t, h, lvl, yrs, daysAgo]) => {
@@ -1045,7 +1073,7 @@ const SAMPLE = (() => {
     { id: 4, action: 'player.pause', target: 'lst-FALOZ', detail: {}, created_at: iso(now - 4 * D), handle: 'sample_admin' },
     { id: 3, action: 'players.upsert', target: null, detail: { added: 15, updated: 0, skipped: 0 }, created_at: iso(now - 20 * D), handle: 'sample_admin' }
   ];
-  const market = { ftr_usd: 2, gbp_usd: 1.3372, welcome_grant: 1000 };
+  const market = { ftr_usd: 2, welcome_grant: 1000 };
   const note = (action, target, detail) => log.unshift({ id: log.length + 1, action, target, detail: detail || {}, created_at: iso(Date.now()), handle: 'sample_admin' });
   const clone = x => JSON.parse(JSON.stringify(x));
   const holdingsFor = m => claims.filter(c => c.handle === m.handle).map(c => ({ ticker: c.ticker, name: c.name, shares: c.shares, locked: 0, avg_cost: c.reference_value, price: shareFtr(byT(c.ticker).valuation_usd), value: c.shares * shareFtr(byT(c.ticker).valuation_usd) }))
@@ -1063,7 +1091,7 @@ const SAMPLE = (() => {
         days.push({ day: d0.toISOString(), claims: cs.length, paid: cs.reduce((t, c) => t + c.fee_paid, 0) });
       }
       const burnedAll = claims.reduce((t, c) => t + c.fee_burned, 0), circ = M.reduce((t, m) => t + m.balance + m.locked, 0);
-      return { ftr: { ftr_usd: market.ftr_usd, gbp_usd: market.gbp_usd, max_supply: 10000000, burned: burnedAll, circulating: circ,
+      return { ftr: { ftr_usd: market.ftr_usd, max_supply: 10000000, burned: burnedAll, circulating: circ,
                       treasury: 10000000 - burnedAll - circ, welcome_grant: market.welcome_grant },
         managers: M.length, managers_7d: M.filter(m => now - new Date(m.created_at) < 7 * D).length, suspended: M.filter(m => m.suspended).length,
         wallet_ftr: M.reduce((t, m) => t + m.balance, 0), locked_ftr: 0,
@@ -1122,8 +1150,8 @@ const SAMPLE = (() => {
           settled: es.filter(e => e.status === 'SETTLED').length, shares_staked: es.reduce((t, e) => t + e.staked_shares, 0), projected_fp: es.reduce((t, e) => t + e.projected_fp, 0) }; });
       return { by_status: by, matchdays: mds, entries: clone(entries) };
     },
-    ft_admin_set_market: ({ p_ftr_usd, p_gbp_usd, p_welcome }) => { const before = market.ftr_usd;
-      market.ftr_usd = p_ftr_usd; if (p_gbp_usd) market.gbp_usd = p_gbp_usd; if (p_welcome != null) market.welcome_grant = p_welcome;
+    ft_admin_set_market: ({ p_ftr_usd, p_welcome }) => { const before = market.ftr_usd;
+      market.ftr_usd = p_ftr_usd; if (p_welcome != null) market.welcome_grant = p_welcome;
       note('market.set', '$FTR', { from: before, to: p_ftr_usd }); return clone(market); },
     ft_admin_log: () => clone(log)
   };

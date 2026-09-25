@@ -553,9 +553,6 @@ function editPlayer(p, kind) {
             <button type="button" class="btn btn-ghost btn-sm" id="phRemove"${photo.url ? '' : ' hidden'}>${ic('trash')}Remove</button></div>
             <p class="hint" style="margin:8px 0 0">JPG, PNG or WebP. A head-and-shoulders shot works best. It's resized to 720px and location data is removed.</p></div>
         </div>
-        <div class="field" style="margin-top:14px"><label for="f-credit">Photo credit</label><input class="input" id="f-credit" value="${esc(p.photo_credit || '')}" placeholder="e.g. Jane Smith / Wikimedia Commons, CC BY-SA 4.0"></div>
-        <div class="field"><label for="f-source">Where it came from (link, optional)</label><input class="input" id="f-source" value="${esc(p.photo_source || '')}" placeholder="https://"></div>
-        <label class="check" id="phRightsRow" hidden><input type="checkbox" id="f-rights"><span>Fantrade has the right to use this photo: we took it, bought it, or its licence allows this use with the credit above.</span></label>
       </div>
       <div class="section"><h3>Identity</h3>
         <div class="field"><label for="f-name">Full name</label><input class="input" id="f-name" required value="${esc(p.name)}" placeholder="e.g. Khadija Shaw"></div>
@@ -607,11 +604,10 @@ function editPlayer(p, kind) {
     $('#phPrev').innerHTML = photo.url && !photo.removed ? `<img src="${esc(photo.url)}" alt="">` : avatar(name, 96);
     $('#phPickTxt').textContent = photo.url && !photo.removed ? 'Replace photo' : 'Upload photo';
     $('#phRemove').hidden = !(photo.url && !photo.removed);
-    $('#phRightsRow').hidden = !photo.blob;
   };
   const takeFile = async f => {
     if (!f) return;
-    try { photo.blob = await shrinkImage(f); photo.url = URL.createObjectURL(photo.blob); photo.removed = false; paintPhoto(); $('#f-credit').focus(); }
+    try { photo.blob = await shrinkImage(f); photo.url = URL.createObjectURL(photo.blob); photo.removed = false; paintPhoto(); }
     catch (e) { toast(e.message, true); }
   };
   $('#phPick').onclick = () => $('#phFile').click();
@@ -642,14 +638,10 @@ function editPlayer(p, kind) {
     const row = { ticker: v('#f-ticker').toUpperCase(), name: v('#f-name'), known_as: v('#f-known'), kind: $('#f-kind').value,
       gender: $('#f-gender').value, position: $('#f-pos').value, country: v('#f-country'), date_of_birth: v('#f-dob'),
       shirt_number: v('#f-num'), height_cm: v('#f-height'), preferred_foot: $('#f-foot').value, club: v('#f-club'), league: v('#f-league'),
-      about: v('#f-about'), photo_credit: v('#f-credit'), photo_source: v('#f-source') };
+      about: v('#f-about'), photo_credit: p.photo_credit || 'Official', photo_source: p.photo_source || '' };
     row.valuation_usd = v('#f-price').replace(/[$,\s]/g, ''); row.valuation_source = v('#f-vsrc');
     if (launched && !row.valuation_usd) delete row.valuation_usd;
-    const hasPhoto = (photo.blob || photo.url) && !photo.removed;
     let problem = validateRow(row, launched);
-    if (!problem && hasPhoto && row.photo_credit.length < 3) problem = 'Add a photo credit: who took it, and the licence.';
-    if (!problem && photo.blob && !$('#f-rights').checked) problem = 'Confirm that Fantrade has the right to use this photo.';
-    if (!problem && row.photo_source && !/^https:\/\//.test(row.photo_source)) problem = 'The photo link must start with https://';
     if (problem) { err.textContent = problem; return; }
     const btn = $('#f-save'); btn.disabled = true; err.textContent = '';
     try {
@@ -682,7 +674,6 @@ function validateRow(r, launched) {
   if (r.height_cm && !(+r.height_cm >= 140 && +r.height_cm <= 220)) return 'Height must be in centimetres, 140 to 220.';
   if (r.about && r.about.length > 800) return 'About is longer than 800 characters.';
   if (r.photo_url && !/^https:\/\//.test(r.photo_url)) return 'Photo link must start with https://';
-  if (r.photo_url && !r.photo_credit) return 'A photo needs a photo_credit.';
   return '';
 }
 

@@ -686,7 +686,6 @@ begin
     elsif nullif(trim(r->>'height_cm'), '') is not null and (v_ht is null or v_ht not between 140 and 220) then bad := 'Height must be in centimetres, 140 to 220';
     elsif length(coalesce(v_about, '')) > 800 then bad := 'About is longer than 800 characters';
     elsif v_photo is not null and v_photo !~ '^https://' then bad := 'Photo link must start with https://';
-    elsif v_photo is not null and v_credit is null then bad := 'A photo needs a credit (who took it, and the licence)';
     end if;
     if bad is not null then
       skipped := skipped || jsonb_build_object('ticker', v_ticker, 'name', v_name, 'reason', bad); continue;
