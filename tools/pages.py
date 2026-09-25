@@ -109,6 +109,13 @@ EX_CSS = """
 .kc-row-right{display:flex;justify-content:flex-end}
 .kc-pill{display:inline-flex;align-items:center;justify-content:center;min-width:76px;height:32px;border-radius:6px;font-family:'Montserrat', sans-serif;font-size:12.5px;font-weight:700;color:#fff;background:var(--lime);box-sizing:border-box;padding:0 6px}
 .kc-pill.down{background:#FF3B47;color:#fff}
+.kc-tape{display:flex;align-items:center;gap:14px;min-width:0;padding:2px 0 14px;overflow:hidden}
+.kc-tape .ft-live-dot{flex:none}
+.kc-tape-track{display:flex;gap:20px;min-width:0;flex:1;overflow:hidden;white-space:nowrap;-webkit-mask-image:linear-gradient(90deg,#000 75%,transparent);mask-image:linear-gradient(90deg,#000 75%,transparent)}
+.kc-tape-item{display:inline-flex;gap:6px;align-items:baseline;font:600 11.5px/1 Montserrat,system-ui,sans-serif;color:#767c82;flex:none;text-decoration:none;animation:kcTapeIn .45s ease-out}
+.kc-tape-item b{color:var(--ink);font-family:Space Grotesk,sans-serif;font-weight:700}
+.kc-tape-item .up{color:#16c784}.kc-tape-item .dn{color:#ea3943}
+@keyframes kcTapeIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
 """
 
 ex = [T('<main><div class="kc-ex-wrap">' + tab_intro('Exchange') +
@@ -119,6 +126,7 @@ ex = [T('<main><div class="kc-ex-wrap">' + tab_intro('Exchange') +
         '    <input id="q" type="search" class="kc-search-input" placeholder="Search players, clubs or coaches" aria-label="Search player shares" autocomplete="off">'
         '  </div>'
         '</div>'
+        '<div class="kc-tape" id="kcTape"><span class="ft-live-dot">Live</span><div class="kc-tape-track" id="kcTapeTrack"></div></div>'
         '<!-- Primary Category Tabs -->'
         '<div class="kc-cat-tabs" id="kcCatTabs">'
         '  <button type="button" class="kc-cat-tab" data-cat="fav">Favorites</button>'
@@ -224,7 +232,7 @@ function renderMarketRows(){
       + "  </div>"
       + "</div>"
       + "<div class='kc-row-mid'>"
-      + "  <div class='kc-price-main'>" + (a.p > 999 ? a.p.toLocaleString('en-US', {minimumFractionDigits: 1, maximumFractionDigits: 2}) : a.p.toFixed(a.p < 1 ? 4 : 2)) + "</div>"
+      + "  <div class='kc-price-main'>" + pxLive(a.p) + "</div>"
       + "  <div class='kc-price-sub'>$" + subPrice + "</div>"
       + "</div>"
       + "<div class='kc-row-right'>"
@@ -277,6 +285,36 @@ document.querySelectorAll('.kc-th span').forEach(function(el){
 
 renderMarketRows();
 window.addEventListener('fantrade:statechange', renderMarketRows);
+
+/* Live market: move the prices in place (re-rendering the list every tick
+   would fight the user's scroll and hover) and run the trade tape. */
+function rowPrice(a){ return pxLive(a.p); }
+function tapeItem(tr){
+  var up = tr.side === 'buy';
+  return "<a class='kc-tape-item' href='asset.html?a=" + encodeURIComponent(tr.t) + "'><b>" + ftSym(tr.t) + "</b>"
+    + "<span class='" + (up ? 'up' : 'dn') + "'>" + (up ? '▲ ' : '▼ ') + pxLive(tr.p) + "</span>"
+    + "<span>" + tr.q.toLocaleString('en-US') + " sh</span></a>";
+}
+var tapeTrack = document.getElementById('kcTapeTrack');
+if(tapeTrack && typeof FTSim !== 'undefined') tapeTrack.innerHTML = FTSim.trades().slice(0, 12).map(tapeItem).join('');
+window.addEventListener('fantrade:tick', function(e){
+  var ch = e.detail.changed;
+  Object.keys(ch).forEach(function(t){
+    var row = document.querySelector("#mktList a.kc-row[href='asset.html?a=" + encodeURIComponent(t) + "']");
+    var a = ASSETS.filter(function(x){ return x.t === t; })[0];
+    if(!row || !a) return;
+    row.querySelector('.kc-price-main').textContent = rowPrice(a);
+    row.querySelector('.kc-price-sub').textContent = '$' + pxFmt(a.p * FTR_USD) + ' USD';
+    var pill = row.querySelector('.kc-pill');
+    pill.textContent = (a.d >= 0 ? '+' : '') + a.d.toFixed(2) + '%';
+    pill.classList.toggle('down', a.d < 0);
+    ftFlash(row.querySelector('.kc-row-mid'), ch[t]);
+  });
+  if(tapeTrack){
+    tapeTrack.insertAdjacentHTML('afterbegin', e.detail.trades.map(tapeItem).join(''));
+    while(tapeTrack.children.length > 14) tapeTrack.removeChild(tapeTrack.lastChild);
+  }
+});
 """
 
 page("exchange.html", "Exchange — Fantrade", "".join(ex), EX_JS, EX_CSS, app=True)

@@ -1070,7 +1070,7 @@ da.append('<section class="home-next" aria-roledescription="carousel" aria-label
           + ''.join('<button type="button" aria-label="Show card %d"%s></button>' % (i + 1, ' aria-current="true"' if i == 0 else '') for i in range(len(HOME_CARDS)))
           + '</div><div class="home-arrows"><button type="button" id="homePrev" aria-label="Previous card">' + ic('arrow', 'ic') + '</button>'
           '<button type="button" id="homeNext" aria-label="Next card">' + ic('arrow', 'ic') + '</button></div></div></section>'
-          '<section class="home-market"><div class="app-section-head"><h2>Players to watch</h2><a href="exchange.html">View exchange</a></div>'
+          '<section class="home-market"><div class="app-section-head"><h2>Players to watch <span class="ft-live-dot" style="margin-left:8px;vertical-align:middle">Live</span></h2><a href="exchange.html">View exchange</a></div>'
           '<div class="kc-cat-tabs" id="homeTabs"><button class="kc-cat-tab on" type="button" data-f="hot">Trending</button>'
           '<button class="kc-cat-tab" type="button" data-f="gainers">Top gainers</button>'
           '<button class="kc-cat-tab" type="button" data-f="forwards">Forwards</button>'
@@ -1420,7 +1420,7 @@ DASH_JS = r"""
         + "  </div>"
         + "</div>"
         + "<div class='kc-row-mid'>"
-        + "  <div class='kc-price-main'>" + pxFmt(a.p) + " <span style='font-size:10px;color:#767c82'>FTR</span></div>"
+        + "  <div class='kc-price-main'>" + pxLive(a.p) + " <span style='font-size:10px;color:#767c82'>FTR</span></div>"
         + "  <div class='kc-price-sub'>≈ " + usdFmt(a.p) + " USD</div>"
         + "</div>"
         + "<div class='kc-row-right'>"
@@ -1439,6 +1439,21 @@ DASH_JS = r"""
     });
   });
   renderHomeRows();
+  // Live market: prices move in place.
+  window.addEventListener('fantrade:tick', function(e){
+    var ch = e.detail.changed;
+    Object.keys(ch).forEach(function(t){
+      var row = document.querySelector("#homeMarketRows a.kc-row[href='asset.html?a=" + encodeURIComponent(t) + "']");
+      var a = ASSETS.filter(function(x){ return x.t === t; })[0];
+      if(!row || !a) return;
+      row.querySelector('.kc-price-main').innerHTML = pxLive(a.p) + " <span style='font-size:10px;color:#767c82'>FTR</span>";
+      row.querySelector('.kc-price-sub').textContent = '≈ ' + usdFmt(a.p) + ' USD';
+      var pill = row.querySelector('.kc-pill');
+      pill.textContent = (a.d >= 0 ? '+' : '') + a.d.toFixed(2) + '%';
+      pill.classList.toggle('down', a.d < 0);
+      ftFlash(row.querySelector('.kc-row-mid'), ch[t]);
+    });
+  });
 })();
 """
 

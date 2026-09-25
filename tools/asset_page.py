@@ -2,23 +2,24 @@
 from common import ic
 
 HTML = '''<main><div class="asset-page">
-  <nav class="asset-breadcrumb" aria-label="Market navigation">
-    <a class="back-btn" href="exchange.html" aria-label="Back to the exchange">Back</a>
-    <button type="button" class="asset-text-button" id="assetSwitch">Switch player</button>
-  </nav>
+  <header class="asset-topbar">
+    <a class="asset-back" id="assetBack" href="exchange.html" aria-label="Back"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+    <div class="asset-chip">
+      <div class="asset-portrait" id="assetPortrait"></div>
+      <div class="asset-name"><h1 id="assetName">Find a player</h1><p id="assetSubtitle">Search the exchange</p></div>
+      <svg class="asset-chip-caret" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9.5l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <button type="button" class="asset-chip-button" id="assetSwitch" aria-haspopup="dialog" aria-label="Switch player"></button>
+    </div>
+    <button type="button" id="assetFavorite" class="asset-favorite" aria-label="Add to watchlist" aria-pressed="false">''' + ic('star', 'ic') + '''</button>
+  </header>
   <section class="asset-missing" id="assetMissing" hidden>
     <h1>Share not found</h1><p>Search the exchange for a player or coach.</p>
     <a class="app-primary" href="exchange.html">Explore the exchange</a>
   </section>
   <div id="assetContent">
-    <header class="asset-identity">
-      <div class="asset-portrait" id="assetPortrait"></div>
-      <div class="asset-name"><p id="assetSubtitle"></p><h1 id="assetName"></h1></div>
-      <button type="button" id="assetFavorite" class="asset-favorite" aria-label="Add to watchlist" aria-pressed="false">''' + ic('star', 'ic') + '''</button>
-    </header>
     <div class="asset-layout">
       <section class="asset-market" aria-label="Share price and chart">
-        <p class="asset-label">Price per share · FTR</p>
+        <p class="asset-label">Price per share · FTR <span class="ft-live-dot">Live</span></p>
         <div class="asset-price" id="assetPrice"></div>
         <p class="asset-price-usd" id="assetPriceUsd"></p>
         <p class="asset-movement"><strong id="assetChange"></strong><span>past 24 hours</span></p>
@@ -33,13 +34,18 @@ HTML = '''<main><div class="asset-page">
         </div>
         <figure class="asset-chart"><div id="assetChart" role="img" aria-label="Illustrative share price history"></div>
           <div id="assetChartAxis" class="asset-chart-axis" aria-hidden="true"></div>
-          <figcaption>Market preview · Illustrative price history</figcaption>
+          <figcaption>Illustrative prices</figcaption>
         </figure>
         <dl class="asset-stats">
           <div><dt>24h high</dt><dd id="assetHigh"></dd></div>
           <div><dt>24h low</dt><dd id="assetLow"></dd></div>
           <div><dt>24h volume</dt><dd id="assetVolume"></dd></div>
         </dl>
+        <section class="asset-trades" aria-labelledby="assetTradesTitle">
+          <div class="asset-section-heading"><h2 id="assetTradesTitle">Recent trades</h2><span class="ft-live-dot">Live</span></div>
+          <div class="asset-trades-labels" aria-hidden="true"><span>Price · FTR</span><span>Shares</span><span>Time</span></div>
+          <div id="assetTrades"></div>
+        </section>
       </section>
       <aside class="asset-position" aria-labelledby="assetPositionTitle">
         <div class="asset-section-heading"><h2 id="assetPositionTitle">Your position</h2><a href="wallet.html">Wallet</a></div>
@@ -68,8 +74,8 @@ HTML = '''<main><div class="asset-page">
             <div><dt>Fixed supply</dt><dd>10 million shares</dd></div>
           </dl>
         </details>
-        <details id="assetDepth"><summary>Market depth</summary>
-          <p class="asset-detail-note">Preview buy and sell orders around the current price.</p>
+        <details id="assetDepth" open><summary>Market depth</summary>
+          <p class="asset-detail-note">Buy and sell orders around the current price.</p>
           <div class="asset-book">
             <div><h3>Buy orders</h3><div class="asset-book-labels"><span>Price · FTR</span><span>Shares</span></div><div id="assetBids"></div></div>
             <div><h3>Sell orders</h3><div class="asset-book-labels"><span>Price · FTR</span><span>Shares</span></div><div id="assetAsks"></div></div>
@@ -94,6 +100,7 @@ JS = r'''
   var asset = ASSETS.find(function(a){ return a.t.toLowerCase() === requested.toLowerCase() || ftSym(a.t).toLowerCase() === requested.toLowerCase(); });
   var picker = byId('assetPicker');
   function money(value){ return pxFmt(value); }
+  function live(value){ return pxLive(value); }
   function escapeText(value){ var node = document.createElement('span'); node.textContent = value; return node.innerHTML; }
   function renderSearch(){
     var query = byId('assetSearch').value.trim().toLowerCase();
@@ -105,6 +112,10 @@ JS = r'''
         + '<span class="asset-search-price">' + money(a.p) + '<small>FTR</small></span></a>';
     }).join('');
   }
+  byId('assetBack').addEventListener('click',function(event){
+    // Go back to wherever the player was opened from, when that was this app.
+    try { if(document.referrer && new URL(document.referrer).origin === location.origin && history.length > 1){ event.preventDefault(); history.back(); } } catch(e){}
+  });
   byId('assetSwitch').addEventListener('click',function(){
     byId('assetSearch').value=''; renderSearch(); picker.showModal();
     document.body.classList.add('asset-picker-open'); byId('assetSearch').focus();
@@ -119,19 +130,24 @@ JS = r'''
     if(event.target===picker && (event.clientX<rect.left || event.clientX>rect.right || event.clientY<rect.top || event.clientY>rect.bottom)) picker.close();
   });
   byId('assetSearch').addEventListener('input',renderSearch);
-  if(!asset){ byId('assetMissing').hidden=false; byId('assetContent').hidden=true; return; }
+  if(!asset){ byId('assetMissing').hidden=false; byId('assetContent').hidden=true; byId('assetFavorite').hidden=true; return; }
 
   document.title=asset.n + ' shares — Fantrade';
   byId('assetName').textContent=asset.n;
   byId('assetSubtitle').textContent=ftSym(asset.t) + ' · ' + asset.club;
   byId('assetPortrait').innerHTML=playerPhoto(asset.t,asset.n);
-  byId('assetPrice').textContent=money(asset.p);
-  if(byId('assetPriceUsd')) byId('assetPriceUsd').textContent = '≈ ' + usdFmt(asset.p) + ' a share' + (asset.v ? ' · valuation $' + (asset.v >= 1e6 ? (asset.v / 1e6).toFixed(1) + 'M' : Math.round(asset.v).toLocaleString('en-US')) : '');
-  byId('assetChange').textContent=(asset.d>=0?'+':'') + asset.d.toFixed(2) + '%';
-  byId('assetChange').className=asset.d>=0?'asset-up':'asset-down';
-  byId('assetHigh').textContent=money(asset.h);
-  byId('assetLow').textContent=money(asset.low);
-  byId('assetVolume').textContent=asset.vol + ' shares';
+  function renderQuote(){
+    byId('assetPrice').textContent=live(asset.p);
+    // The valuation implied by the live share price.
+    var val = asset.p * FTR_USD * 1e7;
+    byId('assetPriceUsd').textContent = '≈ ' + usdFmt(asset.p) + ' a share · valuation $' + (val >= 1e6 ? (val / 1e6).toFixed(1) + 'M' : Math.round(val).toLocaleString('en-US'));
+    byId('assetChange').textContent=(asset.d>=0?'+':'') + asset.d.toFixed(2) + '%';
+    byId('assetChange').className=asset.d>=0?'asset-up':'asset-down';
+    byId('assetHigh').textContent=money(asset.h);
+    byId('assetLow').textContent=money(asset.low);
+    byId('assetVolume').textContent=asset.vol + ' shares';
+  }
+  renderQuote();
   byId('assetClub').textContent=asset.club;
   /* The admin's profile for this player, when there is one. */
   function renderBio(){
@@ -183,20 +199,33 @@ JS = r'''
   window.addEventListener('pageshow',renderPosition);
   renderPosition();
 
-  var period='1D', candles=false;
+  var period='1D', candles=false, series={}, liveCount=0;
+  function seriesFor(p){
+    if(!series[p]){
+      var config=chartConfig[p];
+      // Preview history, scaled to end at the current price.
+      var data=candleData(config[0],asset.p,config[1],config[2]);
+      var factor=asset.p/data[data.length-1].c;
+      data.forEach(function(d){ ['o','h','l','c'].forEach(function(k){d[k]*=factor;}); });
+      // The day's chart opens where the 24h change says it did.
+      if(p==='1D'){
+        var tilt=(asset.p/(1+asset.d/100))/data[0].o, n=data.length-1;
+        data.forEach(function(d,i){ var f=Math.pow(tilt,1-i/n); ['o','h','l','c'].forEach(function(k){d[k]*=f;}); });
+      }
+      series[p]=data;
+    }
+    return series[p];
+  }
   var chartConfig={'1D':[36,.007,17,['24h ago','12h ago','Now']], '1W':[42,.014,29,['7 days ago','3 days ago','Now']], '1M':[40,.026,41,['30 days ago','15 days ago','Now']], '1Y':[48,.05,67,['1 year ago','6 months ago','Now']]};
   function renderChart(){
     var config=chartConfig[period];
-    // Preview history remains deterministic when changing chart types.
-    var data=candleData(config[0],asset.p,config[1],config[2]);
-    var factor=asset.p/data[data.length-1].c;
-    data.forEach(function(d){ ['o','h','l','c'].forEach(function(k){d[k]*=factor;}); });
+    var data=seriesFor(period);
     var low=Math.min.apply(null,data.map(function(d){return d.l;})),high=Math.max.apply(null,data.map(function(d){return d.h;}));
     var span=high-low||1,w=640,h=250,left=4,right=574,top=18,bottom=222;
     function x(i){return left+i*(right-left)/(data.length-1);}
     function y(p){return bottom-(p-low)/span*(bottom-top);}
     var line=data.map(function(d,i){return (i?'L':'M')+x(i).toFixed(1)+','+y(d.c).toFixed(1);}).join(' ');
-    var color=asset.d>=0?'#24c86b':'#ff5668', markup='';
+    var color=data[data.length-1].c>=data[0].o?'#24c86b':'#ff5668', markup='';
     [high,(high+low)/2,low].forEach(function(p){markup+='<text x="638" y="'+(y(p)+4).toFixed(1)+'" text-anchor="end" fill="#979c96" font-size="11">'+pxFix(p)+'</text>';});
     if(candles){
       data.forEach(function(d,i){var c=d.c>=d.o?'#24c86b':'#ff5668';markup+='<line x1="'+x(i)+'" x2="'+x(i)+'" y1="'+y(d.h)+'" y2="'+y(d.l)+'" stroke="'+c+'" stroke-width="1.5"/><rect x="'+(x(i)-3)+'" y="'+y(Math.max(d.o,d.c))+'" width="6" height="'+Math.max(2,Math.abs(y(d.o)-y(d.c)))+'" rx="1" fill="'+c+'"/>';});
@@ -217,13 +246,59 @@ JS = r'''
   });});
   byId('assetChartType').addEventListener('click',function(){candles=!candles;this.setAttribute('aria-pressed',String(candles));renderChart();});
   renderChart();
-  ['Bids','Asks'].forEach(function(side){
-    var buy=side==='Bids',rows=[];
-    for(var i=0;i<6;i++){
-      var px=asset.p*(1+(buy?-1:1)*(i+1)*.0018),amount=Math.round(1200+Math.abs(Math.sin(i*2.3+(buy?0:1)))*8200);
-      rows.push('<div class="asset-book-row"><i aria-hidden="true" style="width:'+(20+i*13)+'%"></i><span class="'+(buy?'asset-up':'asset-down')+'">'+money(px)+'</span><span>'+amount.toLocaleString('en-US')+'</span></div>');
+  /* Order book around the live price. Sizes drift a little every tick, the way
+     resting orders come and go. */
+  var bookSeed=[0,1,2,3,4,5].map(function(i){ return [Math.round(1200+Math.abs(Math.sin(i*2.3))*8200), Math.round(1200+Math.abs(Math.sin(i*2.3+1))*8200)]; });
+  function renderBook(){
+    ['Bids','Asks'].forEach(function(side){
+      var buy=side==='Bids',rows=[],total=0,sizes=[];
+      for(var i=0;i<6;i++){
+        var s=bookSeed[i][buy?0:1]=Math.max(150,Math.round(bookSeed[i][buy?0:1]*(1+(Math.random()-.5)*.18)));
+        sizes.push(s);
+      }
+      var shareScale=Math.max(1,Math.round(8/Math.max(asset.p,.0001)))/8;
+      for(i=0;i<6;i++){
+        total+=sizes[i];
+        var px=asset.p*(1+(buy?-1:1)*(i+1)*.0018),amount=Math.round(sizes[i]*shareScale);
+        rows.push('<div class="asset-book-row"><i aria-hidden="true" style="width:'+Math.min(100,Math.round(total/sizes.reduce(function(a,b){return a+b;},0)*100))+'%"></i><span class="'+(buy?'asset-up':'asset-down')+'">'+live(px)+'</span><span>'+amount.toLocaleString('en-US')+'</span></div>');
+      }
+      byId('asset'+side).innerHTML=rows.join('');
+    });
+  }
+  renderBook();
+
+  /* Recent trades on this share. */
+  function tradeRow(tr){
+    var buy=tr.side==='buy';
+    return '<div class="asset-trade-row"><span class="'+(buy?'asset-up':'asset-down')+'">'+live(tr.p)+'</span><span>'+tr.q.toLocaleString('en-US')+'</span><span data-at="'+tr.at+'">'+ftAgo(tr.at)+'</span></div>';
+  }
+  function renderTrades(){
+    var list=(typeof FTSim!=='undefined'?FTSim.trades(asset.t):[]).slice(0,8);
+    byId('assetTrades').innerHTML=list.length?list.map(tradeRow).join(''):'<p class="asset-detail-note">No trades yet today.</p>';
+  }
+  renderTrades();
+
+  if(typeof FTSim!=='undefined') FTSim.focus(asset.t);
+  window.addEventListener('fantrade:tick',function(e){
+    var dir=e.detail.changed[asset.t];
+    byId('assetTrades').querySelectorAll('[data-at]').forEach(function(el){ el.textContent=ftAgo(Number(el.dataset.at)); });
+    if(!dir) return;
+    renderQuote(); ftFlash(byId('assetPrice'),dir);
+    // The live price moves the newest candle; every few moves a new one opens.
+    liveCount++;
+    Object.keys(series).forEach(function(p){
+      var data=series[p], last=data[data.length-1];
+      if(p==='1D' && liveCount%10===0){ data.shift(); data.push({o:last.c,h:Math.max(last.c,asset.p),l:Math.min(last.c,asset.p),c:asset.p}); }
+      else { last.c=asset.p; last.h=Math.max(last.h,asset.p); last.l=Math.min(last.l,asset.p); }
+    });
+    renderChart(); renderBook(); renderPosition();
+    var mine=e.detail.trades.filter(function(tr){ return tr.t===asset.t; });
+    if(mine.length){
+      var box=byId('assetTrades'); if(box.querySelector('p')) box.innerHTML='';
+      box.insertAdjacentHTML('afterbegin',mine.map(tradeRow).join(''));
+      var first=box.firstElementChild; if(first) first.classList.add('is-new');
+      while(box.children.length>8) box.removeChild(box.lastChild);
     }
-    byId('asset'+side).innerHTML=rows.join('');
   });
 })();
 '''

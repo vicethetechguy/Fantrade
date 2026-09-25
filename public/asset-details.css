@@ -2,17 +2,7 @@
 body.app.calm .asset-page{max-width:980px;margin:0 auto;padding:12px 28px 64px}
 body.app.calm .asset-page [hidden]{display:none!important}
 body.app.calm .asset-page button,body.app.calm .asset-page a{-webkit-tap-highlight-color:transparent}
-body.app.calm .asset-breadcrumb{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:36px;font-size:13px}
-body.app.calm .asset-breadcrumb>a{display:flex;align-items:center;gap:10px;min-height:44px;color:var(--dim)}
-body.app.calm .asset-breadcrumb .ic{width:16px;height:16px}
-body.app.calm .asset-breadcrumb>a.back-btn{margin:0;min-height:44px;padding:10px 18px;font-size:12px;line-height:1}
-body.app.calm .asset-text-button{display:inline-flex;align-items:center;justify-content:center;border:0;background:#1800ad;color:#fff;border-radius:999px;padding:10px 18px;min-height:44px;line-height:1;cursor:pointer;font-size:12px;font-weight:600}
-body.app.calm .asset-identity{display:flex;align-items:center;gap:20px;margin-bottom:44px}
-body.app.calm .asset-portrait{width:76px;height:76px;flex:none;background:var(--panel);border-radius:50%;overflow:hidden}
 body.app.calm .asset-portrait img{width:100%;height:100%;object-fit:cover}
-body.app.calm .asset-name{min-width:0;flex:1}
-body.app.calm .asset-name p{font-size:12px;color:var(--dim);margin:0 0 8px}
-body.app.calm .asset-name h1{font-size:clamp(26px,3.1vw,38px);margin:0;overflow-wrap:anywhere}
 body.app.calm .asset-favorite{width:44px;height:44px;display:grid;place-items:center;border:0;border-radius:50%;background:var(--panel);color:var(--dim);flex:none;cursor:pointer}
 body.app.calm .asset-favorite[aria-pressed=true]{background:var(--lime);color:#fff}
 body.app.calm .asset-favorite .ic{width:21px;height:21px}
@@ -52,7 +42,6 @@ body.app.calm .asset-trade-actions{display:flex;gap:10px}
 body.app.calm .asset-trade-actions>a{flex:1;min-width:0;padding:12px 16px;font-size:12px;white-space:nowrap}
 body.app.calm .asset-secondary{display:flex;justify-content:center;align-items:center;min-height:48px;border-radius:999px;background:var(--panel);color:var(--ink);font-weight:600;text-decoration:none}
 body.app.calm .asset-secondary:hover{background:#242821}
-body.app.calm .asset-text-button:hover{background:#3311cc}
 body.app.calm .asset-empty-title{font-size:19px;line-height:1.4;margin:0 0 10px}
 body.app.calm .asset-empty-copy{font-size:13px;color:var(--dim);line-height:1.7;margin:0 0 28px}
 body.app.calm .asset-use{margin-top:32px;padding:24px;border-radius:24px;background:var(--panel)}
@@ -103,11 +92,6 @@ body.app.calm .asset-search-row small{display:block;font-size:10px;color:var(--d
 body.app.calm .asset-search-price{font-size:13px;text-align:right;flex:none}
 @media(max-width:760px){
  body.app.calm .asset-page{padding:8px 20px calc(116px + env(safe-area-inset-bottom))}
- body.app.calm .asset-breadcrumb{margin-bottom:26px}
- body.app.calm .asset-identity{gap:14px;margin-bottom:32px}
- body.app.calm .asset-portrait{width:60px;height:60px}
- body.app.calm .asset-name h1{font-size:26px}
- body.app.calm .asset-name p{font-size:11px;line-height:1.5;margin-bottom:6px}
  body.app.calm .asset-layout{grid-template-columns:1fr;gap:36px}
  body.app.calm .asset-chart{margin-top:22px}
  body.app.calm .asset-trade-actions{position:fixed;bottom:0;left:0;right:0;z-index:1100;padding:16px 20px max(16px,env(safe-area-inset-bottom));background:#050505}
@@ -121,9 +105,6 @@ body.app.calm .asset-search-price{font-size:13px;text-align:right;flex:none}
 }
 @media(max-width:360px){
  body.app.calm .asset-page{padding-left:16px;padding-right:16px}
- body.app.calm .asset-portrait{width:48px;height:48px}
- body.app.calm .asset-identity{gap:10px}
- body.app.calm .asset-name h1{font-size:23px}
  body.app.calm .asset-periods{gap:0}
  body.app.calm .asset-chart-controls{gap:4px}
  body.app.calm .asset-chart-controls button{padding:8px 10px}
@@ -140,3 +121,46 @@ body.app.calm .asset-details details[hidden]{display:none}
 body.app.calm .asset-photo-credit{font-size:10.5px;color:var(--faint);margin:12px 0 0}
 body.app.calm .asset-photo-credit:empty{display:none}
 body.app.calm .asset-price-usd{margin:6px 0 0;font-size:13px;color:var(--dim)}
+/* Header: back, then the player as the switcher, then the watchlist star. */
+body.app.calm .asset-topbar{display:flex;align-items:center;gap:12px;margin:0 0 36px;min-width:0}
+body.app.calm .asset-back{width:44px;height:44px;flex:none;display:grid;place-items:center;border-radius:50%;background:var(--panel);color:var(--ink);text-decoration:none;transition:background .2s}
+body.app.calm .asset-back svg{width:20px;height:20px}
+body.app.calm .asset-back:hover{background:rgba(24,0,173,.12)}
+body.app.calm .asset-chip{position:relative;display:flex;align-items:center;gap:12px;min-width:0;flex:0 1 auto;padding:6px 16px 6px 6px;border-radius:999px;background:var(--panel);transition:background .2s,box-shadow .2s}
+body.app.calm .asset-chip:hover{background:rgba(24,0,173,.08)}
+body.app.calm .asset-chip:focus-within{box-shadow:0 0 0 2px var(--lime)}
+body.app.calm .asset-chip .asset-portrait{width:44px;height:44px;flex:none;border-radius:50%;overflow:hidden;background:rgba(0,0,0,.06)}
+body.app.calm .asset-chip .asset-portrait img{width:100%;height:100%;object-fit:cover;object-position:50% 18%}
+body.app.calm .asset-name{min-width:0;flex:1}
+body.app.calm .asset-name h1{font-size:17px;line-height:1.2;margin:0;font-weight:700;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+body.app.calm .asset-name p{font-size:11.5px;line-height:1.3;color:var(--dim);margin:2px 0 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+body.app.calm .asset-chip-caret{width:18px;height:18px;flex:none;color:var(--dim);transition:transform .2s}
+body.app.calm .asset-chip:hover .asset-chip-caret{transform:translateY(1px);color:var(--ink)}
+body.app.calm .asset-chip-button{position:absolute;inset:0;width:100%;border:0;border-radius:999px;background:transparent;cursor:pointer;outline:none}
+body.app.calm .asset-topbar .asset-favorite{margin-left:auto}
+body.app.calm .asset-label{display:flex;align-items:center;gap:10px}
+body.app.calm .asset-price{border-radius:10px;margin-left:-6px;padding-left:6px;display:inline-block}
+body.app.calm .asset-trades{margin-top:32px}
+body.app.calm .asset-trades .asset-section-heading{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+body.app.calm .asset-trades h2{font-size:15px;margin:0}
+body.app.calm .asset-trades-labels,body.app.calm .asset-trade-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) 72px;gap:12px;font-size:11.5px}
+body.app.calm .asset-trades-labels{color:var(--faint);font-size:10.5px;padding-bottom:6px}
+body.app.calm .asset-trades-labels span:nth-child(n+2),body.app.calm .asset-trade-row span:nth-child(n+2){text-align:right}
+body.app.calm .asset-trade-row{padding:7px 0;border-top:1px solid rgba(127,127,127,.12);font-variant-numeric:tabular-nums}
+body.app.calm .asset-trade-row span:last-child{color:var(--dim)}
+body.app.calm .asset-trade-row.is-new{animation:assetTradeIn .6s ease-out}
+@keyframes assetTradeIn{from{opacity:0;transform:translateY(-6px);background:rgba(24,0,173,.08)}to{opacity:1;transform:none;background:transparent}}
+body.app.calm .asset-book-row i{transition:width .5s ease}
+@media(max-width:760px){
+ body.app.calm .asset-topbar{gap:10px;margin-bottom:26px}
+ body.app.calm .asset-chip{flex:1 1 auto;padding-right:12px}
+ body.app.calm .asset-chip .asset-portrait{width:40px;height:40px}
+ body.app.calm .asset-name h1{font-size:16px}
+}
+@media(max-width:360px){
+ body.app.calm .asset-topbar{gap:8px}
+ body.app.calm .asset-back,body.app.calm .asset-topbar .asset-favorite{width:40px;height:40px}
+ body.app.calm .asset-chip{gap:8px}
+ body.app.calm .asset-chip .asset-portrait{width:34px;height:34px}
+ body.app.calm .asset-name h1{font-size:15px}
+}

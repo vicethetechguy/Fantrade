@@ -52,13 +52,13 @@ function held(){ return FT.getState().holdings[A.t] || null; }
 // Order book, built deterministically around the last price so the same
 // asset always shows the same depth. Asks render top-down (worst first),
 // bids top-down (best first), the way a real book reads.
-var TICK = 1;
+var TICK = 1, BOOK_JITTER = 0;
 function book2(box, side, count, onPick){
   var rows = [], px = A.p, total = 0;
   for(var i = 0; i < count; i++){
     var step = (i + 1) * (px * 0.0016) * TICK;
     var p = side === 'bid' ? px - step : px + step;
-    var size = Math.round(3100 + Math.abs(Math.sin((i + 1) * 2.7)) * 41000);
+    var size = Math.round((3100 + Math.abs(Math.sin((i + 1) * 2.7)) * 41000) * (1 + (Math.random() - 0.5) * BOOK_JITTER));
     total += size;
     rows.push({ p: p, s: size, t: total });
   }
@@ -349,7 +349,7 @@ el('tTick').addEventListener('change', function(){
   TICK = parseFloat(el('tTick').value) || 1;
   drawBook();
 });
-el('tLast').textContent = pxFmt(A.p);
+el('tLast').textContent = pxLive(A.p);
 el('tLast').style.color = A.d >= 0 ? 'var(--lime)' : 'var(--red)';
 el('tLastSub').textContent = '≈ ' + usdFmt(A.p);
 (function(){
@@ -357,6 +357,25 @@ el('tLastSub').textContent = '≈ ' + usdFmt(A.p);
   el('tdBid').style.width = b + '%'; el('tdAsk').style.width = (100 - b) + '%';
   el('tdBidK').textContent = 'B ' + b + '%'; el('tdAskK').textContent = (100 - b) + '% S';
 })();
+/* Live market: the last price, the book and the buy/sell balance follow the
+   ticks; what the user has typed is left alone. */
+if(typeof FTSim !== 'undefined') FTSim.focus(A.t);
+window.addEventListener('fantrade:tick', function(e){
+  var dir = e.detail.changed[A.t];
+  if(!dir) return;
+  el('tLast').textContent = pxLive(A.p);
+  el('tLast').style.color = dir === 'up' ? 'var(--lime)' : 'var(--red)';
+  el('tLastSub').textContent = '≈ ' + usdFmt(A.p);
+  ftFlash(el('tLast').parentNode, dir);
+  el('tDelta').textContent = (A.d >= 0 ? '+' : '') + A.d.toFixed(2) + '%';
+  el('tDelta').classList.toggle('down', A.d < 0);
+  el('tDelta').style.color = A.d >= 0 ? 'var(--lime)' : 'var(--red)';
+  BOOK_JITTER = 0.25; drawBook();
+  var b = Math.max(12, Math.min(88, Math.round(48 + A.d + (dir === 'up' ? 4 : -4) + (Math.random() - 0.5) * 6)));
+  el('tdBid').style.width = b + '%'; el('tdAsk').style.width = (100 - b) + '%';
+  el('tdBidK').textContent = 'B ' + b + '%'; el('tdAskK').textContent = (100 - b) + '% S';
+  if(typeof calc === 'function') calc();
+});
 
 function num(v){ return parseFloat(String(v).replace(/[^0-9.]/g, '')) || 0; }
 function qty(){ return Math.round(num(el('tQty').value)); }

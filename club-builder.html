@@ -667,6 +667,7 @@ footer{border-top:1px solid var(--hair);padding:70px 0 64px;background:rgba(255,
 .back-btn:hover{background:#3311cc}
 .back-btn:focus-visible{outline:none}
 main .back-btn{margin-bottom:20px}
+.ft-flash-up{animation:ftFlashUp 1.1s ease-out}.ft-flash-down{animation:ftFlashDown 1.1s ease-out}@keyframes ftFlashUp{0%{background-color:rgba(22,199,132,.22)}100%{background-color:transparent}}@keyframes ftFlashDown{0%{background-color:rgba(234,57,67,.22)}100%{background-color:transparent}}.ft-live-dot{display:inline-flex;align-items:center;gap:6px;font:600 11px/1 Montserrat,system-ui,sans-serif;color:#16c784;letter-spacing:.02em}.ft-live-dot::before{content:'';width:7px;height:7px;border-radius:50%;background:#16c784;box-shadow:0 0 0 0 rgba(22,199,132,.6);animation:ftPulse 1.8s infinite}html:not(.sim-on) .ft-live-dot{color:#8a8f86}html:not(.sim-on) .ft-live-dot::before{background:#8a8f86;animation:none}@keyframes ftPulse{0%{box-shadow:0 0 0 0 rgba(22,199,132,.55)}70%{box-shadow:0 0 0 7px rgba(22,199,132,0)}100%{box-shadow:0 0 0 0 rgba(22,199,132,0)}}@media (prefers-reduced-motion:reduce){.ft-flash-up,.ft-flash-down,.ft-live-dot::before{animation:none}}
 .nav-min a.back .ic{width:13px;height:13px;transform:rotate(180deg)}
 
 /* ── data tables ────────────────────────────────────── */
@@ -2040,6 +2041,9 @@ window.addEventListener('fantrade:market', function(ev){
 /* Share prices run from tens of $FTR down to fractions of a cent, so they get
    as many decimals as they need: 12.61, 0.0917, 0.004586. */
 function pxFix(n){ n = Number(n) || 0; var a = Math.abs(n); return n.toFixed(a >= 1 || a === 0 ? 2 : a >= 0.01 ? 4 : 6); }
+/* Live quotes carry one more decimal so small moves show: 6.312, 12.604. */
+function pxLive(n){ n = Number(n) || 0; var a = Math.abs(n), d = a >= 100 ? 2 : a >= 1 ? 3 : a >= 0.01 ? 4 : 6;
+  return n.toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d }); }
 function pxFmt(n){ n = Number(n) || 0; var a = Math.abs(n), d = a >= 1 || a === 0 ? 2 : a >= 0.01 ? 4 : 6;
   return n.toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d }); }
 function usdFmt(ftr){ var d = (Number(ftr) || 0) * FTR_USD, a = Math.abs(d);
@@ -3067,6 +3071,100 @@ var FT = (function(){
     window.addEventListener('fantrade:auth', function(e){ if(e.detail) sync(); });
   }
 })();
+
+/* ── Demo market ────────────────────────────────────────────────────────
+   Makes the exchange behave like a live one for demos: prices move tick
+   by tick around each player's valuation, trades print, the order book
+   shifts, charts extend and portfolio values follow. It all happens in this
+   browser; nothing is sent to the database. It is on by default in this
+   prototype; ?sim=off in the address (or FTSim.stop()) turns it off, and
+   ?sim=on turns it back on. */
+var FTSim = (function(){
+  var KEY = 'ft_sim_v1', PREF = 'ft_sim_pref', S, on = false, timer = null, ticks = 0, feed = [], focus = null;
+  var HANDLES = ['amaka_fc','tobi_eleven','gooner_jess','kwame_m','lp_scout','sofi_r','dan_okoro','priya_fc','tomh','chioma_e',
+    'marcus_l','naija_baller','kopite_kel','bluesmum','ade_scores','lagos_lion','citizen_sam','zara_fc','yinka99','north_bank'];
+  function gauss(){ var u = 1 - Math.random(), v = Math.random(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); }
+  function parseVol(v){ var m = String(v || '0').match(/([\d.]+)\s*([KM]?)/i); if(!m) return 0; return Number(m[1]) * ({K:1e3, M:1e6}[m[2].toUpperCase()] || 1); }
+  function fmtVol(n){ return n >= 1e6 ? (n / 1e6).toFixed(1) + 'M' : n >= 1e3 ? (n / 1e3).toFixed(1) + 'K' : String(Math.round(n)); }
+  function base(a){ return a.v > 0 ? a.v / 1e7 / FTR_USD : (a._b || (a._b = a.p)); }
+  function load(){ try { return JSON.parse(localStorage.getItem(KEY) || 'null'); } catch(e){ return null; } }
+  function persist(){ try { localStorage.setItem(KEY, JSON.stringify(S)); } catch(e){} }
+  function pref(){ var q = (location.search.match(/[?&]sim=(on|off)/) || [])[1];
+    if(q){ try { localStorage.setItem(PREF, q); } catch(e){} return q === 'on'; }
+    try { return localStorage.getItem(PREF) !== 'off'; } catch(e){ return true; } }
+  function init(){
+    var saved = load(), day = new Date().toDateString();
+    S = (saved && saved.day === day && saved.a) ? saved : { day: day, a: {}, trades: [] };
+    feed = S.trades || [];
+    ASSETS.forEach(function(a){
+      var s = S.a[a.t];
+      if(!s){ var d = Number(a.d) || 0; s = S.a[a.t] = { k: 1, o: 1 / (1 + d / 100), hk: Math.max(1, (a.h || a.p) / (a.p || 1)), lk: 0, vol: parseVol(a.vol) }; s.hk = Math.max(1, s.o) * (1.003 + Math.random() * 0.004); s.lk = Math.min(1, s.o) * (0.997 - Math.random() * 0.004); }
+      apply(a, s);
+    });
+    // A fresh day starts with the last few minutes of trading already on the tape.
+    if(!feed.length){
+      var now = Date.now();
+      for(var i = 0; i < 48; i++){
+        var a = ASSETS[Math.floor(Math.pow(Math.random(), 1.6) * ASSETS.length)];
+        feed.push({ t: a.t, side: Math.random() < 0.52 ? 'buy' : 'sell', q: Math.max(1, Math.round(Math.exp(gauss() + 7.0) / Math.max(a.p, 0.0001))),
+                    p: +(a.p * (1 + gauss() * 0.0015)).toFixed(6), at: now - 4000 - i * (6000 + Math.random() * 9000), who: HANDLES[i % HANDLES.length] });
+      }
+      S.trades = feed;
+    }
+  }
+  function apply(a, s){
+    var b = base(a);
+    a.p = +(b * s.k).toFixed(6); a.d = +((s.k / s.o - 1) * 100).toFixed(2);
+    a.h = +(b * s.hk).toFixed(6); a.low = +(b * s.lk).toFixed(6); a.vol = fmtVol(s.vol);
+  }
+  function step(){
+    ticks++;
+    var n = 2 + Math.floor(Math.random() * 4), changed = {}, prints = [], now = Date.now();
+    var focusA = focus && Math.random() < 0.6 ? ASSETS.filter(function(x){ return x.t === focus; })[0] : null;
+    for(var i = 0; i < n; i++){
+      // Busier players trade more often; the player on screen trades most.
+      var a = (i === 0 && focusA) || ASSETS[Math.floor(Math.pow(Math.random(), 1.6) * ASSETS.length)], s = a && S.a[a.t];
+      if(!a || !s) continue;
+      var sigma = a.v < 3e7 ? 0.0026 : 0.0015, pull = (1 - s.k) * 0.015 + (Math.random() < 0.5 ? -1 : 1) * 0.0002;
+      var move = gauss() * sigma + pull;
+      s.k = Math.max(0.5, Math.min(1.8, s.k * (1 + move)));
+      s.hk = Math.max(s.hk, s.k); s.lk = Math.min(s.lk, s.k);
+      var qty = Math.max(1, Math.round(Math.exp(gauss() * 1.0 + 7.0) / Math.max(a.p, 0.0001)));
+      s.vol += qty; apply(a, s); changed[a.t] = move >= 0 ? 'up' : 'down';
+      prints.push({ t: a.t, side: move >= 0 ? 'buy' : 'sell', q: qty, p: a.p, at: now - Math.floor(Math.random() * 900),
+                    who: HANDLES[Math.floor(Math.random() * HANDLES.length)] });
+    }
+    feed = prints.concat(feed).slice(0, 60); S.trades = feed;
+    // Portfolio values follow the market.
+    syncHoldings(Object.keys(changed));
+    if(ticks % 4 === 0) persist();
+    window.dispatchEvent(new CustomEvent('fantrade:tick', { detail: { changed: changed, trades: prints } }));
+  }
+  function syncHoldings(list){
+    if(typeof FT === 'undefined' || !FT.getState) return;
+    var st = FT.getState(), moved = false;
+    list.forEach(function(t){ var h = st.holdings && st.holdings[t], a = ASSETS.filter(function(x){ return x.t === t; })[0];
+      if(h && a){ h.p = a.p; moved = true; } });
+    if(moved && FT.syncUI) FT.syncUI();
+  }
+  function start(){ if(on) return; syncHoldings(Object.keys(S.a)); on = true; timer = setInterval(step, 1300); document.documentElement.classList.add('sim-on'); }
+  function stop(){ on = false; clearInterval(timer); document.documentElement.classList.remove('sim-on'); try { localStorage.setItem(PREF, 'off'); } catch(e){} }
+  init();
+  window.addEventListener('fantrade:market', function(){ ASSETS.forEach(function(a){ if(S.a[a.t]) apply(a, S.a[a.t]); }); });
+  if(pref()) setTimeout(start, 700);
+  return {
+    on: function(){ return on; }, start: function(){ try { localStorage.setItem(PREF, 'on'); } catch(e){} start(); }, stop: stop,
+    focus: function(t){ focus = t; },
+    trades: function(t){ return t ? feed.filter(function(x){ return x.t === t; }) : feed; },
+    reset: function(){ try { localStorage.removeItem(KEY); } catch(e){} init(); }
+  };
+})();
+/* Flash a row or number when its price moves. */
+function ftFlash(el, dir){
+  if(!el) return; el.classList.remove('ft-flash-up', 'ft-flash-down'); void el.offsetWidth;
+  el.classList.add(dir === 'down' ? 'ft-flash-down' : 'ft-flash-up');
+}
+function ftAgo(ms){ var s = Math.max(1, Math.round((Date.now() - ms) / 1000)); return s < 60 ? s + 's ago' : s < 3600 ? Math.floor(s / 60) + 'm ago' : Math.floor(s / 3600) + 'h ago'; }
 
 // Toast Notification
 function showToast(msg, type){
