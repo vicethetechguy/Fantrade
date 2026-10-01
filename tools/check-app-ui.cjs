@@ -8,7 +8,7 @@ const root = path.resolve(__dirname, '..');
 const pages = [
   'dashboard.html','exchange.html','asset.html','trade.html','clubs.html','club-builder.html',
   'fanplay.html','liveboard.html','ftr.html','send.html','receive.html','swap.html','buy.html',
-  'activity.html','portfolio.html','leaderboard.html','divisions.html','notifications.html',
+  'activity.html','wallet.html','withdraw.html','leaderboard.html','divisions.html','notifications.html',
   'account.html','settings.html','settings-profile.html','settings-club.html',
   'settings-security.html','settings-alerts.html','settings-wallet.html','settings-play.html',
   'settings-data.html','onboarding.html'
@@ -31,7 +31,7 @@ const server = http.createServer((request, response) => {
   const page = await browser.newPage();
   await page.addInitScript(() => {
     try {
-      localStorage.setItem('fantrade_v1_state', JSON.stringify({ auth: { signedIn: true, user: { email: 'demo@fantrade.app' } } }));
+      if (!localStorage.getItem('fantrade_v1_state')) localStorage.setItem('fantrade_v1_state', JSON.stringify({ auth: { signedIn: true, user: { email: 'demo@fantrade.app' } } }));
     } catch (e) {}
   });
   const errors = [];
@@ -67,6 +67,61 @@ const server = http.createServer((request, response) => {
       }
       console.log(`App UI pass: ${width}px across ${pages.length} pages`);
     }
+    // Verify the journeys changed by the UI audit, using this isolated preview session.
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto(`${base}/exchange.html`, { waitUntil: 'domcontentloaded' });
+    await page.waitForTimeout(300);
+    assert.equal(await page.locator('.market-filters').evaluate(el => el.open), false, 'Mobile filters should start collapsed');
+    await page.locator('.market-filters > summary').click();
+    await page.locator('[data-sub="holdings"]').click();
+    assert.equal(await page.locator('[data-sub="holdings"]').getAttribute('aria-pressed'), 'true');
+    await page.setViewportSize({ width: 1280, height: 900 });
+    assert.equal(await page.locator('.market-filters').evaluate(el => el.open), true, 'Desktop filters must remain visible');
+
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto(`${base}/settings-alerts.html`, { waitUntil: 'domcontentloaded' });
+    await page.waitForTimeout(150);
+    await page.locator('.settings-switcher > summary').click();
+    assert(await page.locator('.settings-nav a[href="settings-security.html"]').isVisible(), 'Settings destinations must be discoverable');
+    assert.equal(await page.locator('button.tgl:not([aria-label])').count(), 0, 'Every settings toggle needs a name');
+    await page.locator('.settings-switcher > summary').focus();
+    await page.keyboard.press('Shift+Tab');
+    await page.keyboard.press('Tab');
+    assert.equal(await page.locator('.settings-switcher > summary').evaluate(el => getComputedStyle(el).outlineStyle), 'solid', 'Keyboard focus must be visible');
+
+    await page.evaluate(() => localStorage.setItem('ft_market_v1', JSON.stringify({ ftr_usd: 5 })));
+    await page.goto(`${base}/onboarding.html`, { waitUntil: 'domcontentloaded' });
+    const starterPrice = Number(await page.locator('#obPicks [data-sym="FSAKA"]').getAttribute('data-px'));
+    assert(Math.abs(starterPrice - 2.52212) < .02, 'Onboarding must use the market $FTR quote instead of its old fixed price');
+    await page.goto(`${base}/exchange.html`, { waitUntil: 'domcontentloaded' });
+    const exchangePrice = Number((await page.locator('a.kc-row[href*="FSAKA"] .kc-price-main').innerText()).replace(/,/g, ''));
+    assert(Math.abs(exchangePrice - starterPrice) < .02, 'Onboarding and Exchange prices must agree');
+
+    await page.goto(`${base}/wallet.html`, { waitUntil: 'domcontentloaded' });
+    assert(await page.locator('#walAvailable').isVisible(), 'Spendable tokens must be distinct from portfolio value');
+    assert(await page.locator('#walCoachAmt').isVisible(), 'Coach shares must be identifiable in allocation');
+    await page.locator('#walEyeBtn').click();
+    assert((await page.locator('#walAvailable').innerText()).includes('•'), 'Balance privacy must also cover available tokens');
+
+    await page.evaluate(() => {
+      const state = JSON.parse(localStorage.getItem('fantrade_v1_state'));
+      state.holdings = {};
+      state.fanplay = { activeEntries: [], history: [] };
+      localStorage.setItem('fantrade_v1_state', JSON.stringify(state));
+    });
+    await page.goto(`${base}/fanplay.html`, { waitUntil: 'domcontentloaded' });
+    await page.waitForTimeout(500);
+    assert.equal(await page.locator('#stepAssetGrid .fp-asset-card').count(), 0, 'An empty portfolio must never be replaced with sample owned players');
+    assert(await page.locator('#stepAssetGrid a[href="exchange.html"]').isVisible(), 'Empty portfolio needs a next action');
+    assert(await page.locator('#fpProgressText').isVisible(), 'Mobile FanPlay progress must be readable');
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.evaluate(() => scrollTo(0, document.documentElement.scrollHeight));
+    const actionClear = await page.locator('#stepBox1 .fp-nav-btns').evaluate(el => {
+      const action = el.getBoundingClientRect(), dock = document.querySelector('.taskbar').getBoundingClientRect();
+      return action.bottom <= dock.top;
+    });
+    assert(actionClear, 'FanPlay next action must stay above the taskbar');
+    console.log('UI journeys pass: filters, settings, focus, prices, wallet privacy, owned shares and taskbar clearance');
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto(`${base}/notifications.html`, { waitUntil: 'load' });
     await page.waitForTimeout(300);

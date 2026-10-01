@@ -93,9 +93,9 @@ a{color:inherit;text-decoration:none}
 p{margin:0 0 1em}
 button,input,select,textarea{font-family:Montserrat,system-ui,sans-serif}
 .wrap{max-width:var(--maxw);margin:0 auto;padding:0 32px;position:relative}
-:focus-visible{outline:none}
+:focus-visible{outline:2px solid #8475ff!important;outline-offset:4px!important}
 input,select,textarea,button{-webkit-tap-highlight-color:transparent}
-input:focus,select:focus,textarea:focus,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:none!important;box-shadow:none!important}
+input:focus,select:focus,textarea:focus{box-shadow:none!important}
 
 /* icons */
 .ic{width:20px;height:20px;display:block;color:inherit;flex:none;fill:currentColor}

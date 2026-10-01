@@ -5,6 +5,7 @@ import os, re, sys
 sys.path.insert(0, os.path.dirname(__file__))
 from app_design import apply_design, intro, tab_intro
 from common import head, atmosphere, nav, nav_min, footer, ic, JS_SHELL
+from econ_values import share_ftr
 
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
 ARROW = '<span class="cap">' + ic("arrow", "ic") + '</span>'
@@ -164,6 +165,8 @@ body{background:#050505;--dim:#b9bcb7;--faint:#979c96;--ink:#f4f6f1;--lime:#1800
 .auth-submit{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;min-height:52px;border:0;border-radius:999px;padding:14px 24px;background:var(--lime);color:#fff;font:600 14px Montserrat,system-ui,sans-serif;cursor:pointer;transition:background .2s}
 .auth-submit:hover{background:#3311cc}
 .auth-submit:focus-visible{outline:none}
+.auth-page .checkrow a{min-height:24px;padding:2px 9px;font-size:12px;vertical-align:baseline}
+.auth-page .checkrow{line-height:2}
 .splitline{margin:28px 0 16px;font-size:12px;font-weight:500;letter-spacing:0;text-transform:none;color:var(--dim)}
 .splitline::before,.splitline::after{background:#1d201c}
 .oauth{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
@@ -208,9 +211,7 @@ si.append(T('<div class="oauth"><button type="button" data-provider="Passkey">@@
             '<button type="button" data-provider="Google">@@ Google</button>'
             '<button type="button" data-provider="Wallet">@@ Wallet</button></div>',
             ic("shield", "ic"), ic("crest", "ic"), ic("wallet", "ic")))
-si.append('<div class="demo-note">Prototype build — accounts are real, balances are play money. '
-          'No account yet? <b>Create one</b> below; if the server is out of reach, '
-          'you are signed in on this device so you can still look around.</div>')
+si.append('<div class="demo-note">Preview mode uses play money. If the server is unavailable, you can explore a local preview on this device.</div>')
 si.append('<div class="auth-alt">New to Fantrade? <a href="signup.html">Create an account</a></div>')
 si.append('</main>')
 
@@ -452,6 +453,7 @@ STARTERS = [("FSAKA", "Bukayo Saka", "Arsenal · Forward", 48.20, False),
             ("FMUS", "Jamal Musiala", "Bayern · Midfielder", 46.70, False),
             ("FARTA", "Mikel Arteta", "Arsenal · Coach", 22.05, True)]
 STEPS = [("01", "Your first shares"), ("02", "Your profile"), ("03", "Your club"), ("04", "Ready to play")]
+STARTERS = [(sym, name, role, share_ftr(sym), coach) for sym, name, role, _price, coach in STARTERS]
 ob = ['<main class="onboarding"><header class="ob-intro"><h1>Make the game yours.</h1>'
       '<p>A few quick steps to your first shares and your own Dream Club.</p></header>'
       '<div class="ob-progress"><p id="obCount" aria-live="polite">Step 1 of 4 · Your first shares</p>'
@@ -567,6 +569,20 @@ function cost(){
   el('obFee').textContent = Math.round(fee).toLocaleString('en-US') + ' $FTR';
   el('obTot').textContent = Math.round(sub + fee).toLocaleString('en-US') + ' $FTR';
 }
+// Use the same catalogue and market updates as Exchange, including cached $FTR quotes.
+function refreshStarterPrices(){
+  document.querySelectorAll('#obPicks .pick').forEach(function(button){
+    var asset = ASSETS.find(function(a){ return a.t === button.dataset.sym; });
+    if(!asset) return;
+    button.dataset.px = asset.p;
+    button.querySelector('.px').innerHTML = pxFmt(asset.p) + ' <small>$FTR / share</small>';
+    if(picked && picked.sym === asset.t) picked.px = asset.p;
+  });
+  cost();
+}
+refreshStarterPrices();
+window.addEventListener('fantrade:market', refreshStarterPrices);
+window.addEventListener('fantrade:statechange', refreshStarterPrices);
 el('obShares').addEventListener('input', cost);
 document.querySelectorAll('.quick button[data-s]').forEach(function(b){
   b.addEventListener('click', function(){
@@ -2153,6 +2169,11 @@ SECTIONS["data"] = T('<div class="bezel flat sec-card" data-reveal><div class="c
             btn("Close account", "btn-red", tag="button", extra='id="stClose"'))
 
 ST_JS = r"""
+document.querySelectorAll('button.tgl').forEach(function(button){
+  var row = button.closest('.sw-row');
+  var label = row && row.querySelector('.t');
+  button.setAttribute('aria-label', label ? label.textContent.trim() : 'Two-factor authentication');
+});
 window.addEventListener('load',function(){var nav=document.querySelector('.settings-nav'),on=nav&&nav.querySelector('a.on');if(!on||nav.scrollWidth<=nav.clientWidth)return;nav.scrollLeft=0;var d=on.getBoundingClientRect().left-nav.getBoundingClientRect().left-parseFloat(getComputedStyle(nav).paddingLeft);if(d>0)nav.scrollLeft=d;});
 // One script serves every settings screen, so nothing here assumes a field is
 // present — each section has its own page now.
@@ -2167,7 +2188,7 @@ function on(id, ev, fn){ var e = el(id); if(e) e.addEventListener(ev, fn); }
   var s = FT.getState();
   set('stName', s.user.name);
   set('stHandle', s.user.handle);
-  set('stEmail', s.auth.email);
+  set('stEmail', s.auth.email || (s.auth.user && s.auth.user.email) || s.user.email || '');
   set('stClub', s.club.name);
   set('stCap', s.prefs.stakeCap.toLocaleString('en-US'));
   [['stRegion', s.user.region], ['stLeague', s.user.league]].forEach(function(p){
@@ -2704,7 +2725,10 @@ def settings_nav(active=""):
     for key, icon_name, label in SETNAV:
         links.append('<a href="settings-%s.html" class="%s">%s<span>%s</span></a>' %
                      (key, "on" if key == active else "", ic(icon_name, "ic"), label))
-    return '<nav class="settings-nav" aria-label="Profile settings">%s</nav>' % "".join(links)
+    links = [link.replace('class="on"', 'class="on" aria-current="page"') for link in links]
+    return ('<details class="settings-switcher"><summary>' + SETTINGS_COPY[active][0] +
+            '<span>Change section</span></summary><nav class="settings-nav" aria-label="Profile settings">' +
+            "".join(links) + '</nav></details>')
 
 def settings_top(title, subtitle, back=("account.html", "Profile")):
     return ('<a class="back-btn" href="%s" aria-label="Back to %s">Back</a>'

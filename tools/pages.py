@@ -138,6 +138,7 @@ ex = [T('<main><div class="kc-ex-wrap">' + tab_intro('Exchange') +
         '  <button type="button" class="kc-cat-tab" data-cat="coaches">Coaches</button>'
         '</div>'
         '<!-- Sub-filter Row -->'
+        '<details class="market-filters"><summary>Filter shares<span>League · Holdings · Gainers</span></summary>'
         '<div class="kc-sub-bar">'
         '  <div class="kc-sub-tabs" id="kcSubTabs">'
         '    <button type="button" class="kc-sub-tab on" data-sub="all">All</button>'
@@ -149,6 +150,7 @@ ex = [T('<main><div class="kc-ex-wrap">' + tab_intro('Exchange') +
         '  </div>'
         '</div>'
         '<!-- Table Headers -->'
+        '</details>'
         '<div class="kc-th">'
         '  <span data-sort="pair">Player ⇅</span>'
         '  <span data-sort="price" style="justify-content:flex-end">Price ($FTR) ⇅</span>'
@@ -224,11 +226,11 @@ function renderMarketRows(){
       + "  <div class='kc-avatar" + (a.c ? " coach" : "") + "'>" + playerPhoto(a.t,a.n) + "</div>"
       + "  <div style='min-width:0'>"
       + "    <div class='kc-pair-title'>"
-      + "      <span>" + sym + "</span>"
+      + "      <span>" + a.n + "</span>"
       + "      <span class='kc-pair-quote'>/" + quote + "</span>"
       + "      <span class='kc-tag'>" + (a.tag || (a.c ? 'COACH' : '10x')) + "</span>"
       + "    </div>"
-      + "    <div class='kc-pair-sub'>" + a.n + " · " + (a.club || (a.c ? 'Coach' : 'Player')) + "</div>"
+      + "    <div class='kc-pair-sub'>" + sym + " · " + (a.club || (a.c ? 'Coach' : 'Player')) + "</div>"
       + "  </div>"
       + "</div>"
       + "<div class='kc-row-mid'>"
@@ -507,6 +509,7 @@ fp.append('<div class="fp-view-nav">'
 # ══════════════════════════════════════════════════════════
 fp.append('<div id="fpViewWizard">'
           '<!-- Step Indicator -->'
+          '<div class="fp-compact-progress"><p id="fpProgressText" role="status" aria-live="polite">Step 1 of 6 · Choose your player</p><progress id="fpProgress" value="1" max="6" aria-label="FanPlay entry progress"></progress></div>'
           '<div class="fp-step-bar">'
           '<div class="fp-step-dot active" id="sdot1" onclick="window.goToStep(1)"><div class="fp-step-circle">1</div><span class="fp-step-label">Asset</span></div>'
           '<div class="fp-step-dot" id="sdot2" onclick="window.goToStep(2)"><div class="fp-step-circle">2</div><span class="fp-step-label">Match</span></div>'
@@ -674,12 +677,7 @@ function getLocalEligibleAssets(){
     'FMUS': 'Bayern Munich', '$Gavi': 'Barcelona', '$Camavinga': 'Real Madrid',
     '$Guardiola': 'Manchester City'
   };
-  var holdings = (s && s.holdings && Object.keys(s.holdings).length > 0) ? s.holdings : {
-    'FSAKA': { n: 'Bukayo Saka', shares: 10000, avg: 31.40, p: 48.20, c: false },
-    'FBRN': { n: 'Bruno Fernandes', shares: 5000, avg: 38.00, p: 39.75, c: false },
-    'FHLND': { n: 'Erling Haaland', shares: 3000, avg: 68.50, p: 71.40, c: false },
-    'FARTA': { n: 'Mikel Arteta', shares: 1000, avg: 20.50, p: 22.05, c: true }
-  };
+  var holdings = (s && s.holdings) || {};
   var lockedMap = {};
   var entries = (s && s.fanplay && s.fanplay.activeEntries) ? s.fanplay.activeEntries : [];
   entries.forEach(function(e){
@@ -706,14 +704,6 @@ function getLocalEligibleAssets(){
       lockedQuantity: locked
     });
   });
-  if(list.length === 0){
-    list = [
-      { id:'asset-saka', assetId:'asset-saka', symbol:'FSAKA', name:'Bukayo Saka', team:'Arsenal', club:'Arsenal', availableQuantity:10000, totalQuantity:10000, lockedQuantity:0 },
-      { id:'asset-bruno', assetId:'asset-bruno', symbol:'FBRN', name:'Bruno Fernandes', team:'Manchester United', club:'Manchester United', availableQuantity:5000, totalQuantity:5000, lockedQuantity:0 },
-      { id:'asset-haaland', assetId:'asset-haaland', symbol:'FHLND', name:'Erling Haaland', team:'Manchester City', club:'Manchester City', availableQuantity:3000, totalQuantity:3000, lockedQuantity:0 },
-      { id:'asset-arteta', assetId:'asset-arteta', symbol:'FARTA', name:'Mikel Arteta', team:'Arsenal', club:'Arsenal', availableQuantity:1000, totalQuantity:1000, lockedQuantity:0 }
-    ];
-  }
   return list;
 }
 
@@ -841,6 +831,10 @@ function goToStep(s){
 window.goToStep = goToStep;
 
 function updateStepUI(){
+  var progressText = document.getElementById('fpProgressText');
+  var progress = document.getElementById('fpProgress');
+  if(progressText) progressText.textContent = curStep === 7 ? 'Entry confirmed' : 'Step ' + curStep + ' of 6 · ' + ['Choose your player','Choose a match','Choose a tier','Make your predictions','Choose your shares','Review your entry'][curStep - 1];
+  if(progress) progress.value = Math.min(curStep, 6);
   for(var i=1; i<=7; i++){
     var dot = document.getElementById('sdot' + i);
     var box = document.getElementById('stepBox' + i);

@@ -99,13 +99,14 @@ f = ['<main><div class="kc-assets-wrap wallet-layout">', tab_intro('Wallet')]
 WCARD_ART = '<svg class="kc-wcard-art" viewBox="0 0 800 300" preserveAspectRatio="xMaxYMax slice" aria-hidden="true" focusable="false"><defs><path id="wcMark" d="M230.5 468.5C215.9 465.3 202.2 457.3 190.6 444.9C155.2 407.3 144.7 349.6 164.4 300.7C166.3 296.2 181.3 265.3 197.9 232.1C216 196 228.7 169.4 229.6 165.8C234.2 148 223.2 138.7 207.4 146.8C203 149.1 146.7 192.7 98.5 231.4C82 244.6 66.2 256.7 63.3 258.2C46.9 267.3 25.6 264.2 12.2 250.9C2.8 241.5 -1.7 227.9 0.8 216.3C2.8 206.9 6.3 201 15.2 192.3C34.8 173.3 202 20.4 207 17C230 1.4 258.4 -3.4 284.8 4C300.2 8.3 311.8 15 324.3 26.9C330.8 33.2 332.3 35.1 333.6 39.7C335.6 46.5 334.3 53 329.8 58.4C324.8 64.5 321.2 65.7 306 66.5C276 68 243.8 71.6 234.8 74.6C221.1 79.1 214.7 90.6 220 101C224.2 109.2 241.2 119 267 128.3C295.6 138.6 364.9 159.4 414 172.4C441.5 179.7 446.3 181.2 457.5 186.4C477 195.4 501.1 215.4 507.1 227.6C509.8 233 510.2 235 510.2 241.5C510.2 248 509.8 250 507.1 255.4C504.5 260.7 501.6 263.9 489.5 275.1C478.8 285 473 289.6 467.4 292.5C459.7 296.5 459.7 296.5 448.1 296.5C437.2 296.5 436.1 296.3 430 293.4C421.5 289.4 393.5 268.2 364.5 244C320.9 207.5 313.5 201.3 301.7 192.1C281.7 176.5 268 167.1 262.9 165.6C254.1 163 246.4 167.3 244 176C242.6 181.2 243.3 186.4 246.3 193.4C247.5 196.2 270 229.3 296.4 267C323.1 305.2 345.8 338.6 347.7 342.5C356.7 361.6 355.4 386.2 344.5 404.5C339.9 412.1 338.7 413.3 314.8 435.5C293.7 455.1 289.4 458.5 279.7 463C265.6 469.6 245.7 471.9 230.5 468.5Z" transform="translate(-255 -235)" vector-effect="non-scaling-stroke"/><linearGradient id="wcLine" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".5"/><stop offset=".6" stop-color="#fff" stop-opacity=".12"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient><radialGradient id="wcGlow" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#8f86ff" stop-opacity=".45"/><stop offset="1" stop-color="#8f86ff" stop-opacity="0"/></radialGradient><pattern id="wcDots" width="46" height="46" patternUnits="userSpaceOnUse" patternTransform="rotate(-18)"><use href="#wcMark" transform="translate(23 23) scale(.034)" fill="#fff" fill-opacity=".07"/></pattern><linearGradient id="wcDotsFade" x1="0" x2="1"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".55" stop-color="#fff" stop-opacity=".0"/><stop offset="1" stop-color="#fff" stop-opacity="1"/></linearGradient><mask id="wcDotsMask"><rect width="800" height="300" fill="url(#wcDotsFade)"/></mask></defs><rect width="800" height="300" fill="url(#wcDots)" mask="url(#wcDotsMask)"/><circle cx="660" cy="130" r="220" fill="url(#wcGlow)"/><g transform="translate(650 158) rotate(-8)"><use href="#wcMark" transform="scale(.56)" fill="#fff" fill-opacity=".07"/><use href="#wcMark" transform="scale(.56)" fill="none" stroke="url(#wcLine)" stroke-width="1.6"/><use href="#wcMark" transform="scale(.72)" fill="none" stroke="#fff" stroke-opacity=".13" stroke-width="1"/><use href="#wcMark" transform="scale(.9)" fill="none" stroke="#fff" stroke-opacity=".08" stroke-width="1"/><use href="#wcMark" transform="scale(1.1)" fill="none" stroke="#fff" stroke-opacity=".05" stroke-width="1"/><use href="#wcMark" transform="scale(1.34)" fill="none" stroke="#fff" stroke-opacity=".03" stroke-width="1"/></g></svg>'
 f.append(T('<div class="kc-assets-card">' + WCARD_ART +
            '<div class="kc-card-top">'
-           '<div class="kc-card-lbl">Total balance'
+           '<div class="kc-card-lbl">Total portfolio value'
            '<button type="button" class="kc-eye-btn" id="walEyeBtn" title="Toggle balance visibility">'
            '<svg class="ic" id="walEyeIcon" viewBox="0 0 24 24" style="fill:none" stroke="currentColor" stroke-width="1.8"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></button></div>'
-           '<div class="kc-pnl-pill" id="walDelta">+2.35% (+2,940)</div>'
+           '<div class="kc-pnl-pill" id="walDelta">Estimated value</div>'
            '</div>'
            '<div class="kc-card-bal"><span id="walBal">1,000,000.00</span><small>$FTR</small></div>'
            '<div class="kc-card-sub"><span id="walGbp">≈ $2,000,000.00 USD</span></div>'
+           '<div class="wallet-spendable"><span>Available to spend</span><b id="walAvailable">—</b></div>'
            '<div class="kc-actions-grid">'
            '<a class="kc-act-btn" href="buy.html"><div class="kc-act-icon">@@</div><span class="kc-act-lbl">Deposit</span></a>'
            '<a class="kc-act-btn" href="withdraw.html"><div class="kc-act-icon">@@</div><span class="kc-act-lbl">Withdraw</span></a>'
@@ -120,13 +121,15 @@ f.append('<div class="kc-alloc-card">'
          '<div class="kc-alloc-bar">'
          '<div class="kc-alloc-bar-seg" style="width:62%;background:#1800ad" title="Liquid FTR"></div>'
          '<div class="kc-alloc-bar-seg" style="width:28%;background:#4DA3FF" title="Player Shares"></div>'
-         '<div class="kc-alloc-bar-seg" style="width:10%;background:#FF6A1F" title="Locked in Entries"></div>'
+         '<div class="kc-alloc-bar-seg" style="width:0%;background:#FF6A1F" title="Coach activity shares"></div>'
+         '<div class="kc-alloc-bar-seg" style="width:0%;background:#929b8a" title="Locked FTR"></div>'
          '</div>'
          '<div class="kc-alloc-legend">'
-         '<div class="kc-leg-item"><div class="kc-leg-dot" style="background:#1800ad"></div>Liquid <b id="walLiquidAmt">1,000,000 FTR</b></div>'
-         '<div class="kc-leg-item"><div class="kc-leg-dot" style="background:#4DA3FF"></div>Shares <b id="walSharesAmt">58,240 FTR</b></div>'
-         '<div class="kc-leg-item"><div class="kc-leg-dot" style="background:#FF6A1F"></div>Locked <b id="walLockedAmt">10,000 FTR</b></div>'
-         '</div></div>')
+         '<div class="kc-leg-item"><div class="kc-leg-dot" style="background:#1800ad"></div>Available $FTR <b id="walLiquidAmt">—</b></div>'
+         '<div class="kc-leg-item"><div class="kc-leg-dot" style="background:#4DA3FF"></div>Player shares <b id="walSharesAmt">—</b></div>'
+         '<div class="kc-leg-item"><div class="kc-leg-dot" style="background:#FF6A1F"></div>Coach shares <b id="walCoachAmt">—</b></div>'
+         '<div class="kc-leg-item"><div class="kc-leg-dot" style="background:#929b8a"></div>Locked $FTR <b id="walLockedAmt">—</b></div>'
+         '</div><p class="wallet-value-note">Share values are estimates in $FTR, not spendable tokens. Shares locked in FanPlay remain included in your holdings.</p></div>')
 
 # Tabs: Holdings / FanPlay / Activity. All three stay on this page.
 f.append('<div class="kc-tabs" role="tablist" aria-label="Wallet views">'
@@ -168,15 +171,15 @@ function renderAssets(){
     + '</div>'
     + '<div class="kc-asset-right">'
     + '<div class="kc-asset-val">' + (hidden ? '••••••' : money(s.wallet.balance) + ' FTR') + '</div>'
-    + '<div class="kc-asset-chg up">+2.35% (24h)</div>'
+    + '<div class="kc-asset-chg wal-muted">Available to spend</div>'
     + '</div></div>');
 
   // Player Holdings
-  var totalSharesVal = 0;
+  var playerSharesVal = 0, coachSharesVal = 0;
   Object.keys(s.holdings).forEach(function(k){
     var h = s.holdings[k];
     var val = h.shares * (h.p || h.avg || 10);
-    totalSharesVal += val;
+    if(h.c) coachSharesVal += val; else playerSharesVal += val;
     var sym = ftSym(k);
     var meta = WASSETS.filter(function(a){ return a.t === sym || a.t === k; })[0]
       || { i: h.c ? 'whistle' : 'boot', c: h.c ? 'coach' : '', d: 0, s: 0 };
@@ -196,10 +199,11 @@ function renderAssets(){
 
   box.innerHTML = rows.join('');
   if(el('walPosCount')) el('walPosCount').textContent = (Object.keys(s.holdings).length + 1) + ' Assets';
-  var allocation = [s.wallet.balance || 0, totalSharesVal, s.wallet.locked || 0];
+  var allocation = [s.wallet.balance || 0, playerSharesVal, coachSharesVal, s.wallet.locked || 0];
   var allocationTotal = allocation.reduce(function(total,value){return total+value;},0);
   document.querySelectorAll('.kc-alloc-bar-seg').forEach(function(segment,index){segment.style.width=(allocationTotal ? allocation[index]/allocationTotal*100 : 0)+'%';});
-  if(el('walSharesAmt')) el('walSharesAmt').textContent = (hidden ? '••••' : money(totalSharesVal) + ' FTR');
+  if(el('walSharesAmt')) el('walSharesAmt').textContent = (hidden ? '••••' : money(playerSharesVal) + ' FTR');
+  if(el('walCoachAmt')) el('walCoachAmt').textContent = (hidden ? '••••' : money(coachSharesVal) + ' FTR');
   if(el('walLockedAmt')) el('walLockedAmt').textContent = (hidden ? '••••' : money(s.wallet.locked || 0) + ' FTR');
   if(el('walLiquidAmt')) el('walLiquidAmt').textContent = (hidden ? '••••' : money(s.wallet.balance) + ' FTR');
 }
@@ -276,6 +280,7 @@ function syncWallet(){
   renderActivity();
   var s = FT.getState();
   var bal = (s.wallet.balance || 0) + (s.wallet.locked || 0) + FT.holdingsValue();
+  if(el('walAvailable')) el('walAvailable').textContent = hidden ? '••••••' : money(s.wallet.balance || 0) + ' $FTR';
   if(el('walBal')){
     el('walBal').textContent = hidden ? '••••••' : bal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   }
@@ -287,6 +292,7 @@ function syncWallet(){
 
 syncWallet();
 window.addEventListener('fantrade:statechange', syncWallet);
+window.addEventListener('fantrade:market', syncWallet);
 """
 page("ftr.html", "Wallet & Assets — Fantrade", "".join(f), FTR_JS, FTR_CSS, app=True)
 page("wallet.html", "Wallet & Assets — Fantrade", "".join(f), FTR_JS, FTR_CSS, app=True)
@@ -358,18 +364,18 @@ details p{color:var(--dim);font-weight:300;font-size:14px;max-width:62ch;padding
 """
 
 WALK = [
-    ("01", "ball", "Fund your balance", "Deposit and convert to $FTR. That single balance is what you trade with, "
-     "stake with and get paid into — there is no second currency to manage.",
-     ["Convert at the rate shown, fee included", "Balance splits into available and locked"], False),
+    ("01", "ball", "Fund your balance", "Buy $FTR at the market price shown. Use it to buy Activity Shares "
+     "and receive FanPlay settlements. FanPlay locks eligible shares rather than staking your $FTR directly.",
+     ["$FTR has a maximum supply of 10,000,000 tokens", "The exchange determines the $FTR price"], False),
     ("02", "candle", "Buy players and coaches", "Every asset carries a fixed ten million shares. Buy one share or a "
      "hundred thousand — you own a real slice of that player's Fantrade market.",
      ["Players and coaches trade on the same book", "0.4% fee on both sides, always shown first"], False),
     ("03", "crest", "Build your Dream Club", "Name it, badge it, pick a coach and a shape. Every slot checks your "
      "wallet before it accepts a player, so the squad is genuinely yours.",
      ["1 coach, 11 starters, a working bench", "Change the formation and the shape rebuilds"], True),
-    ("04", "bolt", "Enter a round", "Play a single player or send the whole club. Pick a market tier and the "
-     "projected points update before you commit anything.",
-     ["Six tiers from Simple to Viynx Max", "Club mode earns a configurable boost"], False),
+    ("04", "bolt", "Enter FanPlay", "Choose eligible shares you own, an upcoming fixture and a prediction tier. "
+     "Review your predictions, shares to lock, and potential gains and losses before confirming.",
+     ["Locked shares cannot be sold before settlement", "Review both the FP and $FTR settlement range"], False),
     ("05", "clock", "The window settles", "Real fixtures do the scoring. When the matchday clock closes, every "
      "eligible performance is collected and converted into Fans Point.",
      ["Your players can be in different matches", "Bench subs in under your own rules"], False),
