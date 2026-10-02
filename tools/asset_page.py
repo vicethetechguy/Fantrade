@@ -164,7 +164,7 @@ JS = r'''
 (function(){
   var byId = function(id){ return document.getElementById(id); };
   var requested = new URLSearchParams(location.search).get('a') || 'FSAKA';
-  var asset = ASSETS.find(function(a){ return a.t.toLowerCase() === requested.toLowerCase() || ftSym(a.t).toLowerCase() === requested.toLowerCase(); });
+  var asset = ftAsset(requested);
   var picker = byId('assetPicker');
   function money(value){ return pxFmt(value); }
   function live(value){ return pxLive(value); }
@@ -243,7 +243,7 @@ JS = r'''
   byId('assetSell').href='trade.html?a='+encodeURIComponent(asset.t)+'&side=sell';
   function renderPosition(){
     var state=FT.getState();
-    var key=Object.keys(state.holdings).find(function(k){return k.toLowerCase()===asset.t.toLowerCase();});
+    var key=Object.keys(state.holdings).find(function(k){return ftAsset(k,state.holdings[k].n)===asset;});
     var holding=key?state.holdings[key]:null;
     var shares=holding?Number(holding.shares)||0:0;
     byId('assetSell').hidden=shares<=0;
@@ -403,7 +403,7 @@ JS = r'''
   function renderInfo(){
     var cap=asset.p*FTR_USD*1e7, vol=volNum(asset.vol), volUsd=vol*asset.p*FTR_USD, year=seriesFor('1Y');
     var hi=Math.max.apply(null,year.map(function(d){return d.h;})), lo=Math.min.apply(null,year.map(function(d){return d.l;}));
-    var st=FT.getState(), key=Object.keys(st.holdings).find(function(k){return k.toLowerCase()===asset.t.toLowerCase();}), mine=key?Number(st.holdings[key].shares)||0:0;
+    var st=FT.getState(), key=Object.keys(st.holdings).find(function(k){return ftAsset(k,st.holdings[k].n)===asset;}), mine=key?Number(st.holdings[key].shares)||0:0;
     byId('infoName').textContent=asset.n;
     byId('infoRank').textContent='No. '+rankOf();
     byId('infoRank').title='Ranked by market cap among '+ASSETS.length+' shares on Fantrade';

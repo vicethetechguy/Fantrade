@@ -3,7 +3,8 @@ body.app.calm{--dock-clearance:calc(112px + env(safe-area-inset-bottom));--faint
 body.app.calm main{padding-bottom:0!important;scroll-padding-bottom:var(--dock-clearance)}
 body.app.calm :is(.kc-home-wrap,.kc-ex-wrap,.kc-assets-wrap,.kc-profile-wrap,.lb2-wrap,.kc-settings-wrap,.utility-page,.secondary-page,.fanplay-layout){padding-bottom:var(--dock-clearance)!important}
 body.app.calm :is(button,a,input,select,textarea,summary,[tabindex]):focus-visible{outline:2px solid #8475ff!important;outline-offset:4px!important}
-body.app.calm :is(input,select,textarea):focus-visible{outline-offset:2px!important}
+body.app.calm :is(input,select,textarea,[contenteditable="true"]):is(:focus,:focus-visible){outline:none!important;border-color:transparent!important;box-shadow:none!important}
+body.app.calm :is(.field,.tfield,.inp,.kc-search-box,.kc-home-search-box,.fp-stake-input-wrap):focus-within{outline:none!important;box-shadow:none!important}
 body.app.calm [data-reveal]{opacity:1!important;transform:none!important;filter:none!important;transition:none!important}
 body.app.calm :is(.kc-price-sub,.kc-pair-sub,.kc-asset-sub,.fp-step-label,.fp-metric-lbl,.lb2-profit,.portfolio-player small,.portfolio-value>span,.portfolio-cost span,.formation-player>b,.formation-player>span,.kc-home-wrap small){font-size:12px!important}
 body.app.calm :is(.kc-card-bal,.kc-price-main,.kc-asset-val,.lb2-profit,.fp-metric-val){font-variant-numeric:tabular-nums}

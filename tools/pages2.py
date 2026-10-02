@@ -180,7 +180,8 @@ function renderAssets(){
     var h = s.holdings[k];
     var val = h.shares * (h.p || h.avg || 10);
     if(h.c) coachSharesVal += val; else playerSharesVal += val;
-    var sym = ftSym(k);
+    var asset = ftAsset(k, h.n);
+    var sym = asset ? asset.t : ftSym(k);
     var meta = WASSETS.filter(function(a){ return a.t === sym || a.t === k; })[0]
       || { i: h.c ? 'whistle' : 'boot', c: h.c ? 'coach' : '', d: 0, s: 0 };
     var up = meta.d >= 0;

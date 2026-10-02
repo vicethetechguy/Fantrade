@@ -56,6 +56,21 @@ const server = http.createServer((request, response) => {
             dockInside: !rect || (rect.left >= -1 && rect.right <= innerWidth + 1)
           };
         });
+        const fieldFocus = await page.evaluate(() => {
+          const fields = [...document.querySelectorAll('input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]):not([type="range"]),textarea')]
+            .filter(el => el.getBoundingClientRect().width > 0 && !el.disabled);
+          const outlined = [];
+          fields.forEach(el => {
+            el.focus();
+            const style = getComputedStyle(el);
+            if (style.outlineStyle !== 'none' && parseFloat(style.outlineWidth) > 0) outlined.push(el.id || el.name);
+            if (style.boxShadow !== 'none') outlined.push((el.id || el.name) + ':shadow');
+            el.blur();
+          });
+          scrollTo(0, 0);
+          return outlined;
+        });
+        assert.deepEqual(fieldFocus, [], `${name} shows a focus border on typing fields at ${width}px`);
         assert(!result.overflow, `${name} overflows at ${width}px`);
         assert.deepEqual(result.brokenImages, [], `${name} has broken images at ${width}px`);
         assert.equal(result.dockLinks, ['asset.html', 'onboarding.html'].includes(name) ? 0 : 5, `${name} has an unexpected primary dock`);
@@ -102,6 +117,25 @@ const server = http.createServer((request, response) => {
     assert(await page.locator('#walCoachAmt').isVisible(), 'Coach shares must be identifiable in allocation');
     await page.locator('#walEyeBtn').click();
     assert((await page.locator('#walAvailable').innerText()).includes('•'), 'Balance privacy must also cover available tokens');
+
+    await page.evaluate(() => {
+      const state = JSON.parse(localStorage.getItem('fantrade_v1_state'));
+      state.holdings = {
+        '$Mbappe': { n: 'Kylian Mbappé', shares: 801, avg: 11, p: 11, c: false },
+        FARTETA: { n: 'Mikel Arteta', shares: 24, avg: 1, p: 1, c: true }
+      };
+      localStorage.setItem('fantrade_v1_state', JSON.stringify(state));
+    });
+    await page.goto(`${base}/wallet.html`, { waitUntil: 'domcontentloaded' });
+    await page.locator('#walAssets a[href*="FKM7"]').click();
+    assert.equal(await page.locator('#assetName').innerText(), 'Kylian Mbappé', 'Wallet legacy shares must open the correct player');
+    assert(await page.locator('#assetContent').isVisible(), 'Player detail UI must be present');
+    assert((await page.locator('#assetHolding').innerText()).includes('801 shares held'), 'Legacy holding quantity must appear in player details');
+    for (const [symbol, name] of [['FMBAPPE','Kylian Mbappé'], ['$bellingham','Jude Bellingham'], ['FARTETA','Mikel Arteta'], ['$Guardiola','Pep Guardiola']]) {
+      await page.goto(`${base}/asset.html?a=${encodeURIComponent(symbol)}`, { waitUntil: 'domcontentloaded' });
+      assert.equal(await page.locator('#assetName').innerText(), name, `${symbol} must resolve to the proper share`);
+    }
+    console.log('Wallet detail links and legacy player/coach symbols pass');
 
     await page.evaluate(() => {
       const state = JSON.parse(localStorage.getItem('fantrade_v1_state'));

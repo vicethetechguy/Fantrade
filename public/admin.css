@@ -57,7 +57,7 @@ a{color:inherit}
 .input,.select,.textarea{width:100%;min-height:46px;padding:11px 14px;border-radius:12px;border:0;background:var(--panel-2);
   box-shadow:inset 0 0 0 1px var(--line);transition:box-shadow .15s ease,background .15s ease}
 .textarea{min-height:88px;resize:vertical}
-.input:focus,.select:focus,.textarea:focus{outline:0;box-shadow:inset 0 0 0 1px var(--lilac);background:var(--panel-3)}
+.input:focus,.select:focus,.textarea:focus{outline:none!important;border-color:transparent!important;box-shadow:none!important;background:var(--panel-3)}
 .input[readonly]{color:var(--dim)}
 .form-error{min-height:20px;color:var(--bad);font-size:12.5px;margin:2px 0 10px}
 .gate-alt{margin-top:22px;padding-top:20px;border-top:1px solid var(--line);font-size:13px;color:var(--dim)}

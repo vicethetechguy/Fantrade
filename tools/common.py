@@ -95,7 +95,7 @@ button,input,select,textarea{font-family:Montserrat,system-ui,sans-serif}
 .wrap{max-width:var(--maxw);margin:0 auto;padding:0 32px;position:relative}
 :focus-visible{outline:2px solid #8475ff!important;outline-offset:4px!important}
 input,select,textarea,button{-webkit-tap-highlight-color:transparent}
-input:focus,select:focus,textarea:focus{box-shadow:none!important}
+input:focus,select:focus,textarea:focus,input:focus-visible,select:focus-visible,textarea:focus-visible,[contenteditable="true"]:focus{outline:none!important;border-color:transparent!important;box-shadow:none!important}
 
 /* icons */
 .ic{width:20px;height:20px;display:block;color:inherit;flex:none;fill:currentColor}
@@ -2164,12 +2164,27 @@ var FT_TICKERS={
 };
 function ftSym(value){
   if(!value) return '';
-  var s = String(value);
-  if(FT_TICKERS[s]) return FT_TICKERS[s];
-  if(s.startsWith('F') && s.length >= 4) return s;
+  var s = String(value).trim();
+  function resolve(token){
+    var raw = token.replace(/^\$/, ''), upper = raw.toUpperCase();
+    var aliases = Object.keys(FT_TICKERS);
+    var key = aliases.find(function(k){ return k.replace(/^\$/, '').toUpperCase() === upper; });
+    if(!key && upper.charAt(0) === 'F') key = aliases.find(function(k){ return k.replace(/^\$/, '').toUpperCase() === upper.slice(1); });
+    if(key) return FT_TICKERS[key];
+    if(upper === 'GUARDIOLA' || upper === 'FGUARDIOLA') return 'FPEP';
+    if(upper === 'RICE' || upper === 'FRICE') return 'FRICE';
+    return upper.charAt(0) === 'F' ? upper : 'F' + upper;
+  }
+  if(/^\$?[A-Za-z0-9]+$/.test(s)) return resolve(s);
   return s.replace(/\$[A-Za-z0-9]+/g, function(id){
-    return FT_TICKERS[id] || (id.charAt(1) === 'F' ? id.slice(1) : 'F' + id.slice(1).toUpperCase());
+    return resolve(id);
   }).replace(/^\$/, '');
+}
+function ftAsset(value, name){
+  var symbol = ftSym(value).toUpperCase();
+  return ASSETS.find(function(a){
+    return ftSym(a.t).toUpperCase() === symbol || (name && a.n.toLowerCase() === String(name).trim().toLowerCase());
+  });
 }
 /* `lg` is the league an asset plays in; the Exchange filters on it rather
    than guessing from the club name, which would file Arsenal's women
