@@ -19,7 +19,7 @@ const server = http.createServer((request, response) => {
   if (!file.startsWith(root + path.sep)) return response.writeHead(403).end();
   fs.readFile(file, (error, data) => {
     if (error) return response.writeHead(404).end();
-    response.setHeader('Content-Type', ({ '.html': 'text/html', '.css': 'text/css', '.js': 'text/javascript', '.png': 'image/png', '.webp': 'image/webp', '.svg': 'image/svg+xml' })[path.extname(file)] || 'application/octet-stream');
+    response.setHeader('Content-Type', ({ '.html': 'text/html', '.css': 'text/css', '.js': 'text/javascript', '.png': 'image/png', '.webp': 'image/webp', '.svg': 'image/svg+xml', '.ttf':'font/ttf' })[path.extname(file)] || 'application/octet-stream');
     response.end(data);
   });
 });
@@ -45,6 +45,7 @@ const server = http.createServer((request, response) => {
       await page.setViewportSize({ width, height: width >= 1000 ? 900 : 844 });
       for (const name of pages) {
         await page.goto(`${base}/${name}`, { waitUntil: 'domcontentloaded' });
+        await page.evaluate(() => document.fonts.ready);
         await page.waitForTimeout(60);
         const result = await page.evaluate(() => {
           const dock = document.querySelector('.taskbar');
@@ -53,7 +54,10 @@ const server = http.createServer((request, response) => {
             overflow: document.documentElement.scrollWidth > innerWidth + 1,
             brokenImages: [...document.images].filter(image => image.complete && image.naturalWidth === 0).map(image => image.getAttribute('src')),
             dockLinks: dock ? dock.querySelectorAll('a').length : 0,
-            dockInside: !rect || (rect.left >= -1 && rect.right <= innerWidth + 1)
+            dockInside: !rect || (rect.left >= -1 && rect.right <= innerWidth + 1),
+            bodyFont: getComputedStyle(document.body).fontFamily,
+            headingWeights: [...document.querySelectorAll('h1,h2,h3,h4')].map(el => getComputedStyle(el).fontWeight),
+            brandFontsLoaded: document.fonts.check('400 16px Montserrat') && document.fonts.check('800 24px Montserrat')
           };
         });
         const fieldFocus = await page.evaluate(() => {
@@ -72,6 +76,8 @@ const server = http.createServer((request, response) => {
         });
         assert.deepEqual(fieldFocus, [], `${name} shows a focus border on typing fields at ${width}px`);
         assert(!result.overflow, `${name} overflows at ${width}px`);
+        assert(result.bodyFont.startsWith('Montserrat') && result.brandFontsLoaded, `${name} must load local Montserrat fonts`);
+        assert(result.headingWeights.every(weight => weight === '800'), `${name} headings must use ExtraBold`);
         assert.deepEqual(result.brokenImages, [], `${name} has broken images at ${width}px`);
         assert.equal(result.dockLinks, ['asset.html', 'onboarding.html'].includes(name) ? 0 : 5, `${name} has an unexpected primary dock`);
         assert(result.dockInside, `${name} dock leaves the viewport at ${width}px`);

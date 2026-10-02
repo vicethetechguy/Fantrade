@@ -1,5 +1,5 @@
 /* Fantrade Admin — its own app, drawn from the same parts as the main one:
-   the brand blue, Space Grotesk for headings, Montserrat for text, and
+   the brand blue, Montserrat ExtraBold headings and regular body text, and
    surfaces that get their depth from fill rather than border lines. */
 :root{
   --bg:#060608; --panel:#0f0f14; --panel-2:#15151c; --panel-3:#1c1c25; --well:rgba(0,0,0,.32);
@@ -11,7 +11,7 @@
   --bad:#ff5e5e; --bad-soft:rgba(255,94,94,.12);
   --amber:#ff6a1f;
   --r-lg:22px; --r:16px; --r-sm:12px;
-  --head:'Space Grotesk',system-ui,sans-serif; --body:'Montserrat',system-ui,sans-serif;
+  --head:'Montserrat',system-ui,sans-serif; --body:'Montserrat',system-ui,sans-serif;
   --side:248px;
   color-scheme:dark;
 }

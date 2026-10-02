@@ -29,7 +29,7 @@ def apply_design(filename, html):
         styles += '<link rel="stylesheet" href="public/app-guide.css">'
     styles += '<link rel="stylesheet" href="public/app-polish.css">'
     styles += '<script src="public/app-polish.js" defer></script>'
-    return html.replace('</head>', styles + '</head>', 1).replace('<body class="app">', '<body class="app calm">', 1)
+    return html.replace('<link rel="stylesheet" href="public/brand.css">', styles + '<link rel="stylesheet" href="public/brand.css">', 1).replace('<body class="app">', '<body class="app calm">', 1)
 
 def tab_intro(title, action=''):
     """Main tab destinations: the taskbar already says where you are, so the

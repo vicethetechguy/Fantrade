@@ -96,10 +96,10 @@ EX_CSS = """
 .kc-row{display:grid;grid-template-columns:1fr 110px 92px;align-items:center;padding:13px 0;border-bottom:1px solid rgba(255,255,255,.04);text-decoration:none;color:inherit;transition:background .2s ease}
 .kc-row:hover{background:rgba(255,255,255,.025)}
 .kc-row-left{display:flex;align-items:center;gap:12px;min-width:0}
-.kc-avatar{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);display:grid;place-items:center;flex:none;color:var(--lime);font-family:Space Grotesk,sans-serif;font-size:11px;font-weight:800;overflow:hidden}
+.kc-avatar{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);display:grid;place-items:center;flex:none;color:var(--lime);font-family:Montserrat,system-ui,sans-serif;font-size:11px;font-weight:800;overflow:hidden}
 .kc-avatar .player-photo{width:100%;height:100%;object-fit:cover;object-position:50% 18%;display:block}
 .kc-avatar.coach{color:var(--amber);border-color:rgba(255,106,31,.25);background:rgba(255,106,31,.08)}
-.kc-pair-title{display:flex;align-items:center;gap:5px;font-family:Space Grotesk,sans-serif;font-weight:700;font-size:14.5px;line-height:1.1;color:var(--ink)}
+.kc-pair-title{display:flex;align-items:center;gap:5px;font-family:Montserrat,system-ui,sans-serif;font-weight:700;font-size:14.5px;line-height:1.1;color:var(--ink)}
 .kc-pair-quote{font-size:11.5px;color:#767c82;font-weight:600}
 .kc-tag{font-family:'Montserrat', sans-serif;font-size:9px;font-weight:600;color:#767c82;background:rgba(255,255,255,.08);border-radius:4px;padding:1px 4px;margin-left:2px}
 .kc-pair-sub{font-size:11.5px;color:#767c82;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -113,7 +113,7 @@ EX_CSS = """
 .kc-tape .ft-live-dot{flex:none}
 .kc-tape-track{display:flex;gap:20px;min-width:0;flex:1;overflow:hidden;white-space:nowrap;-webkit-mask-image:linear-gradient(90deg,#000 75%,transparent);mask-image:linear-gradient(90deg,#000 75%,transparent)}
 .kc-tape-item{display:inline-flex;gap:6px;align-items:baseline;font:600 11.5px/1 Montserrat,system-ui,sans-serif;color:#767c82;flex:none;text-decoration:none;animation:kcTapeIn .45s ease-out}
-.kc-tape-item b{color:var(--ink);font-family:Space Grotesk,sans-serif;font-weight:700}
+.kc-tape-item b{color:var(--ink);font-family:Montserrat,system-ui,sans-serif;font-weight:700}
 .kc-tape-item .up{color:#16c784}.kc-tape-item .dn{color:#ea3943}
 @keyframes kcTapeIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
 """
@@ -339,7 +339,7 @@ FP_CSS = """
 .kc-home-wrap{max-width:760px;margin:0 auto;padding:12px 16px 94px}
 .fp-topbar{display:flex;align-items:center;justify-content:space-between;padding:8px 0 16px;border-bottom:1px solid rgba(255,255,255,.06)}
 .fp-title-box{display:flex;align-items:center;gap:12px}
-.fp-title-box h2{font-family:Space Grotesk,sans-serif;font-weight:700;font-size:18px;margin:0;color:#fff;text-transform:uppercase}
+.fp-title-box h2{font-family:Montserrat,system-ui,sans-serif;font-weight:700;font-size:18px;margin:0;color:#fff;text-transform:uppercase}
 .fp-title-box span{font-size:11px;color:#8E9AA8}
 
 /* Metric Chips Dashboard (§80) */
@@ -367,7 +367,7 @@ FP_CSS = """
 
 /* Step Container Card */
 .fp-panel{background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.07);border-radius:20px;padding:24px;margin-bottom:20px}
-.fp-panel-title{font-family:Space Grotesk,sans-serif;font-weight:700;font-size:18px;color:#fff;margin:0 0 6px;text-transform:uppercase}
+.fp-panel-title{font-family:Montserrat,system-ui,sans-serif;font-weight:700;font-size:18px;color:#fff;margin:0 0 6px;text-transform:uppercase}
 .fp-panel-sub{font-size:13px;color:#8E9AA8;margin:0 0 18px}
 
 /* Asset Selection Grid */
@@ -375,7 +375,7 @@ FP_CSS = """
 .fp-asset-card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:14px;cursor:pointer;transition:all .2s;text-align:left}
 .fp-asset-card:hover{border-color:rgba(24,0,173,.4);background:rgba(255,255,255,.05)}
 .fp-asset-card.selected{border-color:var(--lime);background:rgba(24,0,173,.08);box-shadow:0 0 18px rgba(24,0,173,.15)}
-.fp-asset-sym{font-family:Space Grotesk,sans-serif;font-weight:700;font-size:16px;color:#fff}
+.fp-asset-sym{font-family:Montserrat,system-ui,sans-serif;font-weight:700;font-size:16px;color:#fff}
 .fp-asset-name{font-size:11.5px;color:#8E9AA8;margin-top:2px}
 .fp-asset-avail{margin-top:10px;font-size:11px;color:#1800ad;font-weight:600}
 
@@ -385,7 +385,7 @@ FP_CSS = """
 .fp-match-card:hover{border-color:rgba(24,0,173,.4)}
 .fp-match-card.selected{border-color:var(--lime);background:rgba(24,0,173,.08)}
 .fp-match-comp{font-size:10.5px;font-weight:700;color:var(--amber);text-transform:uppercase;letter-spacing:.06em}
-.fp-match-teams{font-family:Space Grotesk,sans-serif;font-weight:700;font-size:17px;color:#fff;margin:6px 0}
+.fp-match-teams{font-family:Montserrat,system-ui,sans-serif;font-weight:700;font-size:17px;color:#fff;margin:6px 0}
 .fp-match-meta{font-size:11.5px;color:#8E9AA8;display:flex;align-items:center;gap:12px}
 
 /* Market Tiers Grid (§10, §11, §12) */
@@ -394,7 +394,7 @@ FP_CSS = """
 .fp-market-card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:16px;cursor:pointer;transition:all .2s;display:flex;flex-direction:column;gap:8px}
 .fp-market-card:hover{border-color:rgba(24,0,173,.3)}
 .fp-market-card.selected{border-color:var(--lime);background:rgba(24,0,173,.08)}
-.fp-market-name{font-family:Space Grotesk,sans-serif;font-weight:700;font-size:15px;color:#fff;text-transform:uppercase}
+.fp-market-name{font-family:Montserrat,system-ui,sans-serif;font-weight:700;font-size:15px;color:#fff;text-transform:uppercase}
 .fp-market-limit{font-size:10.5px;color:var(--lime);font-weight:700}
 .fp-market-desc{font-size:12px;color:#8E9AA8;line-height:1.5;flex:1}
 
@@ -406,7 +406,7 @@ FP_CSS = """
 .fp-opt-left{display:flex;align-items:center;gap:14px}
 .fp-opt-check{width:22px;height:22px;border-radius:6px;border:1.5px solid rgba(255,255,255,.2);display:grid;place-items:center;color:#fff;font-weight:800;font-size:12px;transition:all .2s}
 .fp-opt-card.selected .fp-opt-check{background:var(--lime);border-color:var(--lime)}
-.fp-opt-label{font-family:Space Grotesk,sans-serif;font-weight:700;font-size:14px;color:#fff}
+.fp-opt-label{font-family:Montserrat,system-ui,sans-serif;font-weight:700;font-size:14px;color:#fff}
 .fp-opt-meta{font-size:11px;color:#8E9AA8;margin-top:2px;display:flex;gap:8px}
 .fp-opt-right{display:flex;gap:12px;text-align:right}
 .fp-opt-suc{font-family:'Montserrat',sans-serif;font-size:13px;font-weight:700;color:var(--lime)}
@@ -426,8 +426,8 @@ FP_CSS = """
 
 /* Action Buttons */
 .fp-nav-btns{display:flex;gap:12px;margin-top:20px}
-.fp-btn-back{flex:1;padding:14px 0;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:#fff;border-radius:12px;font-family:Space Grotesk,sans-serif;font-weight:700;font-size:13px;text-transform:uppercase;cursor:pointer;text-align:center}
-.fp-btn-next{flex:2;padding:14px 0;background:var(--lime);border:0;color:#fff;border-radius:12px;font-family:Space Grotesk,sans-serif;font-weight:700;font-size:13.5px;text-transform:uppercase;cursor:pointer;text-align:center;box-shadow:0 0 20px rgba(24,0,173,.3)}
+.fp-btn-back{flex:1;padding:14px 0;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:#fff;border-radius:12px;font-family:Montserrat,system-ui,sans-serif;font-weight:700;font-size:13px;text-transform:uppercase;cursor:pointer;text-align:center}
+.fp-btn-next{flex:2;padding:14px 0;background:var(--lime);border:0;color:#fff;border-radius:12px;font-family:Montserrat,system-ui,sans-serif;font-weight:700;font-size:13.5px;text-transform:uppercase;cursor:pointer;text-align:center;box-shadow:0 0 20px rgba(24,0,173,.3)}
 
 /* ── Your entries: Active and History ─────────────────────────────────
    The same construction as the home and profile cards: one surface, no
@@ -438,26 +438,26 @@ FP_CSS = """
 .fpx-card{background:#121411;border-radius:22px;padding:20px;box-shadow:inset 0 1px 0 rgba(255,255,255,.05);display:grid;gap:16px}
 .fpx-head{display:grid;grid-template-columns:48px minmax(0,1fr) auto;gap:13px;align-items:center}
 .fpx-photo,.fpx-crest{width:48px;height:48px;border-radius:50%;object-fit:cover;object-position:50% 18%;background:#1b1e1a;display:grid;place-items:center}
-.fpx-crest{background:var(--lime);color:#fff;font:700 15px 'Space Grotesk',Montserrat,sans-serif}
+.fpx-crest{background:var(--lime);color:#fff;font:700 15px Montserrat,system-ui,sans-serif}
 .fpx-who{min-width:0}
-.fpx-who b{display:block;font-family:'Space Grotesk',Montserrat,sans-serif;font-weight:700;font-size:16px;letter-spacing:-.015em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fpx-who b{display:block;font-family:Montserrat,system-ui,sans-serif;font-weight:700;font-size:16px;letter-spacing:-.015em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .fpx-who small{display:flex;align-items:center;gap:7px;margin-top:4px;font-size:12px;color:var(--dim);white-space:nowrap;overflow:hidden}
 .fpx-who small span{overflow:hidden;text-overflow:ellipsis}
-.fpx-who small i{font-style:normal;font:700 10.5px 'Space Grotesk',Montserrat,sans-serif;letter-spacing:.04em;color:var(--ink);background:rgba(255,255,255,.08);border-radius:6px;padding:2px 6px;flex:none}
+.fpx-who small i{font-style:normal;font:700 10.5px Montserrat,system-ui,sans-serif;letter-spacing:.04em;color:var(--ink);background:rgba(255,255,255,.08);border-radius:6px;padding:2px 6px;flex:none}
 .fpx-who .fpx-when{display:block;color:var(--faint);font-size:11px;margin-top:3px}
 /* A status you can read: solid fill, white text. */
 .fpx-chip{font:600 11px Montserrat,sans-serif;letter-spacing:.02em;padding:6px 11px;border-radius:999px;white-space:nowrap}
 .fpx-chip.soon{background:rgba(255,255,255,.09);color:var(--ink)}
 .fpx-chip.live{background:var(--lime);color:#fff}
 .fpx-chip.wait{background:rgba(255,189,82,.16);color:#ffbd52}
-.fpx-result{font:700 15px 'Space Grotesk',Montserrat,sans-serif;letter-spacing:-.01em;white-space:nowrap}
+.fpx-result{font:700 15px Montserrat,system-ui,sans-serif;letter-spacing:-.01em;white-space:nowrap}
 .fpx-result.up{color:#24c86b}
 .fpx-result.down{color:#ff5e5e}
 .fpx-result.off{font:600 11px Montserrat,sans-serif;padding:6px 11px;border-radius:999px;background:rgba(255,255,255,.08);color:var(--dim)}
 .fpx-figs{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin:0;border-radius:16px;overflow:hidden;background:rgba(255,255,255,.06)}
 .fpx-figs>div{background:#0c0e0b;padding:12px 13px}
 .fpx-figs dt{font-size:10.5px;color:var(--faint);margin-bottom:5px;line-height:1.3}
-.fpx-figs dd{margin:0;font:700 14px 'Space Grotesk',Montserrat,sans-serif;letter-spacing:-.01em;overflow-wrap:anywhere}
+.fpx-figs dd{margin:0;font:700 14px Montserrat,system-ui,sans-serif;letter-spacing:-.01em;overflow-wrap:anywhere}
 .fpx-picks{list-style:none;margin:0;padding:0;display:grid;gap:10px}
 .fpx-picks li{display:grid;grid-template-columns:16px minmax(0,1fr) auto;gap:10px;align-items:start;font-size:13px}
 .fpx-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.22);margin:5px 0 0 4px}
@@ -476,7 +476,7 @@ FP_CSS = """
 .fpx-btn.ghost[data-armed]{background:rgba(255,94,94,.16);color:#ff7a7a}
 .fpx-sim{margin:0;font-size:11.5px;color:var(--faint)}
 .fpx-empty{background:#121411;border-radius:22px;padding:32px 22px;text-align:center}
-.fpx-empty b{display:block;font:700 17px 'Space Grotesk',Montserrat,sans-serif;margin-bottom:6px}
+.fpx-empty b{display:block;font:700 17px Montserrat,system-ui,sans-serif;margin-bottom:6px}
 .fpx-empty p{margin:0 auto 18px;max-width:340px;font-size:13px;line-height:1.6;color:var(--dim)}
 @media(max-width:420px){
   .fpx-card{padding:17px;border-radius:20px}

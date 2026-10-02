@@ -2,10 +2,9 @@
 """Fantrade shared shell: design tokens, bespoke icon sprite, nav/footer."""
 import os
 
-FONTS = ('<link rel="preconnect" href="https://fonts.googleapis.com">'
-         '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'
-         '<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700'
-         '&family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">')
+FONTS = ('<link rel="preload" href="assets/fonts/Montserrat-Regular.ttf" as="font" type="font/ttf" crossorigin>'
+         '<link rel="preload" href="assets/fonts/Montserrat-ExtraBold.ttf" as="font" type="font/ttf" crossorigin>'
+         '<link rel="icon" href="assets/brand/fantrade-mark.svg" type="image/svg+xml">')
 
 # ─────────────────────────────────────────────────────────────
 # Bespoke icon set — 24 grid, 1.1 stroke, round joins.
@@ -86,7 +85,7 @@ html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;-webkit-tap-highlight-
 body{margin:0;background:var(--void);color:var(--ink);
   font-family:Montserrat,system-ui,sans-serif;font-weight:400;font-size:15px;line-height:1.7;
   -webkit-font-smoothing:antialiased;overflow-x:hidden}
-h1,h2,h3,h4,.disp{font-family:Space Grotesk,sans-serif;font-weight:700;
+h1,h2,h3,h4,.disp{font-family:Montserrat,system-ui,sans-serif;font-weight:700;
   text-transform:uppercase;line-height:.9;letter-spacing:-.015em;margin:0}
 .mono{font-family:'Montserrat', sans-serif,monospace;font-variant-numeric:tabular-nums}
 a{color:inherit;text-decoration:none}
@@ -123,7 +122,7 @@ main,header,footer,.nav-island{position:relative;z-index:1}
   height:45px;box-sizing:border-box;padding:0 6px 0 18px;border-radius:999px;background:rgba(10,11,12,.62);
   backdrop-filter:blur(22px) saturate(160%);-webkit-backdrop-filter:blur(22px) saturate(160%);
   border:1px solid var(--hair);box-shadow:var(--inset),0 20px 50px -20px rgba(0,0,0,.9)}
-.logo{display:flex;align-items:center;gap:8px;font-family:Space Grotesk;font-weight:700;
+.logo{display:flex;align-items:center;gap:8px;font-family:Montserrat,system-ui,sans-serif;font-weight:700;
   text-transform:uppercase;font-size:14px;white-space:nowrap}
 .logo .brand-logo-img{width:22px;height:22px;object-fit:contain;flex-shrink:0;display:inline-block}
 .logo .ic{color:var(--lime);width:22px;height:22px}
@@ -136,7 +135,7 @@ main,header,footer,.nav-island{position:relative;z-index:1}
 
 /* buttons */
 .btn{position:relative;display:inline-flex;align-items:center;gap:14px;cursor:pointer;border:0;
-  padding:9px 9px 9px 24px;border-radius:999px;font-family:Space Grotesk;font-weight:700;
+  padding:9px 9px 9px 24px;border-radius:999px;font-family:Montserrat,system-ui,sans-serif;font-weight:700;
   text-transform:uppercase;font-size:12px;letter-spacing:.07em;white-space:nowrap;
   transition:transform .6s var(--ease),background .6s var(--ease),border-color .6s var(--ease),color .6s var(--ease)}
 .btn .cap{width:30px;height:30px;flex:none;border-radius:999px;display:grid;place-items:center;
@@ -170,7 +169,7 @@ body.menu-open .burger i:nth-child(2){transform:translateY(-3px) rotate(-45deg)}
   padding:0 32px;gap:6px;opacity:0;pointer-events:none;visibility:hidden;
   transition:opacity .7s var(--ease),visibility 0s linear .7s}
 body.menu-open .overlay{opacity:1;pointer-events:auto;visibility:visible;transition-delay:0s}
-.overlay a{font-family:Space Grotesk;font-weight:700;text-transform:uppercase;
+.overlay a{font-family:Montserrat,system-ui,sans-serif;font-weight:700;text-transform:uppercase;
   font-size:clamp(30px,9vw,54px);line-height:1.15;opacity:0;transform:translateY(48px);
   transition:opacity .8s var(--ease),transform .8s var(--ease)}
 body.menu-open .overlay a{opacity:1;transform:translateY(0)}
@@ -202,7 +201,7 @@ body.menu-open .overlay a:nth-child(4){transition-delay:.28s}
 .clubchip:hover{border-color:var(--hair-2);background:rgba(255,255,255,.055)}
 .clubchip[aria-pressed="true"]{border-color:var(--lime);background:rgba(24,0,173,.08)}
 .clubchip .rc{width:30px;height:33px;flex:none;clip-path:polygon(0 0,100% 0,100% 66%,50% 100%,0 66%);
-  display:grid;place-items:center;font-family:Space Grotesk;font-weight:700;
+  display:grid;place-items:center;font-family:Montserrat,system-ui,sans-serif;font-weight:700;
   font-size:11px;color:#fff}
 .clubchip .rc.plus{background:rgba(24,0,173,.12);color:var(--lime);font-size:17px;
   clip-path:none;border-radius:10px;border:1px dashed rgba(24,0,173,.42)}
@@ -309,9 +308,9 @@ section{padding:130px 0}
 .pitch-head{display:flex;align-items:center;gap:14px;margin-bottom:28px;position:relative;z-index:2}
 .crest{width:46px;height:50px;flex:none;background:linear-gradient(160deg,var(--lime),#0f0075);
   clip-path:polygon(0 0,100% 0,100% 66%,50% 100%,0 66%);display:grid;place-items:center;
-  font-family:Space Grotesk;font-weight:700;font-size:13px;color:#fff;
+  font-family:Montserrat,system-ui,sans-serif;font-weight:700;font-size:13px;color:#fff;
   filter:drop-shadow(0 8px 18px rgba(24,0,173,.35))}
-.pitch-head .name{font-family:Space Grotesk;font-weight:700;text-transform:uppercase;font-size:24px;line-height:1}
+.pitch-head .name{font-family:Montserrat,system-ui,sans-serif;font-weight:700;text-transform:uppercase;font-size:24px;line-height:1}
 .pitch-head .meta{font-weight:600;font-size:9.5px;color:var(--faint);letter-spacing:.14em;margin-top:7px;text-transform:uppercase}
 .pitch-head .coach{margin-left:auto;text-align:right;display:flex;align-items:center;gap:10px}
 .pitch-head .coach b{display:block;font-family:'Montserrat', sans-serif;color:var(--amber);font-size:13px;font-weight:400}
@@ -364,7 +363,7 @@ section{padding:130px 0}
 .tab{flex:1;padding:20px 22px;border-radius:18px;background:transparent;border:1px solid transparent;color:var(--dim);
   cursor:pointer;text-align:left;display:flex;align-items:center;gap:14px;
   transition:background .7s var(--ease),color .7s var(--ease),border-color .7s var(--ease),box-shadow .7s var(--ease)}
-.tab b{display:block;font-family:Space Grotesk;font-weight:700;text-transform:uppercase;
+.tab b{display:block;font-family:Montserrat,system-ui,sans-serif;font-weight:700;text-transform:uppercase;
   font-size:16px;color:inherit;letter-spacing:.02em;margin-bottom:3px}
 .tab span{font-size:12.5px;font-weight:300}
 .tab .ibox{background:rgba(255,255,255,.05);color:inherit}
@@ -381,7 +380,7 @@ section{padding:130px 0}
 .out{margin-top:24px;padding:32px 24px;border-radius:22px;text-align:center;border:1px solid rgba(24,0,173,.28);
   background:radial-gradient(ellipse at 50% 120%,rgba(24,0,173,.18),rgba(24,0,173,.04) 60%);box-shadow:var(--inset)}
 .out .k{font-weight:600;font-size:9.5px;letter-spacing:.02em;color:#95ad44;text-transform:uppercase}
-.out .v{font-family:Space Grotesk;font-weight:700;font-size:clamp(44px,5vw,62px);
+.out .v{font-family:Montserrat,system-ui,sans-serif;font-weight:700;font-size:clamp(44px,5vw,62px);
   color:var(--lime);line-height:1;margin-top:12px;text-shadow:0 0 50px rgba(24,0,173,.4)}
 .out .n{font-weight:600;font-size:10px;color:#8d9f4d;margin-top:12px;letter-spacing:.12em;text-transform:uppercase}
 
@@ -423,7 +422,7 @@ footer{border-top:1px solid var(--hair);padding:70px 0 64px;background:rgba(255,
 .ft-modal-backdrop.open .ft-modal-box{transform:scale(1)}
 .ft-modal-close{position:absolute;top:18px;right:20px;background:rgba(255,255,255,.05);border:1px solid var(--hair);color:var(--dim);border-radius:50%;width:32px;height:32px;display:grid;place-items:center;font-size:18px;cursor:pointer;transition:all .2s ease}
 .ft-modal-close:hover{background:rgba(255,255,255,.1);color:var(--ink)}
-.ft-modal-title{font-family:Space Grotesk,sans-serif;font-weight:700;text-transform:uppercase;font-size:22px;margin:0 0 8px}
+.ft-modal-title{font-family:Montserrat,system-ui,sans-serif;font-weight:700;text-transform:uppercase;font-size:22px;margin:0 0 8px}
 .ft-modal-desc{color:var(--dim);font-size:13.5px;font-weight:300;margin:0 0 20px;line-height:1.5}
 .ft-modal-card{border:1px solid var(--hair);border-radius:16px;padding:18px;background:rgba(255,255,255,.03);box-shadow:var(--inset);margin-bottom:16px}
 .ft-modal-card .m-row{display:flex;justify-content:space-between;padding:8px 0;font-size:13px;color:var(--dim)}
@@ -621,7 +620,7 @@ APP_CSS = r"""
 .acct{position:relative;display:flex;align-items:center}
 .avatar{width:36px;height:36px;flex:none;border-radius:999px;border:1px solid var(--hair);cursor:pointer;
   background:linear-gradient(160deg,rgba(24,0,173,.22),rgba(24,0,173,.05));color:var(--lime);
-  display:grid;place-items:center;box-shadow:var(--inset);font-family:Space Grotesk;
+  display:grid;place-items:center;box-shadow:var(--inset);font-family:Montserrat,system-ui,sans-serif;
   font-weight:700;font-size:12px;letter-spacing:.02em;
   transition:border-color .5s var(--ease),background .5s var(--ease)}
 .avatar:hover,.avatar[aria-expanded="true"]{border-color:rgba(24,0,173,.55)}
@@ -764,7 +763,7 @@ main .back-btn{margin-bottom:20px}
 .tag.red{background:rgba(255,94,94,.09);border-color:rgba(255,94,94,.3);color:#ff9a9a}
 .pl{font-family:'Montserrat', sans-serif;font-variant-numeric:tabular-nums;font-size:13px}
 .pl.up{color:var(--lime)}.pl.down{color:var(--red)}
-.rk{font-family:Space Grotesk;font-weight:700;font-size:17px;color:var(--faint);line-height:1}
+.rk{font-family:Montserrat,system-ui,sans-serif;font-weight:700;font-size:17px;color:var(--faint);line-height:1}
 .rk.top{color:var(--lime)}
 .xi{display:flex;gap:5px;flex-wrap:wrap}
 .xi i{font-style:normal;font-family:'Montserrat', sans-serif;font-size:10px;padding:4px 8px;border-radius:7px;
@@ -844,7 +843,7 @@ main .back-btn{margin-bottom:20px}
 .qa a{display:flex;flex-direction:column;gap:14px;border:1px solid var(--hair);background:rgba(255,255,255,.03);
   border-radius:18px;padding:22px 20px;box-shadow:var(--inset);transition:all .6s var(--ease)}
 .qa a:hover{border-color:rgba(24,0,173,.32);background:rgba(24,0,173,.05);transform:translateY(-3px)}
-.qa b{font-family:Space Grotesk;font-weight:700;text-transform:uppercase;font-size:14px;
+.qa b{font-family:Montserrat,system-ui,sans-serif;font-weight:700;text-transform:uppercase;font-size:14px;
   display:block;margin-bottom:5px}
 .qa span{font-size:11.5px;color:var(--faint);font-weight:300;line-height:1.5}
 .clock{display:flex;gap:8px}
@@ -1005,7 +1004,7 @@ main .back-btn{margin-bottom:20px}
 .qp{flex:none;width:66px;text-align:center;background:transparent;border:0;cursor:pointer;
   color:var(--dim);font-family:Montserrat,sans-serif;padding:0}
 .qp .av{width:52px;height:52px;border-radius:999px;margin:0 auto 9px;display:grid;place-items:center;
-  border:1px solid var(--hair);box-shadow:var(--inset);font-family:Space Grotesk;
+  border:1px solid var(--hair);box-shadow:var(--inset);font-family:Montserrat,system-ui,sans-serif;
   font-weight:700;font-size:15px;color:#fff;
   transition:transform .5s var(--ease)}
 .qp:hover .av{transform:translateY(-3px)}
@@ -1036,7 +1035,7 @@ main .back-btn{margin-bottom:20px}
 .asset-head{display:flex;align-items:center;gap:20px;flex-wrap:wrap}
 .asset-head .coin{width:62px;height:62px}
 .asset-head .coin .ic{width:28px;height:28px}
-.asset-head .nm{font-family:Space Grotesk;font-weight:700;text-transform:uppercase;
+.asset-head .nm{font-family:Montserrat,system-ui,sans-serif;font-weight:700;text-transform:uppercase;
   font-size:clamp(26px,3.2vw,40px);line-height:1}
 .asset-head .sym{font-family:'Montserrat', sans-serif;font-size:13px;color:var(--lime);margin-top:7px}
 .asset-head .px{margin-left:auto;text-align:right}
@@ -1084,7 +1083,7 @@ main .back-btn{margin-bottom:20px}
   transition:border-color .5s var(--ease),background .5s var(--ease),transform .5s var(--ease)}
 .hub a:hover{border-color:rgba(24,0,173,.32);background:rgba(24,0,173,.05);transform:translateY(-3px)}
 .hub a .bd{min-width:0;flex:1}
-.hub a b{display:block;font-family:Space Grotesk;font-weight:700;
+.hub a b{display:block;font-family:Montserrat,system-ui,sans-serif;font-weight:700;
   text-transform:uppercase;font-size:14px;margin-bottom:5px}
 .hub a p{margin:0;font-size:11.5px;color:var(--faint);font-weight:300;line-height:1.5}
 .hub a .go{margin-left:auto;color:var(--faint);flex:none}
@@ -1141,7 +1140,7 @@ main .back-btn{margin-bottom:20px}
 .feat-top{display:flex;justify-content:space-between;align-items:center;gap:14px;font-weight:600;font-size:9.5px;
   letter-spacing:.16em;color:var(--faint);text-transform:uppercase}
 .feat-top .mid{text-align:center;flex:1}
-.feat-top .mid b{display:block;font-family:Space Grotesk;font-weight:700;font-size:15px;
+.feat-top .mid b{display:block;font-family:Montserrat,system-ui,sans-serif;font-weight:700;font-size:15px;
   color:var(--ink);letter-spacing:.02em}
 .feat-top .mid span{display:block;margin-top:5px}
 .feat-top button{background:transparent;border:0;color:var(--faint);cursor:pointer;font:inherit;
@@ -1149,7 +1148,7 @@ main .back-btn{margin-bottom:20px}
 .feat-top button:hover{color:var(--lime)}
 .feat-mid{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:18px;margin-top:22px}
 .feat .side{text-align:center;min-width:0}
-.feat .side .nm{font-family:Space Grotesk;font-weight:700;text-transform:uppercase;
+.feat .side .nm{font-family:Montserrat,system-ui,sans-serif;font-weight:700;text-transform:uppercase;
   font-size:16px;margin-top:13px;line-height:1.1}
 .feat .side .ha{display:flex;align-items:center;justify-content:center;gap:6px;font-weight:600;font-size:9px;
   letter-spacing:.14em;color:var(--faint);margin-top:7px;text-transform:uppercase}
@@ -1162,7 +1161,7 @@ main .back-btn{margin-bottom:20px}
 .minute.live{background:var(--live);color:#fff;box-shadow:0 12px 28px -12px rgba(255,59,71,.9)}
 .minute.done{background:rgba(255,255,255,.1);color:var(--dim);box-shadow:none;border:1px solid var(--hair)}
 .tcrest{width:54px;height:54px;border-radius:999px;margin:0 auto;display:grid;place-items:center;flex:none;
-  font-family:Space Grotesk;font-weight:700;font-size:15px;color:#fff;
+  font-family:Montserrat,system-ui,sans-serif;font-weight:700;font-size:15px;color:#fff;
   box-shadow:var(--inset),0 10px 24px -10px rgba(0,0,0,.9)}
 .tcrest.sm{width:26px;height:26px;font-size:7.5px;letter-spacing:-.01em;border-radius:999px;margin:0;
   box-shadow:var(--inset)}
@@ -1172,7 +1171,7 @@ main .back-btn{margin-bottom:20px}
 .comp .fl{width:24px;height:17px;border-radius:3px;overflow:hidden;flex:none;box-shadow:var(--inset)}
 .comp .fl svg{display:block;width:100%;height:100%}
 .comp>div{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;min-width:0}
-.comp b{font-family:Space Grotesk;font-weight:700;text-transform:uppercase;font-size:17px}
+.comp b{font-family:Montserrat,system-ui,sans-serif;font-weight:700;text-transform:uppercase;font-size:17px}
 .comp span{font-size:11.5px;color:var(--faint);font-weight:300}
 .comp .more{margin-left:auto;color:var(--faint);display:flex;align-items:center;gap:7px;font-size:11px;
   transition:color .4s var(--ease)}
@@ -1392,7 +1391,7 @@ EXCHANGE_CSS = r"""
   padding:10px;border-radius:16px;margin-top:14px;
   background:rgba(9,10,11,.94);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);
   border:1px solid var(--hair);box-shadow:var(--inset),0 18px 44px -16px rgba(0,0,0,.9)}
-.stickybar a{display:block;text-align:center;padding:12px 0;border-radius:11px;font-family:Space Grotesk;
+.stickybar a{display:block;text-align:center;padding:12px 0;border-radius:11px;font-family:Montserrat,system-ui,sans-serif;
   font-weight:700;text-transform:uppercase;font-size:11.5px;
   letter-spacing:.08em;transition:filter .3s var(--ease)}
 .stickybar a:hover{filter:brightness(1.08)}
@@ -1618,7 +1617,7 @@ body.app .taskbar a.on{padding:0}
 body.app .taskbar a .ic{width:20px;height:20px}
 body.app .taskbar a span{font-size:10px}
 .nav-island.topbar{position:fixed;top:22px;left:50%;transform:translateX(-50%);width:min(680px, calc(100vw - 28px));height:45px;min-height:45px;box-sizing:border-box;padding:0 16px;border-radius:999px;display:flex!important;align-items:center;justify-content:space-between;background:rgba(10,12,14,.94);backdrop-filter:blur(24px) saturate(160%);-webkit-backdrop-filter:blur(24px) saturate(160%);border:1px solid rgba(255,255,255,.09);box-shadow:0 16px 36px rgba(0,0,0,.6);z-index:100}
-.nav-island.topbar .logo{font-family:Space Grotesk,sans-serif;font-weight:700;font-size:14px;text-transform:uppercase;color:#fff;display:flex;align-items:center;gap:8px;text-decoration:none}
+.nav-island.topbar .logo{font-family:Montserrat,system-ui,sans-serif;font-weight:700;font-size:14px;text-transform:uppercase;color:#fff;display:flex;align-items:center;gap:8px;text-decoration:none}
 .nav-island.topbar .logo .brand-logo-img{width:20px;height:20px;object-fit:contain;flex-shrink:0}
 .nav-island.topbar .logo .ic{color:var(--lime);width:22px;height:22px}
 .nav-island.topbar #navBell{width:28px;height:28px;border:0;outline:0;box-shadow:none;background:transparent;color:#8E9AA8;display:grid;place-items:center;transition:color .2s ease}
@@ -1692,10 +1691,7 @@ CSS = CSS + EXCHANGE_CSS + DENSE_CSS + SHADOW_CSS
 # head(), so the shared product shell stays visually consistent even when an
 # older screen still carries page-specific presentation rules.
 APP_REFERENCE_CSS = r"""
-@font-face{font-family:Aeonik;src:url('assets/landing/Aeonik-Regular.woff2') format('woff2');font-style:normal;font-weight:400;font-display:swap}
-@font-face{font-family:Aeonik;src:url('assets/landing/Aeonik-Medium.woff2') format('woff2');font-style:normal;font-weight:600 900;font-display:swap}
-/* Aeonik stays loaded for the landing page. Inside the app, headers are
-   Space Grotesk and body copy is Montserrat — set once, here. */
+/* The shared Montserrat identity is loaded locally by public/brand.css. */
 body.app{
   --void:#05030d;--core:#0c0a15;--shell:#12101c;--ink:#f7f6fb;--dim:#aaa7b6;--faint:#6d6979;
   --hair:rgba(255,255,255,.075);--hair-2:rgba(255,255,255,.14);--lime:#1800ad;--positive:#24c86b;
@@ -1708,10 +1704,10 @@ body.app .orb,body.app .grain{display:none!important}
 body.app h1,body.app h2,body.app h3,body.app h4,body.app .disp,
 body.app .kc-top-title,body.app .kc-p-username,body.app .kc-pair-title,
 body.app .kc-hot-ticker,body.app .kc-ref-title,body.app .kc-item-title{
-  font-family:Space Grotesk,Montserrat,system-ui,sans-serif!important;font-variation-settings:normal!important;
+  font-family:Montserrat,system-ui,sans-serif;font-variation-settings:normal!important;
   text-transform:none!important;letter-spacing:-.022em
 }
-body.app [style*="font-family:Space Grotesk"]{font-family:Space Grotesk,Montserrat,system-ui,sans-serif!important;font-variation-settings:normal!important}
+body.app [style*="font-family:Montserrat"]{font-family:Montserrat,system-ui,sans-serif!important;font-variation-settings:normal!important}
 body.app main{padding-top:78px!important;min-height:100vh}
 body.app .kc-home-wrap{max-width:1040px!important;padding:8px 22px 118px!important}
 body.app .kc-ex-wrap{max-width:860px!important;padding:8px 22px 118px!important}
@@ -1829,7 +1825,7 @@ body.app .tgl[aria-pressed="true"] i{background:#fff!important;box-shadow:none!i
 
 /* page title bars and profile */
 body.app .kc-p-topbar{min-height:44px!important;padding:4px 0 18px!important;margin:0!important}
-body.app .kc-p-topbar [style*="font-family:Space Grotesk"]{font-family:Space Grotesk,system-ui,sans-serif!important;text-transform:none!important;font-size:19px!important;font-weight:600!important}
+body.app .kc-p-topbar [style*="font-family:Montserrat"]{font-family:Montserrat,system-ui,sans-serif!important;text-transform:none!important;font-size:19px!important;font-weight:800!important}
 body.app .kc-p-hero{align-items:flex-start!important;text-align:left!important;padding:6px 2px 20px!important}
 body.app .kc-p-avatar-box{width:92px!important;height:92px!important;margin-bottom:18px!important}
 body.app .kc-p-avatar-img{object-fit:contain!important;background:#45f48b!important;padding:18px!important;border:0!important;box-shadow:none!important}
@@ -1895,7 +1891,7 @@ def head(title, extra_css="", body_class=""):
     return ('<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">'
             '<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">'
             '<title>%s</title>%s<script src="public/fantrade-supabase.js"></script>'
-            '<style>%s%s%s</style></head><body class="%s">'
+            '<style>%s%s%s</style><link rel="stylesheet" href="public/brand.css"></head><body class="%s">'
             % (title, FONTS, CSS, extra_css, APP_REFERENCE_CSS if body_class == "app" else "", body_class))
 
 def atmosphere():
@@ -1950,7 +1946,7 @@ def taskbar(current=""):
     for href, label, icon in TASKBAR:
         on = href == tab
         badge_html = ""
-        icon_html = ('<img class="tb-fanplay-mark" src="assets/fantrade-outline-logo.png" alt="">'
+        icon_html = ('<img class="tb-fanplay-mark" src="assets/brand/fantrade-mark-white.svg" alt="">'
                      if label == "FanPlay" else line_icons.get(icon, ic(icon, "ic")))
         out.append(('<a href="%s" class="tb-item%s"%s aria-label="%s">'
                     '<div class="tb-icon-box">%s%s</div>'
@@ -1966,12 +1962,12 @@ def nav(current="", app=False):
     """Floating top bar. app=True returns topbar with profile avatar + full bottom taskbar."""
     if app:
         bell_icon = ic("bell", "ic") + '<span class="nav-bell-badge" hidden style="display:none">0</span>'
-        top = ('<nav class="nav-island topbar" id="appHeader"><a class="logo" href="dashboard.html"><img src="assets/fantrade-logo.png" alt="" class="brand-logo-img" width="20" height="20"> Fantrade</a>'
+        top = ('<nav class="nav-island topbar" id="appHeader"><a class="logo" href="dashboard.html"><img src="assets/brand/fantrade-mark.svg" alt="" class="brand-logo-img" width="20" height="20"> Fantrade</a>'
                '<div style="display:flex;align-items:center;gap:12px;margin-left:auto">'
                '<a class="bell" id="navBell" href="notifications.html" aria-label="Notifications">%s'
                '<span class="dot" id="navDot" hidden></span></a>'
                '<a class="nav-profile-btn" id="navProfileBtn" href="account.html" aria-label="User Profile" title="User Profile">'
-               '<img src="assets/fantrade-outline-logo.png" alt="Profile" class="nav-avatar-img">'
+               '<img src="assets/brand/fantrade-mark-white.svg" alt="Profile" class="nav-avatar-img">'
                '</a>'
                '</div></nav>') % bell_icon
         return top + taskbar(current)
@@ -1985,7 +1981,7 @@ def nav(current="", app=False):
     foot = ('<a class="btn btn-glass" href="signin.html" data-close>Sign in<span class="cap">%s</span></a>'
             '<a class="btn btn-lime" href="signup.html" data-close>Get started<span class="cap">%s</span></a>'
             % (ic("arrow", "ic"), ic("arrow", "ic")))
-    return ('<nav class="nav-island"><a class="logo" href="index.html"><img src="assets/fantrade-logo.png" alt="" class="brand-logo-img" width="22" height="22"> Fantrade</a>'
+    return ('<nav class="nav-island"><a class="logo" href="index.html"><img src="assets/brand/fantrade-mark.svg" alt="" class="brand-logo-img" width="22" height="22"> Fantrade</a>'
             '<div class="nav-links">%s</div><div class="nav-cta">%s</div>'
             '<button class="burger" id="burger" aria-label="Open menu" aria-expanded="false"><i></i><i></i>'
             '</button></nav><div class="overlay" id="overlay">%s%s</div>'
@@ -1994,13 +1990,13 @@ def nav(current="", app=False):
 
 def nav_min(back="index.html", label="Back to Fantrade"):
     """Stripped nav for auth screens — logo and one way out."""
-    return ('<div class="nav-min"><a class="logo" href="index.html"><img src="assets/fantrade-logo.png" alt="" class="brand-logo-img" width="22" height="22"> Fantrade</a>'
+    return ('<div class="nav-min"><a class="logo" href="index.html"><img src="assets/brand/fantrade-mark.svg" alt="" class="brand-logo-img" width="22" height="22"> Fantrade</a>'
             '<a class="back-btn" href="%s" aria-label="%s">Back</a></div>'
             % (back, label))
 
 def footer():
     return ('<footer><div class="wrap"><div class="foot">'
-            '<div class="col brandcol"><a class="logo" href="index.html"><img src="assets/fantrade-logo.png" alt="" class="brand-logo-img" width="22" height="22"> Fantrade</a>'
+            '<div class="col brandcol"><a class="logo" href="index.html"><img src="assets/brand/fantrade-mark.svg" alt="" class="brand-logo-img" width="22" height="22"> Fantrade</a>'
             '<p>A football ownership economy. Own players and coaches, build your Dream Club, play every matchday.</p></div>'
             '<div class="col"><b>Platform</b><a href="dashboard.html">Home</a><a href="exchange.html">Exchange</a>'
             '<a href="fanplay.html">FanPlay</a><a href="leaderboard.html">Leaderboard</a></div>'
@@ -2673,15 +2669,17 @@ var FT = (function(){
       document.querySelectorAll('#menuRank').forEach(function(el){
         el.textContent = 'Apex division · rank #' + state.club.rank;
       });
-      var avatar = state.user.avatar || 'assets/fantrade-outline-logo.png';
+      var savedAvatar = state.user.avatar || '';
+      if(/(?:^|\/)fantrade-(?:outline-)?logo\.png$|(?:^|\/)fantrade-outline\.png$|^assets\/logo\.png$/.test(savedAvatar)) savedAvatar = '';
+      var avatar = savedAvatar || 'assets/brand/fantrade-mark-white.svg';
       document.querySelectorAll('.nav-profile-btn').forEach(function(btn){
-        btn.classList.toggle('has-photo', !!state.user.avatar);
+        btn.classList.toggle('has-photo', !!savedAvatar);
       });
       document.querySelectorAll('.nav-avatar-img,[data-avatar-img]').forEach(function(img){
         if(img.getAttribute('src') !== avatar) img.setAttribute('src', avatar);
         img.setAttribute('alt', state.user.name + ' profile photo');
         var frame = img.closest ? img.closest('.profile-avatar-button') : null;
-        if(frame) frame.classList.toggle('has-photo', !!state.user.avatar);
+        if(frame) frame.classList.toggle('has-photo', !!savedAvatar);
       });
       var n = FT.unread();
       document.querySelectorAll('#navDot').forEach(function(el){

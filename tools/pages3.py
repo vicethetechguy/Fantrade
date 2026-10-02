@@ -132,12 +132,12 @@ AUTH_PAGE_CSS = """
 body{background:#050505;--dim:#b9bcb7;--faint:#979c96;--ink:#f4f6f1;--lime:#1800ad}
 .orb,.grain{display:none}
 .nav-min{top:0;min-height:76px;padding:16px 32px;padding-top:calc(16px + env(safe-area-inset-top));background:#050505}
-.nav-min .logo{font-family:Space Grotesk,system-ui,sans-serif;font-size:25px;text-transform:lowercase;letter-spacing:-.03em}
+.nav-min .logo{font-family:Montserrat,system-ui,sans-serif;font-size:25px;text-transform:lowercase;letter-spacing:-.03em}
 .nav-min .brand-logo-img{width:28px;height:28px}
 .nav-min a.back{min-height:44px;font-family:Montserrat,system-ui,sans-serif;letter-spacing:0;text-transform:none;font-size:12px;color:var(--dim)}
 .auth-page{width:min(460px,100%);margin:auto;padding:128px 24px 64px}
 .auth-intro{text-align:center;margin-bottom:36px}
-.auth-intro h1{font-family:Space Grotesk,system-ui,sans-serif;font-size:clamp(28px,4.2vw,42px);font-weight:700;line-height:1.08;text-transform:none;letter-spacing:-.035em;margin:0}
+.auth-intro h1{font-family:Montserrat,system-ui,sans-serif;font-size:clamp(28px,4.2vw,42px);font-weight:700;line-height:1.08;text-transform:none;letter-spacing:-.035em;margin:0}
 .auth-intro p{font-size:14px;color:var(--dim);line-height:1.6;margin:14px auto 0;max-width:36ch}
 .tf{margin-bottom:20px}
 .tf label{font-size:13px;text-transform:none;letter-spacing:0;color:var(--dim);font-weight:500;margin-bottom:8px}
@@ -176,7 +176,7 @@ body{background:#050505;--dim:#b9bcb7;--faint:#979c96;--ink:#f4f6f1;--lime:#1800
 .demo-note{margin-top:24px;padding:0;border:0;background:none;font-size:12px;font-weight:400;color:var(--dim);line-height:1.7;text-align:center;overflow-wrap:anywhere}
 .demo-note b{color:var(--ink);font-weight:500;font-family:Montserrat,system-ui,sans-serif}
 .auth-alt{margin-top:20px;font-size:13px;color:var(--dim);line-height:1.6}
-.ft-modal-title{font-family:Space Grotesk,system-ui,sans-serif;font-weight:700;font-size:24px;text-transform:none;letter-spacing:-.025em}
+.ft-modal-title{font-family:Montserrat,system-ui,sans-serif;font-weight:700;font-size:24px;text-transform:none;letter-spacing:-.025em}
 .ft-modal-desc{color:var(--dim);line-height:1.6}
 @media (max-width:600px){
   .nav-min{min-height:68px;padding:12px 20px;padding-top:calc(12px + env(safe-area-inset-top))}
@@ -381,7 +381,7 @@ OB_CSS = """
 body{background:#050505;--dim:#b9bcb7;--faint:#979c96;--ink:#f4f6f1;--lime:#1800ad}
 .orb,.grain{display:none}
 .nav-min{top:0;min-height:76px;padding:16px 32px;background:#050505}
-.nav-min .logo{font-family:Space Grotesk,system-ui,sans-serif;font-size:25px;text-transform:lowercase;letter-spacing:-.03em}
+.nav-min .logo{font-family:Montserrat,system-ui,sans-serif;font-size:25px;text-transform:lowercase;letter-spacing:-.03em}
 .nav-min .brand-logo-img{width:28px;height:28px}
 .nav-min a.back{min-height:44px;font-family:Montserrat,system-ui,sans-serif;letter-spacing:0;text-transform:none;font-size:12px}
 .onboarding{width:min(660px,100%);margin:auto;padding:116px 24px 64px}
@@ -394,7 +394,7 @@ body{background:#050505;--dim:#b9bcb7;--faint:#979c96;--ink:#f4f6f1;--lime:#1800
 .prog .st{border:0;padding:0;min-width:0;flex:none;width:8px;height:8px;border-radius:50%;background:#353735;opacity:1}
 .prog .st.on{background:var(--lime);width:24px;border-radius:10px}
 .prog .st.done{background:#b9bcb7}
-.ob-h4{font-family:Space Grotesk,system-ui,sans-serif;font-weight:700;font-size:28px;text-transform:none;letter-spacing:-.025em;line-height:1.15;margin:0 0 10px}
+.ob-h4{font-family:Montserrat,system-ui,sans-serif;font-weight:700;font-size:28px;text-transform:none;letter-spacing:-.025em;line-height:1.15;margin:0 0 10px}
 .ob-p{font-size:14px;color:var(--dim);line-height:1.6;margin:0 0 28px}
 .grant{display:flex;align-items:center;justify-content:space-between;gap:20px;margin:0 0 26px;padding:0;background:none;border:0;box-shadow:none}
 .grant .k{font-size:12px;color:var(--dim)}
@@ -741,7 +741,7 @@ DASH_CSS = """
   color:#fff;font:inherit;font-size:12.5px;font-weight:600;cursor:pointer;transition:background .15s ease}
 .home-claim-chips button:hover{background:rgba(0,0,0,.42)}
 .home-claim-empty{display:grid;gap:6px;padding:16px 18px;border-radius:16px;background:rgba(0,0,0,.26)}
-.home-claim-empty b{font-family:Space Grotesk,sans-serif;font-size:14.5px;letter-spacing:-.01em}
+.home-claim-empty b{font-family:Montserrat,system-ui,sans-serif;font-size:14.5px;letter-spacing:-.01em}
 .home-claim-empty span{font-size:12.5px;line-height:1.6;color:rgba(255,255,255,.72)}
 /* The rows sit in a well rather than behind a border, the way the stats block
    does on the scrolling cards. */
@@ -752,13 +752,13 @@ DASH_CSS = """
 .home-claim-row:hover{background:rgba(0,0,0,.4);transform:translateY(-1px)}
 .home-claim-row .player-photo{width:44px;height:44px;border-radius:50%;object-fit:cover;
   object-position:50% 18%;background:rgba(0,0,0,.4);border:0}
-.home-claim-row b{display:block;font-family:Space Grotesk,sans-serif;font-weight:700;font-size:14.5px;
+.home-claim-row b{display:block;font-family:Montserrat,system-ui,sans-serif;font-weight:700;font-size:14.5px;
   letter-spacing:-.015em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .home-claim-row small{display:flex;align-items:center;gap:7px;margin-top:4px;
   color:rgba(255,255,255,.66);font-size:11.5px;line-height:1.3;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 /* The F-ticker is a market symbol, so it gets a symbol's treatment. */
-.home-claim-row small i{font-style:normal;font-family:Space Grotesk,sans-serif;font-weight:700;
+.home-claim-row small i{font-style:normal;font-family:Montserrat,system-ui,sans-serif;font-weight:700;
   font-size:10.5px;letter-spacing:.04em;color:#fff;background:rgba(255,255,255,.16);
   border-radius:6px;padding:2px 6px;flex-shrink:0}
 /* The money line: dollars first, because that is the figure people know. */
@@ -822,8 +822,8 @@ body.claim-open{overflow:hidden}
 .claim-opt-btn:hover:not(.on){background:#2d3229;transform:translateY(-1px)}
 .claim-opt-btn.on{background:var(--lime);box-shadow:0 10px 26px rgba(24,0,173,.42)}
 .claim-opt-lvl{display:flex;align-items:baseline;gap:7px}
-.claim-opt-lvl b{font-family:Space Grotesk,sans-serif;font-weight:700;font-size:14px;letter-spacing:-.01em}
-.claim-opt-pct{font-family:Space Grotesk,sans-serif;font-weight:700;font-size:26px;line-height:1;
+.claim-opt-lvl b{font-family:Montserrat,system-ui,sans-serif;font-weight:700;font-size:14px;letter-spacing:-.01em}
+.claim-opt-pct{font-family:Montserrat,system-ui,sans-serif;font-weight:700;font-size:26px;line-height:1;
   letter-spacing:-.035em}
 .claim-opt-btn small{display:block;font-size:11px;color:rgba(255,255,255,.62);line-height:1.45}
 .claim-opt-btn.on small{color:rgba(255,255,255,.82)}
@@ -845,7 +845,7 @@ body.claim-open{overflow:hidden}
 .claim-split-key.cs-ft span::before{background:#a596ed}
 .claim-split-key.cs-you span::before{background:var(--lime);box-shadow:inset 0 0 0 1px rgba(255,255,255,.3)}
 .claim-split-key.cs-mkt span::before{background:rgba(255,255,255,.2)}
-.claim-split-key b{font-family:Space Grotesk,sans-serif;font-weight:700;font-size:12.5px;
+.claim-split-key b{font-family:Montserrat,system-ui,sans-serif;font-weight:700;font-size:12.5px;
   color:#fff;letter-spacing:-.01em;white-space:nowrap}
 
 /* Vesting */
@@ -854,7 +854,7 @@ body.claim-open{overflow:hidden}
   color:#fff;text-align:center;cursor:pointer;font:inherit;transition:background .18s ease,transform .18s ease}
 .claim-vest-btn:hover:not(.on){background:#2d3229;transform:translateY(-1px)}
 .claim-vest-btn.on{background:var(--lime);box-shadow:0 8px 20px rgba(24,0,173,.38)}
-.claim-vest-btn b{display:block;font-family:Space Grotesk,sans-serif;font-weight:700;font-size:14px;
+.claim-vest-btn b{display:block;font-family:Montserrat,system-ui,sans-serif;font-weight:700;font-size:14px;
   letter-spacing:-.01em}
 .claim-vest-btn small{display:block;font-size:10.5px;color:rgba(255,255,255,.58);margin-top:3px}
 .claim-vest-btn.on small{color:rgba(255,255,255,.8)}
@@ -863,7 +863,7 @@ body.claim-open{overflow:hidden}
 .claim-terms{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
 .claim-term{background:#242821;border-radius:14px;padding:12px 11px;display:grid;gap:3px}
 .claim-term dt{font-size:10.5px;color:var(--faint);text-transform:uppercase;letter-spacing:.05em}
-.claim-term dd{margin:0;font-family:Space Grotesk,sans-serif;font-weight:700;font-size:14px;
+.claim-term dd{margin:0;font-family:Montserrat,system-ui,sans-serif;font-weight:700;font-size:14px;
   color:#fff;letter-spacing:-.01em}
 .claim-term dd small{display:block;font-family:Montserrat,sans-serif;font-weight:400;font-size:10.5px;
   color:var(--dim);margin-top:2px;letter-spacing:0}
@@ -876,7 +876,7 @@ body.claim-open{overflow:hidden}
 .claim-fee-row.burn span:last-child{color:#a596ed}
 .claim-fee-row.total{margin-top:3px;padding-top:11px;border-top:1px solid rgba(255,255,255,.09);
   color:#fff;font-size:13px}
-.claim-fee-row.total span:last-child{font-family:Space Grotesk,sans-serif;font-weight:700;font-size:19px;
+.claim-fee-row.total span:last-child{font-family:Montserrat,system-ui,sans-serif;font-weight:700;font-size:19px;
   letter-spacing:-.02em}
 .claim-opt-fee i{display:block;font-style:normal;font-weight:500;font-size:10.5px;opacity:.72;margin-top:2px}
 .claim-fee-row b small,.claim-fee-row span small{font-size:11px;color:var(--faint);font-weight:500}
@@ -888,7 +888,7 @@ body.claim-open{overflow:hidden}
 .claim-short b{color:#fff}
 .claim-short a{color:#fff;font-weight:700;margin-left:4px}
 .claim-submit-btn{margin-top:18px;width:100%;min-height:50px;border-radius:999px;background:var(--lime);
-  border:0;color:#fff;font-family:Space Grotesk,sans-serif;font-weight:700;font-size:14.5px;
+  border:0;color:#fff;font-family:Montserrat,system-ui,sans-serif;font-weight:700;font-size:14.5px;
   letter-spacing:-.01em;cursor:pointer;display:grid;place-items:center;
   transition:transform .18s ease,filter .18s ease;box-shadow:0 12px 28px rgba(24,0,173,.44)}
 .claim-submit-btn:hover:not([disabled]){transform:translateY(-1px);filter:brightness(1.12)}
@@ -928,7 +928,7 @@ body.claim-open{overflow:hidden}
 .kc-hot-card{flex:0 0 142px;width:142px;min-width:142px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:12px 14px;text-decoration:none;color:inherit;transition:border-color .2s,transform .2s;box-sizing:border-box}
 .kc-hot-card:hover{border-color:rgba(24,0,173,.3);transform:translateY(-2px)}
 .kc-hot-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
-.kc-hot-ticker{font-family:Space Grotesk,sans-serif;font-weight:700;font-size:13px;color:var(--ink)}
+.kc-hot-ticker{font-family:Montserrat,system-ui,sans-serif;font-weight:700;font-size:13px;color:var(--ink)}
 .kc-hot-badge{font-family:'Montserrat', sans-serif;font-size:10px;font-weight:700;padding:1px 5px;border-radius:4px}
 .kc-hot-badge.up{background:rgba(24,0,173,.15);color:var(--lime)}
 .kc-hot-badge.down{background:rgba(255,94,94,.15);color:#FF5E5E}
@@ -949,10 +949,10 @@ body.claim-open{overflow:hidden}
 .kc-row{display:grid;grid-template-columns:1fr 110px 92px;align-items:center;padding:12px 10px;border-radius:12px;border-bottom:1px solid rgba(255,255,255,.04);text-decoration:none;color:inherit;transition:background .2s ease}
 .kc-row:hover{background:rgba(255,255,255,.03)}
 .kc-row-left{display:flex;align-items:center;gap:12px;min-width:0}
-.kc-avatar{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);display:grid;place-items:center;flex:none;color:var(--lime);font-family:Space Grotesk,sans-serif;font-size:11px;font-weight:800;overflow:hidden}
+.kc-avatar{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);display:grid;place-items:center;flex:none;color:var(--lime);font-family:Montserrat,system-ui,sans-serif;font-size:11px;font-weight:800;overflow:hidden}
 .kc-avatar .player-photo{width:100%;height:100%;object-fit:cover;object-position:50% 18%;display:block}
 .kc-avatar.coach{color:var(--amber);border-color:rgba(255,106,31,.25);background:rgba(255,106,31,.08)}
-.kc-pair-title{display:flex;align-items:center;gap:5px;font-family:Space Grotesk,sans-serif;font-weight:700;font-size:14px;line-height:1.1;color:var(--ink)}
+.kc-pair-title{display:flex;align-items:center;gap:5px;font-family:Montserrat,system-ui,sans-serif;font-weight:700;font-size:14px;line-height:1.1;color:var(--ink)}
 .kc-pair-quote{font-size:11.5px;color:#767c82;font-weight:600}
 .kc-tag{font-family:'Montserrat', sans-serif;font-size:9px;font-weight:600;color:#767c82;background:rgba(255,255,255,.08);border-radius:4px;padding:1px 4px;margin-left:2px}
 .kc-tag.coach-tag{color:var(--amber);background:rgba(255,106,31,.12)}
@@ -968,7 +968,7 @@ body.claim-open{overflow:hidden}
 .kc-ref-card{display:flex;align-items:center;justify-content:space-between;gap:16px;background:linear-gradient(135deg,rgba(255,255,255,.04) 0%,rgba(255,255,255,.02) 100%);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:16px 20px;text-decoration:none;transition:border-color .2s,transform .2s}
 .kc-ref-card:hover{border-color:rgba(24,0,173,.3);transform:translateY(-1px)}
 .kc-ref-left{flex:1}
-.kc-ref-title{font-family:Space Grotesk,sans-serif;font-weight:700;font-size:15px;color:var(--ink);margin-bottom:4px}
+.kc-ref-title{font-family:Montserrat,system-ui,sans-serif;font-weight:700;font-size:15px;color:var(--ink);margin-bottom:4px}
 .kc-ref-sub{font-size:12px;color:#767c82}
 .kc-ref-icon-box{width:52px;height:52px;flex-shrink:0;border-radius:14px;overflow:hidden;background:rgba(255,255,255,.05);display:grid;place-items:center}
 """
@@ -992,7 +992,7 @@ da = ['<main><div class="kc-home-wrap home-layout">', tab_intro('Home'),
       '<div class="kc-bal-sub" id="homeBalSub">—</div>',
       '<div class="home-claim-card" aria-labelledby="homeClaimTitle"><div class="home-claim-head">'
       '<div class="home-claim-top">'
-      '<img class="home-claim-mark" src="assets/fantrade-logo.png" alt="" width="34" height="34">'
+      '<img class="home-claim-mark" src="assets/brand/fantrade-mark-white.svg" alt="" width="34" height="34">'
       '<span class="home-claim-eyebrow">Open to claim</span></div>'
         '<div><h2 id="homeClaimTitle">Launch &amp; Claim Activity Shares</h2>'
         '<p>Search any footballer. If they already trade, see what a share costs. If nobody has claimed '
@@ -1487,14 +1487,14 @@ LB_CSS = """
 .scols{grid-template-columns:54px 2fr 1.15fr 1.5fr .8fr .9fr 1fr 92px}
 .club-cell{display:flex;align-items:center;gap:13px;min-width:0}
 .mcrest{width:34px;height:38px;flex:none;clip-path:polygon(0 0,100% 0,100% 66%,50% 100%,0 66%);
-  display:grid;place-items:center;font-family:Space Grotesk;font-weight:700;
+  display:grid;place-items:center;font-family:Montserrat,system-ui,sans-serif;font-weight:700;
   font-size:11px;color:#fff}
 .club-cell .cn{font-size:13.5px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .div-card{border:1px solid var(--hair);background:rgba(255,255,255,.03);border-radius:18px;padding:20px;
   box-shadow:var(--inset);display:flex;gap:16px;align-items:flex-start;margin-bottom:10px}
 .div-card:last-child{margin-bottom:0}
 .div-card .dot{width:9px;height:9px;border-radius:99px;flex:none;margin-top:6px}
-.div-card b{display:block;font-family:Space Grotesk;font-weight:700;
+.div-card b{display:block;font-family:Montserrat,system-ui,sans-serif;font-weight:700;
   text-transform:uppercase;font-size:14px;margin-bottom:4px}
 .div-card .r{font-size:11.5px;color:var(--faint);font-weight:300}
 .div-card .pp{margin-left:auto;text-align:right;flex:none}
@@ -1571,7 +1571,7 @@ lb = [T('<main><div class="kc-home-wrap">'
         '    <a href="dashboard.html" class="kc-p-back" title="Back to Home">'
         '      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>'
         '    </a>'
-        '    <div style="font-family:Space Grotesk,sans-serif;font-weight:700;font-size:18px;color:var(--ink);white-space:nowrap">League Standings</div>'
+        '    <div style="font-family:Montserrat,system-ui,sans-serif;font-weight:700;font-size:18px;color:var(--ink);white-space:nowrap">League Standings</div>'
         '  </div>'
         '  <a href="divisions.html" class="kc-p-action-btn" title="Divisions">'
         '    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>'
@@ -1583,7 +1583,7 @@ lb = [T('<main><div class="kc-home-wrap">'
 lb.append(T('<div class="bezel flat c12" data-reveal><div class="core pad-sm">'
             '<div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">'
             '<div class="crest-lg" id="lbCrest" style="background:linear-gradient(160deg,#1800ad,#0f0075)">ZF</div>'
-            '<div style="min-width:0"><div style="font-family:Space Grotesk;'
+            '<div style="min-width:0"><div style="font-family:Montserrat,system-ui,sans-serif;'
             'font-weight:700;text-transform:uppercase;font-size:21px;'
             'line-height:1" data-bind="club">Zero FC</div>'
             '<div class="sub-line" style="letter-spacing:.14em;text-transform:uppercase">'
@@ -1602,7 +1602,7 @@ lb.append(T('<div class="bezel flat c12" data-reveal><div class="core pad-sm">'
 # standings
 lb.append(T('<div class="bezel flat c12 flat-sep" data-reveal><div class="core">'
             '<div style="padding:0 0 18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">'
-            '<div><div style="font-family:Space Grotesk;font-weight:700;'
+            '<div><div style="font-family:Montserrat,system-ui,sans-serif;font-weight:700;'
             'text-transform:uppercase;font-size:19px">Gameweek 28 table</div>'
             '<div class="sub-line" id="lbCount">13 of 1,420 clubs</div></div>'
             '<div class="markets" style="margin-left:auto" id="lbFilter">'
@@ -1771,7 +1771,7 @@ lb2 = ['<main><div class="lb2-wrap">' + tab_intro('Leaderboard') +
        '<div class="lb2-club" role="button" tabindex="0" data-club-name="North Bank"><div class="lb2-club-top"><span class="lb2-club-mark"><img src="assets/players/saka.webp" alt=""></span></div><b>North Bank</b><small>🔥 23 members</small><strong>+1,800,986 $FTR</strong></div>'
        '</div>'
        '<div class="lb2-filter"><span class="lb2-period-label">Performance</span><div class="lb2-ranges" id="lb2Ranges"><button class="on" data-m="1" type="button">24h</button><button data-m="3" type="button">7d</button><button data-m="7" type="button">30d</button><button data-m="12" type="button">All</button></div></div>'
-       '<div class="lb2-me"><img class="lb2-me-logo" src="assets/fantrade-outline-logo.png" alt=""><div><span>Your rank</span><b data-bind="rank">#124</b></div><div class="lb2-me-value">245,800<small>$FTR club value</small></div></div>'
+       '<div class="lb2-me"><img class="lb2-me-logo" src="assets/brand/fantrade-mark-white.svg" alt=""><div><span>Your rank</span><b data-bind="rank">#124</b></div><div class="lb2-me-value">245,800<small>$FTR club value</small></div></div>'
        '<div class="lb2-list" id="lb2List">']
 
 lb2_avatars = ["pep", "mbappe", "saka", "musiala", "vinicius", "haaland", "bellingham", "arteta", "yamal", "palmer", "rodri", "vandijk", "rice"]
@@ -1943,7 +1943,7 @@ print("built notifications.html")
 ST_CSS = """
 .sec-card{scroll-margin-top:130px}
 .sec-title{display:flex;align-items:center;gap:14px;margin-bottom:20px}
-.sec-title h3{font-family:Space Grotesk;font-weight:700;text-transform:uppercase;
+.sec-title h3{font-family:Montserrat,system-ui,sans-serif;font-weight:700;text-transform:uppercase;
   font-size:19px;margin:0}
 .sec-title p{font-size:12px;color:var(--faint);font-weight:300;margin:5px 0 0;line-height:1.5}
 .sess{display:flex;align-items:center;gap:14px;padding:15px 0;border-bottom:1px solid rgba(255,255,255,.05)}
@@ -1957,7 +1957,7 @@ ST_CSS = """
 .kc-settings-wrap{width:min(820px,100%);margin:0 auto;padding:6px 16px 110px;box-sizing:border-box}
 .settings-head{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:6px 0 18px}
 .settings-head-copy{min-width:0;text-align:center}
-.settings-head-copy h1{font:800 19px Space Grotesk,sans-serif;font-weight:700;margin:0;color:var(--ink)}
+.settings-head-copy h1{font:800 19px Montserrat,system-ui,sans-serif;font-weight:700;margin:0;color:var(--ink)}
 .settings-head-copy p{font-size:10.5px;color:var(--faint);margin:3px 0 0}
 .settings-nav{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:7px;margin:0 0 14px}
 .settings-nav a{min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:11px 5px;border:1px solid rgba(255,255,255,.065);border-radius:12px;background:rgba(255,255,255,.025);color:var(--faint);text-decoration:none;text-align:center;font-size:9px;line-height:1.2;transition:.2s ease}
@@ -1965,7 +1965,7 @@ ST_CSS = """
 .settings-nav a:hover{color:var(--ink);border-color:rgba(255,255,255,.14);background:rgba(255,255,255,.045)}
 .settings-nav a.on{color:#0a0d03;background:var(--lime);border-color:var(--lime);box-shadow:var(--shadow-action)}
 .settings-hero{padding:3px 2px 14px}
-.settings-hero h2{margin:0 0 5px;font:800 17px Space Grotesk,sans-serif!important;text-transform:none!important}
+.settings-hero h2{margin:0 0 5px;font:800 17px Montserrat,system-ui,sans-serif!important;text-transform:none!important}
 .settings-hero p{margin:0;color:var(--faint);font-size:11.5px}
 .settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .settings-card{display:flex;align-items:center;gap:13px;padding:16px;border:1px solid rgba(255,255,255,.07);border-radius:15px;background:rgba(10,12,14,.7);color:var(--ink);text-decoration:none;box-shadow:var(--shadow-card);transition:.2s ease}
@@ -2379,7 +2379,7 @@ AC_CSS = """
 .kc-p-avatar-box{position:relative;width:88px;height:88px;margin-bottom:12px}
 .kc-p-avatar-img{width:100%;height:100%;border-radius:50%;object-fit:cover;border:2.5px solid var(--lime);box-shadow:0 0 24px rgba(24,0,173,.2)}
 .kc-p-name-row{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:5px}
-.kc-p-username{font-family:Space Grotesk,sans-serif;font-weight:700;font-size:22px;letter-spacing:-.01em;color:var(--ink)}
+.kc-p-username{font-family:Montserrat,system-ui,sans-serif;font-weight:700;font-size:22px;letter-spacing:-.01em;color:var(--ink)}
 .kc-p-edit-btn{background:transparent;border:0;color:#767c82;cursor:pointer;display:grid;place-items:center;padding:2px;transition:color .15s}
 .kc-p-edit-btn:hover{color:var(--lime)}
 .kc-p-uid-row{display:flex;align-items:center;justify-content:center;gap:6px;font-family:'Montserrat', sans-serif;font-size:12px;color:#767c82;margin-bottom:14px}
@@ -2397,7 +2397,7 @@ AC_CSS = """
 .kc-ref-card{display:flex;align-items:center;justify-content:space-between;gap:16px;background:linear-gradient(135deg,rgba(255,255,255,.04) 0%,rgba(255,255,255,.02) 100%);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:16px 20px;margin:18px 0 24px;text-decoration:none;cursor:pointer;transition:border-color .2s,transform .2s}
 .kc-ref-card:hover{border-color:rgba(24,0,173,.3);transform:translateY(-1px)}
 .kc-ref-left{flex:1}
-.kc-ref-title{font-family:Space Grotesk,sans-serif;font-weight:700;font-size:16px;color:var(--ink);margin-bottom:4px}
+.kc-ref-title{font-family:Montserrat,system-ui,sans-serif;font-weight:700;font-size:16px;color:var(--ink);margin-bottom:4px}
 .kc-ref-sub{font-size:12px;color:#767c82}
 .kc-ref-icon-box{width:56px;height:56px;flex-shrink:0;border-radius:14px;overflow:hidden;background:rgba(255,255,255,.05);display:grid;place-items:center}
 .kc-ref-icon-box img{width:100%;height:100%;object-fit:cover}
@@ -2437,7 +2437,7 @@ ac = ['<main><div class="kc-profile-wrap">', tab_intro('Your profile'),
       '<div class="profile-card-top">'
       '<div class="profile-avatar-wrap">'
       '<button type="button" class="profile-avatar-button" id="kcAvatarBtn" aria-label="Change profile picture">'
-      '<img src="assets/fantrade-outline-logo.png" alt="" width="84" height="84" id="kcProfileAvatar" data-avatar-img>'
+      '<img src="assets/brand/fantrade-mark-white.svg" alt="" width="84" height="84" id="kcProfileAvatar" data-avatar-img>'
       '<span class="profile-avatar-edit" aria-hidden="true">' + ic('camera', 'ic') + '</span>'
       '</button>'
       '<input type="file" id="kcAvatarInput" accept="image/png,image/jpeg,image/webp" hidden>'

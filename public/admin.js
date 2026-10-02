@@ -150,7 +150,7 @@ function gateShell(inner) {
   app.className = ''; app.removeAttribute('aria-busy');
   app.innerHTML = `<div class="gate">
     <section class="gate-art">
-      <div class="brand"><img src="assets/fantrade-logo.png" alt="" width="30" height="30">Fantrade Admin</div>
+      <div class="brand"><img src="assets/brand/fantrade-mark.svg" alt="" width="30" height="30">Fantrade Admin</div>
       <div><h1>Run the market behind the game.</h1>
         <p>Clear footballers for listing, watch claims launch them onto the Exchange, look after managers, and keep an eye on every matchday.</p></div>
       <div class="gate-rows">
@@ -233,7 +233,7 @@ function startShell() {
   app.className = ''; app.removeAttribute('aria-busy');
   app.innerHTML = `<div class="shell">
     <aside class="side" id="side" aria-label="Admin">
-      <div class="side-brand"><img src="assets/fantrade-logo.png" alt="">Fantrade<small>Admin</small></div>
+      <div class="side-brand"><img src="assets/brand/fantrade-mark.svg" alt="">Fantrade<small>Admin</small></div>
       <nav class="nav" id="nav">${NAV.map(([k, label, icon]) => `<a href="#/${k}" data-k="${k}">${ic(icon)}<span>${label}</span><span class="count" hidden></span></a>`).join('')}</nav>
       <div class="side-foot">
         <a class="side-link" href="dashboard.html" target="_blank" rel="noopener">${ic('external')}Open the Fantrade app</a>
@@ -243,7 +243,7 @@ function startShell() {
     </aside>
     <div class="content">
       <header class="topbar"><button class="icon-btn" id="menu" aria-label="Open menu">${ic('menu')}</button>
-        <img src="assets/fantrade-logo.png" alt=""><b>Admin</b></header>
+        <img src="assets/brand/fantrade-mark.svg" alt=""><b>Admin</b></header>
       <main class="main" id="view"></main>
     </div></div>
     <div class="scrim" id="scrim"></div><aside class="drawer" id="drawer" aria-label="Details"></aside><div class="dialog" id="dialog"></div>`;
@@ -1161,7 +1161,7 @@ const SAMPLE = (() => {
 /* ── Start ─────────────────────────────────────────────────────────── */
 async function boot() {
   app.className = 'boot'; app.setAttribute('aria-busy', 'true');
-  app.innerHTML = '<div class="boot-mark"><img src="assets/fantrade-logo.png" alt="" width="40" height="40"><span>Fantrade Admin</span></div>';
+  app.innerHTML = '<div class="boot-mark"><img src="assets/brand/fantrade-mark.svg" alt="" width="40" height="40"><span>Fantrade Admin</span></div>';
   try { if (!sb) await loadClient(); } catch (e) { return renderSignIn({ offline: true }); }
   try {
     const { data } = await sb.auth.getSession();

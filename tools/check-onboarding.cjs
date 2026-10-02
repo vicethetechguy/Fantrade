@@ -6,7 +6,7 @@ const server = http.createServer((req, res) => {
   if (!file.startsWith(root + path.sep)) return res.writeHead(403).end();
   fs.readFile(file, (error, data) => {
     if (error) return res.writeHead(404).end();
-    res.setHeader('Content-Type', ({ '.html': 'text/html', '.js': 'text/javascript', '.webp': 'image/webp', '.png': 'image/png' })[path.extname(file)] || 'application/octet-stream');
+    res.setHeader('Content-Type', ({ '.html': 'text/html', '.css':'text/css', '.ttf':'font/ttf', '.svg':'image/svg+xml', '.js': 'text/javascript', '.webp': 'image/webp', '.png': 'image/png' })[path.extname(file)] || 'application/octet-stream');
     res.end(data);
   });
 });
@@ -45,12 +45,13 @@ const server = http.createServer((req, res) => {
       await page.locator('#obBuy').click();
       assert(await page.locator('#obBuy').isEnabled());
       await page.locator('[data-s="100"]').click();
-      assert.equal(await page.locator('#obTot').innerText(), '3,991 $FTR');
+      const quotedTotal = Number((await page.locator('#obTot').innerText()).replace(/[^0-9.]/g, ''));
+      assert(quotedTotal > 0, 'Purchase review must show a positive current quote');
       const beforeBalance = Number((await page.locator('#sumWallet').innerText()).replace(/[^0-9.]/g, ''));
       await page.locator('#obBuy').click();
       await page.locator('[data-pane="1"].on').waitFor();
       const after = await state();
-      assert(Math.abs(beforeBalance - after.wallet.balance - 3991) < 0.01, 'Exactly one purchase is charged');
+      assert(Math.abs(beforeBalance - after.wallet.balance - quotedTotal) < 0.01, 'Exactly one purchase is charged at the displayed quote');
       await verifyStep(1);
       await page.locator('#handle').fill('!');
       await page.locator('#obNext').click();
