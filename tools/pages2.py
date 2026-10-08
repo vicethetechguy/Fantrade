@@ -144,8 +144,7 @@ f.append('<div class="kc-holdings-list" id="walActivity" role="tabpanel" hidden>
 
 f.append('</div></main>')
 
-FTR_JS = ("var WASSETS=" + repr([{"t": t, "n": n, "i": i, "c": c, "d": d, "s": s}
-                                 for t, n, i, c, d, s in WALLET_ASSETS]).replace("'", '"') + ";") + r"""
+FTR_JS = r"""
 function el(id){ return document.getElementById(id); }
 function money(n){ return Number(n).toLocaleString('en-US',{maximumFractionDigits:6}); }
 
@@ -158,6 +157,7 @@ if(eyeBtn){
   });
 }
 
+var holdingsMarkupKey = null;
 function renderAssets(){
   var s = FT.getState(), box = el('walAssets');
   if(!box) return;
@@ -178,27 +178,40 @@ function renderAssets(){
   var playerSharesVal = 0, coachSharesVal = 0;
   Object.keys(s.holdings).forEach(function(k){
     var h = s.holdings[k];
-    var val = h.shares * (h.p || h.avg || 10);
+    var quote = FT.holdingQuote(k), val = quote.value;
     if(h.c) coachSharesVal += val; else playerSharesVal += val;
     var asset = ftAsset(k, h.n);
     var sym = asset ? asset.t : ftSym(k);
-    var meta = WASSETS.filter(function(a){ return a.t === sym || a.t === k; })[0]
-      || { i: h.c ? 'whistle' : 'boot', c: h.c ? 'coach' : '', d: 0, s: 0 };
-    var up = meta.d >= 0;
+    var change = quote.returnPct;
+    var up = change !== null && change >= 0;
+    var changeText = change === null ? 'Return unavailable' : (up ? '+' : '') + change.toFixed(2) + '% return';
 
-    rows.push('<a class="kc-asset-row" href="asset.html?a=' + encodeURIComponent(sym) + '">'
+    rows.push('<a class="kc-asset-row" data-holding="' + esc(k) + '" href="asset.html?a=' + encodeURIComponent(sym) + '">'
       + '<div class="kc-asset-left">'
-      + '<div class="kc-asset-icon ' + (meta.c || '') + '">' + playerPhoto(k,h.n) + '</div>'
+      + '<div class="kc-asset-icon ' + (h.c ? 'coach' : '') + '">' + playerPhoto(k,h.n) + '</div>'
       + '<div><div class="kc-asset-name">' + sym + ' <span style="font-weight:400;color:#8E9AA8;font-size:12px">' + h.n + '</span></div>'
       + '<div class="kc-asset-sub">' + (hidden ? '••••' : h.shares.toLocaleString('en-US') + (h.c ? ' coach activity shares' : ' player activity shares')) + '</div></div>'
       + '</div>'
       + '<div class="kc-asset-right">'
-      + '<div class="kc-asset-val">' + (hidden ? '••••••' : money(val) + ' FTR') + '</div>'
-      + '<div class="kc-asset-chg ' + (up ? 'up' : 'down') + '">' + (up ? '+' : '') + meta.d.toFixed(2) + '%</div>'
+      + '<div class="kc-asset-val">' + (hidden ? '••••••' : quote.price === null ? 'Price unavailable' : money(val) + ' FTR') + '</div>'
+      + '<div class="kc-asset-chg ' + (change === null ? 'wal-muted' : up ? 'up' : 'down') + '" title="Change from your average purchase price">' + (hidden ? '••••' : changeText) + '</div>'
       + '</div></a>');
   });
 
-  box.innerHTML = rows.join('');
+  // Keep links and focused rows in place while only the quotes change.
+  var markupKey = JSON.stringify([hidden, Object.keys(s.holdings).map(function(k){var h=s.holdings[k];return [k,h.n,h.shares,h.c,playerPhoto(k,h.n)];})]);
+  if(markupKey !== holdingsMarkupKey){box.innerHTML=rows.join('');holdingsMarkupKey=markupKey;}
+  else {
+    var liquid=box.querySelector('.kc-asset-val');
+    if(liquid) liquid.textContent=hidden?'••••••':money(s.wallet.balance)+' FTR';
+    box.querySelectorAll('[data-holding]').forEach(function(row){
+      var q=FT.holdingQuote(row.dataset.holding), pct=q.returnPct;
+      row.querySelector('.kc-asset-val').textContent=hidden?'••••••':q.price===null?'Price unavailable':money(q.value)+' FTR';
+      var changeEl=row.querySelector('.kc-asset-chg');
+      changeEl.className='kc-asset-chg '+(pct===null?'wal-muted':pct>=0?'up':'down');
+      changeEl.textContent=hidden?'••••':pct===null?'Return unavailable':(pct>=0?'+':'')+pct.toFixed(2)+'% return';
+    });
+  }
   if(el('walPosCount')) el('walPosCount').textContent = (Object.keys(s.holdings).length + 1) + ' Assets';
   var allocation = [s.wallet.balance || 0, playerSharesVal, coachSharesVal, s.wallet.locked || 0];
   var allocationTotal = allocation.reduce(function(total,value){return total+value;},0);
@@ -276,9 +289,8 @@ document.querySelectorAll('[data-wtab]').forEach(function(b){
   });
 });
 
-function syncWallet(){
-  renderFanplay();
-  renderActivity();
+function syncWallet(event){
+  if(!event || event.type!=='fantrade:tick'){renderFanplay();renderActivity();}
   var s = FT.getState();
   var bal = (s.wallet.balance || 0) + (s.wallet.locked || 0) + FT.holdingsValue();
   if(el('walAvailable')) el('walAvailable').textContent = hidden ? '••••••' : money(s.wallet.balance || 0) + ' $FTR';
@@ -293,7 +305,26 @@ function syncWallet(){
 
 syncWallet();
 window.addEventListener('fantrade:statechange', syncWallet);
-window.addEventListener('fantrade:market', syncWallet);
+window.addEventListener('fantrade:market', function(){requestAnimationFrame(syncWallet);});
+window.addEventListener('fantrade:tick', syncWallet);
+window.addEventListener('fantrade:profiles', syncWallet);
+
+// Read fresh account quotes while the wallet is visible, without overlapping requests.
+var walletRefreshBusy=false;
+async function refreshWalletAccount(){
+  if(document.hidden || walletRefreshBusy) return;
+  walletRefreshBusy=true;
+  try {
+    if(FT.restAccount() && !FT.cloudSignedIn()) await FT.refreshRest();
+    else if(FT.cloudSignedIn()) await FT.syncCloud();
+  } catch(e) { /* Keep the last confirmed balance; retry on the next refresh. */ }
+  finally {walletRefreshBusy=false;}
+}
+var walletRefreshTimer=setInterval(refreshWalletAccount,15000);
+window.addEventListener('focus',refreshWalletAccount);
+document.addEventListener('visibilitychange',function(){if(!document.hidden)refreshWalletAccount();});
+window.addEventListener('pagehide',function(){clearInterval(walletRefreshTimer);});
+window.addEventListener('pageshow',function(e){if(e.persisted){walletRefreshTimer=setInterval(refreshWalletAccount,15000);refreshWalletAccount();}});
 """
 page("ftr.html", "Wallet & Assets — Fantrade", "".join(f), FTR_JS, FTR_CSS, app=True)
 page("wallet.html", "Wallet & Assets — Fantrade", "".join(f), FTR_JS, FTR_CSS, app=True)

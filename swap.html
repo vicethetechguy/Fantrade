@@ -2260,7 +2260,8 @@ var FT = (function(){
     }
     st.listedAssets = st.listedAssets || [];
     if(st.wallet){ delete st.wallet.gbpRate; st.wallet.usdRate = 1 / FTR_USD; }
-    if(!st.econV2){
+    var liveAccount=st.liveWallet || localStorage.getItem('fantrade_auth_token') || Object.keys(localStorage).some(function(k){return k.startsWith('sb-') && k.endsWith('-auth-token');});
+    if(!st.econV2 && !liveAccount){
       Object.keys(st.holdings || {}).forEach(function(t){
         var h = st.holdings[t], a = ASSETS.filter(function(x){ return x.t === t; })[0];
         var np = a ? a.p : (Number(h.p) || 0) * 0.05;
@@ -2271,7 +2272,7 @@ var FT = (function(){
       if(st.wallet){ delete st.wallet.gbpRate; }
       st.econV2 = true;
     }
-    Object.keys(st.holdings||{}).forEach(function(t){var a=ftAsset(t,st.holdings[t].n);if(a)st.holdings[t].p=a.p;});
+    if(!liveAccount) Object.keys(st.holdings||{}).forEach(function(t){var a=ftAsset(t,st.holdings[t].n);if(a)st.holdings[t].p=a.p;});
     delete st.clubs;
     delete st.activeClub;
     st.fanplay = st.fanplay || {};
@@ -2351,7 +2352,7 @@ var FT = (function(){
         var coach = h.kind === 'COACH';
         // Keyed by F-ticker, the name every page uses for a share.
         held[h.ticker || ftSym(h.asset_id)] = { n: h.name, shares: Number(h.shares), avg: Number(h.avg_cost),
-                             p: Number(h.price), locked: Number(h.locked)||0, c: coach,
+                             p: h.price==null?null:Number(h.price), locked: Number(h.locked)||0, c: coach,
                              // The slot travels with the account, so the side
                              // you set on one device is the side on the next.
                              inClub: h.slot || (coach ? 'COACH' : 'SUB') };
@@ -2422,10 +2423,13 @@ var FT = (function(){
     return Math.max(0,Number(h.shares)-Math.max(Number(h.locked)||0,locked));
   }
   async function refreshRest(){
+    if(pending) return false;
+    var revision=transactionRevision;
     var results=await Promise.all([FantradeAPI.getWallet(),FantradeAPI.getPortfolio()]);
+    if(pending || revision!==transactionRevision) return false;
     var w=results[0].wallet,p=results[1];
     if(w){state.wallet.balance=Number(w.available);state.wallet.locked=Number(w.reserved);state.liveWallet=true;}
-    if(p&&p.positions){state.holdings={};p.positions.forEach(function(h){var symbol=ftSym(h.symbol);state.holdings[symbol]={n:h.name,shares:Number(h.quantity),locked:Number(h.quantity)-Number(h.availableQuantity),avg:Number(h.averageCost),p:Number(h.currentPrice),c:h.type==='COACH',inClub:'SUB'};});}
+    if(p&&p.positions){state.holdings={};p.positions.forEach(function(h){var symbol=ftSym(h.symbol);state.holdings[symbol]={n:h.name,shares:Number(h.quantity),locked:Number(h.quantity)-Number(h.availableQuantity),avg:Number(h.averageCost),p:h.currentPrice==null?null:Number(h.currentPrice),c:h.type==='COACH',inClub:'SUB'};});}
     save(state);announce();
   }
   function restAccount(){ return !!(window.FantradeAPI && localStorage.getItem('fantrade_auth_token')); }
@@ -2505,9 +2509,21 @@ var FT = (function(){
     unread: function(){
       return (state.notifications || []).filter(function(n){ return !n.read; }).length;
     },
+    // Account prices come from confirmed snapshots; preview prices follow the demo market.
+    holdingQuote: function(symbol){
+      var h=state.holdings[symbol];
+      if(!h) return {price:null,value:0,returnPct:null};
+      var asset=ftAsset(symbol,h.n);
+      var source=state.liveWallet || restAccount() || cloud() ? h.p : (asset ? asset.p : h.p);
+      var price=source===null || source===undefined ? null : Number(source);
+      if(price!==null && (!Number.isFinite(price) || price<0)) price=null;
+      var avg=Number(h.avg), quantity=Number(h.shares)||0;
+      return {price:price,value:price===null?0:quantity*price,
+              returnPct:price!==null && Number.isFinite(avg) && avg>0 ? (price/avg-1)*100 : null};
+    },
     holdingsValue: function(){
       return Object.keys(state.holdings).reduce(function(t,k){
-        var h = state.holdings[k]; return t + h.shares * h.p;
+        return t + FT.holdingQuote(k).value;
       }, 0);
     },
     syncUI: function(){
