@@ -69,3 +69,6 @@ body.app.calm #homeMarketRows .kc-row-left>div:last-child{flex:1;min-width:0}
  body.app.calm #homeMarketRows .kc-row-left{gap:7px}
  body.app.calm #homeMarketRows .kc-pill{font-size:10px!important}
 }
+
+/* Prevent intrinsic portrait height from stretching Home's grid avatar track. */
+body.app.calm #homeMarketRows .kc-avatar{display:block}
