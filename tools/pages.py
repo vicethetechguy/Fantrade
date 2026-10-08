@@ -129,7 +129,7 @@ ex = [T('<main><div class="kc-ex-wrap">' + tab_intro('Exchange') +
         '<div class="kc-tape" id="kcTape"><span class="ft-live-dot">Live</span><div class="kc-tape-track" id="kcTapeTrack"></div></div>'
         '<!-- Primary Category Tabs -->'
         '<div class="kc-cat-tabs" id="kcCatTabs">'
-        '  <button type="button" class="kc-cat-tab" data-cat="fav">Favorites</button>'
+        '  <button type="button" class="kc-cat-tab" data-cat="fav">Favourites</button>'
         '  <button type="button" class="kc-cat-tab on" data-cat="markets">All shares</button>'
         '  <button type="button" class="kc-cat-tab" data-cat="women">Women</button>'
         '  <button type="button" class="kc-cat-tab" data-cat="alpha">Trending</button>'

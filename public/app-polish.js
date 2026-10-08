@@ -24,3 +24,5 @@
     group.addEventListener('click', syncSelection);
   });
 })();
+
+(function(){var note=document.querySelector(".wallet-value-note"); if(note && !localStorage.getItem("ft_market_v1")) note.textContent+=" Preview illustration: 1,000,000 tokens at $20 each implies a $20m token market value. Live exchange quotes determine actual value; signups do not guarantee growth.";})();

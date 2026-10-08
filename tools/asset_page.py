@@ -77,11 +77,11 @@ HTML = '''<main><div class="asset-page">
             <div class="asset-compose-main">
               <label class="sr-only" for="feedText">Your post</label>
               <textarea id="feedText" rows="2" maxlength="280" placeholder="Share your take"></textarea>
-              <div class="asset-compose-foot"><span id="feedCount">0 / 280</span><button type="submit" class="asset-post-btn" id="feedPost" disabled>Post</button></div>
+              <div class="asset-compose-foot"><span id="feedCount">0 / 280</span><button type="button" class="feed-tag" data-tag="feedText">@ Tag someone</button><button type="submit" class="asset-post-btn" id="feedPost" disabled>Post</button></div>
             </div>
           </form>
           <div class="asset-feed" id="feedPosts" aria-live="polite"></div>
-          <p class="asset-feed-note">Posts are fans' own views, not advice.</p>
+          <p class="asset-feed-note">Preview feed · posts, comments and likes are saved on this device. Fans' views are their own.</p>
         </div>
         <div class="asset-feed" id="feedUpdates" hidden></div>
       </section>
@@ -388,6 +388,7 @@ JS = r'''
     });
   });
 
+  window.addEventListener('hashchange',function(){showTab(location.hash.replace('#',''));});
   var shortName=(function(){ var p=(typeof PLAYER_PROFILES!=='undefined'&&PLAYER_PROFILES[asset.t])||{}; if(p.known_as) return p.known_as;
     var w=asset.n.split(' '); return w.length>1?w[w.length-1]:asset.n; })();
   document.querySelectorAll('.js-short').forEach(function(el){ el.textContent=shortName; });
@@ -475,25 +476,38 @@ JS = r'''
   agoMs.forEach(function(ms){ posts.push(makePost(Date.now()-ms-Math.floor(rnd()*300000))); });
   function readJSON(k,d){ try { return JSON.parse(localStorage.getItem(k)||'null')||d; } catch(e){ return d; } }
   function writeJSON(k,v){ try { localStorage.setItem(k,JSON.stringify(v)); } catch(e){} }
-  var ownPosts=readJSON('ft_feed_v1',{}), liked=readJSON('ft_feed_likes',{});
-  function initialsOf(n){ var w=String(n||'?').trim().split(/\s+/); return ((w[0]||'?')[0]+(w.length>1?w[w.length-1][0]:'')).toUpperCase(); }
+  var ownPosts=readJSON('ft_feed_v1',{}), liked=readJSON('ft_feed_likes',{}), comments=readJSON('ft_feed_comments_v1',{}), openComments={};
+  function handleOf(value){ return String(value||'you').replace(/^@/,'').toLowerCase(); }
+  function userLikeKey(id){ return asset.t+':'+handleOf(FT.getState().user.handle)+':'+id; }
+  function avatarHtml(person){
+    var me=FT.getState().user||{}, src=handleOf(person.handle)===handleOf(me.handle)?me.avatar:person.avatar;
+    if(!src || !/^(https?:\/\/|data:image\/(?:png|jpeg|webp|gif);base64,|assets\/)/i.test(src)) src='assets/brand/fantrade-mark-white.svg';
+    if(/fantrade-(?:outline-)?logo\.png$/.test(src)) src='assets/brand/fantrade-mark-white.svg';
+    var img=document.createElement('img'); img.src=src; img.alt=(person.name||'Fan')+' profile picture'; img.loading='lazy';
+    return '<span class="asset-avatar">'+img.outerHTML+'</span>';
+  }
+  function mentionText(text){ return escapeText(text).replace(/(^|\s)@([a-zA-Z0-9_]{1,40})/g,'$1<span class="feed-mention">@$2</span>'); }
+  function commentKey(id){ return asset.t+':'+id; }
+  function commentHtml(c){ return '<div class="feed-comment">'+avatarHtml(c)+'<div><b>'+escapeText(c.name)+'</b><small>@'+escapeText(handleOf(c.handle))+'</small><p>'+mentionText(c.text)+'</p></div></div>'; }
   function feedAgo(ms){ var s=Math.max(1,Math.round((Date.now()-ms)/1000)); return s<60?'just now':s<3600?Math.floor(s/60)+'m':s<86400?Math.floor(s/3600)+'h':Math.floor(s/86400)+'d'; }
   var ICON_HEART='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 017-2.6A4 4 0 0119 10c0 5.6-7 10-7 10z"/></svg>';
   var ICON_REPLY='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5h14v10H9l-4 4z"/></svg>';
   var ICON_SHARE='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 5l6 6-6 6M20 11H9a5 5 0 00-5 5v2"/></svg>';
   function postHtml(p){
-    var on=!!liked[p.id], likes=p.likes+(on?1:0), up=asset.d>=0;
+    var on=!!liked[userLikeKey(p.id)], likes=p.likes+(on?1:0), up=asset.d>=0, replies=comments[commentKey(p.id)]||[], inputId='reply-'+p.id;
     return '<article class="asset-post'+(p.fresh?' is-new':'')+'" data-id="'+p.id+'">'
-      +'<div class="asset-post-head"><span class="asset-avatar'+(p.mine?' me':'')+'" aria-hidden="true">'+initialsOf(p.name)+'</span><div><b>'+escapeText(p.name)+'</b><small>@'+escapeText(p.handle)+' · <span data-at="'+p.at+'">'+feedAgo(p.at)+'</span></small></div></div>'
-      +'<p>'+escapeText(p.text)+'</p>'
+      +'<div class="asset-post-head">'+avatarHtml(p)+'<div><b>'+escapeText(p.name)+'</b><small>@'+escapeText(handleOf(p.handle))+' · <span data-at="'+p.at+'">'+feedAgo(p.at)+'</span></small></div></div>'
+      +'<p>'+mentionText(p.text)+'</p>'
       +'<span class="asset-post-tag">'+escapeText(ftSym(asset.t))+' <span class="'+(up?'asset-up':'asset-down')+'">'+(up?'+':'')+asset.d.toFixed(2)+'%</span></span>'
       +'<div class="asset-post-actions"><button type="button" data-like aria-pressed="'+on+'" aria-label="Like">'+ICON_HEART+'<span>'+likes+'</span></button>'
-      +'<span>'+ICON_REPLY+'<span>'+p.replies+'</span></span>'
-      +'<button type="button" data-share aria-label="Share">'+ICON_SHARE+'<span>Share</span></button></div></article>';
+      +'<button type="button" data-reply aria-expanded="'+!!openComments[p.id]+'" aria-controls="comments-'+p.id+'" aria-label="Comment">'+ICON_REPLY+'<span>'+replies.length+'</span></button>'
+      +'<button type="button" data-share aria-label="Share">'+ICON_SHARE+'<span>Share</span></button></div>'
+      +'<section class="feed-comments" id="comments-'+p.id+'" '+(openComments[p.id]?'':'hidden')+' aria-label="Comments"><div class="feed-comment-list">'+replies.map(commentHtml).join('')+'</div>'
+      +'<form data-comment-form><label class="sr-only" for="'+inputId+'">Write a comment</label><textarea id="'+inputId+'" maxlength="280" rows="2" placeholder="Write a comment…"></textarea><div class="asset-compose-foot"><button type="button" class="feed-tag" data-tag="'+inputId+'">@ Tag someone</button><button type="submit" class="asset-post-btn">Comment</button></div></form></section></article>';
   }
   var feedView='posts';
   function allPosts(){ return (ownPosts[asset.t]||[]).map(function(p){ return Object.assign({mine:true,replies:0},p); }).concat(posts).sort(function(a,b){ return b.at-a.at; }); }
-  function renderPosts(){ byId('feedPosts').innerHTML=allPosts().map(postHtml).join(''); }
+  function renderPosts(){ var drafts={}; byId('feedPosts').querySelectorAll('textarea').forEach(function(el){drafts[el.id]=el.value;}); byId('feedPosts').innerHTML=allPosts().map(postHtml).join(''); Object.keys(drafts).forEach(function(id){if(byId(id))byId(id).value=drafts[id];}); }
   function renderUpdates(){
     var cap=asset.p*FTR_USD*1e7, up=asset.d>=0, now=Date.now(), items=[
       ['Price', ftSym(asset.t)+' is at '+live(asset.p)+' $FTR (≈ '+usdFmt(asset.p)+'), '+(up?'up ':'down ')+Math.abs(asset.d).toFixed(2)+'% in 24 hours.', now],
@@ -505,7 +519,7 @@ JS = r'''
     byId('feedUpdates').innerHTML=items.map(function(u){ return '<article class="asset-update"><span class="asset-disc-tag">'+u[0]+'</span><p>'+escapeText(u[1])+'</p><small data-at="'+u[2]+'">'+feedAgo(u[2])+'</small></article>'; }).join('');
   }
   function renderFeed(){
-    var me=FT.getState().user||{}; byId('feedMe').textContent=initialsOf(me.name||me.handle||'You');
+    var me=FT.getState().user||{}; byId('feedMe').innerHTML=avatarHtml(me);
     byId('feedPostsWrap').hidden=feedView!=='posts'; byId('feedUpdates').hidden=feedView!=='updates';
     if(feedView==='posts') renderPosts(); else renderUpdates();
   }
@@ -515,24 +529,46 @@ JS = r'''
   byId('feedCompose').addEventListener('submit',function(e){
     e.preventDefault(); var t=byId('feedText').value.trim(); if(!t) return;
     var me=FT.getState().user||{}, list=ownPosts[asset.t]=ownPosts[asset.t]||[];
-    list.unshift({ id:'m'+Date.now(), name:me.name||'You', handle:me.handle||'you', text:t.slice(0,280), at:Date.now(), likes:0, fresh:true });
+    list.unshift({ id:'m'+Date.now(), name:me.name||'You', handle:me.handle||'you', avatar:me.avatar||'', text:t.slice(0,280), at:Date.now(), likes:0, fresh:true });
     writeJSON('ft_feed_v1',ownPosts); byId('feedText').value=''; byId('feedCount').textContent='0 / 280'; byId('feedPost').disabled=true; renderPosts();
     if(typeof showToast==='function') showToast('Posted to the '+ftSym(asset.t)+' feed');
   });
   byId('feedPosts').addEventListener('click',function(e){
     var art=e.target.closest('.asset-post'); if(!art) return;
-    if(e.target.closest('[data-like]')){ var id=art.dataset.id; if(liked[id]) delete liked[id]; else liked[id]=1; writeJSON('ft_feed_likes',liked);
+    if(e.target.closest('[data-like]')){ var id=userLikeKey(art.dataset.id); if(liked[id]) delete liked[id]; else liked[id]=1; writeJSON('ft_feed_likes',liked);
       var b=e.target.closest('[data-like]'), n=b.querySelector('span'); b.setAttribute('aria-pressed',String(!!liked[id])); n.textContent=Number(n.textContent)+(liked[id]?1:-1); }
+    if(e.target.closest('[data-reply]')){ var id=art.dataset.id; openComments[id]=!openComments[id]; art.querySelector('.feed-comments').hidden=!openComments[id]; e.target.closest('[data-reply]').setAttribute('aria-expanded',String(openComments[id])); if(openComments[id])art.querySelector('textarea').focus(); }
     if(e.target.closest('[data-share]')){ var url=location.origin+location.pathname+'?a='+encodeURIComponent(asset.t)+'#feed', txt=art.querySelector('p').textContent;
       if(navigator.share) navigator.share({title:asset.n+' on Fantrade',text:txt,url:url}).catch(function(){});
       else if(navigator.clipboard) navigator.clipboard.writeText(url).then(function(){ if(typeof showToast==='function') showToast('Link copied'); }).catch(function(){}); }
   });
+  byId('feedPosts').addEventListener('submit',function(e){
+    var form=e.target.closest('[data-comment-form]'); if(!form)return; e.preventDefault();
+    var input=form.querySelector('textarea'), text=input.value.trim(); if(!text){input.focus();return;}
+    var id=form.closest('.asset-post').dataset.id, key=commentKey(id), me=FT.getState().user||{};
+    var list=comments[key]=comments[key]||[];
+    list.push({id:'c'+Date.now(),name:me.name||'You',handle:me.handle||'you',avatar:me.avatar||'',text:text.slice(0,280),at:Date.now()});
+    writeJSON('ft_feed_comments_v1',comments); input.value=''; openComments[id]=true; renderPosts(); byId('reply-'+id).focus();
+  });
+  function mentionSuggestions(input){
+    var old=input.parentNode.querySelector('.feed-mentions'); if(old)old.remove();
+    var match=input.value.slice(0,input.selectionStart).match(/(?:^|\s)@([a-zA-Z0-9_]*)$/); if(!match)return;
+    var people=FANS.map(function(f){return {name:f[0],handle:f[1]};}).concat([FT.getState().user||{}]).concat(allPosts());
+    var seen={}, choices=people.filter(function(p){var h=handleOf(p.handle); if(!/^[a-z0-9_]{1,40}$/.test(h)||seen[h]||!h.startsWith(match[1].toLowerCase()))return false;seen[h]=true;return true;}).slice(0,6);
+    if(!choices.length)return;
+    var box=document.createElement('div'); box.className='feed-mentions'; box.setAttribute('role','group'); box.setAttribute('aria-label','People to tag');
+    choices.forEach(function(person){var b=document.createElement('button'); b.type='button'; b.textContent='@'+handleOf(person.handle)+' · '+person.name;
+      b.addEventListener('click',function(){var end=input.selectionStart,start=end-match[1].length-1;input.setRangeText('@'+handleOf(person.handle)+' ',start,end,'end');input.focus();box.remove();input.dispatchEvent(new Event('input',{bubbles:true}));});box.appendChild(b);});
+    input.insertAdjacentElement('afterend',box);
+  }
+  byId('panel-feed').addEventListener('input',function(e){if(e.target.matches('textarea'))mentionSuggestions(e.target);});
+  byId('panel-feed').addEventListener('click',function(e){var tag=e.target.closest('[data-tag]');if(!tag)return;var input=byId(tag.dataset.tag);input.focus();input.setRangeText((input.value&& !/\s$/.test(input.value.slice(0,input.selectionStart))?' ':'')+'@',input.selectionStart,input.selectionEnd,'end');input.dispatchEvent(new Event('input',{bubbles:true}));});
   // With the demo market running, the feed keeps moving too.
   var feedTicks=0;
   window.addEventListener('fantrade:tick',function(e){
     document.querySelectorAll('#panel-feed [data-at]').forEach(function(el){ el.textContent=feedAgo(Number(el.dataset.at)); });
     if(++feedTicks%28===0){ var p=makePost(Date.now()); p.fresh=true; posts.unshift(p); posts=posts.slice(0,30);
-      if(!byId('panel-feed').hidden && feedView==='posts') renderPosts(); }
+      if(!byId('panel-feed').hidden && feedView==='posts' && !byId('panel-feed').contains(document.activeElement)) renderPosts(); }
     if(e.detail.changed[asset.t]){
       if(!byId('panel-info').hidden) renderInfo();
       if(!byId('panel-feed').hidden && feedView==='updates') renderUpdates();

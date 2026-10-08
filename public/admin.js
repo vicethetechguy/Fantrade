@@ -15,7 +15,7 @@ const CONFIG = {
   anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFqandvZG5qY25ta3pndW9zcGF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAwOTI3NjMsImV4cCI6MjEwNTY2ODc2M30.7KUEO-9rzcWcvCezLw26WMyDQWvbCCy15zzk-wyTnrg',
   cdn: 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'
 };
-let FTR_USD = 2;                           // live $FTR price in dollars; refreshed from the database
+let FTR_USD = 20;                           // live $FTR price in dollars; refreshed from the database
 const SHARES = 10000000;                    // every player and coach has 10,000,000 Activity Shares
 const LEVEL_SHARES = { 1: 500000, 2: 1000000 };
 
@@ -327,7 +327,7 @@ VIEWS.overview = async view => {
 /* The $FTR market: one capped supply, split between wallets, the treasury
    and what has been burned. */
 function marketCard(m) {
-  const max = Number(m.max_supply) || 1e7, circ = Number(m.circulating) || 0, burned = Number(m.burned) || 0, tre = Math.max(0, Number(m.treasury) || 0);
+  const max = Number(m.max_supply) || 1e6, circ = Number(m.circulating) || 0, burned = Number(m.burned) || 0, tre = Math.max(0, Number(m.treasury) || 0);
   const pc = v => Math.max(0, Math.min(100, v / max * 100)).toFixed(2) + '%';
   return `<section class="card market-card"><div class="card-head"><div><h2>$FTR market</h2><p>Capped at ${compact(max)} $FTR. Every player's $FTR price follows this.</p></div>
       ${me.role !== 'viewer' ? `<button class="btn btn-sm" id="setMarket">${ic('edit')}Set price</button>` : ''}</div>
@@ -1073,7 +1073,7 @@ const SAMPLE = (() => {
     { id: 4, action: 'player.pause', target: 'lst-FALOZ', detail: {}, created_at: iso(now - 4 * D), handle: 'sample_admin' },
     { id: 3, action: 'players.upsert', target: null, detail: { added: 15, updated: 0, skipped: 0 }, created_at: iso(now - 20 * D), handle: 'sample_admin' }
   ];
-  const market = { ftr_usd: 2, welcome_grant: 1000 };
+  const market = { ftr_usd: 20, welcome_grant: 1000 };
   const note = (action, target, detail) => log.unshift({ id: log.length + 1, action, target, detail: detail || {}, created_at: iso(Date.now()), handle: 'sample_admin' });
   const clone = x => JSON.parse(JSON.stringify(x));
   const holdingsFor = m => claims.filter(c => c.handle === m.handle).map(c => ({ ticker: c.ticker, name: c.name, shares: c.shares, locked: 0, avg_cost: c.reference_value, price: shareFtr(byT(c.ticker).valuation_usd), value: c.shares * shareFtr(byT(c.ticker).valuation_usd) }))
@@ -1091,7 +1091,7 @@ const SAMPLE = (() => {
         days.push({ day: d0.toISOString(), claims: cs.length, paid: cs.reduce((t, c) => t + c.fee_paid, 0) });
       }
       const burnedAll = claims.reduce((t, c) => t + c.fee_burned, 0), circ = M.reduce((t, m) => t + m.balance + m.locked, 0);
-      return { ftr: { ftr_usd: market.ftr_usd, max_supply: 10000000, burned: burnedAll, circulating: circ,
+      return { ftr: { ftr_usd: market.ftr_usd, max_supply: 1000000, burned: burnedAll, circulating: circ,
                       treasury: 10000000 - burnedAll - circ, welcome_grant: market.welcome_grant },
         managers: M.length, managers_7d: M.filter(m => now - new Date(m.created_at) < 7 * D).length, suspended: M.filter(m => m.suspended).length,
         wallet_ftr: M.reduce((t, m) => t + m.balance, 0), locked_ftr: 0,

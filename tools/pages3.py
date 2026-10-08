@@ -519,14 +519,7 @@ function el(id){ return document.getElementById(id); }
 function wrap(id){ return document.getElementById('f-' + id); }
 function num(v){ return parseInt(String(v).replace(/[^0-9]/g, ''), 10) || 0; }
 
-// Ensure 50,000 $FTR grant is present
-(function(){
-  var s = FT.getState();
-  if(s.wallet.balance < 50000){
-    FT.depositFtr(50000);
-  }
-})();
-
+// The shared preview allocation is set once; onboarding never adds tokens.
 function render(){
   PANES.forEach(function(p, i){ p.classList.toggle('on', i === step); });
   document.querySelectorAll('#obProg .st').forEach(function(s, i){
@@ -565,9 +558,9 @@ document.querySelectorAll('#obPicks .pick').forEach(function(p){
 function cost(){
   if(!picked){ el('obSub').textContent = el('obFee').textContent = el('obTot').textContent = '—'; return; }
   var sh = num(el('obShares').value), sub = sh * picked.px, fee = sub * 0.004;
-  el('obSub').textContent = Math.round(sub).toLocaleString('en-US') + ' $FTR';
-  el('obFee').textContent = Math.round(fee).toLocaleString('en-US') + ' $FTR';
-  el('obTot').textContent = Math.round(sub + fee).toLocaleString('en-US') + ' $FTR';
+  el('obSub').textContent = sub.toLocaleString('en-US',{maximumFractionDigits:6}) + ' $FTR';
+  el('obFee').textContent = fee.toLocaleString('en-US',{maximumFractionDigits:6}) + ' $FTR';
+  el('obTot').textContent = Number((sub + fee).toFixed(6)).toLocaleString('en-US',{maximumFractionDigits:6}) + ' $FTR';
 }
 // Use the same catalogue and market updates as Exchange, including cached $FTR quotes.
 function refreshStarterPrices(){

@@ -45,7 +45,7 @@ function param(k){
 }
 var SYM = ftSym(param('a') || 'FSAKA');
 var A = ASSETS.filter(function(x){ return x.t.toLowerCase() === SYM.toLowerCase() || ftSym(x.t).toLowerCase() === SYM.toLowerCase(); })[0] || ASSETS[0];
-function fmt(n){ return Math.round(n).toLocaleString('en-US'); }
+function fmt(n){ return Number(n||0).toLocaleString('en-US',{maximumFractionDigits:6}); }
 function money(n){ return pxFmt(n); }
 function held(){ return FT.getState().holdings[A.t] || null; }
 

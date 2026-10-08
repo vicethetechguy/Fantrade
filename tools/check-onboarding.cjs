@@ -19,6 +19,7 @@ const server = http.createServer((req, res) => {
     for (const width of [320, 390, 768, 1440]) {
       const page = await browser.newPage({ viewport: { width, height: 844 }, reducedMotion: 'reduce' });
       await page.route('http://localhost:3001/**', route => route.abort());
+      await page.route('**/rest/v1/rpc/ft_market',route=>route.fulfill({json:{ftr_usd:20,max_supply:1000000}}));
       const errors = [];
       page.on('pageerror', error => errors.push(error.message));
       await page.goto(`http://127.0.0.1:${server.address().port}/onboarding.html`);
@@ -51,7 +52,7 @@ const server = http.createServer((req, res) => {
       await page.locator('#obBuy').click();
       await page.locator('[data-pane="1"].on').waitFor();
       const after = await state();
-      assert(Math.abs(beforeBalance - after.wallet.balance - quotedTotal) < 0.01, 'Exactly one purchase is charged at the displayed quote');
+      assert(Math.abs(beforeBalance - after.wallet.balance - quotedTotal) < 0.01, 'Exactly one purchase is charged at the displayed quote: '+JSON.stringify({beforeBalance,after:after.wallet.balance,quotedTotal,trade:after.transactions[0]&&after.transactions[0].total}));
       await verifyStep(1);
       await page.locator('#handle').fill('!');
       await page.locator('#obNext').click();

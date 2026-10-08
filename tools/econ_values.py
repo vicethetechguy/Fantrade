@@ -1,5 +1,5 @@
 EURUSD = 1.1464
-FTR_USD = 2.0
+FTR_USD = 20.0  # Illustrative preview quote; live market data overrides it.
 # ticker: (EUR millions or None, USD millions override, source, club override, league override)
 TM = 'Transfermarkt, as reported Jul–Sep 2026'
 SD = 'Soccerdonna (Transfermarkt), latest published'
