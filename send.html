@@ -3406,8 +3406,8 @@ if(el('walletReview')){
   el('reviewConfirm').onclick=async function(){var action=pendingAction;if(!action)return;pendingAction=null;this.disabled=true;
     try{await action();}catch(error){status(error.message,true);}finally{el('walletReview').close();}};
 }
-var labels={BUY:'Bought shares',SELL:'Sold shares',STAKE:'FanPlay entry',PAYOUT:'FanPlay payout',SETTLE:'Settlement',CONVERT:'Added funds',DEPOSIT:'Deposit',SEND:'Transfer sent',WITHDRAW:'Withdrawal to bank',SWAP:'Swapped shares'};
-function ledgerRow(t){var down=['BUY','STAKE','SEND','WITHDRAW'].includes(t.type),neutral=t.type==='SWAP';
+var labels={P2P_BUY:'P2P purchase',P2P_SELL:'P2P sale',P2P_LOCK:'P2P escrow locked',P2P_UNLOCK:'P2P escrow returned',BUY:'Bought shares',SELL:'Sold shares',STAKE:'FanPlay entry',PAYOUT:'FanPlay payout',SETTLE:'Settlement',CONVERT:'Added funds',DEPOSIT:'Deposit',SEND:'Transfer sent',WITHDRAW:'Withdrawal to bank',SWAP:'Swapped shares'};
+function ledgerRow(t){var down=['BUY','STAKE','SEND','WITHDRAW','P2P_SELL'].includes(t.type),neutral=['SWAP','P2P_LOCK','P2P_UNLOCK'].includes(t.type);
   return '<div class="wallet-ledger-row"><span class="ledger-icon"><svg class="ic" aria-hidden="true"><use href="#i-'+(neutral?'swap':'arrow')+'"/></svg></span><div><b>'+esc(labels[t.type]||t.type)+'</b><small>'+esc(t.asset)+'</small><small>'+esc(t.time)+'</small></div><div class="ledger-amount '+(neutral?'':down?'':'positive')+'">'+(neutral?'Value ':down?'−':'+')+fmt(t.total)+' $FTR'+(neutral?'<small>No cash transfer</small>':'')+'</div></div>';
 }
 

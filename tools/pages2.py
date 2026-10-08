@@ -108,8 +108,8 @@ f.append(T('<section class="kc-assets-card wallet-balance-overview" aria-label="
            '<div class="kc-card-sub"><span id="walGbp">—</span></div>'
            '<div class="wallet-spendable"><span>Available to spend</span><b id="walAvailable">—</b></div>'
            '<div class="kc-actions-grid">'
-           '<a class="kc-act-btn" href="buy.html"><div class="kc-act-icon">@@</div><span class="kc-act-lbl">Deposit</span></a>'
-           '<a class="kc-act-btn" href="withdraw.html"><div class="kc-act-icon">@@</div><span class="kc-act-lbl">Withdraw</span></a>'
+           '<a class="kc-act-btn" href="buy.html"><div class="kc-act-icon">@@</div><span class="kc-act-lbl">Buy $FTR</span></a>'
+           '<a class="kc-act-btn" href="withdraw.html"><div class="kc-act-icon">@@</div><span class="kc-act-lbl">Sell $FTR</span></a>'
            '<a class="kc-act-btn" href="send.html"><div class="kc-act-icon">@@</div><span class="kc-act-lbl">Transfer</span></a>'
            '<a class="kc-act-btn" href="swap.html"><div class="kc-act-icon">@@</div><span class="kc-act-lbl">Convert</span></a>'
            '</div></section>',
@@ -256,7 +256,7 @@ function renderFanplay(){
 
 /* Activity tab: every transaction, newest first, as a running history. */
 var TX_LABEL = {BUY:'Bought shares',SELL:'Sold shares',STAKE:'FanPlay entry',PAYOUT:'FanPlay payout',SETTLE:'Settlement',
-  CONVERT:'Added funds',DEPOSIT:'Deposit',SEND:'Transfer sent',WITHDRAW:'Withdrawal to bank',SWAP:'Swapped shares'};
+  P2P_BUY:'P2P purchase',P2P_SELL:'P2P sale',P2P_LOCK:'P2P escrow locked',P2P_UNLOCK:'P2P escrow returned',CONVERT:'Added funds',DEPOSIT:'Deposit',SEND:'Transfer sent',WITHDRAW:'Withdrawal to bank',SWAP:'Swapped shares'};
 var TX_ICON = {BUY:'candle',SELL:'candle',STAKE:'ball',PAYOUT:'trophy',SETTLE:'trophy',CONVERT:'coin',DEPOSIT:'coin',SEND:'send',WITHDRAW:'bank',SWAP:'swap'};
 function renderActivity(){
   var box = el('walActivity'); if(!box) return;
@@ -266,8 +266,8 @@ function renderActivity(){
     return;
   }
   box.innerHTML = list.map(function(t){
-    var out = ['BUY','STAKE','SEND','WITHDRAW'].indexOf(t.type) !== -1, swap = t.type === 'SWAP';
-    var amt = swap ? 'No cash moved' : (hidden ? '••••••' : (out ? '−' : '+') + Math.round(t.total).toLocaleString('en-US') + ' FTR');
+    var out = ['BUY','STAKE','SEND','WITHDRAW','P2P_SELL'].indexOf(t.type) !== -1, swap = ['SWAP','P2P_LOCK','P2P_UNLOCK'].includes(t.type);
+    var amt = swap ? (t.type==='SWAP'?'No cash moved':(hidden?'••••••':money(t.total)+' FTR · escrow')) : (hidden ? '••••••' : (out ? '−' : '+') + Math.round(t.total).toLocaleString('en-US') + ' FTR');
     return '<div class="kc-asset-row">'
       + '<div class="kc-asset-left"><div class="kc-asset-icon"><svg class="ic" aria-hidden="true"><use href="#i-' + (TX_ICON[t.type] || 'arrow') + '"/></svg></div>'
       + '<div><div class="kc-asset-name">' + esc(TX_LABEL[t.type] || t.type) + '</div>'
@@ -396,7 +396,7 @@ details p{color:var(--dim);font-weight:300;font-size:14px;max-width:62ch;padding
 """
 
 WALK = [
-    ("01", "ball", "Fund your balance", "Buy $FTR at the market price shown. Use it to buy Activity Shares "
+    ("01", "ball", "Fund your balance", "Buy $FTR from another fan through an escrow-protected P2P offer. Use it to buy Activity Shares "
      "and receive FanPlay settlements. FanPlay locks eligible shares rather than staking your $FTR directly.",
      ["$FTR has a maximum supply of 10,000,000 tokens", "The exchange determines the $FTR price"], False),
     ("02", "candle", "Buy players and coaches", "Every asset carries a fixed ten million shares. Buy one share or a "
@@ -499,7 +499,7 @@ h.append(T('<section id="mechanics"><div class="wrap"><div class="sec-head" data
            '<p class="lede">Every order on the exchange clears the same way, whether it is your first '
            'fifty shares or a full squad rebuild.</p></div><div class="bento">', ic("swap", "ic")))
 for icon, t, d in [("wallet", "Fund in $FTR",
-                    "Deposit, convert to $FTR, and your balance is ready to trade against any listed asset."),
+                    "Buy $FTR through P2P in your local currency. Tokens arrive after the seller confirms receipt, ready to trade against listed assets."),
                    ("candle", "Buy at market",
                     "Orders fill against the live book. Fees are 0.4% on both sides and are always shown "
                     "before you confirm."),

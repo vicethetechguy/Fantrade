@@ -1,0 +1,102 @@
+/* P2P continues Fantrade's open, quiet wallet presentation. */
+body.app.calm .p2p-page{max-width:1120px;margin:auto;padding:18px 28px calc(130px + env(safe-area-inset-bottom))}
+.p2p-intro{display:flex;justify-content:space-between;align-items:center;gap:24px;margin:16px 0 30px}
+.p2p-kicker{font-size:11px;letter-spacing:.12em;color:#a4aaa1}
+body.app.calm .p2p-intro h1{font-size:clamp(28px,4vw,40px);line-height:1.2;margin:10px 0 14px}
+.p2p-intro p:not(.p2p-kicker){font-size:14px;color:#a4aaa1;max-width:52ch;line-height:1.7}
+.p2p-intro>.app-primary{flex:none}
+.p2p-notice{border-radius:18px;background:#121411;color:#bcc2b8;font-size:12px;line-height:1.7;padding:14px 18px;margin-bottom:24px}
+.p2p-notice.demo{background:#140e2a;color:#d0c9ef}
+.p2p-tabs{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin-bottom:32px;white-space:nowrap}
+.p2p-tabs button,.p2p-filters button,.p2p-secondary{min-height:44px;border:0;box-shadow:none;padding:10px 16px;border-radius:999px;background:#121411;color:#fff;font:600 12px Montserrat;cursor:pointer;text-decoration:none}
+.p2p-tabs button[aria-pressed=true]{background:#1800ad}
+.p2p-tabs span:empty{display:none}
+.p2p-tabs span{color:#a5a099;margin-left:3px}
+.p2p-layout{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:42px}
+.p2p-layout>section{min-width:0}
+.p2p-filters{display:flex;gap:8px;margin-bottom:16px}
+.p2p-filters #p2pRefresh{margin-left:auto}
+.p2p-status{font-size:12px;line-height:1.6;color:#a4aaa1}
+.p2p-status:empty{display:none}
+.p2p-status.error,#p2pDialogError{color:#ff8585;font-size:12px;line-height:1.6}
+.p2p-list-heading{display:flex;justify-content:space-between;color:#8a9185;font-size:11px;margin:22px 0 6px;padding-right:114px}
+.p2p-offer{display:grid;grid-template-columns:minmax(0,1fr) minmax(140px,auto) auto;align-items:center;gap:18px;padding:24px 0}
+.p2p-trader{display:flex;align-items:center;gap:12px;min-width:0}
+.p2p-avatar{width:38px;height:38px;border-radius:24%;background:#161224;color:#ada1ff;display:grid;place-items:center;flex:none;font-weight:800}
+.p2p-trader>div{min-width:0}
+body.app.calm .p2p-offer h2{font-size:13px!important;line-height:1.5;margin:0 0 5px;overflow-wrap:anywhere}
+.p2p-offer small{display:block;font-size:10px;color:#a4aaa1;line-height:1.6}
+.p2p-offer p{font-size:11px;color:#a4aaa1;line-height:1.6;margin:8px 0 4px}
+.p2p-method-tag{display:inline-flex;font-size:10px;color:#c9c5dd;margin-top:8px}
+.p2p-offer-rate{text-align:right;font-variant-numeric:tabular-nums}
+.p2p-offer-rate strong{font-size:15px;white-space:nowrap}
+.p2p-offer>.app-primary{font-size:11px!important;min-height:42px;padding:10px 16px;white-space:nowrap}
+.p2p-guide{border-radius:24px;background:#10110f;padding:28px;align-self:start}
+.p2p-shield{font-size:28px;color:#9688ff}
+body.app.calm .p2p-guide h2{font-size:20px!important;line-height:1.35;margin:16px 0}
+.p2p-guide p,.p2p-guide li span{font-size:12px;line-height:1.8;color:#a4aaa1}
+.p2p-guide ol{padding-left:20px;margin:24px 0}
+.p2p-guide li{padding-left:4px;margin:18px 0;color:#8576f3}
+.p2p-guide li b{display:block;color:#fff;font-size:12px;margin-bottom:6px}
+.p2p-available strong{display:block;font-size:23px;color:#fff;margin:8px 0 22px}
+.p2p-empty{text-align:center;padding:60px 20px;color:#a4aaa1}
+.p2p-empty h2{font-size:20px!important;color:#fff;margin-bottom:12px}
+.p2p-empty p{font-size:13px;line-height:1.8}
+.p2p-order-row{display:flex;align-items:center;justify-content:space-between;gap:20px;text-align:left;width:100%;background:none;border:0;color:#fff;padding:24px 0;cursor:pointer}
+.p2p-order-row>span:last-child{text-align:right}
+.p2p-order-row b{display:block;font-size:13px;line-height:1.5}
+.p2p-order-row small{display:block;font-size:11px;color:#a4aaa1;margin-top:6px;line-height:1.6}
+.p2p-state{display:block;font-size:12px;color:#b8addd;margin-bottom:12px}
+.p2p-state.completed{color:#28ca78}.p2p-state.disputed{color:#edb763}
+body.app.calm .p2p-dialog{position:fixed;inset:0;margin:auto;width:min(600px,calc(100vw - 32px));max-height:88dvh;overflow:auto;scrollbar-width:none;border:0;outline:0;background:#10110f;color:#fff;padding:28px;border-radius:28px;box-sizing:border-box}
+.p2p-dialog::-webkit-scrollbar,.p2p-tabs::-webkit-scrollbar{display:none}
+.p2p-dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(6px)}
+.p2p-dialog>header{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:24px}
+body.app.calm .p2p-dialog h2{font-size:22px!important;line-height:1.35;margin:0}
+.p2p-dialog #p2pClose{background:#1d201a;border:0;box-shadow:none;color:#fff;width:40px;height:40px;border-radius:50%;font-size:24px;cursor:pointer;flex:none}
+.p2p-dialog p,.p2p-dialog label,.p2p-dialog dl{font-size:12px;line-height:1.8;color:#b9bfb3}
+.p2p-dialog label{display:block;margin-bottom:18px}
+.p2p-dialog label small{font-size:10px;color:#8b9484}
+.p2p-dialog input:not([type=checkbox]),.p2p-dialog textarea{display:block;width:100%;min-width:0;box-sizing:border-box;border:0!important;outline:0!important;box-shadow:none!important;border-radius:15px;background:#1b1e18;color:#fff;padding:14px 16px;margin-top:8px;font:400 13px Montserrat;min-height:48px}
+.p2p-dialog textarea{resize:vertical}
+.p2p-dialog input[type=number]{appearance:textfield;-moz-appearance:textfield}
+.p2p-dialog input::-webkit-inner-spin-button{appearance:none}
+.p2p-dialog input[type=checkbox]{accent-color:#1800ad;width:18px;height:18px;flex:none}
+.p2p-dialog .p2p-check{display:flex;gap:12px;align-items:flex-start;margin:22px 0}
+.p2p-dialog dl{margin:24px 0}
+.p2p-dialog dl>div{display:flex;justify-content:space-between;align-items:start;gap:16px;margin:12px 0}
+.p2p-dialog dd{margin:0;color:#fff;text-align:right;max-width:65%;overflow-wrap:anywhere}
+.p2p-dialog dt{color:#a4aaa1}
+.p2p-quote{border-radius:20px;background:#160d35;padding:22px;margin:22px 0}
+.p2p-quote small{font-size:11px;color:#b8afd3}
+.p2p-quote strong{display:block;font-size:28px;font-weight:800;line-height:1.4;margin:8px 0}
+.p2p-quote span{font-size:12px;color:#c4bddb}
+.p2p-fields{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.p2p-payout{border:0;padding:0;margin:24px 0}
+.p2p-payout legend{font-size:15px;color:#fff;font-weight:800}
+.p2p-note{font-size:11px!important;color:#aaa7b2!important}
+.p2p-dialog form>.app-primary{width:100%;margin:14px 0}
+.p2p-dialog .p2p-secondary{margin:8px 0}
+.p2p-choice{display:flex;gap:8px;margin-bottom:22px}
+.p2p-choice button{flex:1;background:#1b1e18;border:0;color:#fff;border-radius:999px;padding:12px;font:600 12px Montserrat;cursor:pointer}
+.p2p-choice button[aria-pressed=true]{background:#1800ad}
+.p2p-picker{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.p2p-picker button{border:0;border-radius:14px;background:#1b1e18;color:#fff;text-align:left;padding:16px;font:400 13px Montserrat;cursor:pointer}
+.p2p-timeline{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:24px 0}
+.p2p-timeline span{font-size:10px;line-height:1.5;color:#8a9184}.p2p-timeline .done{color:#ada0f8}
+.p2p-payment{margin:28px 0}.p2p-dialog h3{font-size:15px;line-height:1.5}
+#p2pCopy{display:inline-flex;background:#1800ad;border:0;border-radius:999px;color:#fff;font:600 10px Montserrat;padding:5px 10px;margin:8px 0 0 8px;cursor:pointer}
+.p2p-order-actions{display:flex;gap:8px;flex-wrap:wrap}.p2p-order-actions button{font-size:12px!important;flex:1;white-space:normal}
+.p2p-chat{margin-top:32px}.p2p-chat #p2pMessages{max-height:220px;overflow:auto;scrollbar-width:none}
+.p2p-chat #p2pMessages p{padding:12px 16px;border-radius:14px;background:#1b1e18;margin:8px 0;overflow-wrap:anywhere}
+.p2p-chat small{display:block;font-size:10px;color:#8f9688}.p2p-chat span{display:block;color:#fff;font-size:12px}
+.p2p-chat form>div{display:flex;gap:8px;align-items:center}.p2p-chat input{flex:1}.p2p-chat .app-primary{font-size:11px;padding:12px 16px;margin-top:8px}
+.p2p-page button:disabled{opacity:.45;cursor:wait}
+.p2p-dialog [hidden],.p2p-page [hidden]{display:none!important}
+@media(max-width:760px){body.app.calm .p2p-page{padding:10px 20px 130px}.p2p-intro{align-items:flex-start;flex-direction:column;gap:14px}.p2p-intro>.app-primary{font-size:12px!important;padding:12px 18px}.p2p-layout{grid-template-columns:1fr;gap:32px}.p2p-guide{padding:24px}.p2p-offer{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px}.p2p-offer>.app-primary{grid-column:2;justify-self:end}.p2p-list-heading{padding:0}.p2p-trader{gap:8px}.p2p-offer-rate strong{font-size:14px}.p2p-tabs button{padding:10px 14px}.p2p-dialog{padding:22px!important}.p2p-order-row{gap:12px}.p2p-order-row b{font-size:12px}.p2p-order-row small{font-size:10px}}
+@media(max-width:360px){.p2p-tabs{gap:6px}.p2p-tabs button{font-size:11px;padding:10px 12px}.p2p-filters button{font-size:11px;padding:10px 12px}.p2p-avatar{width:32px;height:32px}.p2p-offer-rate strong{font-size:12px}.p2p-offer h2{font-size:12px!important}.p2p-fields{grid-template-columns:1fr;gap:0}.p2p-order-row{align-items:flex-start}.p2p-timeline{gap:6px}.p2p-dialog dd{max-width:58%}}
+
+.p2p-dialog>header{position:sticky;top:0;z-index:2;background:#10110f;padding:4px 0 14px}
+.p2p-shield svg{width:32px;height:32px}
+.p2p-trader h2{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media(max-width:760px){.p2p-order-actions{display:grid;grid-template-columns:1fr}.p2p-order-actions button{width:100%;min-height:46px;white-space:nowrap}}

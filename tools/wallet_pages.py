@@ -1,5 +1,6 @@
 """Wallet workflows using the same open layout as onboarding."""
 import json
+from p2p_page import P2P_HTML, P2P_JS
 from common import ic, qr_svg, QR_ADDRESS
 
 
@@ -46,7 +47,7 @@ RECEIVE_HTML = workflow('Receive $FTR', 'Your wallet address, ready to share.', 
                        + qr_svg(quiet=4) + '</div><p class="wallet-address" id="walletAddress">' + QR_ADDRESS + '''</p>
 <button class="app-primary wallet-submit" type="button" id="copyAddr">Copy address</button>''' + STATUS + '''
 <p class="wallet-note">This is the preview wallet address. Do not send real funds to it.</p>
-<div class="wallet-actions"><a class="wallet-button" href="buy.html">Add demo funds</a><a class="wallet-button" href="activity.html">View activity</a></div>''', review=False)
+<div class="wallet-actions"><a class="wallet-button" href="buy.html">Buy $FTR</a><a class="wallet-button" href="activity.html">View activity</a></div>''', review=False)
 
 SWAP_HTML = workflow('Swap players', 'Move between player and coach shares in one step.', '''
 <form id="swapForm"><div class="wallet-field"><span class="wallet-label" id="swapFromLabel">From your portfolio</span>
@@ -70,41 +71,8 @@ SWAP_HTML = workflow('Swap players', 'Move between player and coach shares in on
 <p id="swapSearchStatus" class="asset-search-status" role="status"></p>
 <div id="swapSearchResults" class="asset-search-results"></div></dialog>''')
 
-BUY_HTML = workflow('Add funds', 'Buy $FTR with dollars at the live $FTR price.', BALANCE + '''
-<form id="buyForm"><div class="wallet-field"><label for="fiat">Amount in US dollars</label><div class="wallet-amount">
-<input id="fiat" type="number" min="0.01" step="0.01" inputmode="decimal" placeholder="0" required><span>USD</span></div></div>
-<div class="wallet-quick"><button type="button" class="wallet-chip" data-usd="100">$100</button>
-<button type="button" class="wallet-chip" data-usd="500">$500</button><button type="button" class="wallet-chip" data-usd="1000">$1,000</button></div>
-<span class="wallet-label">You receive, after fees</span><div class="wallet-estimate"><span id="buyNet">—</span> <small>$FTR</small></div>
-<dl class="wallet-summary"><div><dt>Conversion rate</dt><dd id="buyRate"></dd></div><div><dt>Conversion fee · 0.5%</dt><dd id="buyFee">—</dd></div></dl>
-<button class="app-primary wallet-submit" type="submit">Review demo conversion</button></form>''' + STATUS + '''
-<p class="wallet-note">Demo conversion. No card is charged. The amount is added to your preview wallet.</p>''')
-
-WITHDRAW_HTML = workflow('Withdraw to bank', 'Move $FTR out of Fantrade and into your bank account.', BALANCE + '''
-<form id="withdrawForm"><div class="wallet-field"><label for="wdAmount">Amount to withdraw</label><div class="wallet-amount">
-<input id="wdAmount" type="number" min="0.01" step="0.01" inputmode="decimal" placeholder="0" required><span>$FTR</span></div></div>
-<div class="wallet-quick"><button class="wallet-chip" type="button" data-wd="5000">5,000</button>
-<button class="wallet-chip" type="button" data-wd="25000">25,000</button><button class="wallet-chip" type="button" id="wdMax">Max</button></div>
-<h2 class="wallet-section-title">Bank account</h2>
-<div class="wallet-field"><span class="wallet-label" id="wdCurrencyLabel">Currency</span><select id="wdCurrency" hidden tabindex="-1" aria-hidden="true">
-<option value="USD">US dollar · USD</option><option value="NGN">Nigerian naira · NGN</option>
-<option value="EUR">Euro · EUR</option><option value="GBP">British pound · GBP</option></select>
-<button type="button" class="swap-pick" id="wdCurrencyBtn" aria-haspopup="dialog" aria-labelledby="wdCurrencyLabel wdCurrencyBtn"></button></div>
-<div class="wallet-field"><label for="wdName">Account holder name</label><input id="wdName" autocomplete="name" placeholder="As shown on your bank account" required maxlength="80"></div>
-<div class="wallet-field"><label for="wdBank">Bank name</label><input id="wdBank" autocomplete="off" placeholder="e.g. Chase" required maxlength="60"></div>
-<div class="wallet-row"><div class="wallet-field"><label for="wdSort" id="wdSortLabel">Sort code</label><input id="wdSort" inputmode="numeric" autocomplete="off" placeholder="00-00-00" maxlength="11"></div>
-<div class="wallet-field"><label for="wdAcct">Account number</label><input id="wdAcct" inputmode="numeric" autocomplete="off" placeholder="8 digits" required maxlength="34"></div></div>
-<label class="wallet-check"><input type="checkbox" id="wdSave" checked> Save this bank account for next time</label>
-<dl class="wallet-summary"><div><dt>Withdrawal fee · 0.5%, minimum 50 $FTR</dt><dd id="wdFee">—</dd></div>
-<div><dt>Total deducted</dt><dd id="wdTotal">—</dd></div><div><dt>You receive</dt><dd id="wdReceive">—</dd></div>
-<div><dt>Arrives</dt><dd>1–2 working days</dd></div></dl>
-<button class="app-primary wallet-submit" type="submit">Review withdrawal</button></form>''' + STATUS + '''
-<p class="wallet-note">Demo withdrawal. Your preview balance updates; no real money is sent and no bank details leave this browser.</p>
-<section class="wallet-followup"><h2>Recent withdrawals</h2><div id="wdLog"></div></section>
-<dialog id="wdCurrencyPicker" class="asset-picker" aria-labelledby="wdCurrencyPickerTitle">
-<div class="asset-picker-heading"><h2 id="wdCurrencyPickerTitle">Choose currency.</h2><button type="button" id="wdCurrencyPickerClose" aria-label="Close currency picker">''' + ic('cross', 'ic') + '''</button></div>
-<p id="wdCurrencyStatus" class="asset-search-status" role="status"></p>
-<div id="wdCurrencyResults" class="asset-search-results"></div></dialog>''')
+BUY_HTML = P2P_HTML
+WITHDRAW_HTML = P2P_HTML
 
 ACTIVITY_HTML = ('<main><div class="utility-page">' + intro('Wallet activity', 'Follow your trades, transfers and FanPlay entries.')
                  + BALANCE + '''<div class="wallet-actions"><a class="app-primary" href="buy.html">Add funds</a>
@@ -146,8 +114,8 @@ if(el('walletReview')){
   el('reviewConfirm').onclick=async function(){var action=pendingAction;if(!action)return;pendingAction=null;this.disabled=true;
     try{await action();}catch(error){status(error.message,true);}finally{el('walletReview').close();}};
 }
-var labels={BUY:'Bought shares',SELL:'Sold shares',STAKE:'FanPlay entry',PAYOUT:'FanPlay payout',SETTLE:'Settlement',CONVERT:'Added funds',DEPOSIT:'Deposit',SEND:'Transfer sent',WITHDRAW:'Withdrawal to bank',SWAP:'Swapped shares'};
-function ledgerRow(t){var down=['BUY','STAKE','SEND','WITHDRAW'].includes(t.type),neutral=t.type==='SWAP';
+var labels={P2P_BUY:'P2P purchase',P2P_SELL:'P2P sale',P2P_LOCK:'P2P escrow locked',P2P_UNLOCK:'P2P escrow returned',BUY:'Bought shares',SELL:'Sold shares',STAKE:'FanPlay entry',PAYOUT:'FanPlay payout',SETTLE:'Settlement',CONVERT:'Added funds',DEPOSIT:'Deposit',SEND:'Transfer sent',WITHDRAW:'Withdrawal to bank',SWAP:'Swapped shares'};
+function ledgerRow(t){var down=['BUY','STAKE','SEND','WITHDRAW','P2P_SELL'].includes(t.type),neutral=['SWAP','P2P_LOCK','P2P_UNLOCK'].includes(t.type);
   return '<div class="wallet-ledger-row"><span class="ledger-icon"><svg class="ic" aria-hidden="true"><use href="#i-'+(neutral?'swap':'arrow')+'"/></svg></span><div><b>'+esc(labels[t.type]||t.type)+'</b><small>'+esc(t.asset)+'</small><small>'+esc(t.time)+'</small></div><div class="ledger-amount '+(neutral?'':down?'':'positive')+'">'+(neutral?'Value ':down?'−':'+')+fmt(t.total)+' $FTR'+(neutral?'<small>No cash transfer</small>':'')+'</div></div>';
 }
 '''
@@ -240,20 +208,10 @@ picker.addEventListener('click',function(e){var r=picker.getBoundingClientRect()
 fillSwap();window.addEventListener('fantrade:statechange',fillSwap);
 '''
 
-BUY_JS = r'''
-function buyQuote(){var n=amount('fiat'),rate=1/FTR_USD,gross=n*rate;return {amount:n,fee:Math.round(gross*.5)/100,net:Math.round(gross*99.5)/100};}
-function buyCalc(){var q=buyQuote();el('buyRate').textContent='$1 = '+fmt(1/FTR_USD)+' $FTR (1 $FTR = $'+pxFmt(FTR_USD)+')';el('buyNet').textContent=valid(q.amount)?fmt(q.net):'—';el('buyFee').textContent=valid(q.amount)?fmt(q.fee)+' $FTR':'—';}
-el('fiat').addEventListener('input',buyCalc);document.querySelectorAll('[data-usd]').forEach(b=>b.onclick=function(){el('fiat').value=b.dataset.usd;buyCalc();});
-el('buyForm').onsubmit=function(e){e.preventDefault();status('');var q=buyQuote();if(!valid(q.amount)||!(q.net>=1)){status('Enter an amount that converts to at least 1 $FTR.',true);return;}
-  var bal=FT.getState().wallet.balance;
-  review({kind:'Add funds',icon:'coin',title:'Review conversion',heroLabel:'You receive',amount:fmt(q.net),unit:'$FTR',sub:'for $'+fmt(q.amount),
-    rows:[['You pay','$'+fmt(q.amount)],['Rate','$1 = '+fmt(1/FTR_USD)+' $FTR'],['Conversion fee · 0.5%',fmt(q.fee)+' $FTR'],['Arrives','Instantly'],['Balance after',fmt(bal+q.net)+' $FTR','rv-total']],
-    note:'Demo conversion. No card is charged and no real money moves.',confirm:'Add '+fmt(q.net)+' $FTR',action:async function(){var got=await FT.convertUsd(q.amount);el('fiat').value='';buyCalc();status('Added '+fmt(got)+' $FTR to your demo wallet.');}});
-};buyCalc();
-'''
+BUY_JS = P2P_JS
 
 ACTIVITY_JS = r'''
-var category='all',categories={trades:['BUY','SELL','SWAP'],transfers:['SEND','WITHDRAW','DEPOSIT','CONVERT'],fanplay:['STAKE','PAYOUT','SETTLE']};
+var category='all',categories={trades:['BUY','SELL','SWAP'],transfers:['SEND','WITHDRAW','DEPOSIT','CONVERT','P2P_BUY','P2P_SELL','P2P_LOCK','P2P_UNLOCK'],fanplay:['STAKE','PAYOUT','SETTLE']};
 function activity(){var search=el('activitySearch').value.trim().toLowerCase(),list=FT.getState().transactions.filter(t=>(category==='all'||categories[category].includes(t.type))&&[labels[t.type],t.asset,t.time,t.type].join(' ').toLowerCase().includes(search));
   el('activityCount').textContent=list.length+' transaction'+(list.length===1?'':'s');el('activityRows').innerHTML=list.map(ledgerRow).join('')||'<div class="wallet-empty"><b>No activity here yet</b>'+(search||category!=='all'?'Try another search or filter.':'Your trades and transfers will appear here.')+'</div>';
 }
@@ -261,60 +219,7 @@ el('activitySearch').addEventListener('input',activity);document.querySelectorAl
 activity();window.addEventListener('fantrade:statechange',activity);
 '''
 
-WITHDRAW_JS = r'''
-/* Local currency per US dollar (Sept 2026: EUR/USD 1.1464, GBP/USD 1.3372). */
-var RATES={USD:1,NGN:1533,EUR:0.8723,GBP:0.7478},SYMBOL={GBP:'£',NGN:'₦',EUR:'€',USD:'$'},
-CURS={USD:{n:'US dollar',sub:'USD payout account'},NGN:{n:'Nigerian naira',sub:'NGN bank account'},EUR:{n:'Euro',sub:'EUR or IBAN account'},GBP:{n:'British pound',sub:'GBP payout account'}};
-function wdQuote(){var n=amount('wdAmount'),fee=valid(n)?Math.max(Math.ceil(500/FTR_USD)/100,Math.round(n*.5)/100):0,cur=el('wdCurrency').value,
-  usd=valid(n)?n*FTR_USD:0;return {n:n,fee:fee,total:n+fee,cur:cur,out:usd*RATES[cur]};}
-function wdCalc(){var q=wdQuote(),bal=FT.getState().wallet.balance;
-  el('wdFee').textContent=valid(q.n)?fmt(q.fee)+' $FTR':'—';
-  el('wdTotal').textContent=valid(q.n)?(q.total>bal?'More than your balance':fmt(q.total)+' $FTR'):'—';
-  el('wdReceive').textContent=valid(q.n)?'≈ '+SYMBOL[q.cur]+fmt(Math.round(q.out*100)/100):'—';}
-function wdBankFields(){var c=el('wdCurrency').value,gb=c==='GBP',us=c==='USD';el('wdSortLabel').textContent=gb?'Sort code':us?'Routing number (optional)':'Bank code (optional)';
-  el('wdSort').placeholder=gb?'00-00-00':us?'9 digits':'Optional';el('wdAcct').placeholder=gb?'8 digits':el('wdCurrency').value==='NGN'?'10 digits (NUBAN)':'Account number or IBAN';}
-function currencyCard(code){var cur=CURS[code];return '<span class="wallet-currency-dot">'+SYMBOL[code]+'</span><span class="swap-pick-text"><b>'+esc(cur.n)+'</b><small>'+code+' · '+cur.sub+'</small></span><svg class="ic swap-pick-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>';}
-function syncCurrencyPick(){el('wdCurrencyBtn').innerHTML=currencyCard(el('wdCurrency').value);}
-var wdCurrencyPicker=el('wdCurrencyPicker');
-function currencyRows(){var current=el('wdCurrency').value,keys=Object.keys(CURS);el('wdCurrencyStatus').textContent=keys.length+' payout currencies';
-  el('wdCurrencyResults').innerHTML=keys.map(function(code){var cur=CURS[code];return '<button type="button" class="asset-search-row" data-currency="'+code+'"'+(code===current?' aria-current="true"':'')+'><span class="wallet-currency-dot">'+SYMBOL[code]+'</span><span><b>'+esc(cur.n)+'</b><small>'+code+' · '+esc(cur.sub)+'</small></span><span class="asset-search-price">'+code+'</span></button>';}).join('');}
-function openCurrencyPicker(){currencyRows();wdCurrencyPicker.showModal();document.body.classList.add('asset-picker-open');}
-var saved=(FT.getState().prefs||{}).payoutBank;
-if(saved){['Currency','Name','Bank','Sort','Acct'].forEach(function(k){if(saved[k]!=null)el('wd'+k).value=saved[k];});}
-wdBankFields();syncCurrencyPick();
-['wdAmount'].forEach(id=>el(id).addEventListener('input',wdCalc));
-el('wdCurrency').addEventListener('change',function(){wdBankFields();syncCurrencyPick();wdCalc();});
-el('wdCurrencyBtn').addEventListener('click',openCurrencyPicker);
-el('wdCurrencyResults').addEventListener('click',function(e){var row=e.target.closest('[data-currency]');if(!row)return;el('wdCurrency').value=row.dataset.currency;el('wdCurrency').dispatchEvent(new Event('change'));wdCurrencyPicker.close();});
-el('wdCurrencyPickerClose').addEventListener('click',function(){wdCurrencyPicker.close();});
-wdCurrencyPicker.addEventListener('close',function(){document.body.classList.remove('asset-picker-open');el('wdCurrencyBtn').focus();});
-wdCurrencyPicker.addEventListener('click',function(e){var r=wdCurrencyPicker.getBoundingClientRect();if(e.target===wdCurrencyPicker&&(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom))wdCurrencyPicker.close();});
-document.querySelectorAll('[data-wd]').forEach(b=>b.onclick=function(){el('wdAmount').value=b.dataset.wd;wdCalc();});
-el('wdMax').onclick=function(){var bal=FT.getState().wallet.balance,n=Math.floor(Math.max(0,bal-Math.max(5/FTR_USD,bal*.005))/1.005);el('wdAmount').value=n>0?n:'';wdCalc();};
-function digits(v){return (v||'').replace(/[\s-]/g,'');}
-el('withdrawForm').onsubmit=function(e){e.preventDefault();status('');var q=wdQuote(),cur=q.cur,
-  name=el('wdName').value.trim(),bank=el('wdBank').value.trim(),sort=digits(el('wdSort').value),acct=digits(el('wdAcct').value);
-  if(!valid(q.n)){status('Enter a positive amount with up to two decimal places.',true);return;}
-  if(q.total>FT.getState().wallet.balance){status('Your balance cannot cover this amount plus the withdrawal fee.',true);return;}
-  if(name.length<2){status('Enter the account holder name.',true);return;}
-  if(bank.length<2){status('Enter your bank name.',true);return;}
-  if(cur==='GBP'&&!/^\d{6}$/.test(sort)){status('Enter a 6-digit sort code.',true);return;}
-  if(cur==='GBP'&&!/^\d{8}$/.test(acct)){status('Enter an 8-digit account number.',true);return;}
-  if(cur==='NGN'&&!/^\d{10}$/.test(acct)){status('Enter a 10-digit NUBAN account number.',true);return;}
-  if(cur!=='GBP'&&cur!=='NGN'&&!/^[A-Za-z0-9]{6,34}$/.test(acct)){status('Enter a valid account number or IBAN.',true);return;}
-  var dest=bank+' ••'+acct.slice(-4)+' ('+cur+')';
-  var bal=FT.getState().wallet.balance;
-  review({kind:'Withdrawal',icon:'bank',title:'Review withdrawal',heroLabel:'You receive about',amount:SYMBOL[cur]+fmt(Math.round(q.out*100)/100),unit:cur,sub:'to '+name+' · '+dest,
-    rows:[['Account holder',name],['Bank account',dest],['Amount',fmt(q.n)+' $FTR'],['Withdrawal fee',fmt(q.fee)+' $FTR'],['Total deducted',fmt(q.total)+' $FTR'],['Arrives','1–2 working days'],['Balance after',fmt(bal-q.total)+' $FTR','rv-total']],
-    note:'Demo withdrawal. Your preview balance updates; no real money is sent.',confirm:'Withdraw '+fmt(q.n)+' $FTR',action:async function(){
-    if(el('wdSave').checked)FT.setPref('payoutBank',{Currency:cur,Name:name,Bank:bank,Sort:el('wdSort').value.trim(),Acct:acct});
-    await FT.sendFtr(q.n,dest,'withdraw',{currency:cur,holder:name,bank:bank,account:acct,save:el('wdSave').checked});
-    el('wdAmount').value='';wdCalc();status('Withdrawal of '+fmt(q.n)+' $FTR requested to '+dest+'.');}});
-};
-function wdLog(){var rows=FT.getState().transactions.filter(t=>t.type==='WITHDRAW').slice(0,3);
-  el('wdLog').innerHTML=rows.map(ledgerRow).join('')||'<p class="wallet-note">Your withdrawals will appear here.</p>';wdCalc();}
-wdLog();window.addEventListener('fantrade:statechange',wdLog);
-'''
+WITHDRAW_JS = P2P_JS
 
 PAGES = [('send', SEND_HTML, SEND_JS), ('receive', RECEIVE_HTML, RECEIVE_JS),
          ('swap', SWAP_HTML, SWAP_JS), ('buy', BUY_HTML, BUY_JS), ('withdraw', WITHDRAW_HTML, WITHDRAW_JS),

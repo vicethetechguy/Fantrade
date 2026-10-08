@@ -14,7 +14,9 @@
     "build": "prisma generate && tsc && tsx src/scripts/build.ts",
     "test": "vitest run --fileParallelism=false",
     "test:watch": "vitest",
-    "reconcile": "tsx src/scripts/reconcile.ts"
+    "reconcile": "tsx src/scripts/reconcile.ts",
+    "p2p:sweep": "tsx src/scripts/p2p-ops.ts sweep",
+    "p2p:support": "tsx src/scripts/p2p-ops.ts"
   },
   "dependencies": {
     "@prisma/client": "^6.4.1",

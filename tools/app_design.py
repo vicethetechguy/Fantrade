@@ -29,6 +29,8 @@ def apply_design(filename, html):
         styles += '<link rel="stylesheet" href="public/app-settings.css">'
     if filename in GUIDE_PAGES:
         styles += '<link rel="stylesheet" href="public/app-guide.css">'
+    if filename in ('buy.html', 'withdraw.html'):
+        styles += '<link rel="stylesheet" href="public/p2p.css">'
     styles += '<link rel="stylesheet" href="public/app-polish.css">'
     if filename in ('fanplay.html', 'leaderboard.html', 'wallet.html', 'ftr.html'):
         styles += '<link rel="stylesheet" href="public/app-premium.css">'
