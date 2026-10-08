@@ -13,6 +13,9 @@ export async function idempotencyMiddleware(req: AuthenticatedRequest, res: Resp
       where: { key },
     });
 
+    if (existing && (existing.userId !== req.user?.id || existing.endpoint !== req.originalUrl)) {
+      return res.status(409).json({ error: { code: 'IDEMPOTENCY_CONFLICT', message: 'This request key belongs to a different transaction.' } });
+    }
     if (existing && existing.expiresAt > new Date()) {
       return res.status(existing.responseStatus).json(JSON.parse(existing.responseBody));
     }

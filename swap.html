@@ -2310,10 +2310,8 @@ var FT = (function(){
   });
 
 
-  /* ── The database, kept in step with this state ──────────────────────
-     The pages never wait on the network. Every action applies here first,
-     then mirrors to Supabase; if the database refuses, we take its answer
-     as the truth and re-sync. */
+  /* Financial actions wait for one authoritative account service. Local
+     simulation is available only for accounts without a live session. */
   function cloud(){ return window.FTDB && window.FTDB.signedIn && window.FTDB.signedIn() ? window.FTDB : null; }
   function shortTime(iso){
     var d = new Date(iso), now = new Date(), mins = Math.round((now - d) / 60000);
@@ -2352,7 +2350,7 @@ var FT = (function(){
         var coach = h.kind === 'COACH';
         // Keyed by F-ticker, the name every page uses for a share.
         held[h.ticker || ftSym(h.asset_id)] = { n: h.name, shares: Number(h.shares), avg: Number(h.avg_cost),
-                             p: Number(h.price), c: coach,
+                             p: Number(h.price), locked: Number(h.locked)||0, c: coach,
                              // The slot travels with the account, so the side
                              // you set on one device is the side on the next.
                              inClub: h.slot || (coach ? 'COACH' : 'SUB') };
@@ -2376,20 +2374,13 @@ var FT = (function(){
       link(state);
     }
     if(snap.entries){
-      // Entries made on this device carry a local id until the account has
-      // confirmed them. Replacing the list wholesale threw those away — which
-      // is how an entry you had just placed vanished from Active whenever the
-      // save to the account failed. They are kept until the account answers.
-      var unconfirmed = (state.fanplay.activeEntries || []).filter(function(e){ return !serverId(e.id); });
-      // Two kinds of entry read this list — a $FTR stake on a Dream Club and
-      // shares locked against a market — so a row carries both vocabularies.
-      state.fanplay.activeEntries = unconfirmed.concat(snap.entries.map(function(e){
-        var held = state.holdings[e.asset_id] || {};
-        return { id: e.id, mode: e.mode, clubId: e.club_id || '', target: e.target,
+      state.fanplay.activeEntries = snap.entries.map(function(e){
+        var ticker=e.asset_ticker || ftSym(e.asset_id); var held = state.holdings[ticker] || {};
+        return { id: e.id, mode: e.mode, clubId: e.club_id || '', target: e.asset_id ? ticker : e.target,
                  tier: e.tier || '', mult: Number(e.multiplier) || 1,
                  stake: Number(e.stake) || 0,
                  stakedShares: Number(e.staked_shares) || 0,
-                 asset: e.asset_id ? { symbol: e.asset_id, name: held.n || e.asset_id } : null,
+                 asset: e.asset_id ? { symbol: ticker, name: held.n || e.asset_id } : null,
                  match: e.match || null, market: e.market || null,
                  selections: e.selections || [],
                  totalFP: Number(e.scored_fp) || 0,
@@ -2397,7 +2388,7 @@ var FT = (function(){
                  createdAt: e.created_at,
                  matchday: e.matchday,
                  status: 'ACTIVE' };
-      }));
+      });
     }
     if(snap.transactions){
       state.transactions = snap.transactions.map(function(t){
@@ -2421,7 +2412,47 @@ var FT = (function(){
     return { p_name: c.name, p_stadium: c.stadium, p_formation: c.formation,
              p_colors: c.colors, p_color_name: c.colorName, p_coach: c.coach };
   }
-  var pending = 0;
+  var pending = 0, transactionRevision=0;
+  function availableShares(symbol){
+    var h=state.holdings[symbol];if(!h)return 0;
+    var locked=(state.fanplay.activeEntries||[]).reduce(function(n,e){return n+((e.target===symbol||(e.asset&&e.asset.symbol===symbol))?Number(e.stakedShares)||0:0);},0);
+    return Math.max(0,Number(h.shares)-Math.max(Number(h.locked)||0,locked));
+  }
+  async function refreshRest(){
+    var results=await Promise.all([FantradeAPI.getWallet(),FantradeAPI.getPortfolio()]);
+    var w=results[0].wallet,p=results[1];
+    if(w){state.wallet.balance=Number(w.available);state.wallet.locked=Number(w.reserved);state.liveWallet=true;}
+    if(p&&p.positions){state.holdings={};p.positions.forEach(function(h){var symbol=ftSym(h.symbol);state.holdings[symbol]={n:h.name,shares:Number(h.quantity),locked:Number(h.quantity)-Number(h.availableQuantity),avg:Number(h.averageCost),p:Number(h.currentPrice),c:h.type==='COACH',inClub:'SUB'};});}
+    save(state);announce();
+  }
+  function restAccount(){ return !!(window.FantradeAPI && localStorage.getItem('fantrade_auth_token')); }
+  async function transactionAccount(){
+    if(window.FTDB && FTDB.ready) await Promise.race([FTDB.ready(),new Promise(function(_,reject){setTimeout(function(){reject(new Error('Account connection is taking too long. Please reconnect before transacting.'));},12000);})]);
+    var db=cloud();
+    if(!db && (state.liveWallet || localStorage.getItem('fantrade_auth')) && !restAccount()) throw new Error('Reconnect your account before making a transaction. Nothing was submitted.');
+    return db;
+  }
+  async function accountAsset(db,symbol){
+    var rows=await db.assets();
+    if(!Array.isArray(rows)) throw new Error('Could not verify this market. Please try again.');
+    var a=rows.find(function(x){return x.id===symbol || String(x.ticker).toUpperCase()===String(symbol).toUpperCase();});
+    if(!a) throw new Error('This share is not available to trade yet.');
+    return a.id;
+  }
+  var transactionBusy=false;
+  async function confirmedCall(db,fn,args){
+    if(transactionBusy) throw new Error('Your previous transaction is still being confirmed.');
+    transactionBusy=true; pending+=1;transactionRevision+=1;
+    try{
+      var result=await db.call(fn,args);
+      // A confirmed write must never be retried because a follow-up read failed.
+      var snap=await db.snapshot().catch(function(){return null;});
+      if(snap){applySnapshot(snap);announce();}
+      else { showToast('Transaction confirmed. Refresh to load your latest balance.', 'info'); }
+      return result;
+    }finally{transactionBusy=false;pending-=1;}
+  }
+
   /* The account could not be reached, or is missing a function it needs:
      nothing was decided, so nothing local should be undone. */
   function isOutage(error){
@@ -2455,8 +2486,10 @@ var FT = (function(){
     /* Pull everything this account holds and adopt it as the truth. */
     syncCloud: function(){
       var db = window.FTDB; if(!db) return Promise.resolve(false);
+      if(pending)return Promise.resolve(false);
+      var revision=transactionRevision;
       return db.snapshot().then(function(snap){
-        if(!applySnapshot(snap)) return false;
+        if(pending || revision!==transactionRevision || !applySnapshot(snap)) return false;
         announce(); return true;
       }).catch(function(){ return false; });
     },
@@ -2608,6 +2641,7 @@ var FT = (function(){
     /* Claim a cleared player and put them on the market. `settled` means the
        database has already taken the payment, so only the local copy moves. */
     launchPlayer: function(src, level, vestingYears, opts){
+      if((state.liveWallet||localStorage.getItem('fantrade_auth')||restAccount())&&!(opts&&opts.settled)) throw new Error('Reconnect your account to confirm this claim.');
       var e = typeof src === 'object' && src ? src : ELIGIBLE.filter(function(x){ return x.t === src; })[0];
       if(!e || !e.t) throw new Error('That player has not been cleared for listing.');
       if(FT.isLaunched(e.t)) throw new Error(e.n + ' has already been claimed. You can buy their shares on the Exchange.');
@@ -2654,6 +2688,7 @@ var FT = (function(){
                dailyLimit: daily, vestingYears: vestingYears, listerFp: fp };
     },
     claimListing: function(opts){
+      if(state.liveWallet||cloud()||restAccount()) throw new Error('Claims must be confirmed by your account service.');
       var row = typeof opts === 'object' && opts.id ? opts : (opts && opts.row ? opts.row : opts);
       if(!row || !row.id) throw new Error('Pick an Activity Asset listing to claim.');
       state.claimedListings = state.claimedListings || [];
@@ -2770,7 +2805,21 @@ var FT = (function(){
       save(state); FT.syncUI();
       window.dispatchEvent(new CustomEvent('fantrade:statechange', { detail: state }));
     },
-    executeTrade: function(side, assetSymbol, assetName, shares, price, isCoach){
+    executeTrade: async function(side, assetSymbol, assetName, shares, price, isCoach){
+      if(!['buy','sell'].includes(side) || !Number.isSafeInteger(shares) || shares<1 || !Number.isFinite(price) || price<=0) throw new Error('Enter a valid whole number of shares and price.');
+      var db=await transactionAccount();
+      if(db){
+        var result=await confirmedCall(db,side==='buy'?'ft_buy_shares':'ft_sell_shares',{p_asset:await accountAsset(db,assetSymbol),p_shares:shares});
+        return {total:Number(result.total),shares:shares,remainingBalance:state.wallet.balance};
+      }
+      if(restAccount()){
+        var res=await FantradeAPI.placeOrder({assetSymbol:assetSymbol,side:side,quantity:shares,limitPrice:price,type:'MARKET',timeInForce:'IOC'});
+        if(!res || !res.order) throw new Error('The exchange did not confirm your order.');
+        await refreshRest().catch(function(){showToast('Order confirmed. Refresh to load your balance.','info');});
+        var filled=Number(res.execution && res.execution.filledQuantity)||0;
+        if(filled<=0) throw new Error('No shares matched at this price. No purchase was completed.');
+        return {shares:filled,total:Number(res.execution.total),remainingBalance:state.wallet.balance};
+      }
       if(side === 'sell' && state.listerClaims && state.listerClaims.length){
         var today = new Date().toISOString().slice(0, 10);
         var claim = state.listerClaims.find(function(lc){
@@ -2785,9 +2834,10 @@ var FT = (function(){
             var rem = Math.max(0, claim.dailyLimit - claim.tradedToday);
             throw new Error('Lister daily trading limit: You can only trade up to 1% (' + claim.dailyLimit.toLocaleString('en-US') + ' shares) per day during your ' + claim.vestingYears + '-year vesting. Remaining today: ' + rem.toLocaleString('en-US') + ' shares.');
           }
-          claim.tradedToday += shares;
+
         }
       }
+      if(side==='sell' && availableShares(assetSymbol)<shares) throw new Error('Not enough unlocked shares to sell.');
       var subtotal = shares * price;
       var fee = subtotal * 0.004;
       var total = Number((side === 'buy' ? subtotal + fee : subtotal - fee).toFixed(6));
@@ -2829,6 +2879,7 @@ var FT = (function(){
           }
         }
       }
+      if(side==='sell' && typeof claim!=='undefined' && claim) claim.tradedToday+=shares;
       state.transactions.unshift({
         type: side.toUpperCase(),
         asset: assetSymbol,
@@ -2838,49 +2889,10 @@ var FT = (function(){
         time: "Just now"
       });
 
-      push(side === 'buy' ? 'ft_buy_shares' : 'ft_sell_shares', { p_asset: assetSymbol, p_shares: shares });
+
       save(state);
       FT.syncUI();
       window.dispatchEvent(new CustomEvent('fantrade:statechange', { detail: state }));
-
-      // Authoritative PostgreSQL backend sync
-      if(window.FantradeAPI && typeof window.FantradeAPI.placeOrder === 'function'){
-        window.FantradeAPI.placeOrder({
-          assetSymbol: assetSymbol,
-          side: side.toUpperCase(),
-          quantity: shares,
-          limitPrice: price
-        }).then(function(res){
-          console.log('[FantradeAPI] Order matched & recorded on PostgreSQL backend:', res);
-          if(window.FantradeAPI.getWallet && window.FantradeAPI.getPortfolio){
-            Promise.all([window.FantradeAPI.getWallet(), window.FantradeAPI.getPortfolio()]).then(function(results){
-              var w = results[0] && results[0].wallet;
-              var p = results[1] && results[1].portfolio;
-              if(w){
-                state.wallet.balance = Number(w.availableFtr);
-                state.wallet.locked = Math.round(w.reservedFtr);
-              }
-              if(p && p.holdings){
-                p.holdings.forEach(function(h){
-                  var sym = '$' + h.assetSymbol.replace(/^\$/, '');
-                  if(!state.holdings[sym]){
-                    state.holdings[sym] = { n: h.assetName, shares: h.quantity, avg: h.averageCost, p: h.currentPrice, c: isCoach, inClub: isCoach ? 'COACH' : 'SUB' };
-                  } else {
-                    state.holdings[sym].shares = h.quantity;
-                    state.holdings[sym].avg = h.averageCost;
-                    state.holdings[sym].p = h.currentPrice;
-                  }
-                });
-              }
-              save(state);
-              FT.syncUI();
-              window.dispatchEvent(new CustomEvent('fantrade:statechange', { detail: state }));
-            }).catch(function(){});
-          }
-        }).catch(function(err){
-          console.warn('[FantradeAPI] Live order sync notice:', err.message);
-        });
-      }
 
       return { total: total, remainingBalance: state.wallet.balance, shares: shares };
     },
@@ -2897,23 +2909,19 @@ var FT = (function(){
     /* FanPlay's other entry: shares locked against a market on one fixture.
        The page keeps the detail in its own state; this is the part that moves
        something, so it is the part the account has to know about. */
-    stakeShares: function(o){
-      push('ft_enter_fanplay_shares', { p_asset: o.asset, p_shares: o.shares,
-        p_match: o.match || null, p_market: o.market || null,
-        p_selections: o.selections || null, p_action_key: o.key || null },
-        null,
-        function(){
-          if(!o.localId) return;
-          state.fanplay.activeEntries = (state.fanplay.activeEntries || [])
-            .filter(function(e){ return e.id !== o.localId; });
-          save(state);
-          window.dispatchEvent(new CustomEvent('fantrade:statechange', { detail: state }));
-        });
+    stakeShares: async function(o){
+      var db=await transactionAccount();
+      if(!db) return null;
+      return confirmedCall(db,'ft_enter_fanplay_shares',{p_asset:await accountAsset(db,o.asset),p_shares:o.shares,p_match:o.match||null,p_market:o.market||null,p_selections:o.selections||null,p_action_key:o.key});
     },
-    /* Pulling out before the whistle: the shares come straight back. */
-    cancelEntry: function(id){
-      if(serverId(id)) push('ft_cancel_fanplay', { p_entry: id });
+    cancelEntry: async function(id){
+      var db=await transactionAccount();
+      if(db){ if(!serverId(id)) throw new Error('This preview entry is not on your account.'); return confirmedCall(db,'ft_cancel_fanplay',{p_entry:id}); }
+      if(restAccount()) return FantradeAPI.cancelFanPlay(id);
     },
+    transactionAccount: transactionAccount,
+    restAccount: restAccount,
+    refreshRest: refreshRest,
     /* Where a holding lines up. 'SUB' benches it. */
     setSlot: function(symbol, slot){
       var h = state.holdings[symbol];
@@ -2945,7 +2953,8 @@ var FT = (function(){
     /* A manager has one club. It is made during onboarding and edited in
        place after that, so there is nothing to create, switch or delete. */
     club: function(){ return state.club; },
-    activateFanPlayEntry: function(entryData){
+    activateFanPlayEntry: async function(entryData){
+      var db=await transactionAccount(); if(db) return confirmedCall(db,'ft_enter_fanplay',{p_mode:/club/i.test(entryData.mode)?'Dream Club':'Individual',p_target:entryData.target,p_tier:entryData.tier,p_multiplier:entryData.mult,p_stake:entryData.stake,p_projected_fp:entryData.projectedFP,p_club:serverId(entryData.clubId)}); if(restAccount()) throw new Error('Use the share-staking FanPlay entry flow for this account.');
       var stake = entryData.stake || 2500;
       if(state.wallet.balance < stake){
         throw new Error("Insufficient $FTR balance. Need " + stake.toLocaleString('en-US') + " $FTR.");
@@ -2995,7 +3004,8 @@ var FT = (function(){
       return newEntry;
     },
     /* Top up in dollars: $FTR at the live $FTR price, less 0.5%. */
-    convertUsd: function(usdAmount){
+    convertUsd: async function(usdAmount){
+      if(!Number.isFinite(usdAmount)||usdAmount<=0) throw new Error('Enter a valid amount.'); var db=await transactionAccount(); if(db||restAccount()) throw new Error('Deposits require a connected payment provider. No funds were added.');
       var rate = 1 / FTR_USD; state.wallet.usdRate = rate;
       var grossFtr = Math.round(usdAmount * rate * 100) / 100;
       var fee = Math.round(grossFtr * 0.5) / 100;
@@ -3016,7 +3026,8 @@ var FT = (function(){
       return netFtr;
     },
     /* `meta` carries the bank details for a withdrawal; a transfer routes by handle. */
-    sendFtr: function(amount, dest, kind, meta){
+    sendFtr: async function(amount, dest, kind, meta){
+      if(!Number.isFinite(amount)||amount<=0) throw new Error('Enter a valid amount.'); var db=await transactionAccount(); if(db){ if(kind==='withdraw'&&meta) return confirmedCall(db,'ft_withdraw_to_bank',{p_amount:amount,p_currency:meta.currency||'USD',p_holder:meta.holder,p_bank:meta.bank,p_account:meta.account,p_save:meta.save!==false}); if(!/^@/.test(String(dest))) throw new Error('Use the recipient’s Fantrade handle.'); return confirmedCall(db,'ft_transfer_ftr',{p_handle:String(dest),p_amount:amount}); } if(restAccount()) throw new Error('Transfers are unavailable for this account service. No funds were moved.');
       if(amount <= 0) throw new Error("Enter an amount to send.");
       var fee = kind === 'withdraw' ? Math.max(Math.ceil(500 / FTR_USD) / 100, Math.round(amount * 0.5) / 100) : 0;   // 0.5%, at least $5
       if(state.wallet.balance < amount + fee){
@@ -3038,7 +3049,9 @@ var FT = (function(){
       window.dispatchEvent(new CustomEvent('fantrade:statechange', { detail: state }));
       return { sent: amount, fee: fee, remaining: state.wallet.balance };
     },
-    swapAssets: function(fromSym, toSym, shares, prices){
+    swapAssets: async function(fromSym, toSym, shares, prices){
+      if(fromSym===toSym || !Number.isSafeInteger(shares)||shares<1) throw new Error('Choose different shares and a valid whole quantity.'); var db=await transactionAccount(); if(db) return confirmedCall(db,'ft_swap_shares',{p_from:await accountAsset(db,fromSym),p_to:await accountAsset(db,toSym),p_shares:shares}); if(restAccount()){var response=await FantradeAPI.swapAssets({fromSymbol:fromSym,toSymbol:toSym,shares:shares});if(!response||!response.swap) throw new Error('The exchange did not confirm your swap.');await refreshRest().catch(function(){showToast('Swap confirmed. Refresh to load your balance.','info');});return {spent:Number(response.swap.spentShares),received:Number(response.swap.receivedShares),fee:Number(response.swap.feeAmount)};}
+      if(availableShares(fromSym)<shares) throw new Error('Not enough unlocked shares to swap.');
       var from = state.holdings[fromSym];
       if(!from) throw new Error("You do not hold any " + fromSym + ".");
       if(from.shares < shares) throw new Error("You hold " + from.shares.toLocaleString('en-US')
@@ -3071,6 +3084,7 @@ var FT = (function(){
       return { spent: shares, received: got, fee: Math.round(fee) };
     },
     depositFtr: function(amount){
+      if(cloud()||restAccount()||state.liveWallet) throw new Error('Deposits require a connected payment provider.');
       state.wallet.balance += amount;
       state.transactions.unshift({
         type: "DEPOSIT",
@@ -3100,13 +3114,14 @@ var FT = (function(){
     /* FT is a binding inside this page's own script, not a global — checking
        window.FT here would silently never sync. */
     if(typeof FT === 'undefined' || !FT.syncCloud) return;
-    FT.syncCloud();
+    if(FT.restAccount()&&!FT.cloudSignedIn())FT.refreshRest().catch(function(){showToast('Could not load your exchange balance. Please reconnect.', 'error');});
+    else FT.syncCloud();
     // Rank and club value are the field's answer, not this account's, so they
     // come from the board — which any page showing a rank is displaying.
     if(FT.leaderboard && document.querySelector('[data-bind="rank"],[data-bind="clubvalue"]')) FT.leaderboard(50);
   }
   if(window.FTDB){
-    FTDB.ready().then(function(){ if(FTDB.signedIn()) sync(); });
+    FTDB.ready().then(function(){ if(FTDB.signedIn()||FT.restAccount()) sync(); });
     window.addEventListener('fantrade:auth', function(e){ if(e.detail) sync(); });
   }
 })();
@@ -3157,6 +3172,7 @@ var FTSim = (function(){
     a.h = +(b * s.hk).toFixed(6); a.low = +(b * s.lk).toFixed(6); a.vol = fmtVol(s.vol);
   }
   function step(){
+    if(FT.cloudSignedIn()||FT.restAccount()||FT.getState().liveWallet){stop();return;}
     ticks++;
     var n = 2 + Math.floor(Math.random() * 4), changed = {}, prints = [], now = Date.now();
     var focusA = focus && Math.random() < 0.6 ? ASSETS.filter(function(x){ return x.t === focus; })[0] : null;
@@ -3180,13 +3196,14 @@ var FTSim = (function(){
     window.dispatchEvent(new CustomEvent('fantrade:tick', { detail: { changed: changed, trades: prints } }));
   }
   function syncHoldings(list){
+    if(FT.cloudSignedIn()||FT.restAccount()||FT.getState().liveWallet)return;
     if(typeof FT === 'undefined' || !FT.getState) return;
     var st = FT.getState(), moved = false;
     list.forEach(function(t){ var h = st.holdings && st.holdings[t], a = ASSETS.filter(function(x){ return x.t === t; })[0];
       if(h && a){ h.p = a.p; moved = true; } });
     if(moved && FT.syncUI) FT.syncUI();
   }
-  function start(){ if(on) return; syncHoldings(Object.keys(S.a)); on = true; timer = setInterval(step, 1300); document.documentElement.classList.add('sim-on'); }
+  function start(){ if(FT.cloudSignedIn()||FT.restAccount()||FT.getState().liveWallet)return; if(on) return; syncHoldings(Object.keys(S.a)); on = true; timer = setInterval(step, 1300); document.documentElement.classList.add('sim-on'); }
   function stop(){ on = false; clearInterval(timer); document.documentElement.classList.remove('sim-on'); try { localStorage.setItem(PREF, 'off'); } catch(e){} }
   init();
   window.addEventListener('fantrade:market', function(){ ASSETS.forEach(function(a){ if(S.a[a.t]) apply(a, S.a[a.t]); }); });
@@ -3367,8 +3384,8 @@ function review(o,text,action){
 if(el('walletReview')){
   el('reviewCancel').onclick=function(){pendingAction=null;el('walletReview').close();};
   el('walletReview').addEventListener('close',function(){pendingAction=null;});
-  el('reviewConfirm').onclick=function(){var action=pendingAction;if(!action)return;pendingAction=null;this.disabled=true;
-    try{action();}catch(error){status(error.message,true);}finally{el('walletReview').close();}};
+  el('reviewConfirm').onclick=async function(){var action=pendingAction;if(!action)return;pendingAction=null;this.disabled=true;
+    try{await action();}catch(error){status(error.message,true);}finally{el('walletReview').close();}};
 }
 var labels={BUY:'Bought shares',SELL:'Sold shares',STAKE:'FanPlay entry',PAYOUT:'FanPlay payout',SETTLE:'Settlement',CONVERT:'Added funds',DEPOSIT:'Deposit',SEND:'Transfer sent',WITHDRAW:'Withdrawal to bank',SWAP:'Swapped shares'};
 function ledgerRow(t){var down=['BUY','STAKE','SEND','WITHDRAW'].includes(t.type),neutral=t.type==='SWAP';
@@ -3408,8 +3425,8 @@ function swapCalc(){var k=el('swapFrom').value,h=FT.getState().holdings[k];syncP
 ['swapHalf','swapMax'].forEach(id=>el(id).onclick=function(){var h=FT.getState().holdings[el('swapFrom').value];if(h){el('swapQty').value=Math.floor(h.shares*(id==='swapHalf'?.5:1));swapCalc();}});
 el('swapForm').onsubmit=function(e){e.preventDefault();status('');try{var q=quote(),worth=q.q*FT.getState().holdings[q.from].p;review({kind:'Swap',icon:'swap',title:'Review swap',heroLabel:'You receive',amount:fmt(q.got),unit:q.to+' shares',sub:'for '+fmt(q.q)+' '+q.from+' shares',
     rows:[['You give',fmt(q.q)+' '+q.from],['Value of shares given',fmt(worth)+' $FTR'],['You receive',fmt(q.got)+' '+q.to],['Price per '+q.to+' share',fmt(prices[q.to])+' $FTR'],['Swap fee · 0.4%',fmt(q.fee)+' $FTR'],['Change returned to wallet',fmt(q.change)+' $FTR','rv-total']],
-    note:'Both sides settle together. If either side can’t complete, nothing changes.',confirm:'Swap shares',action:function(){
-    var result=FT.swapAssets(q.from,q.to,q.q,prices);el('swapQty').value='';swapCalc();status('Received '+fmt(result.received)+' '+q.to+' shares.');}});}catch(error){status(error.message,true);}};
+    note:'Both sides settle together. If either side can’t complete, nothing changes.',confirm:'Swap shares',action:async function(){
+    var result=await FT.swapAssets(q.from,q.to,q.q,prices);el('swapQty').value='';swapCalc();status('Received '+fmt(result.received)+' '+q.to+' shares.');}});}catch(error){status(error.message,true);}};
 /* Player picker: the same card as Switch player on the player page. */
 var picking='from',picker=el('swapPicker');
 function clubOf(k){var a=ASSETS.filter(function(x){return x.t===k;})[0];return a&&a.club?a.club:(prices[k+':coach']?'Coach':'');}

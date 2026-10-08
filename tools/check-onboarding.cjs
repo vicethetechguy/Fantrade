@@ -44,7 +44,7 @@ const server = http.createServer((req, res) => {
       assert(await page.locator('[data-pane="0"].on').isVisible());
       await page.locator('#obShares').fill('9999999');
       await page.locator('#obBuy').click();
-      assert(await page.locator('#obBuy').isEnabled());
+      await page.waitForFunction(()=>!document.getElementById('obBuy').disabled);
       await page.locator('[data-s="100"]').click();
       const quotedTotal = Number((await page.locator('#obTot').innerText()).replace(/[^0-9.]/g, ''));
       assert(quotedTotal > 0, 'Purchase review must show a positive current quote');

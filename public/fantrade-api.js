@@ -30,6 +30,7 @@
         const errorMsg = data?.error?.message || `Request failed with status ${res.status}`;
         const err = new Error(errorMsg);
         err.code = data?.error?.code || 'API_ERROR';
+        err.status = res.status;
         throw err;
       }
 
@@ -41,6 +42,29 @@
         console.warn('[FantradeAPI] Backend server unreachable at ' + url);
       }
       throw err;
+    }
+  }
+
+  // Keep the same request key if a write's response is lost. A retry can
+  // retrieve its receipt rather than buying, swapping or staking twice.
+  async function transactionRequest(endpoint, body, prefix, explicitKey) {
+    const token = localStorage.getItem('fantrade_auth_token') || '';
+    let account = 0;
+    for (const char of token) account = ((account * 31) + char.charCodeAt(0)) >>> 0;
+    const storage = 'ft_pending_write_' + account;
+    const signature = endpoint + ':' + JSON.stringify(body);
+    let saved = {};
+    try { saved = JSON.parse(localStorage.getItem(storage) || '{}'); } catch {}
+    const key = saved[signature] || explicitKey || prefix + '-' + Date.now() + '-' + Math.random().toString(36).slice(2);
+    saved[signature] = key;
+    localStorage.setItem(storage, JSON.stringify(saved));
+    try {
+      const result = await request(endpoint, { method: 'POST', headers: { 'Idempotency-Key': key }, body: JSON.stringify(body) });
+      delete saved[signature]; localStorage.setItem(storage, JSON.stringify(saved));
+      return result;
+    } catch (error) {
+      if (error.status >= 400 && error.status < 500) { delete saved[signature]; localStorage.setItem(storage, JSON.stringify(saved)); }
+      throw error;
     }
   }
 
@@ -96,19 +120,8 @@
       return request(`/api/orders${q}`);
     },
 
-    async placeOrder({ assetSymbol, side, quantity, limitPrice, timeInForce = 'GTC' }) {
-      const idempotencyKey = 'ord-' + Date.now() + '-' + Math.random().toString(36).substring(2, 8);
-      return request('/api/orders', {
-        method: 'POST',
-        headers: { 'Idempotency-Key': idempotencyKey },
-        body: JSON.stringify({
-          assetSymbol,
-          side: side.toUpperCase(),
-          quantity,
-          limitPrice,
-          timeInForce,
-        }),
-      });
+    async placeOrder({ assetSymbol, side, quantity, limitPrice, type = 'LIMIT', timeInForce = 'GTC' }) {
+      return transactionRequest('/api/orders', {assetSymbol,side:side.toUpperCase(),type,quantity,limitPrice,timeInForce}, 'ord');
     },
 
     async cancelOrder(orderId) {
@@ -118,16 +131,7 @@
     },
 
     async swapAssets({ fromSymbol, toSymbol, shares }) {
-      const idempotencyKey = 'swp-' + Date.now() + '-' + Math.random().toString(36).substring(2, 8);
-      return request('/api/swaps', {
-        method: 'POST',
-        headers: { 'Idempotency-Key': idempotencyKey },
-        body: JSON.stringify({
-          fromSymbol,
-          toSymbol,
-          shares,
-        }),
-      });
+      return transactionRequest('/api/swaps', {fromSymbol,toSymbol,shares}, 'swp');
     },
 
     // FanPlay Engine Methods (Prompt 4)
@@ -165,12 +169,7 @@
     },
 
     async activateFanPlay(payload) {
-      const idempotencyKey = 'fp-' + Date.now() + '-' + Math.random().toString(36).substring(2, 8);
-      return request('/api/fanplay/activate', {
-        method: 'POST',
-        headers: { 'Idempotency-Key': idempotencyKey },
-        body: JSON.stringify(payload),
-      });
+      return transactionRequest('/api/fanplay/activate', payload, 'fp', payload.idempotencyKey);
     },
 
     async getFanPlays(status) {
@@ -202,22 +201,5 @@
 
   window.FantradeAPI = FantradeAPI;
 
-  // Auto-connect to FT state and sync authoritative backend data
-  document.addEventListener('DOMContentLoaded', async () => {
-    const online = await FantradeAPI.checkHealth();
-    if (online) {
-      console.log('[FantradeAPI] Connected to authoritative PostgreSQL Exchange Engine.');
-      try {
-        const walletData = await FantradeAPI.getWallet();
-        if (walletData?.wallet && window.FT) {
-          const s = window.FT.getState();
-          s.wallet.balance = walletData.wallet.available;
-          s.wallet.locked = walletData.wallet.reserved;
-          window.FT.syncUI();
-        }
-      } catch (err) {
-        console.warn('[FantradeAPI] Initial wallet sync skipped:', err);
-      }
-    }
-  });
+  // Shared application state restores the selected account service after auth is ready.
 })(window);

@@ -172,6 +172,7 @@ export class FanPlayService {
         include: { selections: true },
       });
       if (existing) {
+        if (existing.userId !== input.userId) throw new DomainError('This request key belongs to another account.', 'IDEMPOTENCY_CONFLICT', 409);
         return existing;
       }
     }

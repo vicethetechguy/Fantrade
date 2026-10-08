@@ -222,8 +222,8 @@ trade.append(T('<div class="trade-ticket">'
                # buy / sell ticket
                '<div class="pane on" data-pane="order">'
                '<label class="trade-field-label" for="tTypeBtn" id="tTypeLabel">Order type</label><div class="otype" id="tTypeWrap">'
-               '<select id="tType" hidden tabindex="-1" aria-hidden="true" aria-describedby="tradeTypeHelp"><option value="limit">Limit</option>'
-               '<option value="market">Market</option>'
+               '<select id="tType" hidden tabindex="-1" aria-hidden="true" aria-describedby="tradeTypeHelp"><option value="market">Market</option>'
+               '<option value="limit">Limit</option>'
                '</select>'
                '<button type="button" class="trade-pick-card" id="tTypeBtn" aria-haspopup="dialog" aria-labelledby="tTypeLabel tTypeBtn"></button></div><p class="trade-help" id="tradeTypeHelp"></p>'
 
@@ -234,7 +234,7 @@ trade.append(T('<div class="trade-ticket">'
                '<button type="button" data-step="1" data-for="tStop" aria-label="Raise the stop">+</button>'
                '</span></div>'
 
-               '<div class="tfield" id="tLimitWrap"><div class="bd">'
+               '<div class="tfield" id="tLimitWrap" hidden><div class="bd">'
                '<label class="lbl" for="tLimit">Price per share · FTR</label><input id="tLimit" inputmode="decimal"></div>'
                '<span class="pm"><button type="button" data-step="-1" data-for="tLimit" '
                'aria-label="Lower the price">&minus;</button>'
@@ -318,7 +318,7 @@ trade.append('''</div>
 TRADE_JS = PICK_JS + r"""
 document.title = 'Trade ' + ftSym(A.t) + ' Activity Shares — Fantrade';
 var el = function(id){ return document.getElementById(id); };
-var mode = param('side') === 'sell' ? 'sell' : 'buy', otype = 'limit', view = 'open';
+var mode = param('side') === 'sell' ? 'sell' : 'buy', otype = 'market', view = 'open';
 function safeText(v){var span=document.createElement('span');span.textContent=String(v == null ? '' : v);return span.innerHTML.replace(/"/g,'&quot;');}
 
 if(el('tBack')) el('tBack').href = 'asset.html?a=' + encodeURIComponent(A.t);
@@ -432,7 +432,7 @@ function calc(){
   go.className = 'bigbtn' + (mode === 'buy' ? '' : ' sell');
   el('tradeTypeHelp').textContent = otype === 'market'
     ? 'Trade at the available market price. The final price may vary.'
-    : 'Choose your price per share. Limit orders on this preview are kept for this visit only.';
+    : 'Choose your price per share. Limit orders are confirmed by the exchange service and remain open until filled or cancelled.';
 }
 
 var ORDER_TYPES = {
@@ -490,23 +490,29 @@ tradeOptionPicker.addEventListener('click', function(event){
   el(id).addEventListener('input', calc);
 });
 
-el('tGo').addEventListener('click', function(){
+el('tGo').addEventListener('click', async function(){
+  if(this.disabled)return; this.disabled=true;
+  try{
   var q = qty();
   if(q < 1){ showToast('Enter how many shares to trade.', 'error'); return; }
   if(otype !== 'market' && !(price() > 0)){ showToast('Enter a valid price.', 'error'); return; }
   if(otype === 'market'){
+    el('tGo').textContent='Confirming trade…';
     try {
-      var r = FT.executeTrade(mode, A.t, A.n, q, A.p, A.c);
-      showToast((mode === 'buy' ? 'Bought ' : 'Sold ') + q.toLocaleString('en-US') + ' ' + A.t
+      var r = await FT.executeTrade(mode, A.t, A.n, q, A.p, A.c);
+      showToast((mode === 'buy' ? 'Bought ' : 'Sold ') + r.shares.toLocaleString('en-US') + ' ' + A.t
         + ' for ' + r.total.toLocaleString('en-US') + ' $FTR.', 'success');
       rng.value = 0; paintSlider(0); calc(); renderLedger();
     } catch(e){ showToast(e.message, 'error'); }
     return;
   }
-  OPEN.unshift({ side: mode, q: q, px: price(), t: 'Just now', type: otype });
-  renderLedger();
-  showToast((mode === 'buy' ? 'Bid' : 'Ask') + ' for ' + q.toLocaleString('en-US') + ' ' + A.t
-    + ' at ' + pxFmt(price()) + ' is on the book.', 'success');
+  if(FT.cloudSignedIn()||!FT.restAccount()){showToast('Limit and stop orders need the exchange order service. Choose Market for an immediate activity-share purchase.', 'info');return;}
+  if(otype!=='limit'){showToast('Stop orders are not available yet. Choose Market or Limit.', 'info');return;}
+  var response=await FantradeAPI.placeOrder({assetSymbol:A.t,side:mode,quantity:q,limitPrice:price()});
+  if(!response || !response.order) throw new Error('The exchange did not confirm your order.');
+  await loadOrders();await FT.refreshRest().catch(function(){showToast('Order confirmed. Refresh to load your balance.','info');});
+  showToast('Order '+String(response.order.status).toLowerCase()+'.', 'success');
+  }catch(e){showToast(e.message,'error');}finally{this.disabled=false;calc();}
 });
 
 // ── swap ──
@@ -576,20 +582,28 @@ el('tradeAssetResults').addEventListener('click',function(event){var row=event.t
 el('tradeAssetPickerClose').addEventListener('click',function(){tradeAssetPicker.close();});
 tradeAssetPicker.addEventListener('close',function(){document.body.classList.remove('asset-picker-open');el(tradePickMode==='from'?'swFromBtn':'swToBtn').focus();});
 tradeAssetPicker.addEventListener('click',function(event){var r=tradeAssetPicker.getBoundingClientRect();if(event.target===tradeAssetPicker&&(event.clientX<r.left||event.clientX>r.right||event.clientY<r.top||event.clientY>r.bottom))tradeAssetPicker.close();});
-el('swGo').addEventListener('click', function(){
+el('swGo').addEventListener('click', async function(){
+  if(this.disabled)return;this.disabled=true;try{
   var fk = el('swFrom').value, tk = el('swTo').value;
   if(!fk){ showToast('Nothing to swap yet.', 'error'); return; }
   if(fk === tk){ showToast('Pick two different assets.', 'error'); return; }
   try {
-    var r = FT.swapAssets(fk, tk, Math.round(num(el('swQty').value)), PRICES);
+    var r = await FT.swapAssets(fk, tk, Math.round(num(el('swQty').value)), PRICES);
     showToast(r.spent.toLocaleString('en-US') + ' ' + ftSym(fk) + ' swapped for '
       + r.received.toLocaleString('en-US') + ' ' + ftSym(tk) + '.', 'success');
   } catch(e){ showToast(e.message, 'error'); }
+  }finally{this.disabled=false;}
 });
 
 // ── ledger ──
-var OPEN = [{ side:'buy', q:2000, px:A.p * 0.94, t:'Today, 09:12', type:'limit' },
-            { side:'sell', q:1500, px:A.p * 1.08, t:'Yesterday, 18:40', type:'limit' }];
+var OPEN = [];
+async function loadOrders(){
+  if(FT.cloudSignedIn()||!FT.restAccount()){OPEN=[];renderLedger();return;}
+  var response=await FantradeAPI.getOrders();
+  OPEN=(response.orders||[]).filter(function(o){return ['OPEN','PARTIALLY_FILLED'].includes(o.status)&&Number(o.remainingQuantity)>0&&o.asset && o.asset.symbol===A.t;}).map(function(o){return {id:o.id,side:o.side.toLowerCase(),q:Number(o.remainingQuantity),px:Number(o.limitPrice),t:new Date(o.createdAt).toLocaleString(),type:'limit'};});
+  renderLedger();
+}
+loadOrders().catch(function(e){showToast('Could not load open orders. '+e.message,'error');});
 function renderLedger(){
   var box = el('tLedger'), s = FT.getState();
   if(el('tcOpen')) counts();
@@ -613,9 +627,11 @@ function renderLedger(){
           + 'style="width:auto;padding:5px 12px">Cancel</button></div></div>';
       }).join('');
     box.querySelectorAll('[data-cancel]').forEach(function(b){
-      b.addEventListener('click', function(){
-        OPEN.splice(+b.dataset.cancel, 1); renderLedger();
-        showToast('Order cancelled. Nothing was charged.', 'info');
+      b.addEventListener('click', async function(){
+        if(this.disabled)return;this.disabled=true;try{
+        await FantradeAPI.cancelOrder(OPEN[+b.dataset.cancel].id); await loadOrders();
+        showToast('Order cancelled. Reserved funds or shares released.', 'info');
+        }catch(e){showToast(e.message,'error');this.disabled=false;}
       });
     });
     return;

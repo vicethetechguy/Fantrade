@@ -583,7 +583,7 @@ document.querySelectorAll('.quick button[data-s]').forEach(function(b){
     cost();
   });
 });
-el('obBuy').addEventListener('click', function(){
+el('obBuy').addEventListener('click', async function(){
   if(!picked){
     var firstPick = document.querySelector('#obPicks .pick');
     if(firstPick) firstPick.click();
@@ -592,7 +592,7 @@ el('obBuy').addEventListener('click', function(){
   if(sh < 1){ showToast('Enter how many shares you want.', 'error'); return; }
   el('obBuy').disabled = true;
   try {
-    var r = FT.executeTrade('buy', picked.sym, picked.nm, sh, picked.px, picked.coach);
+    var r = await FT.executeTrade('buy', picked.sym, picked.nm, sh, picked.px, picked.coach);
     showToast('🎉 ' + sh.toLocaleString('en-US') + ' ' + picked.sym + ' shares purchased! You are officially an owner.', 'success');
     sum();
     setTimeout(function(){
@@ -1281,7 +1281,7 @@ DASH_JS = r"""
           return FT.syncCloud ? FT.syncCloud().then(function(){ return res; }, function(){ return res; }) : res;
         }, function(err){
           // A database without the claim function yet: carry on locally.
-          if(/function|schema cache|could not find/i.test(String(err && err.message))) return FT.launchPlayer(a, lv, yr);
+          // A refused account claim must never become a local claim.
           throw err;
         })
       : new Promise(function(ok){ ok(FT.launchPlayer(a, lv, yr)); });

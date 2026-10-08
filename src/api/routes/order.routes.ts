@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { prisma } from '../../database/client.js';
 import { z } from 'zod';
 import { OrderService } from '../../services/order.service.js';
 import { authMiddleware, AuthenticatedRequest } from '../middlewares/auth.middleware.js';
@@ -37,7 +38,11 @@ orderRouter.post(
         idempotencyKey,
       });
 
-      res.status(201).json({ order });
+      const fills = await prisma.tradeFill.findMany({ where: { orderId: order.id }, include: { trade: true } });
+      const filledQuantity = fills.reduce((n, f) => n + f.fillQuantity, 0);
+      const total = fills.reduce((n, f) => n + f.trade.totalAmount.toNumber()
+        + (order.side === 'BUY' ? f.trade.buyerFee.toNumber() : -f.trade.sellerFee.toNumber()), 0);
+      res.status(201).json({ order, execution: { filledQuantity, total } });
     } catch (err) {
       next(err);
     }

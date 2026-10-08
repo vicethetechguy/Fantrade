@@ -690,7 +690,7 @@ function getLocalEligibleAssets(){
   Object.keys(holdings).forEach(function(sym){
     var h = holdings[sym];
     if(!h || !h.shares || h.shares <= 0) return;
-    var locked = lockedMap[sym] || 0;
+    var locked = Math.max(Number(h.locked)||0,lockedMap[sym]||0);
     var avail = Math.max(0, h.shares - locked);
     list.push({
       id: 'asset-' + sym.replace('$', '').toLowerCase(),
@@ -851,7 +851,7 @@ function updateStepUI(){
 function loadInitialData(){
   document.getElementById('stepAssetGrid').innerHTML = '<p class="fp-load-state" role="status">Loading your available shares…</p>';
   // 1. Assets
-  if(window.FantradeAPI && FantradeAPI.getFanPlayEligibleAssets){
+  if(FT.restAccount() && FantradeAPI.getFanPlayEligibleAssets){
     FantradeAPI.getFanPlayEligibleAssets().then(function(res){
       if(res && res.success && res.data && res.data.length > 0){
         eligibleAssets = res.data.map(normalizeAsset);
@@ -871,7 +871,7 @@ function loadInitialData(){
   }
 
   // 2. Matches
-  if(window.FantradeAPI && FantradeAPI.getFanPlayMatches){
+  if(FT.restAccount() && FantradeAPI.getFanPlayMatches){
     FantradeAPI.getFanPlayMatches().then(function(res){
       if(res && res.success && res.data && res.data.length > 0){
         matchesList = res.data.map(normalizeMatch);
@@ -890,7 +890,7 @@ function loadInitialData(){
   }
 
   // 3. Markets
-  if(window.FantradeAPI && FantradeAPI.getFanPlayMarkets){
+  if(FT.restAccount() && FantradeAPI.getFanPlayMarkets){
     FantradeAPI.getFanPlayMarkets().then(function(res){
       if(res && res.success && res.data && res.data.length > 0){
         marketsList = res.data.map(normalizeMarket);
@@ -996,7 +996,7 @@ function loadOptions(){
   if(sub){
     sub.textContent = selMarket.name + ' Tier: Select up to ' + selMarket.maxSelections + ' predictions for ' + selAsset.symbol + ' in ' + selMatch.homeTeam + ' vs ' + selMatch.awayTeam + '.';
   }
-  if(window.FantradeAPI && FantradeAPI.getFanPlayOptions){
+  if(FT.restAccount() && FantradeAPI.getFanPlayOptions){
     FantradeAPI.getFanPlayOptions(selAsset.assetId || selAsset.id, selMatch.id, selMarket.tier || selMarket.id).then(function(res){
       if(res && res.success && res.data && res.data.length > 0){
         optionsList = res.data;
@@ -1131,11 +1131,14 @@ function renderReview(){
     + '</dl></div>';
 }
 
-function submitActivation(){
+async function submitActivation(){
+  if(document.getElementById('btnActivate').disabled)return;
   var btn = document.getElementById('btnActivate');
   if(btn) { btn.disabled = true; btn.textContent = 'Locking Shares & Activating...'; }
 
-  var idempotencyKey = 'fp_act_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8);
+  var activationSignature=JSON.stringify([selAsset.symbol,selMatch.id,selMarket.id,stakeShares,selOptionIds]);
+  if(window.fpActivationSignature!==activationSignature){window.fpActivationSignature=activationSignature;window.fpActivationKey='fp_act_'+Date.now()+'_'+Math.random().toString(36).slice(2,8);}
+  var idempotencyKey=window.fpActivationKey;
   var selectedOpts = selOptionIds.map(function(id){ return optionsList.find(function(o){ return o.id === id; }); }).filter(Boolean);
 
   var payload = {
@@ -1202,19 +1205,6 @@ function submitActivation(){
       if(typeof FT.save === 'function') FT.save();
       if(typeof FT.syncUI === 'function') FT.syncUI();
       window.dispatchEvent(new CustomEvent('fantrade:statechange', { detail: s }));
-      // Lock the shares on the account too, keyed so a resubmit cannot lock
-      // a second set. Signed out or offline, this is simply a no-op.
-      if(typeof FT.stakeShares === 'function'){
-        FT.stakeShares({ localId: entryId, asset: selAsset.symbol, shares: stakeShares,
-          match: { homeTeam: selMatch.homeTeam, awayTeam: selMatch.awayTeam,
-                   status: selMatch.status || 'SCHEDULED' },
-          market: { name: selMarket.name, tier: selMarket.tier || selMarket.id },
-          selections: selectedOpts.map(function(o){
-            return { optionLabel: o.label, evaluationResult: 'PENDING',
-                     successFP: o.successFP, failureFP: o.failureFP };
-          }),
-          key: idempotencyKey });
-      }
     }
     showToast('FanPlay position successfully activated! Shares locked.', 'success');
     document.getElementById('step7Msg').textContent = 'Successfully locked ' + stakeShares.toLocaleString() + ' ' + selAsset.symbol + ' shares. ID: ' + entryId;
@@ -1222,20 +1212,28 @@ function submitActivation(){
     loadUserFanPlays();
   }
 
-  if(window.FantradeAPI && FantradeAPI.activateFanPlay){
-    FantradeAPI.activateFanPlay(payload).then(function(res){
-      if(res && res.success && res.data){
-        completeLocalActivation(res.data.id);
-      } else {
-        completeLocalActivation();
-      }
-    }).catch(function(err){
-      console.warn('API activation error, completing position locally:', err);
+  try{
+    var db=await FT.transactionAccount();
+    if(db){
+      var result=await FT.stakeShares({asset:selAsset.symbol,shares:stakeShares,
+        match:{homeTeam:selMatch.homeTeam,awayTeam:selMatch.awayTeam,status:selMatch.status||'SCHEDULED'},
+        market:{name:selMarket.name,tier:selMarket.tier||selMarket.id},
+        selections:selectedOpts.map(function(o){return {optionLabel:o.label,evaluationResult:'PENDING',successFP:o.successFP,failureFP:o.failureFP};}),key:idempotencyKey});
+      if(!result || !result.entry) throw new Error('The account did not confirm your entry.');
+      document.getElementById('step7Msg').textContent='Locked '+stakeShares.toLocaleString()+' '+selAsset.symbol+' shares. ID: '+result.entry.id;
+      goToStep(7);loadUserFanPlays();showToast('FanPlay entry confirmed. Shares locked.','success');
+    }else if(FT.restAccount()){
+      var res=await FantradeAPI.activateFanPlay(payload);
+      if(!res || !res.success || !res.data) throw new Error('The account did not confirm your entry.');
+      completeLocalActivation(res.data.id);
+    }else{
+      var current=getLocalEligibleAssets().find(function(a){return a.symbol===selAsset.symbol;});
+      if(!current || current.availableQuantity<stakeShares) throw new Error('You no longer have enough available shares.');
       completeLocalActivation();
-    });
-  } else {
-    completeLocalActivation();
-  }
+    }
+    window.fpActivationSignature=null;
+  }catch(err){showToast(err.message,'error');}
+  finally{if(btn){btn.disabled=false;btn.textContent='Lock Shares & Activate FanPlay';}}
 }
 window.submitActivation = submitActivation;
 
@@ -1311,7 +1309,7 @@ function loadUserFanPlays(){
     updateDashboardMetrics(); renderActiveList(); renderHistoryList();
   }
   show([]);   // never a blank screen while the service is slow to answer
-  if(window.FantradeAPI && FantradeAPI.getFanPlays){
+  if(FT.restAccount() && FantradeAPI.getFanPlays){
     FantradeAPI.getFanPlays().then(function(res){
       if(res && res.success && Array.isArray(res.data) && res.data.length){
         show(res.data.map(function(e){ return normaliseEntry(e, isFanPlaySettled(e.status)); }));
@@ -1433,12 +1431,12 @@ function retireEntry(id, patch){
   return entry;
 }
 
-function cancelFanPlay(id){
+async function cancelFanPlay(id){
+  try{await FT.cancelEntry(id);
   var entry = retireEntry(id, { status: 'CANCELLED' });
-  if(!entry) return;
-  if(typeof FT.cancelEntry === 'function') FT.cancelEntry(id);
   showToast('Entry cancelled. Your shares are unlocked.', 'success');
   loadUserFanPlays();
+  }catch(e){showToast(e.message,'error');}
 }
 
 /* Prototype only. Real results come from verified match data (§14.6, §20),
@@ -1446,6 +1444,7 @@ function cancelFanPlay(id){
    pick earns its FP for every share staked, 1,000 FP is 1 $FTR — and records
    it as simulated. No $FTR is paid. */
 function settleFanPlay(id){
+  if(FT.cloudSignedIn()||FT.restAccount()){showToast('Account entries settle using verified match results.','info');return;}
   var s = fpState();
   var raw = s && s.fanplay && (s.fanplay.activeEntries || []).filter(function(e){ return e.id === id; })[0];
   if(!raw) return;

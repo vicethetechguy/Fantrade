@@ -143,8 +143,8 @@ function review(o,text,action){
 if(el('walletReview')){
   el('reviewCancel').onclick=function(){pendingAction=null;el('walletReview').close();};
   el('walletReview').addEventListener('close',function(){pendingAction=null;});
-  el('reviewConfirm').onclick=function(){var action=pendingAction;if(!action)return;pendingAction=null;this.disabled=true;
-    try{action();}catch(error){status(error.message,true);}finally{el('walletReview').close();}};
+  el('reviewConfirm').onclick=async function(){var action=pendingAction;if(!action)return;pendingAction=null;this.disabled=true;
+    try{await action();}catch(error){status(error.message,true);}finally{el('walletReview').close();}};
 }
 var labels={BUY:'Bought shares',SELL:'Sold shares',STAKE:'FanPlay entry',PAYOUT:'FanPlay payout',SETTLE:'Settlement',CONVERT:'Added funds',DEPOSIT:'Deposit',SEND:'Transfer sent',WITHDRAW:'Withdrawal to bank',SWAP:'Swapped shares'};
 function ledgerRow(t){var down=['BUY','STAKE','SEND','WITHDRAW'].includes(t.type),neutral=t.type==='SWAP';
@@ -164,8 +164,8 @@ el('sendForm').onsubmit=function(e){e.preventDefault();var to=el('sendTo').value
   var bal=FT.getState().wallet.balance;
   review({kind:'Transfer',icon:'send',title:'Review transfer',heroLabel:'You send',amount:fmt(n),unit:'$FTR',sub:'to '+to,
     rows:[['Recipient',to],['Transfer fee','Free'],['Arrives','Instantly'],['Balance now',fmt(bal)+' $FTR'],['Balance after',fmt(bal-n)+' $FTR','rv-total']],
-    note:'Transfers between managers can’t be reversed. Check the recipient before you confirm.',confirm:'Send '+fmt(n)+' $FTR',action:function(){
-    FT.sendFtr(n,to,'send');el('sendAmt').value='';sendCalc();status('Sent '+fmt(n)+' $FTR to '+to+'.');}});
+    note:'Transfers between managers can’t be reversed. Check the recipient before you confirm.',confirm:'Send '+fmt(n)+' $FTR',action:async function(){
+    await FT.sendFtr(n,to,'send');el('sendAmt').value='';sendCalc();status('Sent '+fmt(n)+' $FTR to '+to+'.');}});
 };
 function sendLog(){var rows=FT.getState().transactions.filter(t=>t.type==='SEND').slice(0,3);el('sendLog').innerHTML=rows.map(ledgerRow).join('')||'<p class="wallet-note">Your transfers will appear here after you send $FTR.</p>';sendCalc();}
 sendLog();window.addEventListener('fantrade:statechange',sendLog);
@@ -213,8 +213,8 @@ function swapCalc(){var k=el('swapFrom').value,h=FT.getState().holdings[k];syncP
 ['swapHalf','swapMax'].forEach(id=>el(id).onclick=function(){var h=FT.getState().holdings[el('swapFrom').value];if(h){el('swapQty').value=Math.floor(h.shares*(id==='swapHalf'?.5:1));swapCalc();}});
 el('swapForm').onsubmit=function(e){e.preventDefault();status('');try{var q=quote(),worth=q.q*FT.getState().holdings[q.from].p;review({kind:'Swap',icon:'swap',title:'Review swap',heroLabel:'You receive',amount:fmt(q.got),unit:q.to+' shares',sub:'for '+fmt(q.q)+' '+q.from+' shares',
     rows:[['You give',fmt(q.q)+' '+q.from],['Value of shares given',fmt(worth)+' $FTR'],['You receive',fmt(q.got)+' '+q.to],['Price per '+q.to+' share',fmt(prices[q.to])+' $FTR'],['Swap fee · 0.4%',fmt(q.fee)+' $FTR'],['Change returned to wallet',fmt(q.change)+' $FTR','rv-total']],
-    note:'Both sides settle together. If either side can’t complete, nothing changes.',confirm:'Swap shares',action:function(){
-    var result=FT.swapAssets(q.from,q.to,q.q,prices);el('swapQty').value='';swapCalc();status('Received '+fmt(result.received)+' '+q.to+' shares.');}});}catch(error){status(error.message,true);}};
+    note:'Both sides settle together. If either side can’t complete, nothing changes.',confirm:'Swap shares',action:async function(){
+    var result=await FT.swapAssets(q.from,q.to,q.q,prices);el('swapQty').value='';swapCalc();status('Received '+fmt(result.received)+' '+q.to+' shares.');}});}catch(error){status(error.message,true);}};
 /* Player picker: the same card as Switch player on the player page. */
 var picking='from',picker=el('swapPicker');
 function clubOf(k){var a=ASSETS.filter(function(x){return x.t===k;})[0];return a&&a.club?a.club:(prices[k+':coach']?'Coach':'');}
@@ -248,7 +248,7 @@ el('buyForm').onsubmit=function(e){e.preventDefault();status('');var q=buyQuote(
   var bal=FT.getState().wallet.balance;
   review({kind:'Add funds',icon:'coin',title:'Review conversion',heroLabel:'You receive',amount:fmt(q.net),unit:'$FTR',sub:'for $'+fmt(q.amount),
     rows:[['You pay','$'+fmt(q.amount)],['Rate','$1 = '+fmt(1/FTR_USD)+' $FTR'],['Conversion fee · 0.5%',fmt(q.fee)+' $FTR'],['Arrives','Instantly'],['Balance after',fmt(bal+q.net)+' $FTR','rv-total']],
-    note:'Demo conversion. No card is charged and no real money moves.',confirm:'Add '+fmt(q.net)+' $FTR',action:function(){var got=FT.convertUsd(q.amount);el('fiat').value='';buyCalc();status('Added '+fmt(got)+' $FTR to your demo wallet.');}});
+    note:'Demo conversion. No card is charged and no real money moves.',confirm:'Add '+fmt(q.net)+' $FTR',action:async function(){var got=await FT.convertUsd(q.amount);el('fiat').value='';buyCalc();status('Added '+fmt(got)+' $FTR to your demo wallet.');}});
 };buyCalc();
 '''
 
@@ -306,9 +306,9 @@ el('withdrawForm').onsubmit=function(e){e.preventDefault();status('');var q=wdQu
   var bal=FT.getState().wallet.balance;
   review({kind:'Withdrawal',icon:'bank',title:'Review withdrawal',heroLabel:'You receive about',amount:SYMBOL[cur]+fmt(Math.round(q.out*100)/100),unit:cur,sub:'to '+name+' · '+dest,
     rows:[['Account holder',name],['Bank account',dest],['Amount',fmt(q.n)+' $FTR'],['Withdrawal fee',fmt(q.fee)+' $FTR'],['Total deducted',fmt(q.total)+' $FTR'],['Arrives','1–2 working days'],['Balance after',fmt(bal-q.total)+' $FTR','rv-total']],
-    note:'Demo withdrawal. Your preview balance updates; no real money is sent.',confirm:'Withdraw '+fmt(q.n)+' $FTR',action:function(){
+    note:'Demo withdrawal. Your preview balance updates; no real money is sent.',confirm:'Withdraw '+fmt(q.n)+' $FTR',action:async function(){
     if(el('wdSave').checked)FT.setPref('payoutBank',{Currency:cur,Name:name,Bank:bank,Sort:el('wdSort').value.trim(),Acct:acct});
-    FT.sendFtr(q.n,dest,'withdraw',{currency:cur,holder:name,bank:bank,account:acct,save:el('wdSave').checked});
+    await FT.sendFtr(q.n,dest,'withdraw',{currency:cur,holder:name,bank:bank,account:acct,save:el('wdSave').checked});
     el('wdAmount').value='';wdCalc();status('Withdrawal of '+fmt(q.n)+' $FTR requested to '+dest+'.');}});
 };
 function wdLog(){var rows=FT.getState().transactions.filter(t=>t.type==='WITHDRAW').slice(0,3);

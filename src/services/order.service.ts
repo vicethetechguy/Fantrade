@@ -47,6 +47,7 @@ export class OrderService {
         where: { idempotencyKey },
       });
       if (existingOrder) {
+        if (existingOrder.userId !== userId) throw new DuplicateRequestError(idempotencyKey);
         return existingOrder;
       }
     }
@@ -117,17 +118,12 @@ export class OrderService {
     // 5. Trigger Matching Engine
     try {
       await this.matchingService.matchOrder(createdOrder.id);
-    } catch (err: any) {
-      if (err instanceof SelfTradeError || err?.name === 'SelfTradeError' || err?.code === 'SELF_TRADE_PREVENTED') {
-        // Reject the order, release reserved funds/shares, and rethrow
-        await this.cancelOrder(userId, createdOrder.id);
-        await this.prisma.order.update({
-          where: { id: createdOrder.id },
-          data: { status: 'REJECTED' },
-        });
-        throw err;
-      }
-      console.warn(`[OrderService] Match warning for order ${createdOrder.id}:`, err);
+    } catch (err) {
+      // Matching is atomic: a failed match must release its reservation and
+      // report failure rather than returning a successful, unprocessed order.
+      await this.cancelOrder(userId, createdOrder.id);
+      await this.prisma.order.update({ where: { id: createdOrder.id }, data: { status: 'REJECTED' } });
+      throw err;
     }
 
     // Return the updated order with latest status
