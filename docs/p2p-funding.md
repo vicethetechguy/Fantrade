@@ -34,6 +34,8 @@ The P2P database integration uses the app's Supabase account service. The separa
 
 ## Support operations
 
+A browser-based support workspace is available at `/admin#/p2p`. Apply migration 18 after 17 and use the verified `vectorceenation@gmail.com` account. See [the admin setup guide](p2p-admin.md). This removes the need for a service-role key on the operator computer; the expiry runner setup remains unchanged.
+
 Configure `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` only on a trusted operator host. Never put the service-role key into browser configuration or commit it. Dispute listings contain private payment and conversation information; restrict operator output and access.
 
 ```text

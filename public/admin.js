@@ -136,6 +136,7 @@ document.addEventListener('keydown', e => {
 async function loadClient() {
   const mod = await Promise.race([import(CONFIG.cdn), new Promise((_, no) => setTimeout(() => no(new Error('timeout')), 8000))]);
   sb = mod.createClient(CONFIG.url, CONFIG.anonKey, { auth: { storageKey: 'fantrade-admin-auth', persistSession: true, autoRefreshToken: true } });
+  sb.auth.onAuthStateChange((event)=>{if(event==='SIGNED_OUT'&&mode==='live'&&me){me=null;Object.keys(cache).forEach(k=>delete cache[k]);app.innerHTML='';renderSignIn();}});
 }
 async function api(fn, args) {
   if (mode === 'sample') return SAMPLE.call(fn, args || {});
@@ -152,18 +153,18 @@ function gateShell(inner) {
     <section class="gate-art">
       <div class="brand"><img src="assets/brand/fantrade-mark.svg" alt="" width="30" height="30">Fantrade Admin</div>
       <div><h1>Run the market behind the game.</h1>
-        <p>Clear footballers for listing, watch claims launch them onto the Exchange, look after managers, and keep an eye on every matchday.</p></div>
+        <p>Keep the market running smoothly. Review payment disputes, protect escrow, and look after the people behind every trade.</p></div>
       <div class="gate-rows">
         <div class="gate-row">${ic('lock')}Only accounts on the admin list can get in.</div>
         <div class="gate-row">${ic('log')}Every change you make is written to the activity log.</div>
-        <div class="gate-row">${ic('fanplay')}FanPlay settles from verified match data, never from a click.</div>
+        <div class="gate-row">${ic('claims')}Disputed tokens stay protected until an evidence-based decision.</div>
       </div>
     </section>
     <section class="gate-form"><div class="gate-card">${inner}</div></section></div>`;
 }
 function renderSignIn(opts = {}) {
   gateShell(`
-    <h2>Sign in</h2><p>Use the Fantrade account that has admin access.</p>
+    <h2>Welcome back.</h2><p>Sign in with your approved Fantrade account to manage the platform or review P2P disputes.</p>
     ${opts.offline ? `<div class="gate-note"><b>Can't reach Fantrade's database from here.</b> Check your connection, or look around with sample data.</div>` : ''}
     <form id="signin" novalidate>
       <div class="field"><label for="em">Email</label><input class="input" id="em" type="email" autocomplete="username" required></div>
@@ -188,6 +189,10 @@ function grantSql(email) {
   return `insert into public.admins (user_id)\nselect id from auth.users where email = '${String(email || 'you@example.com').replace(/'/g, "''")}'\non conflict do nothing;`;
 }
 function renderGate(kind) {
+  if(sessionEmail.toLowerCase()==='vectorceenation@gmail.com') {
+    gateShell(`<h2>Support access needs setup.</h2><p>Verify this account’s email, then have your database administrator apply <b>supabase/18_p2p_support_admin.sql</b> after migration 17.</p><p>Once configured, this account can review and resolve P2P disputes.</p><div class="grid"><button class="btn btn-primary" id="again">Check access again</button><button class="btn" id="out">Sign out</button></div>`);
+    document.getElementById('again').onclick=afterSignIn;document.getElementById('out').onclick=signOut;return;
+  }
   const setup = kind === 'setup';
   gateShell(`
     <h2>${setup ? 'One step left' : 'Not an admin yet'}</h2>
@@ -208,13 +213,20 @@ function renderGate(kind) {
 async function afterSignIn() {
   mode = 'live';
   const { data } = await sb.auth.getUser(); sessionEmail = data && data.user ? data.user.email : '';
+  Object.keys(cache).forEach(k => delete cache[k]);
+  let support = {allowed:false};
+  try { support = await api('ft_admin_p2p_whoami'); } catch(e) { if(!missingFn(e)) return renderSignIn({error:e.message}); }
   try { me = await api('ft_admin_whoami'); }
   catch (e) { if (missingFn(e)) return renderGate('setup'); return renderSignIn({ error: e.message }); }
-  if (!me || !me.is_admin) return renderGate('notadmin');
+  if (!me || !me.is_admin) {
+    if(!support?.allowed) return renderGate('notadmin');
+    me = {role:'support',name:'Support operator',email:sessionEmail,handle:'support',is_admin:false};
+  }
+  me.support = !!support?.allowed;
   startShell();
 }
 function enterSample() {
-  mode = 'sample'; me = { is_admin: true, role: 'admin', name: 'Sample admin', handle: 'sample_admin', email: 'sample@fantrade.app' };
+  mode = 'sample'; me = { is_admin: true, role: 'admin', support:true, name: 'Sample admin', handle: 'sample_admin', email: 'sample@fantrade.app' };
   Object.keys(cache).forEach(k => delete cache[k]);
   startShell();
 }
@@ -227,17 +239,17 @@ async function signOut() {
 /* ── The shell ─────────────────────────────────────────────────────── */
 const NAV = [
   ['overview', 'Overview', 'overview'], ['players', 'Players', 'players'], ['coaches', 'Coaches', 'coaches'], ['claims', 'Claims', 'claims'],
-  ['managers', 'Managers', 'managers'], ['fanplay', 'FanPlay', 'fanplay'], ['log', 'Activity log', 'log']
+  ['p2p', 'P2P disputes', 'lock'], ['managers', 'Managers', 'managers'], ['fanplay', 'FanPlay', 'fanplay'], ['log', 'Activity log', 'log']
 ];
 function startShell() {
   app.className = ''; app.removeAttribute('aria-busy');
   app.innerHTML = `<div class="shell">
     <aside class="side" id="side" aria-label="Admin">
       <div class="side-brand"><img src="assets/brand/fantrade-mark.svg" alt="">Fantrade<small>Admin</small></div>
-      <nav class="nav" id="nav">${NAV.map(([k, label, icon]) => `<a href="#/${k}" data-k="${k}">${ic(icon)}<span>${label}</span><span class="count" hidden></span></a>`).join('')}</nav>
+      <nav class="nav" id="nav">${NAV.filter(([k])=>me.role==='support'?k==='p2p':k!=='p2p'||me.support).map(([k, label, icon]) => `<a href="#/${k}" data-k="${k}">${ic(icon)}<span>${label}</span><span class="count" hidden></span></a>`).join('')}</nav>
       <div class="side-foot">
         <a class="side-link" href="dashboard.html" target="_blank" rel="noopener">${ic('external')}Open the Fantrade app</a>
-        <div class="me">${avatar(me.name || me.handle)}<div class="me-text"><b>${esc(me.name || me.handle)}</b><small>${esc(me.role === 'viewer' ? 'Viewer' : 'Admin')} · ${esc(me.email || '@' + me.handle)}</small></div>
+        <div class="me">${avatar(me.name || me.handle)}<div class="me-text"><b>${esc(me.name || me.handle)}</b><small>${esc(me.role === 'support' ? 'Support' : me.role === 'viewer' ? 'Viewer' : 'Admin')} · ${esc(me.email || '@' + me.handle)}</small></div>
           <button class="icon-btn" id="out" title="Sign out" aria-label="Sign out">${ic('logout')}</button></div>
       </div>
     </aside>
@@ -264,6 +276,7 @@ function head(title, sub, actions = '') {
 }
 function wireBanner() { const b = document.getElementById('leaveSample'); if (b) b.onclick = () => { mode = 'live'; me = null; location.hash = ''; boot(); }; }
 async function refreshCounts() {
+  if(me.role==='support') return;
   try {
     const o = cache.overview || (cache.overview = await api('ft_admin_overview'));
     setCount('fanplay', o.fanplay_pending);
@@ -274,8 +287,10 @@ async function refreshCounts() {
 function setCount(k, n) { const el = document.querySelector(`#nav a[data-k="${k}"] .count`); if (!el) return; el.hidden = !n; el.textContent = n; }
 const VIEWS = {};
 function route() {
+  if(!me)return;
   const k = (location.hash.replace(/^#\/?/, '').split('/')[0]) || 'overview';
-  const key = VIEWS[k] ? k : 'overview';
+  const allowed = me.role==='support'?k==='p2p':k!=='p2p'||me.support;
+  const key = VIEWS[k] && allowed ? k : me.role==='support'?'p2p':'overview';
   document.querySelectorAll('#nav a').forEach(a => { if (a.dataset.k === key) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current'); });
   document.getElementById('side')?.classList.remove('open'); closeDrawer(); closeDialog();
   const view = document.getElementById('view'); view.scrollTop = 0; window.scrollTo(0, 0);
@@ -1157,6 +1172,10 @@ const SAMPLE = (() => {
   };
   return { call: async (name, args) => { await new Promise(r => setTimeout(r, 120)); if (!fn[name]) throw new Error('Not available in sample mode'); return fn[name](args); } };
 })();
+
+
+import { mountSupport } from './admin-p2p.js';
+mountSupport({VIEWS,api,head,wireBanner,esc,num,ic,me:()=>me,mode:()=>mode,setCount,toast});
 
 /* ── Start ─────────────────────────────────────────────────────────── */
 async function boot() {
