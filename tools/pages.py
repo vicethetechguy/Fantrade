@@ -520,6 +520,8 @@ fp.append('<div id="fpViewWizard">'
           '<div class="fp-step-dot" id="sdot7"><div class="fp-step-circle">7</div><span class="fp-step-label">Done</span></div>'
           '</div>')
 
+fp.append('<div class="fp-selection-context" id="fpSelectionContext" hidden></div>')
+
 # Step 1: Choose Asset
 fp.append('<div class="fp-panel" id="stepBox1">'
           '<div class="fp-panel-title">Choose your player.</div>'
@@ -531,11 +533,11 @@ fp.append('<div class="fp-panel" id="stepBox1">'
 # Step 2: Choose Match
 fp.append('<div class="fp-panel" id="stepBox2" style="display:none">'
           '<div class="fp-panel-title">Pick a match.</div>'
-          '<div class="fp-panel-sub">Choose an upcoming fixture before entries close.</div>'
+          '<div class="fp-panel-sub" id="fpMatchSub">Only upcoming matches involving your player’s team appear here.</div>'
           '<div class="fp-match-grid" id="stepMatchGrid"></div>'
           '<div class="fp-nav-btns">'
           '<button type="button" class="fp-btn-back" onclick="window.goToStep(1)">← Back</button>'
-          '<button type="button" class="fp-btn-next" onclick="window.goToStep(3)">Next: Choose Market →</button>'
+          '<button type="button" class="fp-btn-next" id="fpMatchNext" disabled onclick="window.goToStep(3)">Next: Choose Market →</button>'
           '</div></div>')
 
 # Choose how you want to play. (§10, §11, §12)
@@ -629,7 +631,7 @@ FP_JS = r"""
 var curView = 'wizard';
 var curStep = 1;
 var eligibleAssets = [];
-var matchesList = [];
+var matchesList = [],fixturesLoading=false,fixturePreview=true;
 var marketsList = [];
 var optionsList = [];
 var userFanPlays = [];
@@ -690,6 +692,9 @@ function getLocalEligibleAssets(){
   Object.keys(holdings).forEach(function(sym){
     var h = holdings[sym];
     if(!h || !h.shares || h.shares <= 0) return;
+    var asset=ftAsset(sym,h.n)||{},profile=PLAYER_PROFILES[sym]||{};
+    var club=profile.club||asset.club||h.club||teamMap[sym]||'';
+    if((asset.w||profile.gender==='W')&&!/women|femen|female|ladies/i.test(club))club+=' Women';
     var locked = Math.max(Number(h.locked)||0,lockedMap[sym]||0);
     var avail = Math.max(0, h.shares - locked);
     list.push({
@@ -697,8 +702,8 @@ function getLocalEligibleAssets(){
       assetId: 'asset-' + sym.replace('$', '').toLowerCase(),
       symbol: sym,
       name: h.n || sym,
-      team: teamMap[sym] || (h.c ? 'Coach' : 'Pro'),
-      club: teamMap[sym] || (h.c ? 'Coach' : 'Pro'),
+      team: club,
+      club: club,
       availableQuantity: avail,
       totalQuantity: h.shares,
       lockedQuantity: locked
@@ -714,8 +719,9 @@ function normalizeAsset(a){
     assetId: a.assetId || a.id || sym,
     symbol: sym,
     name: a.name || sym,
-    team: a.team || a.club || 'Pro',
-    club: a.club || a.team || 'Pro',
+    team: typeof a.team==='object' ? a.team.name : (a.team || a.club || ''),
+    club: a.club || (typeof a.team==='object'?a.team.name:a.team) || '',
+    teamId: a.teamId || a.clubId || (a.team&&a.team.id) || null,
     availableQuantity: a.availableQuantity != null ? a.availableQuantity : (a.totalQuantity != null ? a.totalQuantity : (a.shares || 0)),
     totalQuantity: a.totalQuantity != null ? a.totalQuantity : (a.ownedQuantity != null ? a.ownedQuantity : (a.shares || 0)),
     lockedQuantity: a.lockedQuantity || 0
@@ -726,11 +732,14 @@ function normalizeMatch(m){
   return {
     id: m.id,
     competition: m.competition || 'Premier League',
-    homeTeam: m.homeTeam || 'Home',
-    awayTeam: m.awayTeam || 'Away',
+    homeTeam: typeof m.homeTeam==='object'?m.homeTeam.name:m.homeTeam,
+    awayTeam: typeof m.awayTeam==='object'?m.awayTeam.name:m.awayTeam,
+    homeTeamId: m.homeTeamId || (m.homeTeam&&m.homeTeam.id),
+    awayTeamId: m.awayTeamId || (m.awayTeam&&m.awayTeam.id),
+    cutoffTime: m.cutoffTime || m.entryCutoff,
     matchweek: m.matchweek || 1,
     status: m.status || 'SCHEDULED',
-    scheduledAt: m.scheduledAt || m.kickoffTime || new Date().toISOString()
+    scheduledAt: m.scheduledAt || m.kickoffTime
   };
 }
 
@@ -770,6 +779,7 @@ function resetWizard(){
   // needs it back, or "Create another" leads to a button that never works.
   var btn = document.getElementById('btnActivate');
   if(btn){ btn.disabled = false; btn.innerHTML = 'Lock Shares &amp; Activate FanPlay'; }
+  renderSelectionContext();
   updateStepUI();
   switchFPView('wizard');
   loadInitialData();
@@ -779,8 +789,8 @@ window.resetWizard = resetWizard;
 function useLocalShares(){
   eligibleAssets = getLocalEligibleAssets();
   renderAssetGrid();
-  if(matchesList.length === 0){
-    matchesList = DEFAULT_MATCHES;
+  if(matchesList.length === 0 && !FT.restAccount()){
+    matchesList = DEFAULT_MATCHES.map(normalizeMatch);
     renderMatchGrid();
   }
   if(marketsList.length === 0){
@@ -807,7 +817,7 @@ function goToStep(s){
       }
       return;
     }
-    if(curStep === 2 && !selMatch){ showToast('Select a match fixture to continue.', 'error'); return; }
+    if(curStep === 2 && (!selMatch||!playerFixtures().some(function(m){return m.id===selMatch.id;}))){ showToast('Select a match fixture to continue.', 'error'); return; }
     if(curStep === 3 && !selMarket){ showToast('Select a market tier to continue.', 'error'); return; }
     if(curStep === 4){
       if(selOptionIds.length === 0){ showToast('Select at least 1 prediction option.', 'error'); return; }
@@ -824,6 +834,8 @@ function goToStep(s){
     }
   }
   curStep = s;
+  renderSelectionContext();
+  if(s===2)renderMatchGrid();
   updateStepUI();
   if(s === 4) loadOptions();
   if(s === 5) updateStakeCalculations();
@@ -872,20 +884,24 @@ function loadInitialData(){
 
   // 2. Matches
   if(FT.restAccount() && FantradeAPI.getFanPlayMatches){
+    fixturesLoading=true;fixturePreview=false;matchesList=[];renderMatchGrid();
     FantradeAPI.getFanPlayMatches().then(function(res){
+      fixturesLoading=false;
       if(res && res.success && res.data && res.data.length > 0){
         matchesList = res.data.map(normalizeMatch);
         renderMatchGrid();
       } else {
-        matchesList = DEFAULT_MATCHES;
+        matchesList = [];
         renderMatchGrid();
       }
     }).catch(function(e){
-      matchesList = DEFAULT_MATCHES;
+      fixturesLoading=false;
+      matchesList = [];
       renderMatchGrid();
     });
   } else {
-    matchesList = DEFAULT_MATCHES;
+    fixturePreview=true;fixturesLoading=false;
+    matchesList = DEFAULT_MATCHES.map(normalizeMatch);
     renderMatchGrid();
   }
 
@@ -937,37 +953,63 @@ function renderAssetGrid(){
   }).join('');
 }
 
-function selectAsset(id){
-  selAsset = eligibleAssets.find(function(a){ return a.id === id || a.assetId === id || a.symbol === id; });
-  renderAssetGrid();
-  goToStep(2);
+function teamKey(name){
+  var key=String(name||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]/g,'').replace(/fc$/,'');
+  var aliases={manutd:'manchesterunited',manunited:'manchesterunited',mancity:'manchestercity',spurs:'tottenhamhotspur',tottenham:'tottenhamhotspur',barca:'barcelona',fcbarcelona:'barcelona',psg:'parissaintgermain',barcelonafemeni:'barcelonawomen',barcelonafemenino:'barcelonawomen'};
+  return aliases[key]||key;
 }
-window.selectAsset = selectAsset;
-
+function playerFixtures(){
+  if(!selAsset)return [];
+  var team=teamKey(selAsset.team||selAsset.club);
+  if(!team||['pro','club','coach','unknown'].includes(team))return [];
+  return matchesList.filter(function(m){
+    var belongs=selAsset.teamId&&m.homeTeamId&&m.awayTeamId
+      ? String(selAsset.teamId)===String(m.homeTeamId)||String(selAsset.teamId)===String(m.awayTeamId)
+      : team===teamKey(m.homeTeam)||team===teamKey(m.awayTeam);
+    var kickoff=Date.parse(m.scheduledAt),cutoff=m.cutoffTime?Date.parse(m.cutoffTime):kickoff;
+    return belongs&&['SCHEDULED','LINEUPS_CONFIRMED'].includes(String(m.status||'SCHEDULED').toUpperCase())&&Number.isFinite(kickoff)&&Number.isFinite(cutoff)&&cutoff>Date.now();
+  }).sort(function(a,b){return Date.parse(a.scheduledAt)-Date.parse(b.scheduledAt);});
+}
+function renderSelectionContext(){
+  var box=document.getElementById('fpSelectionContext');if(!box)return;
+  box.hidden=!selAsset||curStep===1||curStep===7;
+  if(!selAsset)return;
+  box.innerHTML=playerPhoto(selAsset.symbol,selAsset.name,'fp-context-photo')+'<div><small>Your selection</small><b>'+fpEsc(selAsset.name)+'</b><span>'+fpEsc(selAsset.team||selAsset.club||'Team unavailable')+'</span></div><div class="fp-context-balance"><b>'+Number(selAsset.availableQuantity||0).toLocaleString()+'</b><small>available shares</small></div>';
+}
+function selectAsset(id){
+  var picked=eligibleAssets.find(function(a){return a.id===id||a.assetId===id||a.symbol===id;});
+  if(!picked||Number(picked.availableQuantity)<=0){showToast('Choose a player with available shares.','error');return;}
+  if(!selAsset||selAsset.symbol!==picked.symbol){selMatch=null;selMarket=null;selOptionIds=[];optionsList=[];stakeShares=0;}
+  selAsset=picked;renderAssetGrid();renderMatchGrid();renderMarketGrid();goToStep(2);
+}
+window.selectAsset=selectAsset;
 function renderMatchGrid(){
-  var container = document.getElementById('stepMatchGrid');
-  if(!container) return;
-  if(matchesList.length === 0){
-    container.innerHTML = '<div style="padding:24px;text-align:center;color:#8E9AA8">No fixtures scheduled currently.</div>';
+  var container=document.getElementById('stepMatchGrid');if(!container)return;
+  var fixtures=playerFixtures();
+  if(selMatch&&!fixtures.some(function(m){return m.id===selMatch.id;})){selMatch=null;selMarket=null;selOptionIds=[];}
+  document.getElementById('fpMatchNext').disabled=!selMatch;
+  var sub=document.getElementById('fpMatchSub');
+  if(sub)sub.textContent=selAsset?(fixturePreview?'Preview fixtures for ':'Upcoming fixtures for ')+(selAsset.team||selAsset.club||selAsset.name)+'. Choose the match you want to play.':'Choose your player first.';
+  renderSelectionContext();
+  if(fixturesLoading){container.innerHTML='<p class="fp-load-state" role="status">Finding upcoming fixtures for your player’s team…</p>';return;}
+  if(!fixtures.length){
+    container.innerHTML='<div class="fp-fixture-empty"><svg class="ic" aria-hidden="true"><use href="#i-calendar"/></svg><h3>No eligible match yet.</h3><p>'+fpEsc(selAsset?'There are no open fixtures for '+(selAsset.team||selAsset.club||'this player’s team')+'. Your shares stay available. Choose another player or check back when fixtures are published.':'Select a player to see their team’s upcoming matches.')+'</p><button type="button" class="app-primary" onclick="window.goToStep(1)">Change player</button></div>';
     return;
   }
-  container.innerHTML = matchesList.map(function(m){
-    var isSel = selMatch && selMatch.id === m.id;
-    var dt = new Date(m.scheduledAt || m.kickoffTime || Date.now()).toLocaleDateString(undefined, { weekday:'short', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
-    return '<div role="button" tabindex="0" class="fp-match-card' + (isSel ? ' selected' : '') + '" onclick="window.selectMatch(\'' + m.id + '\')">'
-      + '<div class="fp-match-comp">' + m.competition + ' · Matchweek ' + (m.matchweek || 1) + '</div>'
-      + '<div class="fp-match-teams">' + m.homeTeam + ' vs ' + m.awayTeam + '</div>'
-      + '<div class="fp-match-meta"><span>📅 ' + dt + '</span><span style="color:var(--lime)">Status: ' + (m.status || 'SCHEDULED') + '</span></div>'
-      + '</div>';
+  container.innerHTML=fixtures.map(function(m,i){
+    var selected=selMatch&&selMatch.id===m.id;
+    var date=new Date(m.scheduledAt),day=date.toLocaleDateString(undefined,{day:'numeric'}),month=date.toLocaleDateString(undefined,{month:'short'});
+    return '<button type="button" class="fp-match-card'+(selected?' selected':'')+'" data-fixture="'+fpEsc(m.id)+'" aria-pressed="'+!!selected+'"><span class="fp-fixture-date"><b>'+day+'</b><small>'+month+'</small></span><span class="fp-fixture-body"><span class="fp-match-comp">'+fpEsc(m.competition)+(i===0?' · Next up':'')+'</span><span class="fp-match-teams">'+fpEsc(m.homeTeam)+' <em>vs</em> '+fpEsc(m.awayTeam)+'</span><span class="fp-match-meta">'+date.toLocaleDateString(undefined,{weekday:'long'})+' · '+date.toLocaleTimeString(undefined,{hour:'2-digit',minute:'2-digit'})+' · Local time</span></span><span class="fp-fixture-check" aria-hidden="true">'+(selected?'✓':'→')+'</span></button>';
   }).join('');
+  container.querySelectorAll('[data-fixture]').forEach(function(button){button.onclick=function(){selectMatch(this.dataset.fixture);};});
 }
-
 function selectMatch(id){
-  selMatch = matchesList.find(function(m){ return m.id === id; });
-  renderMatchGrid();
-  goToStep(3);
+  var fixture=playerFixtures().find(function(m){return m.id===id;});
+  if(!fixture){showToast('Choose an open fixture involving your player’s team.','error');return;}
+  if(!selMatch||selMatch.id!==fixture.id){selMarket=null;selOptionIds=[];optionsList=[];}
+  selMatch=fixture;renderMatchGrid();goToStep(3);
 }
-window.selectMatch = selectMatch;
+window.selectMatch=selectMatch;
 
 function renderMarketGrid(){
   var container = document.getElementById('stepMarketGrid');
@@ -1132,6 +1174,7 @@ function renderReview(){
 }
 
 async function submitActivation(){
+  if(!selMatch||!playerFixtures().some(function(m){return m.id===selMatch.id;})){showToast('This fixture is no longer eligible. Choose an open match for your player’s team.','error');goToStep(2);return;}
   if(document.getElementById('btnActivate').disabled)return;
   var btn = document.getElementById('btnActivate');
   if(btn) { btn.disabled = true; btn.textContent = 'Locking Shares & Activating...'; }
@@ -1494,6 +1537,7 @@ window.settleFanPlay = settleFanPlay;
 loadInitialData();
 setInterval(loadUserFanPlays, 15000);
 window.addEventListener('fantrade:statechange', loadUserFanPlays);
+window.addEventListener('fantrade:profiles',function(){useLocalShares();if(selAsset){var updated=eligibleAssets.find(function(a){return a.symbol===selAsset.symbol;});if(updated)selAsset=updated;renderMatchGrid();}});
 """
 page("fanplay.html", "FanPlay — Fantrade", "".join(fp), FP_JS, FP_CSS, app=True)
 

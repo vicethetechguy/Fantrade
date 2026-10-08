@@ -26,6 +26,7 @@ import {
   SettlementUnavailableError,
 } from '../domain/errors.js';
 import { randomUUID } from 'crypto';
+import { clubInFixture } from '../domain/fixture-eligibility.js';
 
 export class FanPlayService {
   private ownershipService: OwnershipService;
@@ -122,8 +123,9 @@ export class FanPlayService {
     let assetSymbol = input.assetSymbol;
     let assetId = '';
     if (input.assetSymbol) {
-      const asset = await this.prisma.asset.findUnique({ where: { symbol: input.assetSymbol } });
+      const asset = await this.prisma.asset.findUnique({ where: { symbol: input.assetSymbol }, include: { playerProfile: true, coachProfile: true } });
       if (!asset) throw new Error(`Asset ${input.assetSymbol} not found.`);
+      if (!clubInFixture(asset.playerProfile?.club || asset.coachProfile?.club, match.homeTeam, match.awayTeam)) throw new InvalidSelectionError('Choose a fixture involving this player’s team.');
       assetId = asset.id;
       assetSymbol = asset.symbol;
     }
@@ -275,10 +277,11 @@ export class FanPlayService {
       if (!input.assetSymbol) {
         throw new InvalidSelectionError('An individual FanPlay requires an assetSymbol.');
       }
-      const asset = await this.prisma.asset.findUnique({ where: { symbol: input.assetSymbol } });
+      const asset = await this.prisma.asset.findUnique({ where: { symbol: input.assetSymbol }, include: { playerProfile: true, coachProfile: true } });
       if (!asset || asset.status !== 'ACTIVE') {
         throw new DomainError(`Asset ${input.assetSymbol} not found or inactive.`, 'ASSET_INACTIVE', 400);
       }
+      if (!clubInFixture(asset.playerProfile?.club || asset.coachProfile?.club, match.homeTeam, match.awayTeam)) throw new InvalidSelectionError('Choose a fixture involving this player’s team.');
       targetAssetId = asset.id;
 
       // Ownership Check

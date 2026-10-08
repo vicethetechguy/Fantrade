@@ -28,6 +28,8 @@ def apply_design(filename, html):
     if filename in GUIDE_PAGES:
         styles += '<link rel="stylesheet" href="public/app-guide.css">'
     styles += '<link rel="stylesheet" href="public/app-polish.css">'
+    if filename in ('fanplay.html', 'leaderboard.html', 'wallet.html', 'ftr.html'):
+        styles += '<link rel="stylesheet" href="public/app-premium.css">'
     styles += '<script src="public/app-polish.js" defer></script>'
     return html.replace('<link rel="stylesheet" href="public/brand.css">', styles + '<link rel="stylesheet" href="public/brand.css">', 1).replace('<body class="app">', '<body class="app calm">', 1)
 
