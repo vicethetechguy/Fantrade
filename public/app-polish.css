@@ -46,3 +46,26 @@ body.app.calm .fp-asset-card[aria-pressed="true"],body.app.calm .fp-asset-card.s
  body.app.calm .fp-compact-progress progress::-moz-progress-bar{background:#1800ad}
  body.app.calm .wallet-spendable{flex-wrap:wrap}
 }
+
+/* Home market: consistent price and change columns, including small mobile screens. */
+body.app.calm #homeMarketRows .kc-row{grid-template-columns:minmax(0,1fr) 124px 70px!important;gap:12px!important;padding:14px 0!important}
+body.app.calm #homeMarketRows .kc-row-mid,body.app.calm #homeMarketRows .kc-row-right{min-width:0}
+body.app.calm #homeMarketRows .kc-price-main,body.app.calm #homeMarketRows .kc-price-sub,body.app.calm #homeMarketRows .kc-pill{white-space:nowrap;line-height:1.4}
+body.app.calm #homeMarketRows .kc-price-sub{font-size:11px!important;margin-top:3px}
+body.app.calm #homeMarketRows .kc-row-left>div:last-child{flex:1;min-width:0}
+@media(max-width:680px){
+ body.app.calm #homeMarketRows .kc-row{grid-template-columns:minmax(0,1fr) 112px 52px!important;gap:8px!important}
+ body.app.calm #homeMarketRows .kc-price-main{font-size:13px!important}
+ body.app.calm #homeMarketRows .kc-pair-title{font-size:13px!important}
+ body.app.calm #homeMarketRows .kc-pair-sub{font-size:11px!important}
+ body.app.calm #homeMarketRows .kc-pill{font-size:11px!important}
+ body.app.calm #homeMarketRows .kc-row-left{gap:8px}
+}
+@media(max-width:360px){
+ body.app.calm #homeMarketRows .kc-row{grid-template-columns:minmax(0,1fr) 104px 46px!important;gap:6px!important}
+ body.app.calm #homeMarketRows .kc-price-main{font-size:12px!important}
+ body.app.calm #homeMarketRows .kc-price-sub,body.app.calm #homeMarketRows .kc-pair-sub{font-size:10px!important}
+ body.app.calm #homeMarketRows .kc-avatar{width:34px!important;height:34px!important}
+ body.app.calm #homeMarketRows .kc-row-left{gap:7px}
+ body.app.calm #homeMarketRows .kc-pill{font-size:10px!important}
+}

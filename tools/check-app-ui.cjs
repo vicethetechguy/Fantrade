@@ -134,6 +134,8 @@ const server = http.createServer((request, response) => {
     });
     await page.goto(`${base}/wallet.html`, { waitUntil: 'domcontentloaded' });
     await page.locator('#walAssets a[href*="FKM7"]').click();
+    await page.waitForURL('**/asset.html?a=FKM7');
+    await page.waitForLoadState('domcontentloaded');
     assert.equal(await page.locator('#assetName').innerText(), 'Kylian Mbappé', 'Wallet legacy shares must open the correct player');
     assert(await page.locator('#assetContent').isVisible(), 'Player detail UI must be present');
     assert((await page.locator('#assetHolding').innerText()).includes('801 shares held'), 'Legacy holding quantity must appear in player details');
