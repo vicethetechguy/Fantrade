@@ -32,60 +32,6 @@ body.app.calm .fp-asset-card{border:0!important;border-radius:18px!important;bac
 body.app.calm .fp-asset-card.selected{background:#1800ad!important}
 body.app.calm .fp-asset-card.selected .fp-asset-name,body.app.calm .fp-asset-card.selected .fp-asset-avail{color:#e4dfff!important}
 body.app.calm .fp-nav-btns button:disabled{opacity:.35;cursor:not-allowed}
-/* Standings — a leading trio, your club and an uncluttered full field. */
-body.app.calm .lb2-wrap.premium-standings{max-width:1120px!important;padding-top:36px!important}
-body.app.calm .standings-intro{display:flex;align-items:flex-end;justify-content:space-between;gap:28px;margin:0 0 38px}
-body.app.calm .standings-intro h1{font-size:clamp(32px,4.5vw,58px);margin:0 0 16px;line-height:1.08}
-body.app.calm .standings-intro p{font-size:14px;line-height:1.8;color:#a7a7b2;max-width:430px}
-body.app.calm .standings-guide{flex:none;padding:13px 20px;border-radius:999px;font-size:12px;display:flex;gap:22px;align-items:center}
-body.app.calm .standings-meta{display:flex;justify-content:space-between;gap:16px;align-items:center;margin:0 0 18px;font-size:11px;color:#a7a7b2;flex-wrap:wrap}
-body.app.calm .standings-meta>span:first-child{display:flex;gap:9px;align-items:center;color:#fff}
-body.app.calm .standings-meta i{width:6px;height:6px;background:#1800ad;border-radius:50%}
-body.app.calm .standings-podium{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-bottom:26px}
-body.app.calm .standings-leader{background:#111112;border-radius:22px;padding:24px;position:relative;overflow:hidden;min-width:0}
-body.app.calm .standings-leader.leader-1{background:linear-gradient(145deg,#1800ad,#0d005f)}
-body.app.calm .standings-leader-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:25px;color:#b7b7c0;font-size:11px}
-body.app.calm .standings-leader-top>b{font-size:20px;color:rgba(255,255,255,.5);font-weight:800}
-body.app.calm .standings-crest{display:grid;place-items:center;width:46px;height:46px;background:#232326;border-radius:15px;flex:none}
-body.app.calm .standings-crest img{width:32px;height:24px;object-fit:contain}
-body.app.calm .leader-1 .standings-crest{background:rgba(255,255,255,.12)}
-body.app.calm .standings-leader h2{font-size:19px;margin:20px 0 7px;overflow-wrap:anywhere}
-body.app.calm .standings-leader p{font-size:11px;color:#aaaab5;overflow-wrap:anywhere;line-height:1.6}
-body.app.calm .leader-1 p,body.app.calm .leader-1 .standings-leader-top{color:#d2cbf5}
-body.app.calm .standings-leader-score{font-size:30px;font-weight:800;margin-top:26px;letter-spacing:-.04em}
-body.app.calm .standings-leader-score small{display:block;letter-spacing:0;font-size:10px;font-weight:400;color:#aaaab5;margin-top:6px}
-body.app.calm .leader-1 .standings-leader-score small{color:#d2cbf5}
-body.app.calm .standings-mine{display:flex;align-items:center;gap:18px;padding:22px 24px;background:#111112;border-radius:20px;margin:0 0 48px}
-body.app.calm .standings-mine-mark{display:grid;place-items:center;width:44px;height:44px;background:#1800ad;border-radius:50%;flex:none}
-body.app.calm .standings-mine-mark img{width:30px;height:24px;object-fit:contain}
-body.app.calm .standings-mine>div{min-width:0}
-body.app.calm .standings-mine b{display:block;font-size:17px;overflow-wrap:anywhere}
-body.app.calm .standings-mine small,body.app.calm .standings-mine>div>span{display:block;font-size:11px;color:#a7a7b2;margin:5px 0}
-body.app.calm .standings-mine-points{margin-left:auto;text-align:right;flex:none}
-body.app.calm .standings-mine-points b{font-size:25px}
-body.app.calm .standings-mine>a{display:grid;place-items:center;width:38px;height:38px;background:#1800ad;border-radius:50%;font-size:19px;flex:none}
-body.app.calm .standings-controls{display:flex;align-items:center;justify-content:space-between;gap:20px;margin-bottom:26px}
-body.app.calm .standings-controls h2{font-size:24px;margin-bottom:7px}
-body.app.calm .standings-controls p{color:#92929d;font-size:12px}
-body.app.calm .standings-search{display:flex;align-items:center;gap:10px;border-radius:999px;background:#111112;padding:14px 18px;max-width:320px;width:100%;color:#9999a4}
-body.app.calm .standings-search input{min-width:0;width:100%;border:0;background:transparent;color:#fff;font-size:12px;padding:0;outline:none;box-shadow:none}
-body.app.calm .standings-columns{display:grid;grid-template-columns:minmax(0,1fr) 170px 110px;font-size:10px;color:#888894;padding:0 14px 16px}
-body.app.calm .standings-columns span:not(:first-child){text-align:right}
-body.app.calm .lb2-row.standings-row{display:grid;grid-template-columns:32px 46px minmax(0,1fr) 160px 110px;gap:18px;align-items:center;padding:18px 14px!important;border:0!important;background:transparent!important;border-radius:16px;width:100%;text-align:left;color:#fff;cursor:pointer;box-shadow:none!important}
-body.app.calm .lb2-row.standings-row:hover,body.app.calm .lb2-row.standings-row.you{background:#111112!important}
-body.app.calm .standings-rank{font-size:13px;color:#9999a4;font-variant-numeric:tabular-nums}
-body.app.calm .standings-club{min-width:0}
-body.app.calm .standings-club b{display:block;font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-body.app.calm .standings-club small{display:block;font-size:11px;color:#9999a4;margin-top:7px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-body.app.calm .standings-club em{font-style:normal;font-size:9px;border-radius:20px;padding:3px 6px;background:#1800ad;margin-left:7px;vertical-align:middle}
-body.app.calm .standings-value,body.app.calm .standings-points{text-align:right;font-size:17px;font-variant-numeric:tabular-nums;white-space:nowrap}
-body.app.calm .standings-value{color:#aaaab5;font-size:13px}
-body.app.calm .standings-value small,body.app.calm .standings-points small{display:block;font-size:9px;color:#92929d;margin-top:5px}
-body.app.calm .standings-note{font-size:11px;line-height:1.8;color:#888894;margin-top:25px;max-width:600px}
-body.app.calm .standings-empty{padding:28px 14px;color:#9999a4;font-size:13px;line-height:1.8}
-body.app.calm .standings-empty h3{font-size:20px;color:#fff;margin-bottom:10px}
-body.app.calm .standings-dialog-score{display:flex;justify-content:space-between;align-items:center;gap:20px;font-size:36px;font-weight:800;margin:24px 0}
-body.app.calm .standings-dialog-score span{font-size:24px}
 /* Wallet — an open balance overview, with blue reserved for useful actions. */
 body.app.calm .wallet-layout{display:grid;grid-template-columns:1fr!important;gap:0}
 body.app.calm .wallet-layout .wallet-balance-overview{background:transparent!important;border:0!important;box-shadow:none!important;border-radius:0!important;padding:18px 0 38px!important;overflow:visible!important}
@@ -114,36 +60,6 @@ body.app.calm .wallet-value-note{font-size:10px!important;line-height:1.8;color:
  body.app.calm .wallet-layout .kc-alloc-card{align-self:center;margin-bottom:38px}
 }
 @media(max-width:600px){
- body.app.calm .lb2-wrap.premium-standings{padding-top:20px!important}
- body.app.calm .standings-intro{display:block;margin-bottom:30px}
- body.app.calm .standings-intro h1{font-size:38px}
- body.app.calm .standings-guide{display:inline-flex;margin-top:18px}
- body.app.calm .standings-podium{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:18px}
- body.app.calm .standings-leader{padding:18px;border-radius:18px}
- body.app.calm .standings-leader.leader-1{grid-column:1/-1;display:grid;grid-template-columns:48px minmax(0,1fr) auto;gap:0 14px;align-items:center}
- body.app.calm .leader-1 .standings-leader-top{grid-column:1/-1;margin-bottom:20px}
- body.app.calm .leader-1 .standings-crest{grid-row:2/4}
- body.app.calm .leader-1 h2{margin:0 0 7px;font-size:18px}
- body.app.calm .leader-1 p{grid-column:2;grid-row:3}
- body.app.calm .leader-1 .standings-leader-score{grid-column:3;grid-row:2/4;font-size:26px;margin:0;text-align:right}
- body.app.calm .standings-leader-top{font-size:10px;margin-bottom:18px;gap:8px}
- body.app.calm .standings-leader h2{font-size:15px;margin-top:16px}
- body.app.calm .standings-leader p{font-size:10px}
- body.app.calm .standings-leader-score{font-size:24px;margin-top:20px}
- body.app.calm .standings-mine{padding:18px 14px;gap:12px;margin-bottom:32px}
- body.app.calm .standings-mine b{font-size:14px}
- body.app.calm .standings-mine-points b{font-size:20px}
- body.app.calm .standings-mine>a{width:32px;height:32px}
- body.app.calm .standings-controls{display:block;margin-bottom:22px}
- body.app.calm .standings-search{max-width:none;margin-top:18px}
- body.app.calm .standings-columns{grid-template-columns:1fr 80px;padding-left:0;padding-right:0}
- body.app.calm .standings-columns>span:nth-child(2),body.app.calm .standings-value{display:none}
- body.app.calm .lb2-row.standings-row{grid-template-columns:22px 36px minmax(0,1fr) 66px;gap:10px;padding:16px 0!important}
- body.app.calm .standings-row .standings-crest{width:36px;height:36px;border-radius:12px}
- body.app.calm .standings-row .standings-crest img{width:27px;height:20px}
- body.app.calm .standings-club b{font-size:13px}
- body.app.calm .standings-club small{font-size:10px}
- body.app.calm .standings-points{font-size:16px}
  body.app.calm .fp-selection-context{padding:16px;gap:12px;border-radius:18px}
  body.app.calm .fp-selection-context b{font-size:14px}
  body.app.calm .fp-context-photo{width:40px!important;height:40px!important}
@@ -165,7 +81,6 @@ body.app.calm .wallet-value-note{font-size:10px!important;line-height:1.8;color:
  body.app.calm .wallet-balance-overview .kc-card-bal small{font-size:12px;margin-left:7px}
  body.app.calm .wallet-balance-overview .kc-card-top{gap:12px;flex-wrap:wrap}
 }
-@media(prefers-reduced-motion:reduce){body.app.calm .fp-match-card,body.app.calm .standings-row{transition:none}}
 
 /* A compact overview keeps the entry journey closer to the top of the screen. */
 body.app.calm .fp-metrics-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:16px!important;margin:0 0 28px!important}
@@ -177,27 +92,6 @@ body.app.calm .fp-metric-val{font-size:22px!important;overflow-wrap:anywhere}
  body.app.calm .fp-metric-val{font-size:18px!important}
 }
 
-/* Compact social standings: horizontal highlights and an open ranked list. */
-body.app.calm .lb2-wrap.premium-standings{max-width:960px!important}
-body.app.calm .standings-intro{display:flex;margin-bottom:24px;align-items:center}
-body.app.calm .standings-intro h1{font-size:26px!important;margin:0;line-height:1.2}
-body.app.calm .standings-guide{margin:0;padding:11px 16px;font-size:11px}
-body.app.calm .standings-highlights-title{font-size:15px;margin:24px 0 14px}
-body.app.calm .standings-podium{display:flex;overflow-x:auto;gap:12px;scrollbar-width:none;padding-bottom:4px}
-body.app.calm .standings-podium::-webkit-scrollbar{display:none}
-body.app.calm .standings-leader,body.app.calm .standings-leader.leader-1{display:flex;flex-direction:column;align-items:center;flex:1 0 160px;min-width:160px;padding:18px;border-radius:20px;text-align:center;background:#111112}
-body.app.calm .standings-leader-top,body.app.calm .leader-1 .standings-leader-top{width:100%;margin:0 0 14px;font-size:10px;color:#a7a7b2}
-body.app.calm .standings-leader-top>b{font-size:14px}
-body.app.calm .standings-leader h2,body.app.calm .leader-1 h2{font-size:13px;margin:12px 0 6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
-body.app.calm .standings-leader p,body.app.calm .leader-1 p{font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;color:#9999a4}
-body.app.calm .standings-leader-score,body.app.calm .leader-1 .standings-leader-score{font-size:19px;margin-top:16px;padding:10px 14px;border-radius:13px;background:#19191d;color:#35d68d;letter-spacing:0;text-align:center}
-body.app.calm .standings-mine{margin:22px 0 28px;padding:16px;gap:12px}
-body.app.calm .standings-mine b{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-body.app.calm .standings-mine-points b{font-size:18px}
-body.app.calm .standings-controls h2{font-size:18px}
-body.app.calm .standings-points{color:#35d68d;font-size:15px}
-body.app.calm .standings-rank{font-size:12px}
-body.app.calm .standings-row:nth-child(-n+3) .standings-rank{color:#e7c57f}
 html body.app.calm .fp-metric-lbl{white-space:nowrap;min-height:0!important;font-size:11px!important;line-height:1.4}
 body.app.calm .fp-metric-val{white-space:nowrap;overflow-wrap:normal;font-size:20px!important;line-height:1.4}
 body.app.calm .fp-panel-title{font-size:clamp(22px,3vw,30px)!important}
@@ -208,20 +102,4 @@ body.app.calm .fp-opt-meta{font-size:10px!important;line-height:1.5}
  body.app.calm .fp-metrics-grid{gap:8px!important}
  html body.app.calm .fp-metric-lbl{font-size:clamp(8px,2.3vw,11px)!important}
  body.app.calm .fp-metric-val{font-size:clamp(12px,3.4vw,18px)!important}
- body.app.calm .standings-intro h1{font-size:22px!important}
- body.app.calm .standings-points{font-size:13px}
- body.app.calm .standings-club b{font-size:12px}
- body.app.calm .standings-mine-mark{width:34px;height:34px}
- body.app.calm .standings-mine>a{width:28px;height:28px}
 }
-
-html body.app.calm .standings-leader,html body.app.calm .standings-leader.leader-1{min-height:0!important;padding:16px!important}
-html body.app.calm .standings-leader h2,html body.app.calm .leader-1 h2{font-size:13px!important;margin:10px 0 5px!important}
-html body.app.calm .standings-leader p{font-size:10px!important;margin:0!important}
-html body.app.calm .standings-leader-score,html body.app.calm .leader-1 .standings-leader-score{font-size:18px!important;margin:12px 0 0!important;padding:8px 12px!important}
-html body.app.calm .standings-leader-score small{font-size:9px!important;margin-top:4px}
-html body.app.calm .standings-leader-top{margin-bottom:10px!important}
-html body.app.calm .standings-highlights-title{font-size:15px!important}
-html body.app.calm .standings-controls h2{font-size:18px!important}
-html body.app.calm .standings-club b{font-size:14px!important}
-@media(max-width:600px){html body.app.calm .standings-club b{font-size:12px!important}}

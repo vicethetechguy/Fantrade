@@ -3243,10 +3243,12 @@ function showToast(msg, type){
 }
 
 // Universal Modal
+var modalHideTimer=null;
 function openModal(html){
   var bd = document.getElementById('ftModalBackdrop');
   var ct = document.getElementById('ftModalContent');
   if(!bd || !ct) return;
+  clearTimeout(modalHideTimer);
   ct.innerHTML = html;
   bd.style.display = 'flex';
   requestAnimationFrame(function(){ bd.classList.add('open'); });
@@ -3255,7 +3257,8 @@ function closeModal(){
   var bd = document.getElementById('ftModalBackdrop');
   if(!bd) return;
   bd.classList.remove('open');
-  setTimeout(function(){ bd.style.display = 'none'; }, 260);
+  clearTimeout(modalHideTimer);
+  modalHideTimer=setTimeout(function(){ if(!bd.classList.contains('open'))bd.style.display = 'none'; }, 260);
 }
 var mc = document.getElementById('ftModalClose');
 if(mc) mc.addEventListener('click', closeModal);

@@ -13,6 +13,8 @@ def apply_design(filename, html):
     if filename not in PAGES:
         return html
     styles = '<link rel="stylesheet" href="public/app-onboarding.css">'
+    if filename == 'leaderboard.html':
+        styles += '<link rel="stylesheet" href="public/leaderboard.css">'
     if filename == 'asset.html':
         styles += '<link rel="stylesheet" href="public/asset-details.css">'
     if filename in ('wallet.html', 'ftr.html'):
