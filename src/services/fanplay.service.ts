@@ -1,3 +1,4 @@
+import { activityRule, supportsActivity } from '../domain/activity-rules.js';
 import { PrismaClient, Prisma } from '@prisma/client';
 import { prisma as defaultPrisma } from '../database/client.js';
 import { OwnershipService } from './ownership.service.js';
@@ -96,7 +97,7 @@ export class FanPlayService {
     assetId?: string;
     marketTier?: MarketTier;
   }) {
-    return this.prisma.fanPlayOption.findMany({
+    const options = await this.prisma.fanPlayOption.findMany({
       where: {
         matchId: params.matchId,
         assetId: params.assetId !== undefined ? params.assetId : undefined,
@@ -108,6 +109,7 @@ export class FanPlayService {
         match: true,
       },
     });
+    return options.filter(o => o.asset && supportsActivity(o.asset.type, o.evaluationRule));
   }
 
   // ============================================================
@@ -122,11 +124,13 @@ export class FanPlayService {
 
     let assetSymbol = input.assetSymbol;
     let assetId = '';
+    let assetType: 'PLAYER' | 'COACH' = 'PLAYER';
     if (input.assetSymbol) {
       const asset = await this.prisma.asset.findUnique({ where: { symbol: input.assetSymbol }, include: { playerProfile: true, coachProfile: true } });
       if (!asset) throw new Error(`Asset ${input.assetSymbol} not found.`);
       if (!clubInFixture(asset.playerProfile?.club || asset.coachProfile?.club, match.homeTeam, match.awayTeam)) throw new InvalidSelectionError('Choose a fixture involving this player’s team.');
       assetId = asset.id;
+      assetType = asset.type;
       assetSymbol = asset.symbol;
     }
 
@@ -137,6 +141,8 @@ export class FanPlayService {
     if (options.length === 0) {
       throw new InvalidSelectionError('At least one prediction option must be selected.');
     }
+
+    if(options.length !== input.selectedOptionIds.length || (assetId && options.some(o => o.assetId !== assetId || o.matchId !== match.id || o.status !== 'ACTIVE' || !supportsActivity(assetType,o.evaluationRule)))) throw new InvalidSelectionError('Choose published activities for this player or coach and fixture.');
 
     const stake = input.stakedShares;
     const maxPotentialFP = options.reduce((sum, o) => sum + o.successFP * stake, 0);
@@ -282,6 +288,7 @@ export class FanPlayService {
         throw new DomainError(`Asset ${input.assetSymbol} not found or inactive.`, 'ASSET_INACTIVE', 400);
       }
       if (!clubInFixture(asset.playerProfile?.club || asset.coachProfile?.club, match.homeTeam, match.awayTeam)) throw new InvalidSelectionError('Choose a fixture involving this player’s team.');
+      if(options.some(o => o.assetId !== asset.id || o.status !== 'ACTIVE' || o.marketConfigId !== marketConfig.id || !supportsActivity(asset.type,o.evaluationRule))) throw new InvalidSelectionError('Choose published activities for this player or coach and tier.');
       targetAssetId = asset.id;
 
       // Ownership Check
@@ -452,7 +459,7 @@ export class FanPlayService {
       include: {
         selections: { include: { option: true } },
         match: true,
-        asset: true,
+        asset: { include: { playerProfile: true, coachProfile: true } },
         settlement: true,
       },
     });
@@ -478,18 +485,13 @@ export class FanPlayService {
     // 2. Fetch authoritative match events and player stats (§20, §54)
     const events = await this.footballDataProvider.getEvents(fanPlay.matchId);
     let playerStats: NormalizedPlayerStats | null = null;
-    if (fanPlay.assetId) {
+    if (fanPlay.assetId && fanPlay.asset?.type !== 'COACH') {
       playerStats = await this.footballDataProvider.getPlayerStats(fanPlay.matchId, fanPlay.assetId);
     }
 
     // 3. Evaluate each selection deterministically (§19, §30, §31)
     const evaluationInputs = fanPlay.selections.map((sel) => {
-      let parsedRule: EvaluationRule;
-      try {
-        parsedRule = JSON.parse(sel.evaluationRuleSnapshot);
-      } catch {
-        parsedRule = { metric: 'goals', op: 'gte', value: 1 };
-      }
+      const parsedRule = activityRule(sel.evaluationRuleSnapshot) || {metric:'unavailable',op:'eq' as const};
 
       return {
         optionId: sel.optionId,
@@ -501,10 +503,19 @@ export class FanPlayService {
         evaluationRule: parsedRule,
         assetId: sel.assetId || fanPlay.assetId || undefined,
         stakedShares: fanPlay.stakedShares,
+        assetType: fanPlay.asset?.type,
+        coachContext: fanPlay.asset?.type === 'COACH' ? {
+          club: fanPlay.asset.coachProfile?.club || '',
+          homeTeam: fanPlay.match.homeTeam, awayTeam: fanPlay.match.awayTeam,
+          homeScore: fanPlay.match.homeScore, awayScore: fanPlay.match.awayScore,
+          final: fanPlay.match.status === 'FULL_TIME',
+        } : undefined,
       };
     });
 
     const evalResult = this.evaluationService.evaluateFanPlay(evaluationInputs, playerStats, events);
+
+    if(evalResult.selections.some(s => s.result === 'PENDING')) throw new SettlementUnavailableError('Verified activity data is incomplete. Settlement will wait for confirmed match data.');
 
     // 4. Update individual selection results
     for (const selRes of evalResult.selections) {

@@ -173,6 +173,55 @@ body.app.calm .fp-metric-card{min-width:0;padding:0!important;gap:8px}
 body.app.calm .fp-metric-val{font-size:22px!important;overflow-wrap:anywhere}
 @media(max-width:600px){
  body.app.calm .fp-metrics-grid{gap:12px!important;margin-bottom:24px!important}
- body.app.calm .fp-metric-lbl{font-size:10px!important;line-height:1.5;min-height:30px}
+ html body.app.calm .fp-metric-lbl{font-size:10px!important;line-height:1.5;min-height:30px}
  body.app.calm .fp-metric-val{font-size:18px!important}
 }
+
+/* Compact social standings: horizontal highlights and an open ranked list. */
+body.app.calm .lb2-wrap.premium-standings{max-width:960px!important}
+body.app.calm .standings-intro{display:flex;margin-bottom:24px;align-items:center}
+body.app.calm .standings-intro h1{font-size:26px!important;margin:0;line-height:1.2}
+body.app.calm .standings-guide{margin:0;padding:11px 16px;font-size:11px}
+body.app.calm .standings-highlights-title{font-size:15px;margin:24px 0 14px}
+body.app.calm .standings-podium{display:flex;overflow-x:auto;gap:12px;scrollbar-width:none;padding-bottom:4px}
+body.app.calm .standings-podium::-webkit-scrollbar{display:none}
+body.app.calm .standings-leader,body.app.calm .standings-leader.leader-1{display:flex;flex-direction:column;align-items:center;flex:1 0 160px;min-width:160px;padding:18px;border-radius:20px;text-align:center;background:#111112}
+body.app.calm .standings-leader-top,body.app.calm .leader-1 .standings-leader-top{width:100%;margin:0 0 14px;font-size:10px;color:#a7a7b2}
+body.app.calm .standings-leader-top>b{font-size:14px}
+body.app.calm .standings-leader h2,body.app.calm .leader-1 h2{font-size:13px;margin:12px 0 6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+body.app.calm .standings-leader p,body.app.calm .leader-1 p{font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;color:#9999a4}
+body.app.calm .standings-leader-score,body.app.calm .leader-1 .standings-leader-score{font-size:19px;margin-top:16px;padding:10px 14px;border-radius:13px;background:#19191d;color:#35d68d;letter-spacing:0;text-align:center}
+body.app.calm .standings-mine{margin:22px 0 28px;padding:16px;gap:12px}
+body.app.calm .standings-mine b{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+body.app.calm .standings-mine-points b{font-size:18px}
+body.app.calm .standings-controls h2{font-size:18px}
+body.app.calm .standings-points{color:#35d68d;font-size:15px}
+body.app.calm .standings-rank{font-size:12px}
+body.app.calm .standings-row:nth-child(-n+3) .standings-rank{color:#e7c57f}
+html body.app.calm .fp-metric-lbl{white-space:nowrap;min-height:0!important;font-size:11px!important;line-height:1.4}
+body.app.calm .fp-metric-val{white-space:nowrap;overflow-wrap:normal;font-size:20px!important;line-height:1.4}
+body.app.calm .fp-panel-title{font-size:clamp(22px,3vw,30px)!important}
+body.app.calm .fp-panel-sub{font-size:13px!important;line-height:1.7}
+body.app.calm .fp-opt-label{font-size:13px!important;line-height:1.5}
+body.app.calm .fp-opt-meta{font-size:10px!important;line-height:1.5}
+@media(max-width:600px){
+ body.app.calm .fp-metrics-grid{gap:8px!important}
+ html body.app.calm .fp-metric-lbl{font-size:clamp(8px,2.3vw,11px)!important}
+ body.app.calm .fp-metric-val{font-size:clamp(12px,3.4vw,18px)!important}
+ body.app.calm .standings-intro h1{font-size:22px!important}
+ body.app.calm .standings-points{font-size:13px}
+ body.app.calm .standings-club b{font-size:12px}
+ body.app.calm .standings-mine-mark{width:34px;height:34px}
+ body.app.calm .standings-mine>a{width:28px;height:28px}
+}
+
+html body.app.calm .standings-leader,html body.app.calm .standings-leader.leader-1{min-height:0!important;padding:16px!important}
+html body.app.calm .standings-leader h2,html body.app.calm .leader-1 h2{font-size:13px!important;margin:10px 0 5px!important}
+html body.app.calm .standings-leader p{font-size:10px!important;margin:0!important}
+html body.app.calm .standings-leader-score,html body.app.calm .leader-1 .standings-leader-score{font-size:18px!important;margin:12px 0 0!important;padding:8px 12px!important}
+html body.app.calm .standings-leader-score small{font-size:9px!important;margin-top:4px}
+html body.app.calm .standings-leader-top{margin-bottom:10px!important}
+html body.app.calm .standings-highlights-title{font-size:15px!important}
+html body.app.calm .standings-controls h2{font-size:18px!important}
+html body.app.calm .standings-club b{font-size:14px!important}
+@media(max-width:600px){html body.app.calm .standings-club b{font-size:12px!important}}

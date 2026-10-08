@@ -509,7 +509,7 @@ fp.append('<div class="fp-view-nav">'
 # ══════════════════════════════════════════════════════════
 fp.append('<div id="fpViewWizard">'
           '<!-- Step Indicator -->'
-          '<div class="fp-compact-progress"><p id="fpProgressText" role="status" aria-live="polite">Step 1 of 6 · Choose your player</p><progress id="fpProgress" value="1" max="6" aria-label="FanPlay entry progress"></progress></div>'
+          '<div class="fp-compact-progress"><p id="fpProgressText" role="status" aria-live="polite">Step 1 of 6 · Choose your shares</p><progress id="fpProgress" value="1" max="6" aria-label="FanPlay entry progress"></progress></div>'
           '<div class="fp-step-bar">'
           '<div class="fp-step-dot active" id="sdot1" onclick="window.goToStep(1)"><div class="fp-step-circle">1</div><span class="fp-step-label">Asset</span></div>'
           '<div class="fp-step-dot" id="sdot2" onclick="window.goToStep(2)"><div class="fp-step-circle">2</div><span class="fp-step-label">Match</span></div>'
@@ -524,7 +524,7 @@ fp.append('<div class="fp-selection-context" id="fpSelectionContext" hidden></di
 
 # Step 1: Choose Asset
 fp.append('<div class="fp-panel" id="stepBox1">'
-          '<div class="fp-panel-title">Choose your player.</div>'
+          '<div class="fp-panel-title">Choose your shares.</div>'
           '<div class="fp-panel-sub">Choose a player or coach you own. Only available shares can be entered.</div>'
           '<div class="fp-asset-grid" id="stepAssetGrid"></div>'
           '<div class="fp-nav-btns"><button type="button" class="fp-btn-next" onclick="window.goToStep(2)">Next: Choose Match →</button></div>'
@@ -650,14 +650,25 @@ var DEFAULT_MATCHES = [
 ];
 
 var DEFAULT_MARKETS = [
-  { id: 'tier-1', tier: 'SIMPLE', name: 'Solo', maxSelections: 1, minSelections: 1, description: 'Choose one prediction for your player.' },
+  { id: 'tier-1', tier: 'SIMPLE', name: 'Solo', maxSelections: 1, minSelections: 1, description: 'Choose one activity prediction.' },
   { id: 'tier-2', tier: 'PRO', name: 'Pro', maxSelections: 3, minSelections: 2, description: 'Combine 2 to 3 performance predictions for higher multipliers.' },
-  { id: 'tier-3', tier: 'ELITE', name: 'Elite', maxSelections: 5, minSelections: 3, description: 'High-stakes predictions across goals, assists and performance metrics.' }
+  { id: 'tier-3', tier: 'ELITE', name: 'Elite', maxSelections: 5, minSelections: 3, description: 'Combine predictions for your player or coach’s match activities.' }
 ];
 
 function getFallbackOptions(asset, match, market){
   var name = asset ? asset.name : 'Player';
   var team = asset ? (asset.team || asset.club || 'Team') : 'Team';
+  if(asset && asset.type==='COACH'){
+    var picks=[
+      {id:'coach-win',label:team+' wins the match',category:'Team result',successFP:100,failureFP:-50,optionGroup:'result',evaluationRule:{metric:'team_won',op:'eq',value:true}},
+      {id:'coach-subs',label:'Makes 3 or more substitutions',category:'Substitutions',successFP:90,failureFP:-45,optionGroup:'substitutions',evaluationRule:{metric:'substitutions',op:'gte',value:3}},
+      {id:'coach-early',label:'Makes a substitution before 60 minutes',category:'Match management',successFP:80,failureFP:-40,optionGroup:'timing',evaluationRule:{metric:'substitutions_before_60',op:'gte',value:1}},
+      {id:'coach-clean',label:team+' keeps a clean sheet',category:'Team defence',successFP:75,failureFP:-35,optionGroup:'defence',evaluationRule:{metric:'clean_sheet',op:'eq',value:true}}
+    ];
+    var teammate=ASSETS.find(function(a){return !a.c && teamKey(a.club)===teamKey(team);});
+    if(teammate)picks.push({id:'coach-uses-'+teammate.t,label:'Uses '+teammate.n+' in the match',category:'Player selection',successFP:90,failureFP:-45,optionGroup:'selection',evaluationRule:{metric:'player_used',op:'eq',value:true,playerId:teammate.t}});
+    return picks;
+  }
   return [
     { id: 'opt-1', label: name + ' scores a goal', category: 'Goals', difficulty: 'Standard', successFP: 100, failureFP: -50, optionGroup: 'goals' },
     { id: 'opt-2', label: name + ' records an assist', category: 'Playmaking', difficulty: 'Standard', successFP: 90, failureFP: -45, optionGroup: 'assists' },
@@ -702,6 +713,7 @@ function getLocalEligibleAssets(){
       assetId: 'asset-' + sym.replace('$', '').toLowerCase(),
       symbol: sym,
       name: h.n || sym,
+      type: asset.c || h.c || profile.type==='COACH' ? 'COACH' : 'PLAYER',
       team: club,
       club: club,
       availableQuantity: avail,
@@ -719,6 +731,7 @@ function normalizeAsset(a){
     assetId: a.assetId || a.id || sym,
     symbol: sym,
     name: a.name || sym,
+    type: a.type || ((ftAsset(sym)||{}).c ? 'COACH' : 'PLAYER'),
     team: typeof a.team==='object' ? a.team.name : (a.team || a.club || ''),
     club: a.club || (typeof a.team==='object'?a.team.name:a.team) || '',
     teamId: a.teamId || a.clubId || (a.team&&a.team.id) || null,
@@ -845,7 +858,7 @@ window.goToStep = goToStep;
 function updateStepUI(){
   var progressText = document.getElementById('fpProgressText');
   var progress = document.getElementById('fpProgress');
-  if(progressText) progressText.textContent = curStep === 7 ? 'Entry confirmed' : 'Step ' + curStep + ' of 6 · ' + ['Choose your player','Choose a match','Choose a tier','Make your predictions','Choose your shares','Review your entry'][curStep - 1];
+  if(progressText) progressText.textContent = curStep === 7 ? 'Entry confirmed' : 'Step ' + curStep + ' of 6 · ' + ['Choose your shares','Choose a match','Choose a tier','Make your predictions','Choose your shares','Review your entry'][curStep - 1];
   if(progress) progress.value = Math.min(curStep, 6);
   for(var i=1; i<=7; i++){
     var dot = document.getElementById('sdot' + i);
@@ -1034,28 +1047,17 @@ window.selectMarket = selectMarket;
 
 function loadOptions(){
   if(!selAsset || !selMatch || !selMarket) return;
-  var sub = document.getElementById('stepPicksSub');
-  if(sub){
-    sub.textContent = selMarket.name + ' Tier: Select up to ' + selMarket.maxSelections + ' predictions for ' + selAsset.symbol + ' in ' + selMatch.homeTeam + ' vs ' + selMatch.awayTeam + '.';
-  }
+  var asset=selAsset,match=selMatch,market=selMarket;
+  var sub=document.getElementById('stepPicksSub');
+  if(sub)sub.textContent=(asset.type==='COACH'?'Coach activities · Team results, substitutions and player selection. ':'Player activities · On-field performance. ')+market.name+': choose up to '+market.maxSelections+' predictions.';
+  optionsList=[];selOptionIds=[];renderOptionsGrid();
   if(FT.restAccount() && FantradeAPI.getFanPlayOptions){
-    FantradeAPI.getFanPlayOptions(selAsset.assetId || selAsset.id, selMatch.id, selMarket.tier || selMarket.id).then(function(res){
-      if(res && res.success && res.data && res.data.length > 0){
-        optionsList = res.data;
-        renderOptionsGrid();
-      } else {
-        optionsList = getFallbackOptions(selAsset, selMatch, selMarket);
-        renderOptionsGrid();
-      }
-    }).catch(function(e){
-      console.warn('Options load error, using fallback options:', e);
-      optionsList = getFallbackOptions(selAsset, selMatch, selMarket);
+    FantradeAPI.getFanPlayOptions(asset.assetId || asset.id,match.id,market.tier || market.id).then(function(res){
+      if(selAsset!==asset||selMatch!==match||selMarket!==market)return;
+      optionsList=res&&res.success&&Array.isArray(res.data)?res.data:[];
       renderOptionsGrid();
-    });
-  } else {
-    optionsList = getFallbackOptions(selAsset, selMatch, selMarket);
-    renderOptionsGrid();
-  }
+    }).catch(function(){if(selAsset!==asset||selMatch!==match||selMarket!==market)return;optionsList=[];renderOptionsGrid();showToast('Predictions could not load. Please try again.','error');});
+  }else{optionsList=getFallbackOptions(asset,match,market);renderOptionsGrid();}
 }
 
 function renderOptionsGrid(){
@@ -1071,7 +1073,7 @@ function renderOptionsGrid(){
       + '<div class="fp-opt-left">'
       + '  <div class="fp-opt-check">' + (isSel ? '✓' : '') + '</div>'
       + '  <div>'
-      + '    <div class="fp-opt-label">' + opt.label + '</div>'
+      + '    <div class="fp-opt-label">' + fpEsc(opt.label) + '</div>'
       + '    <div class="fp-opt-meta"><span>Category: ' + (opt.category || 'Performance') + '</span><span>•</span><span>Difficulty: ' + (opt.difficulty || 'Standard') + '</span>' + (opt.optionGroup ? '<span>• Group: ' + opt.optionGroup + '</span>' : '') + '</div>'
       + '  </div>'
       + '</div>'
@@ -1086,6 +1088,7 @@ function renderOptionsGrid(){
 function toggleOption(id){
   var idx = selOptionIds.indexOf(id);
   var opt = optionsList.find(function(o){ return o.id === id; });
+  if(!opt)return;
   if(idx !== -1){
     selOptionIds.splice(idx, 1);
   } else {
@@ -1364,11 +1367,14 @@ function loadUserFanPlays(){
 function updateDashboardMetrics(){
   var active = userFanPlays.filter(function(e){ return e.status === 'ACTIVE'; });
   var done = userFanPlays.filter(function(e){ return e.status !== 'ACTIVE'; });
-  function set(id, text){ var el = document.getElementById(id); if(el) el.textContent = text; }
-  set('mLockedShares', fpNum(active.reduce(function(t, e){ return t + e.shares; }, 0)));
+  function set(id, text){ var el = document.getElementById(id); if(el){el.title=String(text);el.textContent=text;} }
+  function metricNum(n){return Math.abs(n)>=100000?Number(n).toLocaleString('en-US',{notation:'compact',maximumFractionDigits:1}):fpNum(n);}
+  set('mLockedShares', metricNum(active.reduce(function(t, e){ return t + e.shares; }, 0)));
   set('mActiveCount', active.length);
   set('tabActiveCount', active.length);
-  set('mProvFP', fpSigned(active.reduce(function(t, e){ return t + e.projectedFP; }, 0)) + ' FP');
+  var projected=active.reduce(function(t,e){return t+e.projectedFP;},0);
+  set('mProvFP',(projected>0?'+':'')+metricNum(projected));
+  document.getElementById('mProvFP').title=fpSigned(projected)+' FP';
   set('mSettledFTR', done.length);
 }
 

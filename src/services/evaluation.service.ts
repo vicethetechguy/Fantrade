@@ -1,3 +1,5 @@
+import { clubKey } from '../domain/fixture-eligibility.js';
+import { supportsActivity } from '../domain/activity-rules.js';
 import {
   OptionEvaluationResult,
   EvaluationRule,
@@ -14,6 +16,8 @@ export interface EvaluationInput {
   failureFP: number;
   evaluationRule: EvaluationRule;
   assetId?: string;
+  assetType?: 'PLAYER' | 'COACH';
+  coachContext?: {club:string;homeTeam:string;awayTeam:string;homeScore:number;awayScore:number;final:boolean};
   stakedShares: number;
 }
 
@@ -34,6 +38,7 @@ export class FanPlayEvaluationService {
     stats: NormalizedPlayerStats | null,
     events: NormalizedFootballEvent[]
   ): EvaluationResult {
+    if(input.assetType==='COACH') return this.evaluateCoach(input,events);
     const { rule, successFP, failureFP, stakedShares } = {
       rule: input.evaluationRule,
       successFP: input.successFP,
@@ -92,7 +97,7 @@ export class FanPlayEvaluationService {
         case 'teamresult':
         case 'team_won':
         case 'win':
-          actualVal = stats.teamWon === true;
+          actualVal = stats.teamWon;
           break;
         case 'minutes':
         case 'minutesplayed':
@@ -172,9 +177,7 @@ export class FanPlayEvaluationService {
             : `Player incurred ${metric} at minute ${matchingEvents[0].minute}.`;
         }
       } else {
-        // Default to failure if unresolvable
-        isSuccess = false;
-        explanation = `No conclusive event or statistic recorded for '${metric}'.`;
+        return this.pending(input, `Awaiting verified data for '${metric}'.`);
       }
     }
 
@@ -189,6 +192,48 @@ export class FanPlayEvaluationService {
       optionContributionFP,
       explanation,
     };
+  }
+
+  private pending(input: EvaluationInput, explanation: string): EvaluationResult {
+    return {optionId:input.optionId,result:'PENDING',optionResultFP:0,optionContributionFP:0,explanation};
+  }
+
+  private evaluateCoach(input: EvaluationInput, events: NormalizedFootballEvent[]): EvaluationResult {
+    const ctx=input.coachContext, rule=input.evaluationRule, metric=rule.metric.toLowerCase();
+    if(!ctx || !ctx.final || !supportsActivity('COACH',rule)) return this.pending(input,'Awaiting a verified coach activity and final fixture.');
+    const home=clubKey(ctx.club)===clubKey(ctx.homeTeam),away=clubKey(ctx.club)===clubKey(ctx.awayTeam);
+    if(!home && !away) return this.pending(input,'The coach team could not be matched to this fixture.');
+    const own=home?ctx.homeScore:ctx.awayScore,opponent=home?ctx.awayScore:ctx.homeScore;
+    // Never interpret another team's events as this coach's decisions. Providers can
+    // supply a canonical team name in teamId or metadata.teamName.
+    const teamEvents=events.filter(e=>clubKey(e.metadata?.teamName || e.teamId)===clubKey(ctx.club));
+    let actual:number|boolean|undefined;
+    if(['team_result','teamresult','team_won','win'].includes(metric)) actual=own>opponent;
+    else if(metric==='clean_sheet') actual=opponent===0;
+    else if(metric.startsWith('substitutions')) {
+      const subs=teamEvents.filter(e=>e.eventType==='SUBSTITUTION' && (metric!=='substitutions_before_60' || e.minute<60));
+      const complete=teamEvents.some(e=>Array.isArray(e.metadata?.completeEventTypes) && e.metadata.completeEventTypes.includes('SUBSTITUTION'));
+      // Positive thresholds can be proved by observed events; absence needs complete coverage.
+      const threshold=Number(rule.value);
+      const proven=(rule.op==='gte'&&subs.length>=threshold)||(rule.op==='gt'&&subs.length>threshold)||(rule.op==='contains'&&subs.length>0);
+      if(!complete&&!proven)return this.pending(input,'Awaiting complete team substitution data.');
+      actual=subs.length;
+    } else if(['player_used','player_started'].includes(metric)) {
+      const participation=teamEvents.find(e=>e.eventType==='MINUTES_PLAYED' && e.playerId===rule.playerId && e.metadata?.participationConfirmed===true);
+      if(!participation || (metric==='player_started' && typeof participation.metadata?.started!=='boolean'))return this.pending(input,'Awaiting confirmed player selection data.');
+      actual=metric==='player_started'?participation.metadata!.started:Number(participation.value)>0;
+    }
+    if(actual===undefined)return this.pending(input,'Awaiting verified coach data.');
+    let success=false;
+    if(typeof actual==='boolean'){
+      if(rule.op!=='eq'||typeof rule.value!=='boolean')return this.pending(input,'Invalid team-result rule.');
+      success=actual===rule.value;
+    }else{
+      const target=Number(rule.value);
+      switch(rule.op){case 'gte':success=actual>=target;break;case 'gt':success=actual>target;break;case 'lte':success=actual<=target;break;case 'lt':success=actual<target;break;case 'eq':success=actual===target;break;case 'between':success=actual>=(rule.min??0)&&actual<=(rule.max??Infinity);break;case 'contains':success=actual>0;break;case 'avoid':success=actual===0;break;}
+    }
+    const fp=success?input.successFP:input.failureFP;
+    return {optionId:input.optionId,result:success?'SUCCESS':'FAILURE',optionResultFP:fp,optionContributionFP:fp*input.stakedShares,explanation:`Verified coach activity: ${metric} = ${actual}.`};
   }
 
   /**

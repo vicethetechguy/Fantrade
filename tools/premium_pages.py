@@ -1,10 +1,10 @@
 """Season standings: consistent FP ranking, live data and an explicit preview."""
 LEADERBOARD_HTML = r'''<main><div class="lb2-wrap premium-standings">
-<header class="standings-intro"><div><span class="premium-eyebrow">The club leaderboard</span><h1>The game.<br>Your legacy.</h1><p>Build your club. Earn Fans Points. Make your way to the top.</p></div><a class="app-primary standings-guide" href="divisions.html">Explore divisions <span aria-hidden="true">↗</span></a></header>
+<header class="standings-intro"><h1>Leaderboard</h1><a class="app-primary standings-guide" href="divisions.html">Divisions ↗</a></header>
 <div class="standings-meta"><span><i></i> Season standings</span><span id="standingsSource" role="status">Loading standings…</span></div>
-<section class="standings-podium" id="standingsPodium" aria-label="Leading clubs"></section>
+<h2 class="standings-highlights-title">Clubs to watch</h2><section class="standings-podium" id="standingsPodium" aria-label="Clubs to watch"></section>
 <section class="standings-mine" aria-label="Your club"><span class="standings-mine-mark"><img src="assets/brand/fantrade-mark-white.svg" alt=""></span><div><small>Your club</small><b data-bind="club">Your club</b><span id="standingsMyRank">Not ranked yet</span></div><div class="standings-mine-points"><b id="standingsMyFP">—</b><small>season FP</small></div><a href="clubs.html" aria-label="Open your club"><span aria-hidden="true">↗</span></a></section>
-<section class="standings-field" aria-labelledby="standingsFieldTitle"><div class="standings-controls"><div><h2 id="standingsFieldTitle">The full field</h2><p id="standingsCount" role="status"></p></div><label class="standings-search"><svg class="ic" aria-hidden="true"><use href="#i-search"/></svg><span class="sr-only">Search clubs and managers</span><input id="standingsSearch" type="search" placeholder="Find a club or manager" autocomplete="off"></label></div>
+<section class="standings-field" aria-labelledby="standingsFieldTitle"><div class="standings-controls"><div><h2 id="standingsFieldTitle">Club standings</h2><p id="standingsCount" role="status"></p></div><label class="standings-search"><svg class="ic" aria-hidden="true"><use href="#i-search"/></svg><span class="sr-only">Search clubs and managers</span><input id="standingsSearch" type="search" placeholder="Find a club or manager" autocomplete="off"></label></div>
 <div class="standings-columns" aria-hidden="true"><span>Rank / Club</span><span>Club value · $FTR</span><span>Season FP</span></div><div class="lb2-list" id="lb2List"></div></section>
 <p class="standings-note">Ranked by season Fans Points. Club value is shown for context and does not determine rank.</p>
 </div></main>'''
@@ -21,7 +21,7 @@ function renderStandings(){
   document.querySelectorAll('[data-standing]').forEach(function(button){button.onclick=function(){var r=standingsRows.find(function(row){return row.id===button.dataset.standing;});if(!r)return;openModal('<span class="premium-eyebrow">'+(standingsPreview?'Preview club':'Season standing')+'</span><h2 class="ft-modal-title">'+standingsEscape(r.name)+'</h2><p class="ft-modal-desc">'+standingsEscape(r.manager)+'</p><div class="standings-dialog-score">#'+r.position+' <span>'+standingsNumber(r.fp)+' FP</span></div><p class="ft-modal-desc">Club value: '+standingsNumber(r.value)+' $FTR. Rankings follow season Fans Points.</p><a class="app-primary" href="divisions.html">Explore divisions</a>');};});
 }
 function renderPodium(){
- document.getElementById('standingsPodium').innerHTML=standingsRows.slice(0,3).map(function(r,i){return '<article class="standings-leader leader-'+(i+1)+'"><div class="standings-leader-top"><span>'+['Leading the way','The challenger','In the pursuit'][i]+'</span><b>0'+(i+1)+'</b></div>'+standingsMark(r)+'<h2>'+standingsEscape(r.name)+'</h2><p>'+standingsEscape(r.manager)+'</p><div class="standings-leader-score">'+standingsNumber(r.fp)+'<small>season FP</small></div></article>';}).join('');
+ document.getElementById('standingsPodium').innerHTML=standingsRows.slice(0,3).map(function(r,i){return '<article class="standings-leader leader-'+(i+1)+'"><div class="standings-leader-top"><span>'+'Rank #'+r.position+'</span><b>0'+(i+1)+'</b></div>'+standingsMark(r)+'<h2>'+standingsEscape(r.name)+'</h2><p>'+standingsEscape(r.manager)+'</p><div class="standings-leader-score">'+standingsNumber(r.fp)+'<small>season FP</small></div></article>';}).join('');
 }
 function adoptStandings(rows,preview){
  standingsPreview=preview;standingsRows=rows;

@@ -152,6 +152,8 @@ export type PlayerMatchEligibility =
   | 'UNKNOWN';
 
 export interface EvaluationRule {
+  /** Platform asset ID of the player selected by a coach. */
+  playerId?: string;
   metric: string;
   op: 'gte' | 'lte' | 'eq' | 'gt' | 'lt' | 'between' | 'contains' | 'avoid';
   value?: number | string | boolean;
