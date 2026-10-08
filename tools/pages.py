@@ -499,7 +499,7 @@ fp.append('<div class="fp-metrics-grid">'
 
 # Tab Switcher: Wizard vs Active vs History
 fp.append('<div class="fp-view-nav">'
-          '<button type="button" class="fp-view-btn on" id="vbtnWizard" onclick="window.switchFPView(\'wizard\')">New entry</button>'
+          '<button type="button" class="fp-view-btn on" id="vbtnWizard" onclick="window.resetWizard()">New entry</button>'
           '<button type="button" class="fp-view-btn" id="vbtnActive" onclick="window.switchFPView(\'active\')">Active (<span id="tabActiveCount">0</span>)</button>'
           '<button type="button" class="fp-view-btn" id="vbtnHistory" onclick="window.switchFPView(\'history\')">History</button>'
           '</div>')
@@ -787,7 +787,8 @@ function resetWizard(){
   selMatch = null;
   selMarket = null;
   selOptionIds = [];
-  stakeShares = 100;
+  stakeShares = 0;
+  optionsList=[]; window.fpActivationSignature=null;
   // The last activation left this disabled mid-"Locking…"; a new entry
   // needs it back, or "Create another" leads to a button that never works.
   var btn = document.getElementById('btnActivate');
@@ -1314,8 +1315,8 @@ function normaliseEntry(e, fromHistory){
     return { label: p.optionLabel || p.label || 'Prediction',
              result: String(p.evaluationResult || 'PENDING').toUpperCase(),
              win: Number(p.successFP) || 0, loss: Number(p.failureFP) || 0,
-             earned: p.earnedFP != null ? Number(p.earnedFP) : null,
-             reason: p.evaluationReason || '' };
+             earned: p.earnedFP != null ? Number(p.earnedFP) : (p.optionContributionFP!=null?Number(p.optionContributionFP):null),
+             reason: p.evaluationReason || p.explanation || '' };
   });
   var isClub = e.mode === 'Dream Club' || (!sym && !!e.target);
   var projected = isClub ? (Number(e.projectedFP) || 0)
@@ -1332,7 +1333,7 @@ function normaliseEntry(e, fromHistory){
     shares: shares, stakeFTR: Number(e.stake) || 0,
     picks: picks, projectedFP: projected,
     resultFP: e.resultFP != null ? Number(e.resultFP) : (e.totalFP != null && status === 'SETTLED' ? Number(e.totalFP) : null),
-    simulated: !!e.simulated, status: status,
+    simulated: !!e.simulated || (e.selections||[]).some(function(p){return /Demo simulation/.test(p.explanation||'');}), status: status,
     createdAt: e.createdAt || null, settledAt: e.settledAt || null
   };
 }
@@ -1350,14 +1351,14 @@ function loadUserFanPlays(){
   var local = localEntries();
   function show(remote){
     var seen = {}, all = [];
-    local.concat(remote || []).forEach(function(e){ if(e && e.id && !seen[e.id]){ seen[e.id] = 1; all.push(e); } });
+    (remote || []).concat(local).forEach(function(e){ if(e && e.id && !seen[e.id]){ seen[e.id] = 1; all.push(e); } });
     userFanPlays = all;
     updateDashboardMetrics(); renderActiveList(); renderHistoryList();
   }
   show([]);   // never a blank screen while the service is slow to answer
   if(FT.restAccount() && FantradeAPI.getFanPlays){
     FantradeAPI.getFanPlays().then(function(res){
-      if(res && res.success && Array.isArray(res.data) && res.data.length){
+      if(res && res.success && Array.isArray(res.data)){
         show(res.data.map(function(e){ return normaliseEntry(e, isFanPlaySettled(e.status)); }));
       }
     }).catch(function(){ /* offline: what this device holds is already on screen */ });
@@ -1399,7 +1400,7 @@ function renderActiveList(){
   if(!active.length){
     host.innerHTML = '<div class="fpx-empty"><b>No live entries</b>'
       + '<p>When you stake shares on a match they sit here, locked, until full time.</p>'
-      + '<button type="button" class="fpx-btn" onclick="window.switchFPView(\'wizard\')">Start an entry</button></div>';
+      + '<button type="button" class="fpx-btn" onclick="window.resetWizard()">Start an entry</button></div>';
     return;
   }
   host.innerHTML = '<p class="fpx-lede">Results settle from verified match data at full time. '
@@ -1492,8 +1493,13 @@ async function cancelFanPlay(id){
    never from a button. This plays one out by the white paper's rules — each
    pick earns its FP for every share staked, 1,000 FP is 1 $FTR — and records
    it as simulated. No $FTR is paid. */
-function settleFanPlay(id){
-  if(FT.cloudSignedIn()||FT.restAccount()){showToast('Account entries settle using verified match results.','info');return;}
+async function settleFanPlay(id){
+  if(FT.cloudSignedIn()||FT.restAccount()){
+    var button=document.querySelector('[data-simulate="'+CSS.escape(id)+'"]');if(button)button.disabled=true;
+    try{await FT.simulateEntry(id);loadUserFanPlays();useLocalShares();switchFPView('history');showToast('Demo result simulated. Shares unlocked; no $FTR paid.','success');}
+    catch(e){showToast(e.message||'Demo simulation is unavailable.','error');}
+    finally{if(button)button.disabled=false;}return;
+  }
   var s = fpState();
   var raw = s && s.fanplay && (s.fanplay.activeEntries || []).filter(function(e){ return e.id === id; })[0];
   if(!raw) return;
@@ -1509,7 +1515,7 @@ function settleFanPlay(id){
   if(!picks.length) total = Math.round((Number(raw.projectedFP) || 0) * (0.4 + roll()));
   retireEntry(id, { status: 'SETTLED', selections: picks, resultFP: total, simulated: true });
   showToast('Result simulated: ' + fpSigned(total) + ' FP (' + fpFtr(total) + ').', total >= 0 ? 'success' : 'info');
-  loadUserFanPlays();
+  loadUserFanPlays();useLocalShares();switchFPView('history');
 }
 
 /* Cancelling asks twice rather than opening a browser dialog. */

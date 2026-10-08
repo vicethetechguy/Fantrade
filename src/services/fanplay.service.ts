@@ -446,6 +446,24 @@ export class FanPlayService {
   // AUTHORITATIVE IDEMPOTENT SETTLEMENT (§36, §37, §38, §69-74)
   // ============================================================
 
+  async simulateDemoFanPlay(userId:string,id:string) {
+    if(this.prisma instanceof PrismaClient)return this.prisma.$transaction(tx=>new FanPlayService(tx).simulateDemoFanPlay(userId,id));
+    const user=await this.prisma.user.findUnique({where:{id:userId}});
+    if(!user || !['demo@fantrade.com','alex.morgan@fantrade.app'].includes(user.email.toLowerCase()))throw new DomainError('Simulation is available only on designated demo accounts.','DEMO_ONLY',403);
+    const entry=await this.prisma.fanPlay.findUnique({where:{id},include:{selections:true}});
+    if(!entry || entry.userId!==userId)throw new FanPlayNotFoundError(id);
+    if(entry.status!=='ACTIVE')return entry;
+    const claimed=await this.prisma.fanPlay.updateMany({where:{id,userId,status:'ACTIVE'},data:{status:'SETTLED',settledAt:new Date(),ftrSettlement:0}});
+    if(!claimed.count)return this.prisma.fanPlay.findUnique({where:{id},include:{selections:true}});
+    let total=0;
+    for(const pick of entry.selections){
+      const ok=Math.random()<0.6,fp=ok?pick.successFP:pick.failureFP,earned=fp*entry.stakedShares;total+=earned;
+      await this.prisma.fanPlaySelection.update({where:{id:pick.id},data:{evaluationResult:ok?'SUCCESS':'FAILURE',resultFP:fp,optionContributionFP:earned,explanation:'Demo simulation — no FTR payout',evaluatedAt:new Date()}});
+    }
+    if(entry.reservationId)await this.ownershipService.releaseShares(entry.reservationId);
+    return this.prisma.fanPlay.update({where:{id},data:{totalFP:total},include:{selections:true,asset:true,match:true,marketConfig:true}});
+  }
+
   async settleFanPlay(fanPlayId: string, forceFinal = false) {
     if (this.prisma instanceof PrismaClient) {
       return this.prisma.$transaction(async (tx) => {
@@ -474,6 +492,8 @@ export class FanPlayService {
         fanPlay,
       };
     }
+
+    if(fanPlay.status==='SETTLED' && fanPlay.selections.some(s=>s.explanation?.startsWith('Demo simulation')))return {alreadySettled:true,settlement:null,fanPlay};
 
     // Verify match status (§21, §37)
     if (!forceFinal && fanPlay.match.status !== 'FULL_TIME') {

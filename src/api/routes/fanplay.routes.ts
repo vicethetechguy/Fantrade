@@ -211,3 +211,7 @@ fanplayRouter.post('/:id/settle', authMiddleware, async (req: AuthenticatedReque
     next(err);
   }
 });
+
+fanplayRouter.post('/:id/simulate',authMiddleware,async(req:AuthenticatedRequest,res:Response,next:NextFunction)=>{
+ try{res.json({success:true,data:await fanPlayService.simulateDemoFanPlay(req.user!.id,req.params.id)});}catch(err){next(err);}
+});

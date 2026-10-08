@@ -2040,7 +2040,7 @@ var ELIGIBLE=[
 ];
 /* The $FTR economy. $FTR is capped at 10,000,000 and priced by the market
    (start: $2). Every player has 10,000,000 shares; a share is worth their
-   dollar valuation (v) / 10,000,000, and costs that in $FTR at the current
+   dollar valuation (v) / 1,000 / 10,000,000 (coaches retain their existing valuation model), and costs that in $FTR at the current
    $FTR price, so when $FTR moves, every $FTR price moves with it. The live
    price is fetched by fantrade-supabase.js and cached on this device. */
 // Hypothetical preview: $20m token market value / 1m tokens = $20 per token.
@@ -2049,7 +2049,7 @@ var FTR_USD=20, FTR_MAX_SUPPLY=1000000;
 function ftReprice(){
   [ASSETS, typeof ELIGIBLE !== 'undefined' ? ELIGIBLE : []].forEach(function(list){ list.forEach(function(a){
     if(!(a.v > 0)) return;
-    var np = +(a.v / 1e7 / FTR_USD).toFixed(6), old = Number(a.p) || np;
+    var np = +(a.v / (a.c ? 1 : 1000) / 1e7 / FTR_USD).toFixed(10), old = Number(a.p) || np;
     if(a.h) a.h = +(a.h * np / old).toFixed(6);
     if(a.low) a.low = +(a.low * np / old).toFixed(6);
     a.p = np; a.cap = (np * 10 >= 1 ? (np * 10).toFixed(1) + 'M' : Math.round(np * 1e7).toLocaleString('en-US'));
@@ -2109,7 +2109,7 @@ function playerPhoto(symbol,name,className){
   var label=String(name||symbol||'Player').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
   var up=(typeof PLAYER_PROFILES!=='undefined')&&PLAYER_PROFILES[raw.toUpperCase()];
   var src=(up&&up.photo?String(up.photo).replace(/'/g,'%27'):'')||PLAYER_IMAGES[key]||monogram(name||symbol);
-  return "<img class='"+(className||'player-photo')+"' src='"+src+"' alt='"+label+"' loading='lazy' decoding='async'>";
+  return "<img class='"+(className||'player-photo')+' activity-photo'+"' src='"+src+"' alt='"+label+"' loading='lazy' decoding='async'>";
 }
 /* Profiles kept in the admin (photo, club, country, about and the rest).
    fantrade-supabase.js fetches them and caches them on this device, so they
@@ -2299,6 +2299,7 @@ var FT = (function(){
   (state.listedAssets || []).forEach(function(a){
     if(typeof ASSETS !== 'undefined' && !ASSETS.some(function(x){ return x.t === a.t; })) ASSETS.push(a);
   });
+  ftReprice();
 
 
   /* Financial actions wait for one authoritative account service. Local
@@ -2365,7 +2366,7 @@ var FT = (function(){
       link(state);
     }
     if(snap.entries){
-      state.fanplay.activeEntries = snap.entries.map(function(e){
+      var accountEntries = snap.entries.map(function(e){
         var ticker=e.asset_ticker || ftSym(e.asset_id); var held = state.holdings[ticker] || {};
         return { id: e.id, mode: e.mode, clubId: e.club_id || '', target: e.asset_id ? ticker : e.target,
                  tier: e.tier || '', mult: Number(e.multiplier) || 1,
@@ -2376,10 +2377,12 @@ var FT = (function(){
                  selections: e.selections || [],
                  totalFP: Number(e.scored_fp) || 0,
                  projectedFP: Number(e.projected_fp) || 0,
-                 createdAt: e.created_at,
+                 createdAt: e.created_at, settledAt:e.settled_at, simulated:!!e.simulated,
                  matchday: e.matchday,
-                 status: 'ACTIVE' };
+                 status: e.status || 'ACTIVE' };
       });
+      state.fanplay.activeEntries=accountEntries.filter(function(e){return e.status==='ACTIVE';});
+      state.fanplay.history=accountEntries.filter(function(e){return e.status!=='ACTIVE';});
     }
     if(snap.transactions){
       state.transactions = snap.transactions.map(function(t){
@@ -2619,11 +2622,11 @@ var FT = (function(){
        Level 2 is 10% (1,000,000). 2% of what is paid is burned. */
     claimQuote: function(asset, level){
       var shares = Number(level) === 2 ? 1000000 : 500000;
-      var price = Number(asset && asset.p) || 0;
-      var cost = Math.round(shares * price);
+      var price = asset && asset.v>0 ? asset.v / (asset.c?1:1000) / 1e7 / FTR_USD : Number(asset && asset.p) || 0;
+      var cost = Math.round(shares * price * 100)/100;
       var bal = Number(state.wallet.balance) || 0;
       return { level: shares === 1000000 ? 2 : 1, shares: shares, percent: shares / 100000, price: price,
-               cost: cost, burn: Math.round(cost * 0.02), usd: cost * FTR_USD,
+               cost: cost, burn: Math.round(cost * 0.02 * 100)/100, usd: cost * FTR_USD,
                balance: bal, short: Math.max(0, cost - bal) };
     },
     isLaunched: function(ticker){
@@ -2905,6 +2908,12 @@ var FT = (function(){
       if(!db) return null;
       return confirmedCall(db,'ft_enter_fanplay_shares',{p_asset:await accountAsset(db,o.asset),p_shares:o.shares,p_match:o.match||null,p_market:o.market||null,p_selections:o.selections||null,p_action_key:o.key});
     },
+    simulateEntry: async function(id){
+      var db=await transactionAccount();
+      if(db)return confirmedCall(db,'ft_simulate_fanplay_demo',{p_entry:id});
+      if(restAccount()){var res=await FantradeAPI.simulateFanPlay(id);if(!res||!res.success)throw new Error('Demo simulation was not confirmed.');await refreshRest();return res.data;}
+      return null;
+    },
     cancelEntry: async function(id){
       var db=await transactionAccount();
       if(db){ if(!serverId(id)) throw new Error('This preview entry is not on your account.'); return confirmedCall(db,'ft_cancel_fanplay',{p_entry:id}); }
@@ -3131,7 +3140,7 @@ var FTSim = (function(){
   function gauss(){ var u = 1 - Math.random(), v = Math.random(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); }
   function parseVol(v){ var m = String(v || '0').match(/([\d.]+)\s*([KM]?)/i); if(!m) return 0; return Number(m[1]) * ({K:1e3, M:1e6}[m[2].toUpperCase()] || 1); }
   function fmtVol(n){ return n >= 1e6 ? (n / 1e6).toFixed(1) + 'M' : n >= 1e3 ? (n / 1e3).toFixed(1) + 'K' : String(Math.round(n)); }
-  function base(a){ return a.v > 0 ? a.v / 1e7 / FTR_USD : (a._b || (a._b = a.p)); }
+  function base(a){ return a.v > 0 ? a.v / (a.c ? 1 : 1000) / 1e7 / FTR_USD : (a._b || (a._b = a.p)); }
   function load(){ try { return JSON.parse(localStorage.getItem(KEY) || 'null'); } catch(e){ return null; } }
   function persist(){ try { localStorage.setItem(KEY, JSON.stringify(S)); } catch(e){} }
   function pref(){ var q = (location.search.match(/[?&]sim=(on|off)/) || [])[1];
@@ -3159,8 +3168,8 @@ var FTSim = (function(){
   }
   function apply(a, s){
     var b = base(a);
-    a.p = +(b * s.k).toFixed(6); a.d = +((s.k / s.o - 1) * 100).toFixed(2);
-    a.h = +(b * s.hk).toFixed(6); a.low = +(b * s.lk).toFixed(6); a.vol = fmtVol(s.vol);
+    a.p = +(b * s.k).toFixed(10); a.d = +((s.k / s.o - 1) * 100).toFixed(2);
+    a.h = +(b * s.hk).toFixed(10); a.low = +(b * s.lk).toFixed(10); a.vol = fmtVol(s.vol);
   }
   function step(){
     if(FT.cloudSignedIn()||FT.restAccount()||FT.getState().liveWallet){stop();return;}

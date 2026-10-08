@@ -475,7 +475,7 @@ STARTER_IMG_MAP = {
 for sym, nm, role, px, coach in STARTERS:
     img_slug = STARTER_IMG_MAP.get(sym, sym[1:].lower())
     ob.append(f'<button class="pick" type="button" data-sym="{sym}" data-nm="{nm}" data-px="{px}" data-coach="{int(coach)}" aria-pressed="false">'
-              f'<img src="assets/players/{img_slug}.webp" alt="" width="52" height="52">'
+              f'<img class="activity-photo" src="assets/players/{img_slug}.webp" alt="" width="52" height="52">'
               f'<span class="sym">{nm}</span><span class="nm">{role}</span><span class="px">{px:.2f} <small>$FTR / share</small></span></button>')
 ob.append('</div><div class="field"><label for="obShares">Shares to buy</label><input id="obShares" value="500" inputmode="numeric"></div>'
           '<div class="quick"><button type="button" data-s="100">100</button><button type="button" data-s="250">250</button>'
@@ -1176,8 +1176,8 @@ DASH_JS = r"""
     var q = FT.claimQuote(a, 1);
     return '<button type="button" class="home-claim-row" data-claim="' + esc(a.t) + '">' + playerPhoto(a.t, a.n)
       + '<span class="home-claim-who"><b>' + esc(a.n) + '</b>' + meta
-      + '<span class="home-claim-val">Open to claim. 5% costs <strong>' + usd(q.cost) + '</strong> &middot; ' + compact(q.cost) + ' $FTR</span></span>'
-      + '<span class="home-claim-action">Claim</span></button>';
+      + '</span><span class="home-claim-action">Claim</span>'
+      + '<span class="home-claim-val"><span>5% allocation · 500,000 shares<br><strong>' + usd(q.cost) + '</strong></span><em>' + pxFmt(q.cost) + ' $FTR<br>View vesting options →</em></span></button>';
   }
   function search(raw){
     var f = fold(raw).trim();

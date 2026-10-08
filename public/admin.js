@@ -56,10 +56,10 @@ function avatar(name, size) {
   return `<span class="av" style="background:${hues[h % hues.length]}${dim}">${esc(initials(name))}</span>`;
 }
 function claimCost(price, level) { return Math.round((Number(price) || 0) * LEVEL_SHARES[level || 1]); }
-/* A player's share is worth valuation ÷ 10,000,000 dollars, and costs that in
+/* A player's share is worth valuation ÷ 1,000 ÷ 10,000,000 dollars, and costs that in
    $FTR at the current $FTR price. */
-const shareUsd = val => (Number(val) || 0) / SHARES;
-const shareFtr = val => shareUsd(val) / FTR_USD;
+const shareUsd = (val,kind='PLAYER') => (Number(val) || 0) / (kind==='COACH'?1:1000) / SHARES;
+const shareFtr = (val,kind='PLAYER') => shareUsd(val,kind) / FTR_USD;
 function usdBig(n) { n = Number(n) || 0; const a = Math.abs(n); if (a >= 1e6) return '$' + compact(n); if (a >= 1) return '$' + num(n, a >= 1000 ? 0 : 2); return '$' + n.toFixed(a >= 0.01 ? 4 : 6); }
 function px(n) { n = Number(n) || 0; const a = Math.abs(n); return num(n, a >= 1 || a === 0 ? 2 : a >= 0.01 ? 4 : 6); }
 function setFx(v) { if (Number(v) > 0) FTR_USD = Number(v); }
@@ -487,13 +487,13 @@ function playerRow(p, canWrite) {
   const bits = [p.country, p.gender === 'W' ? "Women's" : '', ageFrom(p.date_of_birth) ? ageFrom(p.date_of_birth) + ' yrs' : ''].filter(Boolean).join(' · ');
   const missing = !p.photo_url || !p.about || !p.country;
   if (p.ftr_usd) setFx(p.ftr_usd);
-  const val = Number(p.valuation_usd) || 0, price = val ? shareFtr(val) : (Number(p.price) || 0);
+  const val = Number(p.valuation_usd) || 0, price = val ? shareFtr(val,p.kind) : (Number(p.price) || 0);
   return `<tr class="row-link" data-id="${id}" title="Edit ${esc(p.name)}">
     <td><div class="who">${playerAvatar(p)}<div class="who-text"><b>${esc(p.known_as || p.name)}${missing ? ` <span class="dot-warn" title="Profile incomplete: ${[!p.photo_url && 'photo', !p.about && 'about', !p.country && 'country'].filter(Boolean).join(', ')}"></span>` : ''}</b>
       <small><span class="tick">${esc(p.ticker)}</span>${bits ? ' ' + esc(bits) : ''}</small></div></div></td>
     <td><div class="who-text"><b>${esc(p.club || '—')}</b><small>${esc(p.league || '')}</small></div></td>
     <td>${esc(p.position || '—')}${p.shirt_number ? ` <small class="faint">#${esc(p.shirt_number)}</small>` : ''}</td>
-    <td class="r money num"><b>${val ? usdBig(val) : '<span class="dot-warn" title="No valuation"></span> —'}</b><small>${px(price)} $FTR · ${usdBig(shareUsd(val))} a share</small></td>
+    <td class="r money num"><b>${val ? usdBig(val) : '<span class="dot-warn" title="No valuation"></span> —'}</b><small>${px(price)} $FTR · ${usdBig(shareUsd(val,p.kind))} a share</small></td>
     <td class="r money num">${launched ? '<span class="faint">—</span>' : `<b>${compact(claimCost(price, 1))}</b><small>≈ ${usd(claimCost(price, 1))}</small>`}</td>
     <td><span class="pill ${p.status}">${STATUS_LABEL[p.status]}</span>${p.status === 'claimed' && p.claimed_by ? `<small class="faint" style="display:block;margin-top:4px">by @${esc(p.claimed_by)}</small>` : ''}</td>
     <td class="r"><div class="row-actions">${acts}</div></td></tr>`;
@@ -619,12 +619,12 @@ function editPlayer(p, kind) {
   ['dragleave', 'drop'].forEach(t => drop.addEventListener(t, e => { e.preventDefault(); drop.classList.remove('over'); }));
   drop.addEventListener('drop', e => takeFile(e.dataTransfer.files[0]));
   const calc = () => {
-    const v = parseFloat(String($('#f-price').value).replace(/[$,\s]/g, '')), f = shareFtr(v);
+    const v = parseFloat(String($('#f-price').value).replace(/[$,\s]/g, '')), f = shareFtr(v,$('#f-kind').value);
     $('#f-calc span').innerHTML = v > 0
-      ? `One share: <b>${usdBig(shareUsd(v))}</b> = <b>${px(f)} $FTR</b> at $${px(FTR_USD)} a $FTR. ` + (launched
+      ? `One share: <b>${usdBig(shareUsd(v,$('#f-kind').value))}</b> = <b>${px(f)} $FTR</b> at $${px(FTR_USD)} a $FTR. ` + (launched
         ? 'Trading now: until the share order book is live, a new valuation moves its share price.'
         : `A 5% claim (500,000 shares) costs <b>${num(claimCost(f, 1))} $FTR</b> (≈ ${usd(claimCost(f, 1))}); 10% costs ${num(claimCost(f, 2))} $FTR.`)
-      : 'Enter the player\'s real-world valuation in dollars. A share is worth that ÷ 10,000,000.';
+      : 'Enter the player\'s real-world valuation in dollars. A share is worth that ÷ 1,000 ÷ 10,000,000 (players).';
   };
   const age = () => { const a = ageFrom($('#f-dob').value); $('#f-age').textContent = a ? `· ${a} years old` : ''; };
   const count = () => { $('#f-count').textContent = `· ${$('#f-about').value.length}/800`; };
@@ -775,7 +775,7 @@ function openUpload() {
           <td><div class="who-text"><b>${esc(r.name || '—')}</b><small><span class="tick">${esc(r.ticker || '—')}</span></small></div></td>
           <td><div class="who-text"><b>${esc(r.club || '—')}</b><small>${esc(r.league)}</small></div></td>
           <td>${esc(r.position)}</td>
-          <td class="r money num"><b>${r.valuation_usd > 0 ? usdBig(r.valuation_usd) : r.reference_value > 0 ? px(r.reference_value) + ' $FTR' : '—'}</b>${r.valuation_usd > 0 ? `<small>${px(shareFtr(r.valuation_usd))} $FTR a share</small>` : ''}</td>
+          <td class="r money num"><b>${r.valuation_usd > 0 ? usdBig(r.valuation_usd) : r.reference_value > 0 ? px(r.reference_value) + ' $FTR' : '—'}</b>${r.valuation_usd > 0 ? `<small>${px(shareFtr(r.valuation_usd,r.kind))} $FTR a share</small>` : ''}</td>
           <td>${r.problem ? `<span class="issue">${esc(r.problem)}</span>` : r.launched ? '<span class="note-up">Updates the profile and valuation</span>' : r.update ? '<span class="note-up">Updates the listed player</span>' : '<span class="note-ok">Ready to add</span>'}</td></tr>`).join('')}</tbody>
       </table></div></div>`;
     box.querySelector('#ua').innerHTML = `<button class="btn btn-ghost" id="again">Choose another file</button>
@@ -1050,11 +1050,11 @@ const SAMPLE = (() => {
   const claims = [];
   claimsDef.forEach(([t, h, lvl, yrs, daysAgo]) => {
     const p = byT(t); if (!h) { p.status = 'paused'; return; }
-    const m = byH(h), shares = LEVEL_SHARES[lvl], paid = Math.round(shares * shareFtr(p.valuation_usd)), at = now - daysAgo * D - 3600e3 * (daysAgo + 2);
+    const m = byH(h), shares = LEVEL_SHARES[lvl], paid = Math.round(shares * shareFtr(p.valuation_usd,p.kind)), at = now - daysAgo * D - 3600e3 * (daysAgo + 2);
     p.status = 'claimed'; p.claimed_by = h; p.claimed_at = iso(at);
     claims.push({ listing_id: p.listing_id, ticker: t, name: p.name, club: p.club, handle: h, display_name: m.display_name, user_id: m.id, claim_level: lvl,
       shares, vesting_years: yrs, fee_paid: paid, fee_burned: Math.round(paid * .02), daily_limit: shares / 100, claimed_at: iso(at),
-      vesting_until: iso(at + yrs * 365 * D), reference_value: shareFtr(p.valuation_usd) });
+      vesting_until: iso(at + yrs * 365 * D), reference_value: shareFtr(p.valuation_usd,p.kind) });
   });
   const fixtures = [['Arsenal', 'Chelsea'], ['Galatasaray', 'Fenerbahçe'], ['Barcelona', 'Real Madrid'], ['Manchester City', 'Liverpool'], ['AC Milan', 'Inter']];
   const targets = [['FCHUK', 'Samuel Chukwueze'], ['FSAKA', 'Bukayo Saka'], ['FHLND', 'Erling Haaland'], ['FAJBD', 'Rasheedat Ajibade'], ['FKM7', 'Kylian Mbappé']];
@@ -1076,7 +1076,7 @@ const SAMPLE = (() => {
   const market = { ftr_usd: 20, welcome_grant: 1000 };
   const note = (action, target, detail) => log.unshift({ id: log.length + 1, action, target, detail: detail || {}, created_at: iso(Date.now()), handle: 'sample_admin' });
   const clone = x => JSON.parse(JSON.stringify(x));
-  const holdingsFor = m => claims.filter(c => c.handle === m.handle).map(c => ({ ticker: c.ticker, name: c.name, shares: c.shares, locked: 0, avg_cost: c.reference_value, price: shareFtr(byT(c.ticker).valuation_usd), value: c.shares * shareFtr(byT(c.ticker).valuation_usd) }))
+  const holdingsFor = m => claims.filter(c => c.handle === m.handle).map(c => ({ ticker: c.ticker, name: c.name, shares: c.shares, locked: 0, avg_cost: c.reference_value, price: shareFtr(byT(c.ticker).valuation_usd,byT(c.ticker).kind), value: c.shares * shareFtr(byT(c.ticker).valuation_usd,byT(c.ticker).kind) }))
     .concat(m.handle === 'sample_admin' ? [] : [{ ticker: 'FSAKA', name: 'Bukayo Saka', shares: 1000 + m.handle.length * 150, locked: 0, avg_cost: 5.9, price: shareFtr(VAL.FSAKA), value: (1000 + m.handle.length * 150) * shareFtr(VAL.FSAKA) }]);
   const fn = {
     ft_admin_whoami: () => ({ is_admin: true, role: 'admin', handle: 'sample_admin', name: 'Sample admin', email: 'sample@fantrade.app' }),
@@ -1108,12 +1108,12 @@ const SAMPLE = (() => {
         const ex = byT(r.ticker), launched = ex && (ex.status === 'claimed' || ex.status === 'trading');
         const problem = validateRow(Object.assign({}, r, { photo_url: '' }), launched);
         if (problem) { skipped.push({ ticker: r.ticker, name: r.name, reason: problem }); return; }
-        const v = parseFloat(r.valuation_usd) || (parseFloat(r.reference_value) * FTR_USD * SHARES) || 0;
+        const v = parseFloat(r.valuation_usd) || (parseFloat(r.reference_value) * FTR_USD * SHARES * (r.kind==='COACH'?1:1000)) || 0;
         if (ex) {
           ex.name = r.name; FIELDS.forEach(k => { if (k in r) ex[k] = r[k]; }); if (r.position) ex.position = r.position;
           if (!launched) ex.kind = r.kind;
           if (v > 0) { ex.valuation_usd = v; ex.valuation_source = r.valuation_source || 'Set in the admin';
-            if (launched) notes.push({ ticker: r.ticker, name: r.name, note: 'Trading now: the new valuation moves its share price to ' + usdBig(v / SHARES) + '.' }); }
+            if (launched) notes.push({ ticker: r.ticker, name: r.name, note: 'Trading now: the new valuation moves its share price to ' + usdBig(v / (ex.kind==='COACH'?1:1000) / SHARES) + '.' }); }
           updated++;
         } else {
           const np = { listing_id: 'lst-' + r.ticker, asset_id: '$' + r.ticker, ticker: r.ticker, name: r.name, kind: r.kind, position: r.position || 'FWD',

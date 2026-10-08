@@ -105,7 +105,7 @@ HTML = '''<main><div class="asset-page">
           </dl>
         </section>
         <section class="asset-info-block"><h3>What is an Activity Share?</h3>
-          <p class="asset-detail-note">Every player and coach on Fantrade has 10,000,000 Activity Shares, and that number never changes. A share is worth the player's dollar valuation divided by 10,000,000, paid in $FTR at the live $FTR price. Hold shares to build your Dream Club, back your predictions in FanPlay, or trade them on the exchange.</p>
+          <p class="asset-detail-note">Every player and coach on Fantrade has 10,000,000 Activity Shares, and that number never changes. For players, the activity-share pool is the real-world dollar valuation divided by 1,000. Divide that pool by 10,000,000 to price one share, paid in $FTR at its current market price. Coach shares use their listed activity valuation. Hold shares to build your Dream Club, back your predictions in FanPlay, or trade them on the exchange.</p>
         </section>
       </section>
 
@@ -207,7 +207,7 @@ JS = r'''
     byId('assetPrice').textContent=live(asset.p);
     // The valuation implied by the live share price.
     var val = asset.p * FTR_USD * 1e7;
-    byId('assetPriceUsd').textContent = '≈ ' + usdFmt(asset.p) + ' a share · valuation $' + (val >= 1e6 ? (val / 1e6).toFixed(1) + 'M' : Math.round(val).toLocaleString('en-US'));
+    byId('assetPriceUsd').textContent = '≈ ' + usdFmt(asset.p) + ' a share · activity-share pool $' + (val >= 1e6 ? (val / 1e6).toFixed(1) + 'M' : Math.round(val).toLocaleString('en-US'));
     byId('assetChange').textContent=(asset.d>=0?'+':'') + asset.d.toFixed(2) + '%';
     byId('assetChange').className=asset.d>=0?'asset-up':'asset-down';
     byId('assetHigh').textContent=money(asset.h);

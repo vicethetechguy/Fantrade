@@ -113,10 +113,10 @@ const server = http.createServer((request, response) => {
     await page.evaluate(() => localStorage.setItem('ft_market_v1', JSON.stringify({ ftr_usd: 5 })));
     await page.goto(`${base}/onboarding.html`, { waitUntil: 'domcontentloaded' });
     const starterPrice = Number(await page.locator('#obPicks [data-sym="FSAKA"]').getAttribute('data-px'));
-    assert(Math.abs(starterPrice - 2.52212) < .02, 'Onboarding must use the market $FTR quote instead of its old fixed price');
+    assert(Math.abs(starterPrice - .00252208) < .00002, 'Onboarding must use the market $FTR quote instead of its old fixed price');
     await page.goto(`${base}/exchange.html`, { waitUntil: 'domcontentloaded' });
     const exchangePrice = Number((await page.locator('a.kc-row[href*="FSAKA"] .kc-price-main').innerText()).replace(/,/g, ''));
-    assert(Math.abs(exchangePrice - starterPrice) < .02, 'Onboarding and Exchange prices must agree');
+    assert(Math.abs(exchangePrice - starterPrice) < .0001, 'Onboarding and Exchange prices must agree');
 
     await page.goto(`${base}/wallet.html`, { waitUntil: 'domcontentloaded' });
     assert(await page.locator('#walAvailable').isVisible(), 'Spendable tokens must be distinct from portfolio value');

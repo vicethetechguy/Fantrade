@@ -172,6 +172,7 @@
       return transactionRequest('/api/fanplay/activate', payload, 'fp', payload.idempotencyKey);
     },
 
+    async simulateFanPlay(id){return request('/api/fanplay/'+encodeURIComponent(id)+'/simulate',{method:'POST'});},
     async getFanPlays(status) {
       const q = status ? `?status=${status}` : '';
       return request(`/api/fanplay${q}`);
